@@ -19,6 +19,7 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.title = "Inspect - Certificate"
         for item: AnyObject in self.extensionContext!.inputItems {
             let inputItem = item as! NSExtensionItem
             for provider: AnyObject in inputItem.attachments! {

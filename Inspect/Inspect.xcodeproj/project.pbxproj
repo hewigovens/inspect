@@ -16,6 +16,7 @@
 		BB46EB9B1C30492B00E156E9 /* ActionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */; };
 		BB46EB9E1C30492B00E156E9 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB9C1C30492B00E156E9 /* MainInterface.storyboard */; };
 		BB46EBA21C30492B00E156E9 /* Certificate.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BB46EB981C30492B00E156E9 /* Certificate.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BB46EC6E1C3186A200E156E9 /* WOT.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EC6D1C3186A200E156E9 /* WOT.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +65,7 @@
 		BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionViewController.swift; sourceTree = "<group>"; };
 		BB46EB9D1C30492B00E156E9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		BB46EB9F1C30492B00E156E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BB46EC6D1C3186A200E156E9 /* WOT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WOT.swift; path = WOT/WOT.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +96,7 @@
 		BB46EB681C3046B300E156E9 = {
 			isa = PBXGroup;
 			children = (
+				BB46EC6F1C3186A800E156E9 /* WOT */,
 				BB46EB731C3046B300E156E9 /* Inspect */,
 				BB46EB881C3046B300E156E9 /* InspectTests */,
 				BB46EB991C30492B00E156E9 /* Certificate */,
@@ -141,6 +144,14 @@
 				BB46EB9F1C30492B00E156E9 /* Info.plist */,
 			);
 			path = Certificate;
+			sourceTree = "<group>";
+		};
+		BB46EC6F1C3186A800E156E9 /* WOT */ = {
+			isa = PBXGroup;
+			children = (
+				BB46EC6D1C3186A200E156E9 /* WOT.swift */,
+			);
+			name = WOT;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -275,6 +286,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB46EC6E1C3186A200E156E9 /* WOT.swift in Sources */,
 				BB46EB771C3046B300E156E9 /* ViewController.swift in Sources */,
 				BB46EB751C3046B300E156E9 /* AppDelegate.swift in Sources */,
 			);
