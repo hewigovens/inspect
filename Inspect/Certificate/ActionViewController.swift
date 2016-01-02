@@ -11,7 +11,7 @@ import MobileCoreServices
 
 class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, NSURLSessionDelegate {
   
-  @IBOutlet weak var imageView: UIImageView!
+  @IBOutlet weak var stackView: UIStackView!
   private lazy var tableView = UITableView(frame: CGRectZero, style: .Plain);
   private var urlSession: NSURLSession?
   private var certificates: [SecCertificate] = []

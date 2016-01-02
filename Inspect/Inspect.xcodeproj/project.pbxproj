@@ -24,6 +24,7 @@
 		BB46EC7A1C32CEA600E156E9 /* Alamofire.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BB46EC721C32C0AF00E156E9 /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BB46EC7B1C32CEA600E156E9 /* SwiftyJSON.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BB46EC731C32C0AF00E156E9 /* SwiftyJSON.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BB46EC7C1C32ECAC00E156E9 /* WOT.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EC6D1C3186A200E156E9 /* WOT.swift */; };
+		BB6B2AFC1C36EC3800E34055 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB7B1C3046B300E156E9 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -311,6 +312,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB6B2AFC1C36EC3800E34055 /* Assets.xcassets in Resources */,
 				BB46EB9E1C30492B00E156E9 /* MainInterface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -576,6 +578,7 @@
 				BB46EB901C3046B300E156E9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		BB46EB911C3046B300E156E9 /* Build configuration list for PBXNativeTarget "InspectTests" */ = {
 			isa = XCConfigurationList;
@@ -584,6 +587,7 @@
 				BB46EB931C3046B300E156E9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		BB46EBA31C30492B00E156E9 /* Build configuration list for PBXNativeTarget "Certificate" */ = {
 			isa = XCConfigurationList;
@@ -592,6 +596,7 @@
 				BB46EBA51C30492B00E156E9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
