@@ -19,7 +19,7 @@ public struct Record {
         case VeryPoor
     }
     
-    public enum Category {
+    public enum Category: String {
         case Negative
         case Questionable
         case Neutral

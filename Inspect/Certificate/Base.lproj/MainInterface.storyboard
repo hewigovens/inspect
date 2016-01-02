@@ -2,12 +2,13 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="ObA-dk-sSI">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--Image-->
+        <!--ActionViewController-->
         <scene sceneID="7MM-of-jgj">
             <objects>
-                <viewController title="Image" id="ObA-dk-sSI" customClass="ActionViewController" customModule="Certificate" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="ActionViewController" id="ObA-dk-sSI" customClass="ActionViewController" customModule="Certificate" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="qkL-Od-lgU"/>
                         <viewControllerLayoutGuide type="bottom" id="n38-gi-rB5"/>
@@ -25,23 +26,60 @@
                                                 <action selector="done" destination="ObA-dk-sSI" id="Qdu-qn-U6V"/>
                                             </connections>
                                         </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="ZuV-A0-AqN">
+                                            <connections>
+                                                <action selector="share" destination="ObA-dk-sSI" id="NoW-Nt-kzi"/>
+                                            </connections>
+                                        </barButtonItem>
                                     </navigationItem>
                                 </items>
                             </navigationBar>
-                            <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="1CG-dN-W5k">
-                                <rect key="frame" x="0.0" y="64" width="320" height="464"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="1CG-dN-W5k">
+                                <rect key="frame" x="0.0" y="64" width="320" height="465"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="PSP-iQ-ZAo">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="120"/>
+                                        <subviews>
+                                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="1" sectionFooterHeight="1" translatesAutoresizingMaskIntoConstraints="NO" id="2Sd-wa-KhB">
+                                                <rect key="frame" x="0.0" y="0.0" width="320" height="120"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="120" id="KTZ-VW-Sgx"/>
+                                                </constraints>
+                                                <connections>
+                                                    <outlet property="dataSource" destination="ObA-dk-sSI" id="Wa8-Re-lxg"/>
+                                                    <outlet property="delegate" destination="ObA-dk-sSI" id="PK9-Rk-NsV"/>
+                                                </connections>
+                                            </tableView>
+                                        </subviews>
+                                    </stackView>
+                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="1" sectionFooterHeight="1" translatesAutoresizingMaskIntoConstraints="NO" id="LPU-J1-v0l">
+                                        <rect key="frame" x="0.0" y="120" width="320" height="345"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <connections>
+                                            <outlet property="dataSource" destination="ObA-dk-sSI" id="hGv-lv-8Pt"/>
+                                            <outlet property="delegate" destination="ObA-dk-sSI" id="Rz3-jB-yVs"/>
+                                        </connections>
+                                    </tableView>
+                                </subviews>
                             </stackView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="NOA-Dm-cuz" secondAttribute="trailing" id="A05-Pj-hrr"/>
-                            <constraint firstItem="NOA-Dm-cuz" firstAttribute="leading" secondItem="zMn-AG-sqS" secondAttribute="leading" id="HxO-8t-aoh"/>
-                            <constraint firstItem="NOA-Dm-cuz" firstAttribute="top" secondItem="qkL-Od-lgU" secondAttribute="bottom" id="we0-1t-bgp"/>
+                            <constraint firstItem="NOA-Dm-cuz" firstAttribute="top" secondItem="qkL-Od-lgU" secondAttribute="bottom" id="2fJ-pW-x00"/>
+                            <constraint firstAttribute="trailing" secondItem="NOA-Dm-cuz" secondAttribute="trailing" id="39v-6S-Ge0"/>
+                            <constraint firstItem="NOA-Dm-cuz" firstAttribute="leading" secondItem="zMn-AG-sqS" secondAttribute="leading" id="BFm-cu-IZj"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="1CG-dN-W5k" secondAttribute="bottom" constant="-1" id="EFG-Hv-Fav"/>
+                            <constraint firstItem="1CG-dN-W5k" firstAttribute="top" secondItem="NOA-Dm-cuz" secondAttribute="bottom" id="LZA-ik-rQw"/>
+                            <constraint firstItem="1CG-dN-W5k" firstAttribute="leading" secondItem="NOA-Dm-cuz" secondAttribute="leading" id="ZR8-Yv-AjB"/>
+                            <constraint firstItem="NOA-Dm-cuz" firstAttribute="trailing" secondItem="1CG-dN-W5k" secondAttribute="trailing" id="dny-90-7ji"/>
                         </constraints>
                     </view>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="528"/>
                     <connections>
+                        <outlet property="contentTableView" destination="LPU-J1-v0l" id="uW7-77-dSG"/>
+                        <outlet property="headerTableView" destination="2Sd-wa-KhB" id="ScH-sB-NBq"/>
                         <outlet property="stackView" destination="1CG-dN-W5k" id="W0R-GF-6g3"/>
                         <outlet property="view" destination="zMn-AG-sqS" id="Qma-de-2ek"/>
                     </connections>
