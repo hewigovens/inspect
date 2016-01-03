@@ -24,6 +24,8 @@
 		BB46EC7A1C32CEA600E156E9 /* Alamofire.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BB46EC721C32C0AF00E156E9 /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BB46EC7B1C32CEA600E156E9 /* SwiftyJSON.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BB46EC731C32C0AF00E156E9 /* SwiftyJSON.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BB46EC7C1C32ECAC00E156E9 /* WOT.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EC6D1C3186A200E156E9 /* WOT.swift */; };
+		BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */; };
+		BB5DB8621C391F2400219411 /* SSLLabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB8611C391F2400219411 /* SSLLabs.swift */; };
 		BB6B2AFC1C36EC3800E34055 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB7B1C3046B300E156E9 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -88,6 +90,8 @@
 		BB46EC6D1C3186A200E156E9 /* WOT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WOT.swift; path = WOT/WOT.swift; sourceTree = "<group>"; };
 		BB46EC721C32C0AF00E156E9 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		BB46EC731C32C0AF00E156E9 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
+		BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificateCells.swift; sourceTree = "<group>"; };
+		BB5DB8611C391F2400219411 /* SSLLabs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SSLLabs.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +126,7 @@
 		BB46EB681C3046B300E156E9 = {
 			isa = PBXGroup;
 			children = (
+				BB5DB8601C391F0D00219411 /* SSLLabs */,
 				BB46EC781C32C8EF00E156E9 /* Frameworks */,
 				BB46EC6F1C3186A800E156E9 /* WOT */,
 				BB46EB731C3046B300E156E9 /* Inspect */,
@@ -169,6 +174,7 @@
 				BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */,
 				BB46EB9C1C30492B00E156E9 /* MainInterface.storyboard */,
 				BB46EB9F1C30492B00E156E9 /* Info.plist */,
+				BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */,
 			);
 			path = Certificate;
 			sourceTree = "<group>";
@@ -188,6 +194,14 @@
 				BB46EC731C32C0AF00E156E9 /* SwiftyJSON.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BB5DB8601C391F0D00219411 /* SSLLabs */ = {
+			isa = PBXGroup;
+			children = (
+				BB5DB8611C391F2400219411 /* SSLLabs.swift */,
+			);
+			name = SSLLabs;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -342,8 +356,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB5DB8621C391F2400219411 /* SSLLabs.swift in Sources */,
 				BB46EC7C1C32ECAC00E156E9 /* WOT.swift in Sources */,
 				BB46EB9B1C30492B00E156E9 /* ActionViewController.swift in Sources */,
+				BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

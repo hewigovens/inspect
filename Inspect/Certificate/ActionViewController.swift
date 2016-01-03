@@ -8,20 +8,33 @@
 
 import UIKit
 import MobileCoreServices
+import SafariServices
 
-
-class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, NSURLSessionDelegate {
+class ActionViewController: UIViewController,
+                            UITableViewDelegate,
+                            UITableViewDataSource,
+                            NSURLSessionDelegate,
+                            UIActionSheetDelegate {
     
     @IBOutlet weak var stackView: UIStackView!
     @IBOutlet weak var headerTableView: UITableView!
     @IBOutlet weak var contentTableView: UITableView!
+    
+    private var selectedIndex: Int?
+    private var inspectingUrl: NSURL?
     private var urlSession: NSURLSession?
-    private var certificates: [SecCertificate] = []
+    private lazy var requestQueue = NSOperationQueue()
+    private var certificates: [SecCertificate] = [] {
+        didSet {
+            self.headerTableView.reloadData()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.title = "Inspect - Certificate"
+        self.configureTableViews()
         
         var validItemProvider: NSItemProvider?
         nestedLoop: for item: AnyObject in self.extensionContext!.inputItems {
@@ -38,9 +51,10 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
         if validItemProvider != nil {
             validItemProvider!.loadItemForTypeIdentifier(kUTTypeURL as String, options: nil, completionHandler: { (item, error) -> Void in
                 if let url = item as? NSURL? {
+                    self.inspectingUrl = url
                     print("get url \(url), scheme = \(url?.scheme)");
                     if url?.scheme == ("https") {
-                        self.urlSession = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: NSOperationQueue.mainQueue())
+                        self.urlSession = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: self.requestQueue)
                         let task = self.urlSession?.dataTaskWithURL(url!)
                         if task != nil {
                             task!.resume();
@@ -78,22 +92,56 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     @IBAction func share() {
-        let activity = UIActivityViewController(activityItems: [], applicationActivities: nil)
-        self.presentViewController(activity, animated: true) { () -> Void in
-            //
-        }
+        let sheet = UIAlertController(title: "More Options", message: nil, preferredStyle: .ActionSheet)
+        sheet.addAction(UIAlertAction(title: "Scan in SSLLabs.com", style: .Default, handler: { (action) -> Void in
+            if self.inspectingUrl != nil {
+            if let url = SSLLabs.scanUrl((self.inspectingUrl?.host)!) {
+                    let vc = SFSafariViewController(URL: url)
+                    self.presentViewController(vc, animated: true, completion: nil)
+                }
+            }
+        }))
+        
+        sheet.addAction(UIAlertAction(title: "Export Certificates", style: .Default, handler: { (action) -> Void in
+            
+            let items = [NSData()]
+            let vc = UIActivityViewController(activityItems: items, applicationActivities: nil)
+            self.presentViewController(vc, animated: true, completion: nil)
+        }))
+        
+        sheet.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
+        
+        self.presentViewController(sheet, animated: true, completion: nil)
     }
     
     // MARK: UITableViewDelegate
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        if tableView == self.headerTableView {
+            let cert = self.certificates[indexPath.row]
+            let cell = tableView.dequeueReusableCellWithIdentifier(CertificateStackCell.reuseId) as? CertificateStackCell
+            cell?.level = indexPath.row
+            cell?.name = SecCertificateCopySubjectSummary(cert) as String
+            return cell!
+        } else {
+            return UITableViewCell()
+        }
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return certificates.count
+        if tableView == self.headerTableView {
+            return certificates.count
+        } else {
+            return 0
+        }
     }
     
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        if tableView == self.headerTableView {
+            self.selectedIndex = indexPath.row
+            self.contentTableView.reloadData()
+        }
+    }
     
     // MARK: NSURLSessionDelegate
     
@@ -104,16 +152,33 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     // MARK: Private funcs
-    private func showWOTRating(record: Record) {
+    
+    private func configureTableViews() {
         
+        // Certificate Stack View
+        self.headerTableView.bounces = false
+        self.headerTableView.separatorStyle = .None
+        self.headerTableView.registerClass(CertificateStackCell.self, forCellReuseIdentifier: CertificateStackCell.reuseId)
+        self.headerTableView.rowHeight = UITableViewAutomaticDimension
+        
+        
+        self.contentTableView.separatorStyle = .None
+        self.contentTableView.registerClass(CertificateInfoCell.self, forCellReuseIdentifier: CertificateInfoCell.reuseId)
+    }
+    
+    private func showWOTRating(record: Record) {
+        dispatch_async(dispatch_get_main_queue()) { () -> Void in
+            self.title = record.reputation.rawValue
+        }
     }
     
     private func showError(errorMessage: String) {
         print("error \(errorMessage)")
+        self.navigationItem.rightBarButtonItem?.enabled = false
     }
     
     private func showError(error: NSError) {
-        print("error \(error.description)")
+        return self.showError(error.description)
     }
     
     private func certificateDataForTrust(trust: SecTrust) -> [SecCertificate] {
@@ -123,6 +188,6 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
                 certs.append(cert)
             }
         }
-        return certs;
+        return certs.reverse();
     }
 }
