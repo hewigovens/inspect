@@ -126,9 +126,8 @@
 		BB46EB681C3046B300E156E9 = {
 			isa = PBXGroup;
 			children = (
-				BB5DB8601C391F0D00219411 /* SSLLabs */,
+				BB5DB8631C393CAA00219411 /* Services */,
 				BB46EC781C32C8EF00E156E9 /* Frameworks */,
-				BB46EC6F1C3186A800E156E9 /* WOT */,
 				BB46EB731C3046B300E156E9 /* Inspect */,
 				BB46EB881C3046B300E156E9 /* InspectTests */,
 				BB46EB991C30492B00E156E9 /* Certificate */,
@@ -172,9 +171,9 @@
 			isa = PBXGroup;
 			children = (
 				BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */,
+				BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */,
 				BB46EB9C1C30492B00E156E9 /* MainInterface.storyboard */,
 				BB46EB9F1C30492B00E156E9 /* Info.plist */,
-				BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */,
 			);
 			path = Certificate;
 			sourceTree = "<group>";
@@ -202,6 +201,15 @@
 				BB5DB8611C391F2400219411 /* SSLLabs.swift */,
 			);
 			name = SSLLabs;
+			sourceTree = "<group>";
+		};
+		BB5DB8631C393CAA00219411 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				BB5DB8601C391F0D00219411 /* SSLLabs */,
+				BB46EC6F1C3186A800E156E9 /* WOT */,
+			);
+			name = Services;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

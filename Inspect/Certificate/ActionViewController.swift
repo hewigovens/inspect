@@ -16,6 +16,7 @@ class ActionViewController: UIViewController,
                             NSURLSessionDelegate,
                             UIActionSheetDelegate {
     
+    @IBOutlet internal weak var navItem: UINavigationItem!
     @IBOutlet weak var stackView: UIStackView!
     @IBOutlet weak var headerTableView: UITableView!
     @IBOutlet weak var contentTableView: UITableView!
@@ -33,7 +34,7 @@ class ActionViewController: UIViewController,
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = "Inspect - Certificate"
+        self.navItem?.title = "Inspect - Certificate"
         self.configureTableViews()
         
         var validItemProvider: NSItemProvider?
@@ -146,9 +147,10 @@ class ActionViewController: UIViewController,
     // MARK: NSURLSessionDelegate
     
     func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
-        
-        self.certificates = self.certificateDataForTrust(challenge.protectionSpace.serverTrust!)
-        completionHandler(.UseCredential, challenge.proposedCredential);
+        dispatch_async(dispatch_get_main_queue()) { () -> Void in
+            self.certificates = self.certificateDataForTrust(challenge.protectionSpace.serverTrust!)
+        }
+        completionHandler(.CancelAuthenticationChallenge, challenge.proposedCredential);
     }
     
     // MARK: Private funcs
@@ -158,17 +160,15 @@ class ActionViewController: UIViewController,
         // Certificate Stack View
         self.headerTableView.bounces = false
         self.headerTableView.separatorStyle = .None
-        self.headerTableView.registerClass(CertificateStackCell.self, forCellReuseIdentifier: CertificateStackCell.reuseId)
         self.headerTableView.rowHeight = UITableViewAutomaticDimension
         
         
         self.contentTableView.separatorStyle = .None
-        self.contentTableView.registerClass(CertificateInfoCell.self, forCellReuseIdentifier: CertificateInfoCell.reuseId)
     }
     
     private func showWOTRating(record: Record) {
         dispatch_async(dispatch_get_main_queue()) { () -> Void in
-            self.title = record.reputation.rawValue
+            self.navItem?.title = "Web of Trust: \(record.reputation.rawValue)"
         }
     }
     

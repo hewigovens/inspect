@@ -8,6 +8,7 @@
 
 import Foundation
 
+// API docs https://github.com/ssllabs/ssllabs-scan/blob/master/ssllabs-api-docs.md
 public class SSLLabs {
     static let testUrl = "https://www.ssllabs.com/ssltest/analyze.html?d="
     static func scanUrl(host: String) -> NSURL? {

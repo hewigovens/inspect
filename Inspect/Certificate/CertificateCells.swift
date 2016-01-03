@@ -10,19 +10,26 @@ import UIKit
 
 public class CertificateStackCell: UITableViewCell {
     static let reuseId = "kCertificateStackCell"
+    
+    @IBOutlet public weak var indicatorLabel: UILabel!
+    @IBOutlet public weak var iconView: UIImageView!
+    @IBOutlet public weak var titleLabel: UILabel!
+    @IBOutlet public weak var indicatorLeading: NSLayoutConstraint!
+    
     public var level = 0 {
         didSet {
             if self.level == 0 {
-                self.imageView?.image = UIImage(imageLiteral: "CertSmallRoot")
+                self.iconView?.image = UIImage(imageLiteral: "CertSmallRoot")
             } else {
-                self.imageView?.image = UIImage(imageLiteral: "CertSmallStd")
+                self.indicatorLeading?.constant = (self.indicatorLeading?.constant)! - CGFloat(self.level) * 35.0
+                self.iconView?.image = UIImage(imageLiteral: "CertSmallStd")
             }
         }
     }
     public var name = "" {
         didSet {
-            self.textLabel?.text = self.name
-            self.textLabel?.numberOfLines = 0
+            self.titleLabel?.text = self.name
+            self.titleLabel?.numberOfLines = 0
         }
     }
 }
