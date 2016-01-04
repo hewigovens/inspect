@@ -28,6 +28,7 @@
 		BB5DB8621C391F2400219411 /* SSLLabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB8611C391F2400219411 /* SSLLabs.swift */; };
 		BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 		BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
+		BB5DB8681C397BF200219411 /* X509.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB8671C397BF200219411 /* X509.swift */; };
 		BB6B2AFC1C36EC3800E34055 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB7B1C3046B300E156E9 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -95,6 +96,7 @@
 		BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificateCells.swift; sourceTree = "<group>"; };
 		BB5DB8611C391F2400219411 /* SSLLabs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SSLLabs.swift; sourceTree = "<group>"; };
 		BB5DB8641C3974D100219411 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = ../Dependencies/openssl.framework; sourceTree = "<group>"; };
+		BB5DB8671C397BF200219411 /* X509.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = X509.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,7 +133,7 @@
 		BB46EB681C3046B300E156E9 = {
 			isa = PBXGroup;
 			children = (
-				BB5DB8631C393CAA00219411 /* Services */,
+				BB5DB8631C393CAA00219411 /* Utils */,
 				BB46EC781C32C8EF00E156E9 /* Frameworks */,
 				BB46EB731C3046B300E156E9 /* Inspect */,
 				BB46EB881C3046B300E156E9 /* InspectTests */,
@@ -209,13 +211,14 @@
 			name = SSLLabs;
 			sourceTree = "<group>";
 		};
-		BB5DB8631C393CAA00219411 /* Services */ = {
+		BB5DB8631C393CAA00219411 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
 				BB5DB8601C391F0D00219411 /* SSLLabs */,
 				BB46EC6F1C3186A800E156E9 /* WOT */,
+				BB5DB8671C397BF200219411 /* X509.swift */,
 			);
-			name = Services;
+			name = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -370,6 +373,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB5DB8681C397BF200219411 /* X509.swift in Sources */,
 				BB5DB8621C391F2400219411 /* SSLLabs.swift in Sources */,
 				BB46EC7C1C32ECAC00E156E9 /* WOT.swift in Sources */,
 				BB46EB9B1C30492B00E156E9 /* ActionViewController.swift in Sources */,
