@@ -105,9 +105,36 @@ class ActionViewController: UIViewController,
         
         sheet.addAction(UIAlertAction(title: "Export Certificates", style: .Default, handler: { (action) -> Void in
             
-            let items = [NSData()]
-            let vc = UIActivityViewController(activityItems: items, applicationActivities: nil)
-            self.presentViewController(vc, animated: true, completion: nil)
+            var selectedCert: SecCertificate? = self.certificates.last
+            if self.selectedIndex != nil {
+                selectedCert = self.certificates[self.selectedIndex!]
+            }
+            if selectedCert != nil {
+                let cert = selectedCert!
+                let data = SecCertificateCopyData(cert) as NSData
+                let paths = NSSearchPathForDirectoriesInDomains(.CachesDirectory, .UserDomainMask, true)
+                if let path = paths.first {
+                    let file_name = "cert0.cer";
+                    let cert_zip = NSURL(fileURLWithPath: path + "/cert0.zip");
+                    print(cert_zip)
+                    do {
+                        let archive = try ZZArchive(URL: cert_zip, options: [ZZOpenOptionsCreateIfMissingKey: NSNumber(bool: true)])
+                        let entry = ZZArchiveEntry(fileName: file_name, compress: true, dataBlock: { (_) -> NSData? in
+                            return data;
+                        })
+                        try archive.updateEntries([entry])
+                        
+                        let items = [cert_zip]
+                        let vc = UIActivityViewController(activityItems: items, applicationActivities: nil)
+                        self.presentViewController(vc, animated: true, completion: nil)
+                        
+                    } catch (let error as NSError) {
+                        print("zip cert failed \(error.description)")
+                    }
+                }
+            } else {
+                self.showError("no valid certificate");
+            }
         }))
         
         sheet.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))

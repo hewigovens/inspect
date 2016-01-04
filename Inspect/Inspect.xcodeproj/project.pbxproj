@@ -29,6 +29,9 @@
 		BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 		BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 		BB5DB8681C397BF200219411 /* X509.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB8671C397BF200219411 /* X509.swift */; };
+		BB5DB8831C3AA0DD00219411 /* ZipZap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8741C3AA09300219411 /* ZipZap.framework */; };
+		BB5DB8841C3AA0E400219411 /* ZipZap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8741C3AA09300219411 /* ZipZap.framework */; };
+		BB5DB8871C3ABB3B00219411 /* ZipZap.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8741C3AA09300219411 /* ZipZap.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BB6B2AFC1C36EC3800E34055 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB7B1C3046B300E156E9 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -46,6 +49,62 @@
 			proxyType = 1;
 			remoteGlobalIDString = BB46EB971C30492B00E156E9;
 			remoteInfo = Certificate;
+		};
+		BB5DB8731C3AA09300219411 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BB5DB8691C3AA09300219411 /* ZipZap.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D87BA1F81B3D6DEA00ED7EB3;
+			remoteInfo = "ZipZap (iOS Framework)";
+		};
+		BB5DB8751C3AA09300219411 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BB5DB8691C3AA09300219411 /* ZipZap.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D899CFB0162C5EEB00112F49;
+			remoteInfo = "ZipZap (iOS Static Library)";
+		};
+		BB5DB8771C3AA09300219411 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BB5DB8691C3AA09300219411 /* ZipZap.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D8D140D31B423B1100C411B0;
+			remoteInfo = "ZipZap (OS X Framework)";
+		};
+		BB5DB8791C3AA09300219411 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BB5DB8691C3AA09300219411 /* ZipZap.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D899CF82162C5EC100112F49;
+			remoteInfo = "ZipZap (OS X Static Library)";
+		};
+		BB5DB87B1C3AA09300219411 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BB5DB8691C3AA09300219411 /* ZipZap.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BF8624CB1BB7495200C12EEE;
+			remoteInfo = "ZipZap (tvOS Framework)";
+		};
+		BB5DB87D1C3AA09300219411 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BB5DB8691C3AA09300219411 /* ZipZap.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BF8624EF1BB74B1F00C12EEE;
+			remoteInfo = "ZipZap (tvOS Static Library)";
+		};
+		BB5DB87F1C3AA09300219411 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BB5DB8691C3AA09300219411 /* ZipZap.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D899CF96162C5EC100112F49;
+			remoteInfo = ZipZapTests;
+		};
+		BB5DB8811C3AA0AB00219411 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BB5DB8691C3AA09300219411 /* ZipZap.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D87BA1F71B3D6DEA00ED7EB3;
+			remoteInfo = "ZipZap (iOS Framework)";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -67,6 +126,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				BB5DB8871C3ABB3B00219411 /* ZipZap.framework in Copy Frameworks */,
 				BB46EC7A1C32CEA600E156E9 /* Alamofire.framework in Copy Frameworks */,
 				BB46EC7B1C32CEA600E156E9 /* SwiftyJSON.framework in Copy Frameworks */,
 			);
@@ -90,13 +150,15 @@
 		BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionViewController.swift; sourceTree = "<group>"; };
 		BB46EB9D1C30492B00E156E9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		BB46EB9F1C30492B00E156E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BB46EC6D1C3186A200E156E9 /* WOT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WOT.swift; path = WOT/WOT.swift; sourceTree = "<group>"; };
+		BB46EC6D1C3186A200E156E9 /* WOT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WOT.swift; path = Utils/WOT.swift; sourceTree = "<group>"; };
 		BB46EC721C32C0AF00E156E9 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
 		BB46EC731C32C0AF00E156E9 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
 		BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificateCells.swift; sourceTree = "<group>"; };
-		BB5DB8611C391F2400219411 /* SSLLabs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SSLLabs.swift; sourceTree = "<group>"; };
+		BB5DB8611C391F2400219411 /* SSLLabs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SSLLabs.swift; path = Utils/SSLLabs.swift; sourceTree = "<group>"; };
 		BB5DB8641C3974D100219411 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = ../Dependencies/openssl.framework; sourceTree = "<group>"; };
-		BB5DB8671C397BF200219411 /* X509.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = X509.swift; sourceTree = "<group>"; };
+		BB5DB8671C397BF200219411 /* X509.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = X509.swift; path = Utils/X509.swift; sourceTree = "<group>"; };
+		BB5DB8691C3AA09300219411 /* ZipZap.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ZipZap.xcodeproj; path = ../Dependencies/ZipZap/ZipZap.xcodeproj; sourceTree = "<group>"; };
+		BB5DB8861C3AA52900219411 /* Certificate-Bridging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Certificate-Bridging.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +166,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB5DB8841C3AA0E400219411 /* ZipZap.framework in Frameworks */,
 				BB46EC761C32C0BD00E156E9 /* Alamofire.framework in Frameworks */,
 				BB46EC771C32C0BE00E156E9 /* SwiftyJSON.framework in Frameworks */,
 				BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */,
@@ -121,6 +184,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB5DB8831C3AA0DD00219411 /* ZipZap.framework in Frameworks */,
 				BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */,
 				BB46EC741C32C0AF00E156E9 /* Alamofire.framework in Frameworks */,
 				BB46EC751C32C0AF00E156E9 /* SwiftyJSON.framework in Frameworks */,
@@ -155,6 +219,7 @@
 		BB46EB731C3046B300E156E9 /* Inspect */ = {
 			isa = PBXGroup;
 			children = (
+				BB5DB8861C3AA52900219411 /* Certificate-Bridging.h */,
 				BB46EB741C3046B300E156E9 /* AppDelegate.swift */,
 				BB46EB761C3046B300E156E9 /* ViewController.swift */,
 				BB46EB781C3046B300E156E9 /* Main.storyboard */,
@@ -196,6 +261,7 @@
 		BB46EC781C32C8EF00E156E9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BB5DB8691C3AA09300219411 /* ZipZap.xcodeproj */,
 				BB5DB8641C3974D100219411 /* openssl.framework */,
 				BB46EC721C32C0AF00E156E9 /* Alamofire.framework */,
 				BB46EC731C32C0AF00E156E9 /* SwiftyJSON.framework */,
@@ -219,6 +285,20 @@
 				BB5DB8671C397BF200219411 /* X509.swift */,
 			);
 			name = Utils;
+			sourceTree = "<group>";
+		};
+		BB5DB86A1C3AA09300219411 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BB5DB8741C3AA09300219411 /* ZipZap.framework */,
+				BB5DB8761C3AA09300219411 /* libZipZap.a */,
+				BB5DB8781C3AA09300219411 /* ZipZap.framework */,
+				BB5DB87A1C3AA09300219411 /* libZipZap.a */,
+				BB5DB87C1C3AA09300219411 /* ZipZap.framework */,
+				BB5DB87E1C3AA09300219411 /* libZipZap.a */,
+				BB5DB8801C3AA09300219411 /* ZipZapTests.xctest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -273,6 +353,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				BB5DB8821C3AA0AB00219411 /* PBXTargetDependency */,
 			);
 			name = Certificate;
 			productName = Certificate;
@@ -312,6 +393,12 @@
 			mainGroup = BB46EB681C3046B300E156E9;
 			productRefGroup = BB46EB721C3046B300E156E9 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = BB5DB86A1C3AA09300219411 /* Products */;
+					ProjectRef = BB5DB8691C3AA09300219411 /* ZipZap.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				BB46EB701C3046B300E156E9 /* Inspect */,
@@ -320,6 +407,58 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		BB5DB8741C3AA09300219411 /* ZipZap.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = ZipZap.framework;
+			remoteRef = BB5DB8731C3AA09300219411 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BB5DB8761C3AA09300219411 /* libZipZap.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libZipZap.a;
+			remoteRef = BB5DB8751C3AA09300219411 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BB5DB8781C3AA09300219411 /* ZipZap.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = ZipZap.framework;
+			remoteRef = BB5DB8771C3AA09300219411 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BB5DB87A1C3AA09300219411 /* libZipZap.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libZipZap.a;
+			remoteRef = BB5DB8791C3AA09300219411 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BB5DB87C1C3AA09300219411 /* ZipZap.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = ZipZap.framework;
+			remoteRef = BB5DB87B1C3AA09300219411 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BB5DB87E1C3AA09300219411 /* libZipZap.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libZipZap.a;
+			remoteRef = BB5DB87D1C3AA09300219411 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BB5DB8801C3AA09300219411 /* ZipZapTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ZipZapTests.xctest;
+			remoteRef = BB5DB87F1C3AA09300219411 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		BB46EB6F1C3046B300E156E9 /* Resources */ = {
@@ -393,6 +532,11 @@
 			isa = PBXTargetDependency;
 			target = BB46EB971C30492B00E156E9 /* Certificate */;
 			targetProxy = BB46EBA01C30492B00E156E9 /* PBXContainerItemProxy */;
+		};
+		BB5DB8821C3AA0AB00219411 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "ZipZap (iOS Framework)";
+			targetProxy = BB5DB8811C3AA0AB00219411 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -522,6 +666,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = in.fourplex.Inspect;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Inspect/Certificate-Bridging.h";
 			};
 			name = Debug;
 		};
@@ -538,6 +683,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = in.fourplex.Inspect;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Inspect/Certificate-Bridging.h";
 			};
 			name = Release;
 		};
@@ -577,6 +723,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = in.fourplex.Inspect.Certificate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Inspect/Certificate-Bridging.h";
 			};
 			name = Debug;
 		};
@@ -592,6 +739,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = in.fourplex.Inspect.Certificate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Inspect/Certificate-Bridging.h";
 			};
 			name = Release;
 		};
