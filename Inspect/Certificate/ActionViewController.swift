@@ -20,6 +20,7 @@ class ActionViewController: UIViewController,
     @IBOutlet weak var stackView: UIStackView!
     @IBOutlet weak var headerTableView: UITableView!
     @IBOutlet weak var contentTableView: UITableView!
+    @IBOutlet weak var headerHeightConstraint: NSLayoutConstraint!
     
     private var selectedIndex: Int?
     private var inspectingUrl: NSURL?
@@ -27,9 +28,11 @@ class ActionViewController: UIViewController,
     private lazy var requestQueue = NSOperationQueue()
     private var certificates: [SecCertificate] = [] {
         didSet {
+            self.headerHeightConstraint.constant = CGFloat(44 * self.certificates.count)
             self.headerTableView.reloadData()
         }
     }
+    private var selectedCertInfo: [[String: String]] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -152,7 +155,19 @@ class ActionViewController: UIViewController,
             cell?.name = SecCertificateCopySubjectSummary(cert) as String
             return cell!
         } else {
-            return UITableViewCell()
+            let cell = tableView.dequeueReusableCellWithIdentifier(CertificateInfoCell.reuseId)
+            cell?.textLabel?.text = "This is key"
+            cell?.detailTextLabel?.text = "This is very long text."
+            cell?.detailTextLabel?.numberOfLines = 0
+            return cell!
+        }
+    }
+    
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        if tableView == self.headerTableView {
+            return 1;
+        } else {
+            return 7;
         }
     }
     
@@ -160,8 +175,15 @@ class ActionViewController: UIViewController,
         if tableView == self.headerTableView {
             return certificates.count
         } else {
-            return 0
+            return 2
         }
+    }
+    
+    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if tableView == self.contentTableView {
+            return "Section Header"
+        }
+        return nil
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
@@ -189,8 +211,8 @@ class ActionViewController: UIViewController,
         self.headerTableView.separatorStyle = .None
         self.headerTableView.rowHeight = UITableViewAutomaticDimension
         
-        
-        self.contentTableView.separatorStyle = .None
+        self.contentTableView.rowHeight = UITableViewAutomaticDimension
+//        self.contentTableView.separatorStyle = .None
     }
     
     private func showWOTRating(record: Record) {

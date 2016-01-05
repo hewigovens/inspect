@@ -7,3 +7,10 @@
 //
 
 import Foundation
+
+public class X509Certificate {
+    
+    init(certificate: SecCertificate) {
+        
+    }
+}
