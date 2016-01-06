@@ -36,4 +36,7 @@ public class CertificateStackCell: UITableViewCell {
 
 public class CertificateInfoCell: UITableViewCell {
     static let reuseId = "kCertificateInfoCell"
+    
+    @IBOutlet public weak var titleLabel: UILabel!
+    @IBOutlet public weak var detailLabel: UILabel!
 }

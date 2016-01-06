@@ -28,7 +28,7 @@ class ActionViewController: UIViewController,
     private lazy var requestQueue = NSOperationQueue()
     private var certificates: [SecCertificate] = [] {
         didSet {
-            self.headerHeightConstraint.constant = CGFloat(44 * self.certificates.count)
+            self.headerHeightConstraint.constant = CGFloat(50 * self.certificates.count)
             self.headerTableView.reloadData()
         }
     }
@@ -155,10 +155,9 @@ class ActionViewController: UIViewController,
             cell?.name = SecCertificateCopySubjectSummary(cert) as String
             return cell!
         } else {
-            let cell = tableView.dequeueReusableCellWithIdentifier(CertificateInfoCell.reuseId)
-            cell?.textLabel?.text = "This is key"
-            cell?.detailTextLabel?.text = "This is very long text."
-            cell?.detailTextLabel?.numberOfLines = 0
+            let cell = tableView.dequeueReusableCellWithIdentifier(CertificateInfoCell.reuseId) as? CertificateInfoCell
+            cell?.titleLabel?.text = "This is key"
+            cell?.detailLabel?.text = "This is very long text.This is very long text.This is very long text.This is very long text.This is very long text.This is very long text."
             return cell!
         }
     }
@@ -210,9 +209,11 @@ class ActionViewController: UIViewController,
         self.headerTableView.bounces = false
         self.headerTableView.separatorStyle = .None
         self.headerTableView.rowHeight = UITableViewAutomaticDimension
+        self.headerTableView.estimatedRowHeight = 44
+        self.headerTableView.backgroundColor = UIColor.lightTextColor()
         
+        self.contentTableView.estimatedRowHeight = 100
         self.contentTableView.rowHeight = UITableViewAutomaticDimension
-//        self.contentTableView.separatorStyle = .None
     }
     
     private func showWOTRating(record: Record) {
