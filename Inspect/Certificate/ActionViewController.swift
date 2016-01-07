@@ -22,7 +22,12 @@ class ActionViewController: UIViewController,
     @IBOutlet weak var contentTableView: UITableView!
     @IBOutlet weak var headerHeightConstraint: NSLayoutConstraint!
     
-    private var selectedIndex: Int?
+    private var selectedIndex: Int? {
+        didSet {
+            self.selectedCert = X509Certificate(certificate: certificates[self.selectedIndex!])
+        }
+    }
+    private var selectedCert: X509Certificate?
     private var inspectingUrl: NSURL?
     private var urlSession: NSURLSession?
     private lazy var requestQueue = NSOperationQueue()
@@ -108,35 +113,30 @@ class ActionViewController: UIViewController,
         
         sheet.addAction(UIAlertAction(title: "Export Certificates", style: .Default, handler: { (action) -> Void in
             
-            var selectedCert: SecCertificate? = self.certificates.last
-            if self.selectedIndex != nil {
-                selectedCert = self.certificates[self.selectedIndex!]
+            if self.selectedIndex == nil {
+                self.selectedIndex = self.certificates.count - 1;
             }
-            if selectedCert != nil {
-                let cert = selectedCert!
-                let data = SecCertificateCopyData(cert) as NSData
-                let paths = NSSearchPathForDirectoriesInDomains(.CachesDirectory, .UserDomainMask, true)
-                if let path = paths.first {
-                    let file_name = "cert0.cer";
-                    let cert_zip = NSURL(fileURLWithPath: path + "/cert0.zip");
-                    print(cert_zip)
-                    do {
-                        let archive = try ZZArchive(URL: cert_zip, options: [ZZOpenOptionsCreateIfMissingKey: NSNumber(bool: true)])
-                        let entry = ZZArchiveEntry(fileName: file_name, compress: true, dataBlock: { (_) -> NSData? in
-                            return data;
-                        })
-                        try archive.updateEntries([entry])
-                        
-                        let items = [cert_zip]
-                        let vc = UIActivityViewController(activityItems: items, applicationActivities: nil)
-                        self.presentViewController(vc, animated: true, completion: nil)
-                        
-                    } catch (let error as NSError) {
-                        print("zip cert failed \(error.description)")
-                    }
+            let cert = self.certificates[self.selectedIndex!]
+            let data = SecCertificateCopyData(cert) as NSData
+            let paths = NSSearchPathForDirectoriesInDomains(.CachesDirectory, .UserDomainMask, true)
+            if let path = paths.first {
+                let file_name = "cert0.cer";
+                let cert_zip = NSURL(fileURLWithPath: path + "/cert0.zip");
+                print(cert_zip)
+                do {
+                    let archive = try ZZArchive(URL: cert_zip, options: [ZZOpenOptionsCreateIfMissingKey: NSNumber(bool: true)])
+                    let entry = ZZArchiveEntry(fileName: file_name, compress: true, dataBlock: { (_) -> NSData? in
+                        return data;
+                    })
+                    try archive.updateEntries([entry])
+                    
+                    let items = [cert_zip]
+                    let vc = UIActivityViewController(activityItems: items, applicationActivities: nil)
+                    self.presentViewController(vc, animated: true, completion: nil)
+                    
+                } catch (let error as NSError) {
+                    print("zip cert failed \(error.description)")
                 }
-            } else {
-                self.showError("no valid certificate");
             }
         }))
         
@@ -197,6 +197,9 @@ class ActionViewController: UIViewController,
     func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
         dispatch_async(dispatch_get_main_queue()) { () -> Void in
             self.certificates = self.certificateDataForTrust(challenge.protectionSpace.serverTrust!)
+            if self.certificates.count > 0 {
+                self.selectedIndex = self.certificates.count - 1
+            }
         }
         completionHandler(.CancelAuthenticationChallenge, challenge.proposedCredential);
     }

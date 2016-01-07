@@ -7,6 +7,10 @@
 //
 
 #import <ZipZap/ZipZap.h>
+#import <openssl/x509v3.h>
+#import <openssl/bn.h>
+#import <openssl/asn1.h>
 #import <openssl/x509.h>
-#include <openssl/x509v3.h>
-#include <openssl/bio.h>
+#import <openssl/x509_vfy.h>
+#import <openssl/pem.h>
+#import <openssl/bio.h>
