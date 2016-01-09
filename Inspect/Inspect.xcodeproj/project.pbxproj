@@ -36,6 +36,8 @@
 		BBBEA30D1C4098D200F1C3EE /* X509.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB8671C397BF200219411 /* X509.swift */; };
 		BBBEA3151C409A8E00F1C3EE /* mac_dev.cer in Resources */ = {isa = PBXBuildFile; fileRef = BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */; };
 		BBBEA3161C409DE000F1C3EE /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
+		BBBEA31B1C414B6000F1C3EE /* X509Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = BBBEA31A1C414B6000F1C3EE /* X509Helper.m */; };
+		BBBEA31C1C414B6000F1C3EE /* X509Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = BBBEA31A1C414B6000F1C3EE /* X509Helper.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -161,8 +163,10 @@
 		BB5DB8641C3974D100219411 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = ../Dependencies/openssl.framework; sourceTree = "<group>"; };
 		BB5DB8671C397BF200219411 /* X509.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = X509.swift; path = Utils/X509.swift; sourceTree = "<group>"; };
 		BB5DB8691C3AA09300219411 /* ZipZap.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ZipZap.xcodeproj; path = ../Dependencies/ZipZap/ZipZap.xcodeproj; sourceTree = "<group>"; };
-		BB5DB8861C3AA52900219411 /* Certificate-Bridging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Certificate-Bridging.h"; sourceTree = "<group>"; };
+		BB5DB8861C3AA52900219411 /* Inspect-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Inspect-Bridging-Header.h"; path = "../Inspect-Bridging-Header.h"; sourceTree = "<group>"; };
 		BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */ = {isa = PBXFileReference; lastKnownFileType = file; name = mac_dev.cer; path = ../../../../../Desktop/mac_dev.cer; sourceTree = "<group>"; };
+		BBBEA3191C414B6000F1C3EE /* X509Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = X509Helper.h; path = Utils/X509Helper.h; sourceTree = "<group>"; };
+		BBBEA31A1C414B6000F1C3EE /* X509Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = X509Helper.m; path = Utils/X509Helper.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -224,7 +228,7 @@
 		BB46EB731C3046B300E156E9 /* Inspect */ = {
 			isa = PBXGroup;
 			children = (
-				BB5DB8861C3AA52900219411 /* Certificate-Bridging.h */,
+				BB5DB8861C3AA52900219411 /* Inspect-Bridging-Header.h */,
 				BB46EB741C3046B300E156E9 /* AppDelegate.swift */,
 				BB46EB761C3046B300E156E9 /* ViewController.swift */,
 				BB46EB781C3046B300E156E9 /* Main.storyboard */,
@@ -288,7 +292,7 @@
 			children = (
 				BB5DB8601C391F0D00219411 /* SSLLabs */,
 				BB46EC6F1C3186A800E156E9 /* WOT */,
-				BB5DB8671C397BF200219411 /* X509.swift */,
+				BBBEA31D1C414CC800F1C3EE /* X509 */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -305,6 +309,16 @@
 				BB5DB8801C3AA09300219411 /* ZipZapTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		BBBEA31D1C414CC800F1C3EE /* X509 */ = {
+			isa = PBXGroup;
+			children = (
+				BBBEA3191C414B6000F1C3EE /* X509Helper.h */,
+				BBBEA31A1C414B6000F1C3EE /* X509Helper.m */,
+				BB5DB8671C397BF200219411 /* X509.swift */,
+			);
+			name = X509;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -511,6 +525,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BBBEA31B1C414B6000F1C3EE /* X509Helper.m in Sources */,
 				BBBEA30D1C4098D200F1C3EE /* X509.swift in Sources */,
 				BB46EB8A1C3046B300E156E9 /* InspectTests.swift in Sources */,
 			);
@@ -523,6 +538,7 @@
 				BB5DB8681C397BF200219411 /* X509.swift in Sources */,
 				BB5DB8621C391F2400219411 /* SSLLabs.swift in Sources */,
 				BB46EC7C1C32ECAC00E156E9 /* WOT.swift in Sources */,
+				BBBEA31C1C414B6000F1C3EE /* X509Helper.m in Sources */,
 				BB46EB9B1C30492B00E156E9 /* ActionViewController.swift in Sources */,
 				BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */,
 			);
@@ -617,7 +633,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				SWIFT_OBJC_BRIDGING_HEADER = "Inspect/Certificate-Bridging.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Inspect-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -657,7 +673,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OBJC_BRIDGING_HEADER = "Inspect/Certificate-Bridging.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Inspect-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -699,10 +715,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = InspectTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = in.fourplex.InspectTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Inspect.app/Inspect";
 			};
 			name = Debug;
@@ -711,6 +729,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = InspectTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = in.fourplex.InspectTests;
@@ -722,6 +741,7 @@
 		BB46EBA41C30492B00E156E9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -731,12 +751,14 @@
 				PRODUCT_BUNDLE_IDENTIFIER = in.fourplex.Inspect.Certificate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		BB46EBA51C30492B00E156E9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",

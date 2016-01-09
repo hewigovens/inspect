@@ -34,9 +34,24 @@ public class CertificateStackCell: UITableViewCell {
     }
 }
 
+public enum CertificateInfoSection: Int {
+    case Subject
+    case Issuer
+}
+
 public class CertificateInfoCell: UITableViewCell {
     static let reuseId = "kCertificateInfoCell"
+    static let sectionsCount = 2
     
     @IBOutlet public weak var titleLabel: UILabel!
     @IBOutlet public weak var detailLabel: UILabel!
+}
+
+extension X509Certificate {
+    func displaySections() -> [[String: AnyObject]] {
+        var sections: [[String: AnyObject]] = []
+        sections.append(self.subjectDict)
+        sections.append(self.issuerDict)
+        return sections
+    }
 }

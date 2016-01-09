@@ -14,3 +14,5 @@
 #import <openssl/x509_vfy.h>
 #import <openssl/pem.h>
 #import <openssl/bio.h>
+#import <openssl/ossl_typ.h>
+#import "X509Helper.h"

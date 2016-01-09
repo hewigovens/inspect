@@ -24,15 +24,19 @@ class ActionViewController: UIViewController,
     
     private var selectedIndex: Int? {
         didSet {
-            self.selectedCert = X509Certificate(certificate: certificates[self.selectedIndex!])
+            self.contentSections = self.x509Certs[self.selectedIndex!].displaySections()
         }
     }
-    private var selectedCert: X509Certificate?
+    private var contentSections: [[String: AnyObject]]?
     private var inspectingUrl: NSURL?
     private var urlSession: NSURLSession?
     private lazy var requestQueue = NSOperationQueue()
+    private var x509Certs: [X509Certificate] = []
     private var certificates: [SecCertificate] = [] {
         didSet {
+            self.x509Certs = self.certificates.map({ (certificate) -> X509Certificate in
+                return X509Certificate(certificate: certificate)
+            })
             self.headerHeightConstraint.constant = CGFloat(50 * self.certificates.count)
             self.headerTableView.reloadData()
         }
@@ -156,17 +160,33 @@ class ActionViewController: UIViewController,
             return cell!
         } else {
             let cell = tableView.dequeueReusableCellWithIdentifier(CertificateInfoCell.reuseId) as? CertificateInfoCell
-            cell?.titleLabel?.text = "This is key"
-            cell?.detailLabel?.text = "This is very long text.This is very long text.This is very long text.This is very long text.This is very long text.This is very long text."
+            
+            var key = ""
+            var value = ""
+            
+            if self.x509Certs.count == 0 {
+                return cell!
+            }
+            
+            let sections = self.contentSections!
+            let section = sections[indexPath.section]
+            let keys = Array(section.keys)
+            key = keys[indexPath.row]
+            value = (section as NSDictionary).valueForKey(key) as! String
+            cell?.titleLabel?.text = key
+            cell?.detailLabel?.text = value
             return cell!
         }
     }
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         if tableView == self.headerTableView {
-            return 1;
+            return 1
         } else {
-            return 7;
+            if self.x509Certs.count == 0 {
+                return 0
+            }
+            return 2
         }
     }
     
@@ -174,13 +194,24 @@ class ActionViewController: UIViewController,
         if tableView == self.headerTableView {
             return certificates.count
         } else {
-            return 2
+            
+            if self.x509Certs.count == 0 {
+                return 0
+            }
+            
+            let sections = self.contentSections!
+            return sections[section].count
         }
     }
     
     func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if tableView == self.contentTableView {
-            return "Section Header"
+            // todo build sections
+            if section == 0 {
+                return "Subject Name"
+            } else if section == 1 {
+                return "Issuer Name"
+            }
         }
         return nil
     }
