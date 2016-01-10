@@ -108,12 +108,12 @@
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yzf-Ki-Yf3">
-                                                            <rect key="frame" x="15" y="11" width="42" height="21"/>
+                                                            <rect key="frame" x="15" y="11" width="42" height="20.5"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="l6i-UP-org">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="justified" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="l6i-UP-org">
                                                             <rect key="frame" x="270" y="11" width="42" height="21"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -126,7 +126,7 @@
                                                         <constraint firstItem="Yzf-Ki-Yf3" firstAttribute="top" secondItem="OoP-nd-MSn" secondAttribute="topMargin" constant="3" id="LwL-dX-ut3"/>
                                                         <constraint firstItem="Yzf-Ki-Yf3" firstAttribute="leading" secondItem="OoP-nd-MSn" secondAttribute="leadingMargin" constant="7" id="ehh-Mv-3Vi"/>
                                                         <constraint firstItem="l6i-UP-org" firstAttribute="top" secondItem="OoP-nd-MSn" secondAttribute="topMargin" constant="3" id="ktX-Ol-b87"/>
-                                                        <constraint firstItem="l6i-UP-org" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Yzf-Ki-Yf3" secondAttribute="trailing" priority="750" constant="30" id="rHi-OO-kAb"/>
+                                                        <constraint firstItem="l6i-UP-org" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Yzf-Ki-Yf3" secondAttribute="trailing" priority="750" constant="5" id="rHi-OO-kAb"/>
                                                     </constraints>
                                                 </tableViewCellContentView>
                                                 <connections>

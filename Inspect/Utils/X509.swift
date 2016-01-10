@@ -67,11 +67,10 @@ public struct X509Certificate {
         
         let pkey = X509_get_pubkey(cert)
         self.pubKey = X509Helper.hexPubKey(pkey, nid: pkey_nid)
-        //self.pubKey = X509Helper.digestPubKey(cert)
 
         self.notValidBefore = X509Helper.getNotBefore(cert)
         self.notValidAfter = X509Helper.getNotAfter(cert)
-        self.isCA = X509_check_ca(cert) >= 1
+        self.isCA = (X509_check_ca(cert) >= 1)
         
         self.md5Fingerprint = X509Helper.fingerprint(cert, method: "md5")
         self.sha1Fingerprint = X509Helper.fingerprint(cert, method: "sha1")
@@ -121,7 +120,7 @@ extension X509Helper {
         return ""
     }
     
-    static func asn1TimeToString(time: UnsafePointer<ASN1_TIME>) -> String {
+    static func convertASN1TimeToString(time: UnsafePointer<ASN1_TIME>) -> String {
         let bio = BIO_new(BIO_s_mem())
         defer {
             BIO_free(bio)
@@ -161,35 +160,13 @@ extension X509Helper {
         return string
     }
     
-//    static func digestPubKey(cert: UnsafePointer<x509_st>) -> String {
-//        let pkey_nid = OBJ_obj2nid(cert.memory.cert_info.memory.key.memory.algor.memory.algorithm)
-//        let method = EVP_get_digestbyname(OBJ_nid2sn(pkey_nid))
-//        let buffer = UnsafeMutablePointer<UInt8>.alloc(512)
-//        let len_ptr = UnsafeMutablePointer<UInt32>.alloc(1)
-//        defer {
-//            buffer.destroy()
-//            len_ptr.destroy()
-//        }
-//        var string = ""
-//        if X509_pubkey_digest(cert, method, buffer, len_ptr) > 0 {
-//            let len = Int(len_ptr.memory)
-//            if len > 0 {
-//                let p = UnsafePointer<UInt8>(buffer)
-//                for char in UnsafeBufferPointer(start: p, count: len) {
-//                    string += String(format: "%02x", char)
-//                }
-//            }
-//        }
-//        return string
-//    }
-    
     static func getNotBefore(cert: UnsafePointer<x509_st>) -> String {
         let time = cert.memory.cert_info.memory.validity.memory.notBefore
-        return self.asn1TimeToString(time)
+        return self.convertASN1TimeToString(time)
     }
     
     static func getNotAfter(cert: UnsafePointer<x509_st>) -> String {
         let time = cert.memory.cert_info.memory.validity.memory.notAfter
-        return self.asn1TimeToString(time)
+        return self.convertASN1TimeToString(time)
     }
 }

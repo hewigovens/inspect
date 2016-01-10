@@ -23,7 +23,7 @@ public class SessionManager: NSObject, NSURLSessionTaskDelegate {
     
     public func fetchCertsForUrl(url: NSURL, completion: fetchCertsHandler) -> Void {
         let task = self.session?.dataTaskWithURL(url)
-        guard task == nil else { return completion([]) }
+        guard task != nil else { return completion([]) }
         self.callbacks[url] = completion
         task!.resume()
     }

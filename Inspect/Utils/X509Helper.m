@@ -18,7 +18,7 @@
         // exponent
         //char *rsa_e_dec = BN_bn2dec(rsa_key->e);
         char *rsa_n_hex = BN_bn2hex(rsa_key->n);
-        return [NSString stringWithUTF8String:rsa_n_hex];
+        return [[NSString stringWithUTF8String:rsa_n_hex] lowercaseString];
         
     }
     return @"";

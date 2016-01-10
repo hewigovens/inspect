@@ -52,6 +52,7 @@ public enum CertificateInfoSection: String {
     case PubKeyInfo = "Public Key Info"
     case Fingerprints = "Fingerprints"
     case Extension = "Extended Key Usage"
+    case Misc = "Misc"
     
     // todo
     case AuthorityKeyId = "Authority Key Identifier"
@@ -65,8 +66,10 @@ extension String {
         "UID": "User ID",
         "CN": "Common Name",
         "OU": "Organization Unit",
+        "ST": "State/Province",
         "O": "Organization",
-        "C": "Country"
+        "C": "Country",
+        "L": "Locality"
     ]
     
     func x509Entries() -> [String: AnyObject] {
@@ -82,6 +85,19 @@ extension String {
             }
         }
         return dict
+    }
+    
+    func fingerprintRepresentation() -> String {
+        var array: [String] = []
+        var hex = ""
+        for (index, char) in self.characters.enumerate() {
+            hex.append(char)
+            if (index + 1) % 2 == 0 {
+                array.append(hex)
+                hex = ""
+            }
+        }
+        return array.joinWithSeparator(":")
     }
 }
 
@@ -108,9 +124,28 @@ extension X509Certificate {
         
         sectionNames.append(.Issuer)
         sectionDatas.append(self.issuerDict)
-       
+        
+        sectionNames.append(.SignatureAlgorithm)
+        sectionDatas.append(["Signature Algorithm": self.signatureAlgorithm])
+        
+        sectionNames.append(.Misc)
+        sectionDatas.append([
+            "Version": String(self.version),
+            "Serial Number": String(self.serialNumber),
+            "Not Valid Before": self.notValidBefore,
+            "Not Valid After": self.notValidAfter,
+        ])
+        
+        sectionNames.append(.PubKeyInfo)
+        sectionDatas.append([
+            "Pub Key": self.pubKey
+        ])
+        
         sectionNames.append(.Fingerprints)
-        sectionDatas.append(["MD5": self.md5Fingerprint, "SHA1": self.sha1Fingerprint])
+        sectionDatas.append([
+            "md5": self.md5Fingerprint,
+            "sha1": self.sha1Fingerprint
+        ])
         
         return (sectionDatas, sectionNames)
     }
