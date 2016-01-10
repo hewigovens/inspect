@@ -11,20 +11,8 @@ import Foundation
 public struct X509Certificate {
 
     public var subjectName = ""
-    
-    public var subjectDict: Dictionary<String, AnyObject> {
-        get {
-            return self.subjectName.x509Entries()
-        }
-    }
-    
-    public var issuerDict: [String: AnyObject] {
-        get {
-            return self.issuerName.x509Entries()
-        }
-    }
-    
     public var issuerName = ""
+    
     public var md5Fingerprint = ""
     public var sha1Fingerprint = ""
     public var version = 1
@@ -79,7 +67,7 @@ public struct X509Certificate {
         
         let pkey = X509_get_pubkey(cert)
         self.pubKey = X509Helper.hexPubKey(pkey, nid: pkey_nid)
-//        self.pubKey = X509Helper.digestPubKey(cert)
+        //self.pubKey = X509Helper.digestPubKey(cert)
 
         self.notValidBefore = X509Helper.getNotBefore(cert)
         self.notValidAfter = X509Helper.getNotAfter(cert)
@@ -93,8 +81,11 @@ public struct X509Certificate {
             X509_free(cert)
         }
     }
+}
+
+extension X509Certificate: CustomStringConvertible {
     
-    func description() -> String {
+    public var description: String {
         var description = "X509Certificate: {\n"
         description += "\t subject = \(self.subjectName)\n"
         description += "\t issuer = \(self.issuerName)\n"
@@ -109,18 +100,6 @@ public struct X509Certificate {
         description += "\t sha1 fingerprint = \(self.sha1Fingerprint)\n"
         description += "}\n"
         return description
-    }
-}
-
-extension String {
-    func x509Entries() -> [String: AnyObject] {
-        var dict = [String: AnyObject]()
-        let componments = self.characters.split("/").map(String.init)
-        for componment in componments {
-            let tuples = componment.characters.split("=").map(String.init)
-            dict[tuples[0]] = tuples[1]
-        }
-        return dict
     }
 }
 

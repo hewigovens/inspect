@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BB1773BE1C4280BD001AAB80 /* X509Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = BBBEA31A1C414B6000F1C3EE /* X509Helper.m */; };
+		BB1773BF1C4280BD001AAB80 /* X509.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB8671C397BF200219411 /* X509.swift */; };
+		BB1773C01C4280C6001AAB80 /* SSLLabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB8611C391F2400219411 /* SSLLabs.swift */; };
+		BB1773C11C4280C6001AAB80 /* WOT.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EC6D1C3186A200E156E9 /* WOT.swift */; };
+		BB1773C21C4280C6001AAB80 /* X509Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = BBBEA31A1C414B6000F1C3EE /* X509Helper.m */; };
+		BB1773C31C4280C6001AAB80 /* X509.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB8671C397BF200219411 /* X509.swift */; };
+		BB1773C51C428227001AAB80 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1773C41C428227001AAB80 /* SessionManager.swift */; };
+		BB1773C61C428732001AAB80 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1773C41C428227001AAB80 /* SessionManager.swift */; };
 		BB46EB751C3046B300E156E9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB741C3046B300E156E9 /* AppDelegate.swift */; };
 		BB46EB771C3046B300E156E9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB761C3046B300E156E9 /* ViewController.swift */; };
 		BB46EB7A1C3046B300E156E9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB781C3046B300E156E9 /* Main.storyboard */; };
@@ -16,28 +24,21 @@
 		BB46EB9B1C30492B00E156E9 /* ActionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */; };
 		BB46EB9E1C30492B00E156E9 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB9C1C30492B00E156E9 /* MainInterface.storyboard */; };
 		BB46EBA21C30492B00E156E9 /* Certificate.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BB46EB981C30492B00E156E9 /* Certificate.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		BB46EC6E1C3186A200E156E9 /* WOT.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EC6D1C3186A200E156E9 /* WOT.swift */; };
 		BB46EC741C32C0AF00E156E9 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB46EC721C32C0AF00E156E9 /* Alamofire.framework */; };
 		BB46EC751C32C0AF00E156E9 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB46EC731C32C0AF00E156E9 /* SwiftyJSON.framework */; };
 		BB46EC761C32C0BD00E156E9 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB46EC721C32C0AF00E156E9 /* Alamofire.framework */; };
 		BB46EC771C32C0BE00E156E9 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB46EC731C32C0AF00E156E9 /* SwiftyJSON.framework */; };
 		BB46EC7A1C32CEA600E156E9 /* Alamofire.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BB46EC721C32C0AF00E156E9 /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BB46EC7B1C32CEA600E156E9 /* SwiftyJSON.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BB46EC731C32C0AF00E156E9 /* SwiftyJSON.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		BB46EC7C1C32ECAC00E156E9 /* WOT.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EC6D1C3186A200E156E9 /* WOT.swift */; };
 		BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */; };
-		BB5DB8621C391F2400219411 /* SSLLabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB8611C391F2400219411 /* SSLLabs.swift */; };
 		BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 		BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
-		BB5DB8681C397BF200219411 /* X509.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB8671C397BF200219411 /* X509.swift */; };
 		BB5DB8831C3AA0DD00219411 /* ZipZap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8741C3AA09300219411 /* ZipZap.framework */; };
 		BB5DB8841C3AA0E400219411 /* ZipZap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8741C3AA09300219411 /* ZipZap.framework */; };
 		BB5DB8871C3ABB3B00219411 /* ZipZap.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8741C3AA09300219411 /* ZipZap.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BB6B2AFC1C36EC3800E34055 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB7B1C3046B300E156E9 /* Assets.xcassets */; };
-		BBBEA30D1C4098D200F1C3EE /* X509.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB8671C397BF200219411 /* X509.swift */; };
 		BBBEA3151C409A8E00F1C3EE /* mac_dev.cer in Resources */ = {isa = PBXBuildFile; fileRef = BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */; };
 		BBBEA3161C409DE000F1C3EE /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
-		BBBEA31B1C414B6000F1C3EE /* X509Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = BBBEA31A1C414B6000F1C3EE /* X509Helper.m */; };
-		BBBEA31C1C414B6000F1C3EE /* X509Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = BBBEA31A1C414B6000F1C3EE /* X509Helper.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -141,6 +142,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BB1773C41C428227001AAB80 /* SessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SessionManager.swift; path = Utils/SessionManager.swift; sourceTree = "<group>"; };
 		BB46EB711C3046B300E156E9 /* Inspect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inspect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB46EB741C3046B300E156E9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BB46EB761C3046B300E156E9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -293,6 +295,7 @@
 				BB5DB8601C391F0D00219411 /* SSLLabs */,
 				BB46EC6F1C3186A800E156E9 /* WOT */,
 				BBBEA31D1C414CC800F1C3EE /* X509 */,
+				BB1773C41C428227001AAB80 /* SessionManager.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -515,9 +518,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB46EC6E1C3186A200E156E9 /* WOT.swift in Sources */,
 				BB46EB771C3046B300E156E9 /* ViewController.swift in Sources */,
 				BB46EB751C3046B300E156E9 /* AppDelegate.swift in Sources */,
+				BB1773C51C428227001AAB80 /* SessionManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -525,8 +528,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BBBEA31B1C414B6000F1C3EE /* X509Helper.m in Sources */,
-				BBBEA30D1C4098D200F1C3EE /* X509.swift in Sources */,
+				BB1773BE1C4280BD001AAB80 /* X509Helper.m in Sources */,
+				BB1773BF1C4280BD001AAB80 /* X509.swift in Sources */,
 				BB46EB8A1C3046B300E156E9 /* InspectTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -535,10 +538,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB5DB8681C397BF200219411 /* X509.swift in Sources */,
-				BB5DB8621C391F2400219411 /* SSLLabs.swift in Sources */,
-				BB46EC7C1C32ECAC00E156E9 /* WOT.swift in Sources */,
-				BBBEA31C1C414B6000F1C3EE /* X509Helper.m in Sources */,
+				BB1773C61C428732001AAB80 /* SessionManager.swift in Sources */,
+				BB1773C01C4280C6001AAB80 /* SSLLabs.swift in Sources */,
+				BB1773C11C4280C6001AAB80 /* WOT.swift in Sources */,
+				BB1773C21C4280C6001AAB80 /* X509Helper.m in Sources */,
+				BB1773C31C4280C6001AAB80 /* X509.swift in Sources */,
 				BB46EB9B1C30492B00E156E9 /* ActionViewController.swift in Sources */,
 				BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */,
 			);

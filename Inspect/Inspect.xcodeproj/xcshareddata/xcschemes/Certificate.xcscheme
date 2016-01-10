@@ -43,13 +43,23 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "BB17739B1C427F90001AAB80"
+               BuildableName = "InspectUtilsTests.xctest"
+               BlueprintName = "InspectUtilsTests"
+               ReferencedContainer = "container:Inspect.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "BB46EB971C30492B00E156E9"
-            BuildableName = "Certificate.appex"
-            BlueprintName = "Certificate"
+            BlueprintIdentifier = "BB46EB701C3046B300E156E9"
+            BuildableName = "Inspect.app"
+            BlueprintName = "Inspect"
             ReferencedContainer = "container:Inspect.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

@@ -25,9 +25,6 @@ class InspectTests: XCTestCase {
         let certificate = SecCertificateCreateWithData(nil, self.data)
         let cert = X509Certificate(certificate: certificate!)
         XCTAssert(cert.subjectName.lengthOfBytesUsingEncoding(NSUTF8StringEncoding) > 0)
-
-        print(cert.description())
-        print(cert.subjectDict)
-        print(cert.issuerDict)
+        print(cert.description)
     }
 }

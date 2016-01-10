@@ -13,7 +13,6 @@ import SafariServices
 class ActionViewController: UIViewController,
                             UITableViewDelegate,
                             UITableViewDataSource,
-                            NSURLSessionDelegate,
                             UIActionSheetDelegate {
     
     @IBOutlet internal weak var navItem: UINavigationItem!
@@ -22,33 +21,33 @@ class ActionViewController: UIViewController,
     @IBOutlet weak var contentTableView: UITableView!
     @IBOutlet weak var headerHeightConstraint: NSLayoutConstraint!
     
-    private var selectedIndex: Int? {
-        didSet {
-            self.contentSections = self.x509Certs[self.selectedIndex!].displaySections()
-        }
-    }
     private var contentSections: [[String: AnyObject]]?
+    private var contentSectionNames: [CertificateInfoSection]?
     private var inspectingUrl: NSURL?
-    private var urlSession: NSURLSession?
-    private lazy var requestQueue = NSOperationQueue()
+    private var selectedCertInfo: [[String: String]] = []
     private var x509Certs: [X509Certificate] = []
     private var certificates: [SecCertificate] = [] {
         didSet {
             self.x509Certs = self.certificates.map({ (certificate) -> X509Certificate in
                 return X509Certificate(certificate: certificate)
             })
-            self.headerHeightConstraint.constant = CGFloat(50 * self.certificates.count)
+            self.headerHeightConstraint.constant = CGFloat(48 * self.certificates.count)
             self.headerTableView.reloadData()
         }
     }
-    private var selectedCertInfo: [[String: String]] = []
+    private var selectedIndex: Int? {
+        didSet {
+            let tuples = self.x509Certs[self.selectedIndex!].displaySections()
+            self.contentSections = tuples.0
+            self.contentSectionNames = tuples.1
+        }
+    }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.navItem?.title = "Inspect - Certificate"
-        self.configureTableViews()
-        
         var validItemProvider: NSItemProvider?
         nestedLoop: for item: AnyObject in self.extensionContext!.inputItems {
             let inputItem = item as! NSExtensionItem
@@ -60,39 +59,37 @@ class ActionViewController: UIViewController,
                 }
             }
         }
+        guard validItemProvider != nil else { return self.showError("no valid item privoder!") }
         
-        if validItemProvider != nil {
-            validItemProvider!.loadItemForTypeIdentifier(kUTTypeURL as String, options: nil, completionHandler: { (item, error) -> Void in
-                if let url = item as? NSURL? {
-                    self.inspectingUrl = url
-                    print("get url \(url), scheme = \(url?.scheme)");
-                    if url?.scheme == ("https") {
-                        self.urlSession = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: self.requestQueue)
-                        let task = self.urlSession?.dataTaskWithURL(url!)
-                        if task != nil {
-                            task!.resume();
-                            if let host = url?.host {
-                                WOT.query(host) { result in
-                                    print(result)
-                                    switch result {
-                                    case .Success(let record):
-                                        self.showWOTRating(record)
-                                    case .Failure(let error):
-                                        self.showError(error)
-                                    }
-                                }
-                            }
+        self.configureTableViews()
+        validItemProvider!.loadItemForTypeIdentifier(kUTTypeURL as String, options: nil, completionHandler: { (item, error) -> Void in
+            if let url = item as? NSURL? {
+                self.inspectingUrl = url
+                print("get url \(url), scheme = \(url?.scheme)");
+                if url?.scheme == ("https") {
+                    SessionManager.sharedManager.fetchCertsForUrl(url!, completion: { (certs) -> Void in
+                        if certs.count > 0 {
+                            self.certificates = certs
+                            self.selectedIndex = certs.count - 1
                         }
-                    } else {
-                        self.showError("not https url")
+                    })
+                    WOT.query((url?.host)!) { result in
+                        print(result)
+                        switch result {
+                        case .Success(let record):
+                            self.showWOTRating(record)
+                        case .Failure(let error):
+                            self.showError(error)
+                        }
                     }
+                    
                 } else {
-                    self.showError("url is not valid NSURL object")
+                    self.showError("not https url")
                 }
-            });
-        } else {
-            self.showError("no valid item privoder!")
-        }
+            } else {
+                self.showError("url is not valid NSURL object")
+            }
+        });
     }
     
     // MARK: Action
@@ -115,7 +112,7 @@ class ActionViewController: UIViewController,
             }
         }))
         
-        sheet.addAction(UIAlertAction(title: "Export Certificates", style: .Default, handler: { (action) -> Void in
+        sheet.addAction(UIAlertAction(title: "Export Certificate", style: .Default, handler: { (action) -> Void in
             
             if self.selectedIndex == nil {
                 self.selectedIndex = self.certificates.count - 1;
@@ -124,8 +121,9 @@ class ActionViewController: UIViewController,
             let data = SecCertificateCopyData(cert) as NSData
             let paths = NSSearchPathForDirectoriesInDomains(.CachesDirectory, .UserDomainMask, true)
             if let path = paths.first {
-                let file_name = "cert0.cer";
-                let cert_zip = NSURL(fileURLWithPath: path + "/cert0.zip");
+                let file_name = "cert\(self.selectedIndex!).cer";
+                let file_zip_name = "/cert\(self.selectedIndex!).zip"
+                let cert_zip = NSURL(fileURLWithPath: path + file_zip_name);
                 print(cert_zip)
                 do {
                     let archive = try ZZArchive(URL: cert_zip, options: [ZZOpenOptionsCreateIfMissingKey: NSNumber(bool: true)])
@@ -161,18 +159,15 @@ class ActionViewController: UIViewController,
         } else {
             let cell = tableView.dequeueReusableCellWithIdentifier(CertificateInfoCell.reuseId) as? CertificateInfoCell
             
-            var key = ""
-            var value = ""
-            
-            if self.x509Certs.count == 0 {
+            guard self.x509Certs.count > 0 else {
                 return cell!
             }
             
             let sections = self.contentSections!
             let section = sections[indexPath.section]
             let keys = Array(section.keys)
-            key = keys[indexPath.row]
-            value = (section as NSDictionary).valueForKey(key) as! String
+            let key = keys[indexPath.row]
+            let value = (section as NSDictionary).valueForKey(key) as! String
             cell?.titleLabel?.text = key
             cell?.detailLabel?.text = value
             return cell!
@@ -183,10 +178,7 @@ class ActionViewController: UIViewController,
         if tableView == self.headerTableView {
             return 1
         } else {
-            if self.x509Certs.count == 0 {
-                return 0
-            }
-            return 2
+            return self.contentSectionNames?.count ?? 0
         }
     }
     
@@ -194,24 +186,16 @@ class ActionViewController: UIViewController,
         if tableView == self.headerTableView {
             return certificates.count
         } else {
-            
-            if self.x509Certs.count == 0 {
-                return 0
+            if let sections = self.contentSections {
+                return sections[section].count
             }
-            
-            let sections = self.contentSections!
-            return sections[section].count
+            return 0
         }
     }
     
     func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if tableView == self.contentTableView {
-            // todo build sections
-            if section == 0 {
-                return "Subject Name"
-            } else if section == 1 {
-                return "Issuer Name"
-            }
+            return self.contentSectionNames?[section].rawValue ?? nil
         }
         return nil
     }
@@ -221,18 +205,6 @@ class ActionViewController: UIViewController,
             self.selectedIndex = indexPath.row
             self.contentTableView.reloadData()
         }
-    }
-    
-    // MARK: NSURLSessionDelegate
-    
-    func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
-        dispatch_async(dispatch_get_main_queue()) { () -> Void in
-            self.certificates = self.certificateDataForTrust(challenge.protectionSpace.serverTrust!)
-            if self.certificates.count > 0 {
-                self.selectedIndex = self.certificates.count - 1
-            }
-        }
-        completionHandler(.CancelAuthenticationChallenge, challenge.proposedCredential);
     }
     
     // MARK: Private funcs
@@ -263,15 +235,5 @@ class ActionViewController: UIViewController,
     
     private func showError(error: NSError) {
         return self.showError(error.description)
-    }
-    
-    private func certificateDataForTrust(trust: SecTrust) -> [SecCertificate] {
-        var certs: [SecCertificate] = []
-        for index in 0..<SecTrustGetCertificateCount(trust) {
-            if let cert = SecTrustGetCertificateAtIndex(trust, index) {
-                certs.append(cert)
-            }
-        }
-        return certs.reverse();
     }
 }
