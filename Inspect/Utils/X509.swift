@@ -126,9 +126,11 @@ extension X509Helper {
             BIO_free(bio)
         }
         if ASN1_TIME_print(bio, time) > 0 {
-            let buffer = UnsafeMutablePointer<Int8>.alloc(128)
+            var buffer = UnsafeMutablePointer<Int8>.alloc(128)
             defer {
                 buffer.destroy()
+                buffer.dealloc(128)
+                buffer = nil
             }
             if BIO_gets(bio, buffer, 128) > 0 {
                 return String.fromCString(buffer)!
@@ -139,11 +141,16 @@ extension X509Helper {
     }
     
     static func fingerprint(cert: UnsafePointer<x509_st>, method: String) -> String {
-        let buffer = UnsafeMutablePointer<UInt8>.alloc(64)
-        let len_ptr = UnsafeMutablePointer<UInt32>.alloc(1)
+        var buffer = UnsafeMutablePointer<UInt8>.alloc(64)
+        var len_ptr = UnsafeMutablePointer<UInt32>.alloc(1)
         defer {
             buffer.destroy()
+            buffer.dealloc(64)
+            buffer = nil
+            
             len_ptr.destroy()
+            len_ptr.dealloc(1)
+            len_ptr = nil
         }
         
         let md = EVP_get_digestbyname(method)
