@@ -204,6 +204,8 @@ class ActionViewController: UIViewController,
         if tableView == self.headerTableView {
             self.selectedIndex = indexPath.row
             self.contentTableView.reloadData()
+        } else {
+            tableView.deselectRowAtIndexPath(indexPath, animated: true)
         }
     }
     

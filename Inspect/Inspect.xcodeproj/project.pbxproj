@@ -112,6 +112,27 @@
 			remoteGlobalIDString = D87BA1F71B3D6DEA00ED7EB3;
 			remoteInfo = "ZipZap (iOS Framework)";
 		};
+		BBD8FCD41C4548740099F626 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BBD8FCCF1C4548740099F626 /* PKHUD.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F99631FC19514FAC001F73CA;
+			remoteInfo = "PKHUD Demo";
+		};
+		BBD8FCD61C4548740099F626 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BBD8FCCF1C4548740099F626 /* PKHUD.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F996321E19514FD8001F73CA;
+			remoteInfo = PKHUD;
+		};
+		BBD8FCDE1C4548EC0099F626 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BBD8FCCF1C4548740099F626 /* PKHUD.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F996321D19514FD8001F73CA;
+			remoteInfo = PKHUD;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -169,6 +190,7 @@
 		BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */ = {isa = PBXFileReference; lastKnownFileType = file; name = mac_dev.cer; path = ../../../../../Desktop/mac_dev.cer; sourceTree = "<group>"; };
 		BBBEA3191C414B6000F1C3EE /* X509Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = X509Helper.h; path = Utils/X509Helper.h; sourceTree = "<group>"; };
 		BBBEA31A1C414B6000F1C3EE /* X509Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = X509Helper.m; path = Utils/X509Helper.m; sourceTree = "<group>"; };
+		BBD8FCCF1C4548740099F626 /* PKHUD.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PKHUD.xcodeproj; path = ../Dependencies/PKHUD/PKHUD.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -273,6 +295,7 @@
 		BB46EC781C32C8EF00E156E9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BBD8FCCF1C4548740099F626 /* PKHUD.xcodeproj */,
 				BB5DB8691C3AA09300219411 /* ZipZap.xcodeproj */,
 				BB5DB8641C3974D100219411 /* openssl.framework */,
 				BB46EC721C32C0AF00E156E9 /* Alamofire.framework */,
@@ -322,6 +345,15 @@
 				BB5DB8671C397BF200219411 /* X509.swift */,
 			);
 			name = X509;
+			sourceTree = "<group>";
+		};
+		BBD8FCD01C4548740099F626 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BBD8FCD51C4548740099F626 /* PKHUD Demo.app */,
+				BBD8FCD71C4548740099F626 /* PKHUD.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -376,6 +408,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				BBD8FCDF1C4548EC0099F626 /* PBXTargetDependency */,
 				BB5DB8821C3AA0AB00219411 /* PBXTargetDependency */,
 			);
 			name = Certificate;
@@ -417,6 +450,10 @@
 			productRefGroup = BB46EB721C3046B300E156E9 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
+				{
+					ProductGroup = BBD8FCD01C4548740099F626 /* Products */;
+					ProjectRef = BBD8FCCF1C4548740099F626 /* PKHUD.xcodeproj */;
+				},
 				{
 					ProductGroup = BB5DB86A1C3AA09300219411 /* Products */;
 					ProjectRef = BB5DB8691C3AA09300219411 /* ZipZap.xcodeproj */;
@@ -479,6 +516,20 @@
 			fileType = wrapper.cfbundle;
 			path = ZipZapTests.xctest;
 			remoteRef = BB5DB87F1C3AA09300219411 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BBD8FCD51C4548740099F626 /* PKHUD Demo.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "PKHUD Demo.app";
+			remoteRef = BBD8FCD41C4548740099F626 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BBD8FCD71C4548740099F626 /* PKHUD.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = PKHUD.framework;
+			remoteRef = BBD8FCD61C4548740099F626 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -565,6 +616,11 @@
 			isa = PBXTargetDependency;
 			name = "ZipZap (iOS Framework)";
 			targetProxy = BB5DB8811C3AA0AB00219411 /* PBXContainerItemProxy */;
+		};
+		BBD8FCDF1C4548EC0099F626 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = PKHUD;
+			targetProxy = BBD8FCDE1C4548EC0099F626 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
