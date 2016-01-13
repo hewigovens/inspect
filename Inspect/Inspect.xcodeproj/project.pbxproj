@@ -15,12 +15,13 @@
 		BB1773C31C4280C6001AAB80 /* X509.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB8671C397BF200219411 /* X509.swift */; };
 		BB1773C51C428227001AAB80 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1773C41C428227001AAB80 /* SessionManager.swift */; };
 		BB1773C61C428732001AAB80 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1773C41C428227001AAB80 /* SessionManager.swift */; };
+		BB2C5B3C1C469BFE00911EA4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB2C5B3B1C469BFE00911EA4 /* Images.xcassets */; };
+		BB2C5B3E1C469C3200911EA4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB2C5B3D1C469C3200911EA4 /* Assets.xcassets */; };
 		BB3911141C46813600330E1A /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB3911111C46813600330E1A /* HockeySDK.framework */; };
 		BB3911151C46813600330E1A /* HockeySDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BB3911131C46813600330E1A /* HockeySDKResources.bundle */; };
 		BB46EB751C3046B300E156E9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB741C3046B300E156E9 /* AppDelegate.swift */; };
 		BB46EB771C3046B300E156E9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB761C3046B300E156E9 /* ViewController.swift */; };
 		BB46EB7A1C3046B300E156E9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB781C3046B300E156E9 /* Main.storyboard */; };
-		BB46EB7C1C3046B300E156E9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB7B1C3046B300E156E9 /* Assets.xcassets */; };
 		BB46EB7F1C3046B300E156E9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB7D1C3046B300E156E9 /* LaunchScreen.storyboard */; };
 		BB46EB8A1C3046B300E156E9 /* InspectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB891C3046B300E156E9 /* InspectTests.swift */; };
 		BB46EB9B1C30492B00E156E9 /* ActionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */; };
@@ -38,7 +39,6 @@
 		BB5DB8831C3AA0DD00219411 /* ZipZap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8741C3AA09300219411 /* ZipZap.framework */; };
 		BB5DB8841C3AA0E400219411 /* ZipZap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8741C3AA09300219411 /* ZipZap.framework */; };
 		BB5DB8871C3ABB3B00219411 /* ZipZap.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8741C3AA09300219411 /* ZipZap.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		BB6B2AFC1C36EC3800E34055 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB7B1C3046B300E156E9 /* Assets.xcassets */; };
 		BBBEA3151C409A8E00F1C3EE /* mac_dev.cer in Resources */ = {isa = PBXBuildFile; fileRef = BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */; };
 		BBBEA3161C409DE000F1C3EE /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 /* End PBXBuildFile section */
@@ -166,13 +166,14 @@
 
 /* Begin PBXFileReference section */
 		BB1773C41C428227001AAB80 /* SessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SessionManager.swift; path = Utils/SessionManager.swift; sourceTree = "<group>"; };
+		BB2C5B3B1C469BFE00911EA4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		BB2C5B3D1C469C3200911EA4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BB3911111C46813600330E1A /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HockeySDK.framework; sourceTree = "<group>"; };
 		BB3911131C46813600330E1A /* HockeySDKResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = HockeySDKResources.bundle; sourceTree = "<group>"; };
 		BB46EB711C3046B300E156E9 /* Inspect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inspect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB46EB741C3046B300E156E9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BB46EB761C3046B300E156E9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		BB46EB791C3046B300E156E9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		BB46EB7B1C3046B300E156E9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BB46EB7E1C3046B300E156E9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BB46EB801C3046B300E156E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BB46EB851C3046B300E156E9 /* InspectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InspectTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -275,11 +276,11 @@
 		BB46EB731C3046B300E156E9 /* Inspect */ = {
 			isa = PBXGroup;
 			children = (
+				BB2C5B3D1C469C3200911EA4 /* Assets.xcassets */,
 				BB5DB8861C3AA52900219411 /* Inspect-Bridging-Header.h */,
 				BB46EB741C3046B300E156E9 /* AppDelegate.swift */,
 				BB46EB761C3046B300E156E9 /* ViewController.swift */,
 				BB46EB781C3046B300E156E9 /* Main.storyboard */,
-				BB46EB7B1C3046B300E156E9 /* Assets.xcassets */,
 				BB46EB7D1C3046B300E156E9 /* LaunchScreen.storyboard */,
 				BB46EB801C3046B300E156E9 /* Info.plist */,
 			);
@@ -303,6 +304,7 @@
 				BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */,
 				BB46EB9C1C30492B00E156E9 /* MainInterface.storyboard */,
 				BB46EB9F1C30492B00E156E9 /* Info.plist */,
+				BB2C5B3B1C469BFE00911EA4 /* Images.xcassets */,
 			);
 			path = Certificate;
 			sourceTree = "<group>";
@@ -566,7 +568,7 @@
 			files = (
 				BB46EB7F1C3046B300E156E9 /* LaunchScreen.storyboard in Resources */,
 				BB3911151C46813600330E1A /* HockeySDKResources.bundle in Resources */,
-				BB46EB7C1C3046B300E156E9 /* Assets.xcassets in Resources */,
+				BB2C5B3E1C469C3200911EA4 /* Assets.xcassets in Resources */,
 				BB46EB7A1C3046B300E156E9 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -583,7 +585,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB6B2AFC1C36EC3800E34055 /* Assets.xcassets in Resources */,
+				BB2C5B3C1C469BFE00911EA4 /* Images.xcassets in Resources */,
 				BB46EB9E1C30492B00E156E9 /* MainInterface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -846,6 +848,7 @@
 		BB46EBA41C30492B00E156E9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -863,6 +866,7 @@
 		BB46EBA51C30492B00E156E9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
