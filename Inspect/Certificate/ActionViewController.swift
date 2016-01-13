@@ -168,6 +168,11 @@ class ActionViewController: UIViewController,
             let keys = Array(section.keys)
             let key = keys[indexPath.row]
             let value = (section as NSDictionary).valueForKey(key) as! String
+            let sectionType = self.contentSectionNames![indexPath.section]
+            if sectionType == .PubKeyInfo ||
+                sectionType == .Fingerprints {
+                cell?.detailLabel.font = UIFont(name: "Courier", size: 17)
+            }
             cell?.titleLabel?.text = key
             cell?.detailLabel?.text = value
             return cell!

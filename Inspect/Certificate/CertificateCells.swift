@@ -43,6 +43,11 @@ public class CertificateInfoCell: UITableViewCell {
     
     @IBOutlet public weak var titleLabel: UILabel!
     @IBOutlet public weak var detailLabel: UILabel!
+    @IBOutlet weak var longTextLabel: UILabel!
+    
+    public override func prepareForReuse() {
+        self.detailLabel.font = UIFont.systemFontOfSize(17)
+    }
 }
 
 public enum CertificateInfoSection: String {
@@ -97,7 +102,7 @@ extension String {
                 hex = ""
             }
         }
-        return array.joinWithSeparator(":")
+        return array.joinWithSeparator(" ")
     }
 }
 
@@ -138,13 +143,13 @@ extension X509Certificate {
         
         sectionNames.append(.PubKeyInfo)
         sectionDatas.append([
-            "Pub Key": self.pubKey
+            "Pub Key": self.pubKey.fingerprintRepresentation()
         ])
         
         sectionNames.append(.Fingerprints)
         sectionDatas.append([
-            "md5": self.md5Fingerprint,
-            "sha1": self.sha1Fingerprint
+            "md5": self.md5.fingerprintRepresentation(),
+            "sha1": self.sha1.fingerprintRepresentation()
         ])
         
         return (sectionDatas, sectionNames)
