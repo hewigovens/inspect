@@ -13,8 +13,8 @@ public struct X509Certificate {
     public var subjectName = ""
     public var issuerName = ""
     
-    public var md5Fingerprint = ""
-    public var sha1Fingerprint = ""
+    public var md5 = ""
+    public var sha1 = ""
     public var version = 1
     public var serialNumber = 0
     
@@ -72,8 +72,8 @@ public struct X509Certificate {
         self.notValidAfter = X509Helper.getNotAfter(cert)
         self.isCA = (X509_check_ca(cert) >= 1)
         
-        self.md5Fingerprint = X509Helper.fingerprint(cert, method: "md5")
-        self.sha1Fingerprint = X509Helper.fingerprint(cert, method: "sha1")
+        self.md5 = X509Helper.fingerprint(cert, method: "md5")
+        self.sha1 = X509Helper.fingerprint(cert, method: "sha1")
         
         defer {
             EVP_PKEY_free(pkey)
@@ -95,8 +95,8 @@ extension X509Certificate: CustomStringConvertible {
         description += "\t not valid after = \(self.notValidAfter)\n"
         description += "\t is CA = \(self.isCA)\n"
         description += "\t pubkey is = \(self.pubKey)\n"
-        description += "\t md5 fingerprint = \(self.md5Fingerprint)\n"
-        description += "\t sha1 fingerprint = \(self.sha1Fingerprint)\n"
+        description += "\t md5 fingerprint = \(self.md5)\n"
+        description += "\t sha1 fingerprint = \(self.sha1)\n"
         description += "}\n"
         return description
     }
