@@ -1,0 +1,9 @@
+[submodule "Carthage/Checkouts/Cartography"]
+	path = Inspect/Carthage/Checkouts/Cartography
+	url = https://github.com/robb/Cartography.git
+[submodule "Carthage/Checkouts/Pages"]
+	path = Inspect/Carthage/Checkouts/Pages
+	url = https://github.com/hyperoslo/Pages.git
+[submodule "Carthage/Checkouts/Presentation"]
+	path = Inspect/Carthage/Checkouts/Presentation
+	url = https://github.com/hyperoslo/Presentation.git
