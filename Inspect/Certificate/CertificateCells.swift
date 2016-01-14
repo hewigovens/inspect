@@ -39,15 +39,16 @@ public class CertificateStackCell: UITableViewCell {
 
 public class CertificateInfoCell: UITableViewCell {
     static let reuseId = "kCertificateInfoCell"
-    static let sectionsCount = 2
     
     @IBOutlet public weak var titleLabel: UILabel!
     @IBOutlet public weak var detailLabel: UILabel!
-    @IBOutlet weak var longTextLabel: UILabel!
+}
+
+public class CertificateInfoCell2: UITableViewCell {
+    static let reuseId = "kCertificateInfoCell2"
     
-    public override func prepareForReuse() {
-        self.detailLabel.font = UIFont.systemFontOfSize(17)
-    }
+    @IBOutlet public weak var titleLabel: UILabel!
+    @IBOutlet public weak var longTextLabel: UILabel!
 }
 
 public enum CertificateInfoSection: String {

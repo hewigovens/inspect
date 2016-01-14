@@ -119,29 +119,53 @@
                                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h3Y-Zp-nMf">
-                                                            <rect key="frame" x="15" y="23" width="42" height="21"/>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                            <nil key="highlightedColor"/>
-                                                        </label>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstAttribute="trailingMargin" secondItem="l6i-UP-org" secondAttribute="trailing" id="2zE-H0-8yX"/>
                                                         <constraint firstAttribute="bottomMargin" secondItem="l6i-UP-org" secondAttribute="bottom" constant="4" id="L6y-PS-ZDN"/>
                                                         <constraint firstItem="Yzf-Ki-Yf3" firstAttribute="top" secondItem="OoP-nd-MSn" secondAttribute="topMargin" constant="3" id="LwL-dX-ut3"/>
-                                                        <constraint firstAttribute="trailingMargin" secondItem="h3Y-Zp-nMf" secondAttribute="trailing" constant="255" id="XKY-h3-VPW"/>
-                                                        <constraint firstItem="h3Y-Zp-nMf" firstAttribute="leading" secondItem="OoP-nd-MSn" secondAttribute="leadingMargin" constant="7" id="dd0-Fj-yUU"/>
                                                         <constraint firstItem="Yzf-Ki-Yf3" firstAttribute="leading" secondItem="OoP-nd-MSn" secondAttribute="leadingMargin" constant="7" id="ehh-Mv-3Vi"/>
                                                         <constraint firstItem="l6i-UP-org" firstAttribute="top" secondItem="OoP-nd-MSn" secondAttribute="topMargin" constant="3" id="ktX-Ol-b87"/>
                                                         <constraint firstItem="l6i-UP-org" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Yzf-Ki-Yf3" secondAttribute="trailing" priority="750" constant="5" id="rHi-OO-kAb"/>
-                                                        <constraint firstItem="h3Y-Zp-nMf" firstAttribute="top" secondItem="Yzf-Ki-Yf3" secondAttribute="bottom" constant="-9" id="yrN-g2-rvf"/>
                                                     </constraints>
                                                 </tableViewCellContentView>
                                                 <connections>
                                                     <outlet property="detailLabel" destination="l6i-UP-org" id="vCX-zz-O5z"/>
-                                                    <outlet property="longTextLabel" destination="h3Y-Zp-nMf" id="3jd-tz-lbz"/>
                                                     <outlet property="titleLabel" destination="Yzf-Ki-Yf3" id="oQF-jp-dc0"/>
+                                                </connections>
+                                            </tableViewCell>
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="kCertificateInfoCell2" rowHeight="75" id="SEH-fG-hhD" customClass="CertificateInfoCell2" customModule="Certificate" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="94" width="320" height="75"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="SEH-fG-hhD" id="5ut-yc-zgA">
+                                                    <rect key="frame" x="0.0" y="0.0" width="320" height="74.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h3Y-Zp-nMf">
+                                                            <rect key="frame" x="15" y="44" width="289" height="20"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V51-G4-pFn">
+                                                            <rect key="frame" x="15" y="11" width="42" height="22"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                    <constraints>
+                                                        <constraint firstAttribute="bottomMargin" secondItem="h3Y-Zp-nMf" secondAttribute="bottom" constant="3" id="0Ms-ey-4jE"/>
+                                                        <constraint firstItem="V51-G4-pFn" firstAttribute="top" secondItem="5ut-yc-zgA" secondAttribute="topMargin" constant="3" id="L3A-ZK-CZB"/>
+                                                        <constraint firstItem="h3Y-Zp-nMf" firstAttribute="leading" secondItem="5ut-yc-zgA" secondAttribute="leadingMargin" constant="7" id="SKc-sC-7w4"/>
+                                                        <constraint firstItem="V51-G4-pFn" firstAttribute="leading" secondItem="5ut-yc-zgA" secondAttribute="leadingMargin" constant="7" id="Tdk-GT-9QM"/>
+                                                        <constraint firstAttribute="trailingMargin" secondItem="h3Y-Zp-nMf" secondAttribute="trailing" priority="750" constant="8" id="mXQ-VA-5bY"/>
+                                                        <constraint firstItem="h3Y-Zp-nMf" firstAttribute="top" secondItem="V51-G4-pFn" secondAttribute="bottom" constant="11" id="pne-UI-men"/>
+                                                    </constraints>
+                                                </tableViewCellContentView>
+                                                <connections>
+                                                    <outlet property="longTextLabel" destination="h3Y-Zp-nMf" id="ZxA-GG-rfC"/>
+                                                    <outlet property="titleLabel" destination="V51-G4-pFn" id="vng-7b-TlU"/>
                                                 </connections>
                                             </tableViewCell>
                                         </prototypes>

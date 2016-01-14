@@ -1,6 +1,6 @@
 [submodule "Dependencies/ZipZap"]
 	path = Dependencies/ZipZap
 	url = https://github.com/pixelglow/ZipZap.git
-[submodule "Dependencies/PKHUD"]
-	path = Dependencies/PKHUD
-	url = https://github.com/pkluz/PKHUD.git
+[submodule "Dependencies/BWWalkthrough"]
+	path = Dependencies/BWWalkthrough
+	url = https://github.com/ariok/BWWalkthrough.git

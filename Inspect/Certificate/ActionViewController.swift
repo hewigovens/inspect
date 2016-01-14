@@ -31,6 +31,8 @@ class ActionViewController: UIViewController,
             self.x509Certs = self.certificates.map({ (certificate) -> X509Certificate in
                 return X509Certificate(certificate: certificate)
             })
+            self.headerTableView.hidden = false
+            self.contentTableView.hidden = false
             self.headerHeightConstraint.constant = CGFloat(48 * self.certificates.count)
             self.headerTableView.reloadData()
         }
@@ -46,7 +48,6 @@ class ActionViewController: UIViewController,
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.navItem?.title = "Inspect - Certificate"
         var validItemProvider: NSItemProvider?
         nestedLoop: for item: AnyObject in self.extensionContext!.inputItems {
@@ -67,7 +68,11 @@ class ActionViewController: UIViewController,
                 self.inspectingUrl = url
                 print("get url \(url), scheme = \(url?.scheme)");
                 if url?.scheme == ("https") {
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        JHProgressHUD.sharedHUD.showInView(self.view, withHeader: nil, andFooter: "Fetching Certificates…")
+                    })
                     SessionManager.sharedManager.fetchCertsForUrl(url!, completion: { (certs) -> Void in
+                        JHProgressHUD.sharedHUD.hide()
                         if certs.count > 0 {
                             self.certificates = certs
                             self.selectedIndex = certs.count - 1
@@ -84,7 +89,7 @@ class ActionViewController: UIViewController,
                     }
                     
                 } else {
-                    self.showError("not https url")
+                    self.showError("\(url!) seems not a https URL")
                 }
             } else {
                 self.showError("url is not valid NSURL object")
@@ -171,11 +176,16 @@ class ActionViewController: UIViewController,
             let sectionType = self.contentSectionNames![indexPath.section]
             if sectionType == .PubKeyInfo ||
                 sectionType == .Fingerprints {
-                cell?.detailLabel.font = UIFont(name: "Courier", size: 17)
+                let cell2 = tableView.dequeueReusableCellWithIdentifier(CertificateInfoCell2.reuseId) as? CertificateInfoCell2
+                cell2?.titleLabel?.text = key
+                cell2?.longTextLabel?.text = value
+                cell2?.longTextLabel.font = UIFont(name: "Courier", size: 15)
+                return cell2!
+            } else {
+                cell?.titleLabel?.text = key
+                cell?.detailLabel?.text = value
+                return cell!
             }
-            cell?.titleLabel?.text = key
-            cell?.detailLabel?.text = value
-            return cell!
         }
     }
     
@@ -224,9 +234,11 @@ class ActionViewController: UIViewController,
         self.headerTableView.rowHeight = UITableViewAutomaticDimension
         self.headerTableView.estimatedRowHeight = 44
         self.headerTableView.backgroundColor = UIColor.lightTextColor()
+        self.headerTableView.hidden = true
         
         self.contentTableView.estimatedRowHeight = 100
         self.contentTableView.rowHeight = UITableViewAutomaticDimension
+        self.contentTableView.hidden = true
     }
     
     private func showWOTRating(record: Record) {
@@ -237,7 +249,12 @@ class ActionViewController: UIViewController,
     
     private func showError(errorMessage: String) {
         print("error \(errorMessage)")
-        self.navigationItem.rightBarButtonItem?.enabled = false
+        
+        let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+        dispatch_async(dispatch_get_main_queue()) { () -> Void in
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
     }
     
     private func showError(error: NSError) {
