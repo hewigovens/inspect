@@ -18,6 +18,7 @@
 		BB2C5B3C1C469BFE00911EA4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB2C5B3B1C469BFE00911EA4 /* Images.xcassets */; };
 		BB2C5B3E1C469C3200911EA4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB2C5B3D1C469C3200911EA4 /* Assets.xcassets */; };
 		BB2C5B411C47E85E00911EA4 /* ZipZap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB2C5B401C47E85E00911EA4 /* ZipZap.framework */; };
+		BB2C5B441C47F53F00911EA4 /* ZipZap.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BB2C5B401C47E85E00911EA4 /* ZipZap.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BB3911141C46813600330E1A /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB3911111C46813600330E1A /* HockeySDK.framework */; };
 		BB3911151C46813600330E1A /* HockeySDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BB3911131C46813600330E1A /* HockeySDKResources.bundle */; };
 		BB46EB751C3046B300E156E9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB741C3046B300E156E9 /* AppDelegate.swift */; };
@@ -77,6 +78,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				BB2C5B441C47F53F00911EA4 /* ZipZap.framework in Copy Frameworks */,
 				BB46EC7A1C32CEA600E156E9 /* Alamofire.framework in Copy Frameworks */,
 				BB46EC7B1C32CEA600E156E9 /* SwiftyJSON.framework in Copy Frameworks */,
 			);

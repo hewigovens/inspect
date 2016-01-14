@@ -16,7 +16,7 @@ public struct X509Certificate {
     public var md5 = ""
     public var sha1 = ""
     public var version = 1
-    public var serialNumber = 0
+    public var serialNumber = ""
     
     // todo
     public var signature = ""
@@ -54,7 +54,8 @@ public struct X509Certificate {
         self.subjectName = X509Helper.getSubject(cert)
         self.issuerName = X509Helper.getIssuer(cert)
         self.version = ASN1_INTEGER_get(cert.memory.cert_info.memory.version) + 1
-        self.serialNumber = ASN1_INTEGER_get(X509_get_serialNumber(cert))
+        let serial = ASN1_INTEGER_to_BN(X509_get_serialNumber(cert), nil)
+        self.serialNumber = String.fromCString(BN_bn2hex(serial))!
         
         let algorithm = cert.memory.cert_info.memory.key.memory.algor
         

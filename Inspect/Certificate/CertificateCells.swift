@@ -137,7 +137,7 @@ extension X509Certificate {
         sectionNames.append(.Misc)
         sectionDatas.append([
             "Version": String(self.version),
-            "Serial Number": String(self.serialNumber),
+            "Serial Number": self.serialNumber.fingerprintRepresentation(),
             "Not Valid Before": self.notValidBefore,
             "Not Valid After": self.notValidAfter,
         ])
