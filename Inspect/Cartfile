@@ -1,4 +1,3 @@
 github "Alamofire/Alamofire"
 github "SwiftyJSON/SwiftyJSON"
-github "hyperoslo/Presentation"
 github "pixelglow/zipzap"
