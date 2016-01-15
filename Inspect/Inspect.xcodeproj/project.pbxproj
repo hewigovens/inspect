@@ -38,7 +38,6 @@
 		BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */; };
 		BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 		BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
-		BB9A8AFD1C479000006D9BE6 /* JHProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB9A8AFB1C478FF8006D9BE6 /* JHProgressHUD.swift */; };
 		BBBEA3151C409A8E00F1C3EE /* mac_dev.cer in Resources */ = {isa = PBXBuildFile; fileRef = BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */; };
 		BBBEA3161C409DE000F1C3EE /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 /* End PBXBuildFile section */
@@ -117,7 +116,6 @@
 		BB5DB8641C3974D100219411 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = ../Dependencies/openssl.framework; sourceTree = "<group>"; };
 		BB5DB8671C397BF200219411 /* X509.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = X509.swift; path = Utils/X509.swift; sourceTree = "<group>"; };
 		BB5DB8861C3AA52900219411 /* Inspect-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Inspect-Bridging-Header.h"; path = "../Inspect-Bridging-Header.h"; sourceTree = "<group>"; };
-		BB9A8AFB1C478FF8006D9BE6 /* JHProgressHUD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JHProgressHUD.swift; path = ../Dependencies/JHProgressHUD.swift; sourceTree = "<group>"; };
 		BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */ = {isa = PBXFileReference; lastKnownFileType = file; name = mac_dev.cer; path = ../../../../../Desktop/mac_dev.cer; sourceTree = "<group>"; };
 		BBBEA3191C414B6000F1C3EE /* X509Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = X509Helper.h; path = Utils/X509Helper.h; sourceTree = "<group>"; };
 		BBBEA31A1C414B6000F1C3EE /* X509Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = X509Helper.m; path = Utils/X509Helper.m; sourceTree = "<group>"; };
@@ -266,7 +264,6 @@
 		BB5DB8631C393CAA00219411 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				BB9A8AFB1C478FF8006D9BE6 /* JHProgressHUD.swift */,
 				BB5DB8601C391F0D00219411 /* SSLLabs */,
 				BB46EC6F1C3186A800E156E9 /* WOT */,
 				BBBEA31D1C414CC800F1C3EE /* X509 */,
@@ -471,7 +468,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB9A8AFD1C479000006D9BE6 /* JHProgressHUD.swift in Sources */,
 				BB1773C61C428732001AAB80 /* SessionManager.swift in Sources */,
 				BB1773C01C4280C6001AAB80 /* SSLLabs.swift in Sources */,
 				BB1773C11C4280C6001AAB80 /* WOT.swift in Sources */,

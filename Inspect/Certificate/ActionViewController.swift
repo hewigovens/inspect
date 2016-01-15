@@ -69,10 +69,10 @@ class ActionViewController: UIViewController,
                 print("get url \(url), scheme = \(url?.scheme)");
                 if url?.scheme == ("https") {
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        JHProgressHUD.sharedHUD.showInView(self.view, withHeader: nil, andFooter: "Fetching Certificates…")
+//                        JHProgressHUD.sharedHUD.showInView(self.view, withHeader: nil, andFooter: "Fetching Certificates…")
                     })
                     SessionManager.sharedManager.fetchCertsForUrl(url!, completion: { (certs) -> Void in
-                        JHProgressHUD.sharedHUD.hide()
+//                        JHProgressHUD.sharedHUD.hide()
                         if certs.count > 0 {
                             self.certificates = certs
                             self.selectedIndex = certs.count - 1
