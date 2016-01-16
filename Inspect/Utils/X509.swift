@@ -55,7 +55,7 @@ public struct X509Certificate {
         self.issuerName = X509Helper.getIssuer(cert)
         self.version = ASN1_INTEGER_get(cert.memory.cert_info.memory.version) + 1
         let serial = ASN1_INTEGER_to_BN(X509_get_serialNumber(cert), nil)
-        self.serialNumber = String.fromCString(BN_bn2hex(serial))!
+        self.serialNumber = (String.fromCString(BN_bn2hex(serial))?.lowercaseString)!
         
         let algorithm = cert.memory.cert_info.memory.key.memory.algor
         

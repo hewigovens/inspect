@@ -8,7 +8,7 @@
 
 import Foundation
 
-public typealias fetchCertsHandler = ([SecCertificate]) -> Void
+public typealias fetchCertsHandler = ([(SecCertificate, SecTrustResultType)]) -> Void
 
 public class SessionManager: NSObject, NSURLSessionTaskDelegate {
     static let sharedManager = SessionManager()
@@ -42,11 +42,17 @@ public class SessionManager: NSObject, NSURLSessionTaskDelegate {
         completionHandler(.CancelAuthenticationChallenge, challenge.proposedCredential);
     }
 
-    private func certificateDataForTrust(trust: SecTrust) -> [SecCertificate] {
-        var certs: [SecCertificate] = []
+    private func certificateDataForTrust(trust: SecTrust) -> [(SecCertificate, SecTrustResultType)] {
+        var certs: [(SecCertificate, SecTrustResultType)] = []
         for index in 0..<SecTrustGetCertificateCount(trust) {
             if let cert = SecTrustGetCertificateAtIndex(trust, index) {
-                certs.append(cert)
+                
+                var result = UInt32(kSecTrustResultUnspecified)
+                if SecTrustGetTrustResult(trust, &result) == 0 {
+                    certs.append((cert, result))
+                } else {
+                    certs.append((cert, UInt32(kSecTrustResultUnspecified)))
+                }
             }
         }
         return certs.reverse();

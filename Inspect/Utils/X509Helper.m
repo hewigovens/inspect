@@ -8,6 +8,9 @@
 
 #import "X509Helper.h"
 #import <openssl/evp.h>
+#import <openssl/ec.h>
+#import <openssl/ec_lcl.h>
+#import <openssl/bn.h>
 
 @implementation X509Helper
 
@@ -19,7 +22,11 @@
         //char *rsa_e_dec = BN_bn2dec(rsa_key->e);
         char *rsa_n_hex = BN_bn2hex(rsa_key->n);
         return [[NSString stringWithUTF8String:rsa_n_hex] lowercaseString];
-        
+    } else if (nid == NID_X9_62_id_ecPublicKey) {
+        EC_KEY* key = pubKey->pkey.ec;
+        const EC_POINT *ec_pubkey = EC_KEY_get0_public_key(key);
+        char *hex = EC_POINT_point2hex(key->group, ec_pubkey, POINT_CONVERSION_UNCOMPRESSED, NULL);
+        return [[NSString stringWithUTF8String:hex] lowercaseString];
     }
     return @"";
 }

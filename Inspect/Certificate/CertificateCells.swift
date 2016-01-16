@@ -17,13 +17,23 @@ public class CertificateStackCell: UITableViewCell {
     @IBOutlet public weak var titleLabel: UILabel!
     @IBOutlet public weak var indicatorLeading: NSLayoutConstraint!
     
+    public var trustResult: SecTrustResultType = UInt32(kSecTrustResultUnspecified) {
+        didSet {
+            if trustResult == UInt32(kSecTrustResultProceed) ||
+               trustResult == UInt32(kSecTrustResultUnspecified) {
+                return
+            }
+            
+            self.suffix = "_Invalid"
+        }
+    }
     public var level = 0 {
         didSet {
             if self.level == 0 {
-                self.iconView?.image = UIImage(imageLiteral: "CertSmallRoot")
+                self.iconView?.image = UIImage(imageLiteral: "CertSmallRoot" + suffix)
             } else {
                 self.indicatorLeading?.constant = (self.indicatorLeading?.constant)! - CGFloat(self.level) * 35.0
-                self.iconView?.image = UIImage(imageLiteral: "CertSmallStd")
+                self.iconView?.image = UIImage(imageLiteral: "CertSmallStd" + suffix)
             }
         }
     }
@@ -33,6 +43,8 @@ public class CertificateStackCell: UITableViewCell {
             self.titleLabel?.numberOfLines = 0
         }
     }
+    
+    private var suffix = ""
 }
 
 // MARK: CertificateInfoCell used in Content View
@@ -75,7 +87,13 @@ extension String {
         "ST": "State/Province",
         "O": "Organization",
         "C": "Country",
-        "L": "Locality"
+        "L": "Locality",
+        "businessCategory": "Business Category",
+        "street": "Street Address",
+        "jurisdictionST": "Inc. State/Province",
+        "jurisdictionC": "Inc. Country",
+        "postalCode": "Postal Code",
+        "serialNumber": "Serial Number"
     ]
     
     func x509Entries() -> [String: AnyObject] {
@@ -83,11 +101,16 @@ extension String {
         let componments = self.characters.split("/").map(String.init)
         for componment in componments {
             let tuples = componment.characters.split("=").map(String.init)
-            let rawKey = tuples[0]
-            if let entry = String.x509EntryMapper[rawKey] {
-                dict[entry] = tuples[1]
+            if tuples.count == 2 {
+                let rawKey = tuples[0]
+                if let entry = String.x509EntryMapper[rawKey] {
+                    dict[entry] = tuples[1]
+                } else {
+                    dict[rawKey] = tuples[1]
+                }
             } else {
-                dict[rawKey] = tuples[1]
+                print("!!!error parsing \(self)")
+                continue
             }
         }
         return dict

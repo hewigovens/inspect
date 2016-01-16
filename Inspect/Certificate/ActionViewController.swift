@@ -26,10 +26,10 @@ class ActionViewController: UIViewController,
     private var inspectingUrl: NSURL?
     private var selectedCertInfo: [[String: String]] = []
     private var x509Certs: [X509Certificate] = []
-    private var certificates: [SecCertificate] = [] {
+    private var certificates: [(SecCertificate, SecTrustResultType)] = [] {
         didSet {
             self.x509Certs = self.certificates.map({ (certificate) -> X509Certificate in
-                return X509Certificate(certificate: certificate)
+                return X509Certificate(certificate: certificate.0)
             })
             self.headerTableView.hidden = false
             self.contentTableView.hidden = false
@@ -69,10 +69,11 @@ class ActionViewController: UIViewController,
                 print("get url \(url), scheme = \(url?.scheme)");
                 if url?.scheme == ("https") {
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
-//                        JHProgressHUD.sharedHUD.showInView(self.view, withHeader: nil, andFooter: "Fetching Certificates…")
+                        INHUD.sharedHUD.contentView = INHUDTextView(text: "Fetching Certificates…")
+                        INHUD.sharedHUD.showInView(self.view)
                     })
                     SessionManager.sharedManager.fetchCertsForUrl(url!, completion: { (certs) -> Void in
-//                        JHProgressHUD.sharedHUD.hide()
+                        INHUD.sharedHUD.hide()
                         if certs.count > 0 {
                             self.certificates = certs
                             self.selectedIndex = certs.count - 1
@@ -84,7 +85,9 @@ class ActionViewController: UIViewController,
                         case .Success(let record):
                             self.showWOTRating(record)
                         case .Failure(let error):
+                            #if DEBUG
                             self.showError(error)
+                            #endif
                         }
                     }
                     
@@ -123,7 +126,7 @@ class ActionViewController: UIViewController,
                 self.selectedIndex = self.certificates.count - 1;
             }
             let cert = self.certificates[self.selectedIndex!]
-            let data = SecCertificateCopyData(cert) as NSData
+            let data = SecCertificateCopyData(cert.0) as NSData
             let paths = NSSearchPathForDirectoriesInDomains(.CachesDirectory, .UserDomainMask, true)
             if let path = paths.first {
                 let file_name = "cert\(self.selectedIndex!).cer";
@@ -158,8 +161,9 @@ class ActionViewController: UIViewController,
         if tableView == self.headerTableView {
             let cert = self.certificates[indexPath.row]
             let cell = tableView.dequeueReusableCellWithIdentifier(CertificateStackCell.reuseId) as? CertificateStackCell
+            cell?.trustResult = cert.1
             cell?.level = indexPath.row
-            cell?.name = SecCertificateCopySubjectSummary(cert) as String
+            cell?.name = SecCertificateCopySubjectSummary(cert.0) as String
             return cell!
         } else {
             let cell = tableView.dequeueReusableCellWithIdentifier(CertificateInfoCell.reuseId) as? CertificateInfoCell
@@ -243,7 +247,7 @@ class ActionViewController: UIViewController,
     
     private func showWOTRating(record: Record) {
         dispatch_async(dispatch_get_main_queue()) { () -> Void in
-            self.navItem?.title = "Web of Trust: \(record.reputation.rawValue)"
+            self.navItem?.titleView = self.genTitleView(record)
         }
     }
     
@@ -259,5 +263,18 @@ class ActionViewController: UIViewController,
     
     private func showError(error: NSError) {
         return self.showError(error.description)
+    }
+    
+    private func genTitleView(record: Record) -> UITextView {
+        let textView = UITextView()
+        textView.backgroundColor = UIColor.clearColor()
+        let string = NSMutableAttributedString(string: "WOT: \(record.reputation.rawValue)", attributes: [NSFontAttributeName: UIFont.systemFontOfSize(17)])
+        let attachment = NSTextAttachment()
+        attachment.image = UIImage(named: "WOT\(record.reputation.rawValue)")
+        attachment.bounds = CGRectMake(4, -4, 20, 20)
+        string.appendAttributedString(NSAttributedString(attachment: attachment))
+        textView.attributedText = string
+        textView.sizeToFit()
+        return textView
     }
 }
