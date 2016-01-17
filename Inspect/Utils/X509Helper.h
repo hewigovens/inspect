@@ -17,6 +17,10 @@
  */
 @interface X509Helper : NSObject
 
-+ (nonnull NSString *)hexPubKey:(nonnull EVP_PKEY *)pubKey nid:(int32_t)nid;
++ (nonnull NSString *)hexPubKey:(nonnull EVP_PKEY *)pubKey;
++ (nonnull NSString *)typeStringOfPubKey:(nonnull EVP_PKEY *)pubKey;
++ (nonnull NSString *)ECCurveNameOfPubKey:(nonnull EVP_PKEY *)pubKey;
++ (size_t)sizeOfPubKey:(nonnull EVP_PKEY *)pkey;
++ (nonnull NSArray<NSString *> *)subjectAltNamesOfCert:(nonnull X509*)cert;
 
 @end

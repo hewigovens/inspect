@@ -39,7 +39,8 @@ class ActionViewController: UIViewController,
     }
     private var selectedIndex: Int? {
         didSet {
-            let tuples = self.x509Certs[self.selectedIndex!].displaySections()
+            let cert = self.x509Certs[self.selectedIndex!]
+            let tuples = cert.displaySections()
             self.contentSections = tuples.0
             self.contentSectionNames = tuples.1
         }
@@ -268,7 +269,7 @@ class ActionViewController: UIViewController,
     private func genTitleView(record: Record) -> UITextView {
         let textView = UITextView()
         textView.backgroundColor = UIColor.clearColor()
-        let string = NSMutableAttributedString(string: "WOT: \(record.reputation.rawValue)", attributes: [NSFontAttributeName: UIFont.systemFontOfSize(17)])
+        let string = NSMutableAttributedString(string: "WOT: \(record.reputation.rawValue) ", attributes: [NSFontAttributeName: UIFont.systemFontOfSize(17)])
         let attachment = NSTextAttachment()
         attachment.image = UIImage(named: "WOT\(record.reputation.rawValue)")
         attachment.bounds = CGRectMake(4, -4, 20, 20)

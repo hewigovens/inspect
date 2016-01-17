@@ -155,7 +155,14 @@ extension X509Certificate {
         sectionDatas.append(self.issuerDict)
         
         sectionNames.append(.SignatureAlgorithm)
-        sectionDatas.append(["Signature Algorithm": self.signatureAlgorithm])
+        var datas = [
+            "Algorithm": self.signatureAlgorithm,
+            "Pub Key Size": String(self.pubKeySize),
+        ]
+        if self.pubKeyECCurveName.lengthOfBytesUsingEncoding(NSUTF8StringEncoding) > 0 {
+            datas["ECCurve Name"] = self.pubKeyECCurveName
+        }
+        sectionDatas.append(datas)
         
         sectionNames.append(.Misc)
         sectionDatas.append([
@@ -167,7 +174,7 @@ extension X509Certificate {
         
         sectionNames.append(.PubKeyInfo)
         sectionDatas.append([
-            "Pub Key": self.pubKey.fingerprintRepresentation()
+            "Pub Key": self.pubKey.fingerprintRepresentation(),
         ])
         
         sectionNames.append(.Fingerprints)
