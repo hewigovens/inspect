@@ -93,24 +93,24 @@ extension String {
         "serialNumber": "Serial Number"
     ]
     
-    func x509Entries() -> [String: AnyObject] {
-        var dict = [String: AnyObject]()
+    func x509Entries() -> [(String, AnyObject)] {
+        var array: [(String, AnyObject)] = []
         let componments = self.characters.split("/").map(String.init)
         for componment in componments {
             let tuples = componment.characters.split("=").map(String.init)
             if tuples.count == 2 {
                 let rawKey = tuples[0]
                 if let entry = String.x509EntryMapper[rawKey] {
-                    dict[entry] = tuples[1]
+                    array.append((entry, tuples[1]))
                 } else {
-                    dict[rawKey] = tuples[1]
+                    array.append((rawKey, tuples[1]))
                 }
             } else {
                 print("!!!error parsing \(self)")
                 continue
             }
         }
-        return dict
+        return array
     }
     
     func fingerprintRepresentation() -> String {
@@ -129,68 +129,68 @@ extension String {
 
 extension X509Certificate {
     
-    public var issuerDict: [String: AnyObject] {
+    public var issuerDict: [(String, AnyObject)] {
         get {
             return self.issuerName.x509Entries()
         }
     }
     
-    public var subjectDict: [String: AnyObject] {
+    public var subjectDict: [(String, AnyObject)] {
         get {
             return self.subjectName.x509Entries()
         }
     }
     
-    public func displaySections() -> ([[String: AnyObject]], [CertificateInfoSection]) {
-        var sectionDatas: [[String: AnyObject]] = []
+    public func displaySections() -> ([[(String, AnyObject)]], [CertificateInfoSection]) {
+        var sectionDatas: [[(String, AnyObject)]] = []
         var sectionNames: [CertificateInfoSection] = []
         
         sectionNames.append(.Subject)
         sectionDatas.append(self.subjectDict)
-        
+
         sectionNames.append(.Issuer)
         sectionDatas.append(self.issuerDict)
         
         sectionNames.append(.Misc)
         sectionDatas.append([
-            "Version": String(self.version),
-            "Serial Number": self.serialNumber.fingerprintRepresentation(),
-            "Not Valid Before": self.notValidBefore,
-            "Not Valid After": self.notValidAfter,
+            ("Version", String(self.version)),
+            ("Serial Number", self.serialNumber.fingerprintRepresentation()),
+            ("Not Valid Before", self.notValidBefore),
+            ("Not Valid After", self.notValidAfter),
         ])
         
         sectionNames.append(.Algorithm)
-        var datas = [
-            "Signature Algorithm": self.signatureAlgorithm,
-            "Pub Key Algorithm": self.pubKeyAlgorithm,
-            "Pub Key Size": String(self.pubKeySize),
+        var datas: [(String, AnyObject)] = [
+            ("Signature Algorithm", self.signatureAlgorithm),
+            ("Pub Key Algorithm", self.pubKeyAlgorithm),
+            ("Pub Key Size", String(self.pubKeySize)),
         ]
         if self.pubKeyECCurveName.lengthOfBytesUsingEncoding(NSUTF8StringEncoding) > 0 {
-            datas["ECCurve Name"] = self.pubKeyECCurveName
+            datas.append(("ECCurve Name", self.pubKeyECCurveName))
         }
         sectionDatas.append(datas)
-        
+
         sectionNames.append(.Signature)
         sectionDatas.append([
-            "Signature": self.signature.fingerprintRepresentation(),
+            ("Signature", self.signature.fingerprintRepresentation()),
         ])
         
         sectionNames.append(.PubKeyInfo)
         sectionDatas.append([
-            "Pub Key": self.pubKey.fingerprintRepresentation(),
+            ("Pub Key", self.pubKey.fingerprintRepresentation()),
         ])
-        
+
         sectionNames.append(.Fingerprints)
         sectionDatas.append([
-            "md5": self.md5.fingerprintRepresentation(),
-            "sha1": self.sha1.fingerprintRepresentation()
+            ("md5", self.md5.fingerprintRepresentation()),
+            ("sha1", self.sha1.fingerprintRepresentation())
         ])
         
         if self.subjectAltNames.count > 0 {
             sectionNames.append(.SubjectAltNames)
-            var datas = [String:String]()
+            var datas: [(String, AnyObject)] = []
             for index in 0..<self.subjectAltNames.count {
-                datas["Alt \(index)"] = self.subjectAltNames[index]
+                datas.append(("No.\(index) Alt Name", self.subjectAltNames[index]))
             }
             sectionDatas.append(datas)
         }

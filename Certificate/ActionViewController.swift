@@ -21,7 +21,7 @@ class ActionViewController: UIViewController,
     @IBOutlet weak var contentTableView: UITableView!
     @IBOutlet weak var headerHeightConstraint: NSLayoutConstraint!
     
-    private var contentSections: [[String: AnyObject]]?
+    private var contentSections: [[(String, AnyObject)]]?
     private var contentSectionNames: [CertificateInfoSection]?
     private var inspectingUrl: NSURL?
     private var selectedCertInfo: [[String: String]] = []
@@ -175,21 +175,19 @@ class ActionViewController: UIViewController,
             
             let sections = self.contentSections!
             let section = sections[indexPath.section]
-            let keys = Array(section.keys)
-            let key = keys[indexPath.row]
-            let value = (section as NSDictionary).valueForKey(key) as! String
+            let tuple = section[indexPath.row]
             let sectionType = self.contentSectionNames![indexPath.section]
             if sectionType == .PubKeyInfo ||
                 sectionType == .Fingerprints ||
                 sectionType == .Signature {
                 let cell2 = tableView.dequeueReusableCellWithIdentifier(CertificateInfoCell2.reuseId) as? CertificateInfoCell2
-                cell2?.titleLabel?.text = key
-                cell2?.longTextLabel?.text = value
+                cell2?.titleLabel?.text = tuple.0
+                cell2?.longTextLabel?.text = tuple.1 as? String
                 cell2?.longTextLabel.font = UIFont(name: "Courier", size: 15)
                 return cell2!
             } else {
-                cell?.titleLabel?.text = key
-                cell?.detailLabel?.text = value
+                cell?.titleLabel?.text = tuple.0
+                cell?.detailLabel?.text = tuple.1 as? String
                 return cell!
             }
         }
