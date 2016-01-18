@@ -22,5 +22,6 @@
 + (nonnull NSString *)ECCurveNameOfPubKey:(nonnull EVP_PKEY *)pubKey;
 + (size_t)sizeOfPubKey:(nonnull EVP_PKEY *)pkey;
 + (nonnull NSArray<NSString *> *)subjectAltNamesOfCert:(nonnull X509*)cert;
++ (nonnull NSArray<NSDictionary*> *)extensionsOfCert:(nonnull X509*)cert;
 
 @end

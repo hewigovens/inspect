@@ -31,7 +31,7 @@ public struct X509Certificate {
     public var isCA = false
     
     public var subjectAltNames: [String] = []
-    public var keyUsage = ""
+    public var extensions: [(String, AnyObject)] = []
     
     private var once = dispatch_once_t()
     
@@ -76,6 +76,11 @@ public struct X509Certificate {
         
         self.md5 = X509Helper.x509Digest(cert, method: "md5")
         self.sha1 = X509Helper.x509Digest(cert, method: "sha1")
+        
+        let exts = X509Helper.extensionsOfCert(cert)
+        for dict in exts {
+            self.extensions.append((dict["key"] as! String, dict["value"]!))
+        }
         
         defer {
             EVP_PKEY_free(pkey)

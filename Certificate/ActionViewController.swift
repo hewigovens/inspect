@@ -179,11 +179,16 @@ class ActionViewController: UIViewController,
             let sectionType = self.contentSectionNames![indexPath.section]
             if sectionType == .PubKeyInfo ||
                 sectionType == .Fingerprints ||
-                sectionType == .Signature {
+                sectionType == .Signature ||
+                sectionType == .Extensions {
                 let cell2 = tableView.dequeueReusableCellWithIdentifier(CertificateInfoCell2.reuseId) as? CertificateInfoCell2
                 cell2?.titleLabel?.text = tuple.0
                 cell2?.longTextLabel?.text = tuple.1 as? String
-                cell2?.longTextLabel.font = UIFont(name: "Courier", size: 15)
+                if sectionType != .Extensions {
+                    cell2?.longTextLabel.font = UIFont(name: "Courier", size: 15)
+                } else {
+                    cell2?.longTextLabel.font = UIFont.systemFontOfSize(15)
+                }
                 return cell2!
             } else {
                 cell?.titleLabel?.text = tuple.0

@@ -76,64 +76,81 @@
 {
     NSMutableArray *list = [NSMutableArray new];
     GENERAL_NAMES* subjectAltNames = (GENERAL_NAMES*)X509_get_ext_d2i(cert, NID_subject_alt_name, NULL, NULL);
-    for (int i = 0; i < sk_GENERAL_NAME_num(subjectAltNames); i++)
-    {
+    for (int i = 0; i < sk_GENERAL_NAME_num(subjectAltNames); i++) {
         GENERAL_NAME* gen = sk_GENERAL_NAME_value(subjectAltNames, i);
-        if (gen->type == GEN_URI || gen->type == GEN_DNS || gen->type == GEN_EMAIL)
-        {
+        if (gen->type == GEN_URI || gen->type == GEN_DNS || gen->type == GEN_EMAIL) {
             ASN1_IA5STRING *asn1_str = gen->d.uniformResourceIdentifier;
             NSString *san = [NSString stringWithUTF8String:(char*)ASN1_STRING_data(asn1_str)/*ASN1_STRING_length(asn1_str)*/];
             [list addObject:san];
         }
-        else if (gen->type == GEN_IPADD)
-        {
+        else if (gen->type == GEN_IPADD) {
             unsigned char *p = gen->d.ip->data;
-            if(gen->d.ip->length == 4)
-            {
+            if(gen->d.ip->length == 4) {
                 NSString *string = [NSString stringWithFormat:@"%d.%d.%d.%d", p[0], p[1], p[2], p[3]];
                 [list addObject:string];
             }
-            else //if(gen->d.ip->length == 16) //ipv6?
-            {
-                //std::cerr << "Not implemented: parse sans ("<< __FILE__ << ":" << __LINE__ << ")" << endl;
-            }
-        }
-        else
-        {
-            //std::cerr << "Not implemented: parse sans ("<< __FILE__ << ":" << __LINE__ << ")" << endl;
         }
     }
     return list;
 }
 
-//+ (nonnull NSString *)fingerprint:(nonnull X509 *)cert method:(nonnull NSString*)method
-//{
-//    unsigned char buffer[EVP_MAX_MD_SIZE];
-//    unsigned int len = 0;
-//    
-//    const EVP_MD *md = EVP_get_digestbyname([method UTF8String]);
-//    if (md == NULL) {
-//        if ([method isEqualToString:@"sha1"]) {
-//            md = EVP_sha1();
-//        } else if ([method isEqualToString:@"md5"]) {
-//            md = EVP_md5();
-//        }
-//    }
-//    
-//    if (md == NULL) {
-//        return @"";
-//    }
-//    
-//    X509_digest(cert, md, buffer, &len);
-//    if (len > 0) {
-//        NSMutableString *string = [NSMutableString new];
-//        for(size_t i=0; i < len; i++) {
-//            [string appendFormat:@"%02x", buffer[i]];
-//        }
-//        return [NSString stringWithString:string];
-//    } else {
-//        return @"";
-//    }
-//}
++ (nonnull NSArray*)extensionsOfCert:(nonnull X509*)cert
+{
+    STACK_OF(X509_EXTENSION) *exts = cert->cert_info->extensions;
+    NSMutableArray *array = [NSMutableArray new];
+    int num_of_exts = 0;
+    if (exts) {
+        num_of_exts = sk_X509_EXTENSION_num(exts);
+    }
+    
+    for (int i = 0; i < num_of_exts; i++) {
+        
+        X509_EXTENSION *ex = sk_X509_EXTENSION_value(exts, i);
+        if (!ex) {
+            continue;
+        }
+        ASN1_OBJECT *obj = X509_EXTENSION_get_object(ex);
+        if (!obj) {
+            continue;
+        }
+        
+        BIO *ext_bio = BIO_new(BIO_s_mem());
+        if (!X509V3_EXT_print(ext_bio, ex, 0, 0)) {
+            M_ASN1_OCTET_STRING_print(ext_bio, ex->value);
+        }
+        
+        BUF_MEM *bptr;
+        BIO_get_mem_ptr(ext_bio, &bptr);
+        BIO_set_close(ext_bio, BIO_NOCLOSE);
+        
+        // remove newlines
+        size_t lastchar = bptr->length;
+        if (lastchar > 1 && (bptr->data[lastchar-1] == '\n' || bptr->data[lastchar-1] == '\r')) {
+            bptr->data[lastchar-1] = (char) 0;
+        }
+        if (lastchar > 0 && (bptr->data[lastchar] == '\n' || bptr->data[lastchar] == '\r')) {
+            bptr->data[lastchar] = (char) 0;
+        }
+        
+        BIO_free(ext_bio);
+        unsigned nid = OBJ_obj2nid(obj);
+        NSString *key = @"";
+        NSString *value = @"";
+        // we only handle these extensions
+        if (nid == NID_key_usage ||
+            nid == NID_ext_key_usage ||
+            nid == NID_authority_key_identifier ||
+            nid == NID_subject_key_identifier) {
+            const char *c_ext_name = OBJ_nid2ln(nid);
+            key = [NSString stringWithFormat:@"%s", c_ext_name];
+            value = [NSString stringWithFormat:@"%s", bptr->data];
+            [array addObject:@{@"key": key, @"value": value}];
+        } else {
+            continue;
+        }
+//        NSLog(@"key = %@, value = %@", key, value);
+    }
+    return array;
+}
 
 @end

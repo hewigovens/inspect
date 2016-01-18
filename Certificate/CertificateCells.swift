@@ -71,7 +71,7 @@ public enum CertificateInfoSection: String {
     case Signature = "Signature"
     case Fingerprints = "Fingerprints"
     case SubjectAltNames = "Subject Alt Names"
-    case KeyUsage = "Key Usage"
+    case Extensions = "Extensions"
     case Misc = "Misc"
 }
 
@@ -185,6 +185,11 @@ extension X509Certificate {
             ("md5", self.md5.fingerprintRepresentation()),
             ("sha1", self.sha1.fingerprintRepresentation())
         ])
+        
+        if self.extensions.count > 0 {
+            sectionNames.append(.Extensions)
+            sectionDatas.append(self.extensions)
+        }
         
         if self.subjectAltNames.count > 0 {
             sectionNames.append(.SubjectAltNames)
