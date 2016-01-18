@@ -180,7 +180,8 @@ class ActionViewController: UIViewController,
             let value = (section as NSDictionary).valueForKey(key) as! String
             let sectionType = self.contentSectionNames![indexPath.section]
             if sectionType == .PubKeyInfo ||
-                sectionType == .Fingerprints {
+                sectionType == .Fingerprints ||
+                sectionType == .Signature {
                 let cell2 = tableView.dequeueReusableCellWithIdentifier(CertificateInfoCell2.reuseId) as? CertificateInfoCell2
                 cell2?.titleLabel?.text = key
                 cell2?.longTextLabel?.text = value

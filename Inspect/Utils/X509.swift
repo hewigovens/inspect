@@ -20,21 +20,18 @@ public struct X509Certificate {
     
     public var signature = ""
     public var signatureAlgorithm = ""
+    
     public var pubKey = ""
     public var pubKeySize = -1
+    public var pubKeyAlgorithm = ""
     public var pubKeyECCurveName = ""
     
     public var notValidBefore = ""
     public var notValidAfter = ""
     public var isCA = false
     
-    // todo
-    public var signatureParameter = ""
-    public var extensions: [[String: String]] = []
+    public var subjectAltNames: [String] = []
     public var keyUsage = ""
-    public var subjectKeyId = ""
-    public var authorityKeyId = ""
-    public var netscapeCertType = "" //
     
     private var once = dispatch_once_t()
     
@@ -56,17 +53,22 @@ public struct X509Certificate {
         let serial = ASN1_INTEGER_to_BN(X509_get_serialNumber(cert), nil)
         self.serialNumber = (String.fromCString(BN_bn2hex(serial))?.lowercaseString)!
         
-        let pkey_nid = OBJ_obj2nid(cert.memory.sig_alg.memory.algorithm)
-        if let s = String.fromCString(OBJ_nid2ln(pkey_nid)) {
+        let cert_nid = OBJ_obj2nid(cert.memory.sig_alg.memory.algorithm)
+        if let s = String.fromCString(OBJ_nid2ln(cert_nid)) {
             self.signatureAlgorithm = s
         }
         
-        self.signature = X509Helper.signatureAlgorithmPrint(cert).lowercaseString
+        self.signature = X509Helper.signatureOfCert(cert).lowercaseString
         let pkey = X509_get_pubkey(cert)
+        let pkey_nid = OBJ_obj2nid(cert.memory.cert_info.memory.key.memory.algor.memory.algorithm)
+        if let s = String.fromCString(OBJ_nid2ln(pkey_nid)) {
+            self.pubKeyAlgorithm = s
+        }
         self.pubKey = X509Helper.hexPubKey(pkey)
         self.pubKeySize = X509Helper.sizeOfPubKey(pkey)
         self.pubKeyECCurveName = X509Helper.ECCurveNameOfPubKey(pkey)
-        X509Helper.subjectAltNamesOfCert(cert)
+        
+        self.subjectAltNames = X509Helper.subjectAltNamesOfCert(cert)
 
         self.notValidBefore = X509Helper.getNotBefore(cert)
         self.notValidAfter = X509Helper.getNotAfter(cert)
@@ -133,10 +135,16 @@ extension X509Helper {
                 buffer = nil
             }
             if BIO_gets(bio, buffer, 128) > 0 {
-                return String.fromCString(buffer)!
+                
+                let string = String.fromCString(buffer)!
+                let inFormatter = NSDateFormatter()
+                let outFormatter = NSDateFormatter()
+                inFormatter.dateFormat = "MMM dd HH:mm:ss yyyy zzz"
+                outFormatter.dateFormat = "MM/dd/yy, hh:mm:ss a"
+                let date = inFormatter.dateFromString(string)
+                return outFormatter.stringFromDate(date!)
             }
         }
-        
         return ""
     }
     
@@ -205,24 +213,15 @@ extension X509Helper {
         return self.convertASN1TimeToString(time)
     }
     
-    static func signatureAlgorithmPrint(cert: UnsafePointer<x509_st>) -> String {
-        let bio = BIO_new(BIO_s_mem())
-        defer {
-            BIO_free(bio)
+    static func signatureOfCert(cert: UnsafePointer<x509_st>) -> String {
+        let sig = cert.memory.signature
+        let len = Int(sig.memory.length)
+        let p = UnsafePointer<UInt8>(sig.memory.data)
+        var string = ""
+        for char in UnsafeBufferPointer(start: p, count: len) {
+            string += String(format: "%02x", char)
         }
-        X509_signature_print(bio, cert.memory.sig_alg, cert.memory.signature)
-        let length = 256
-        var buffer = UnsafeMutablePointer<Int8>.alloc(length)
-        defer {
-            buffer.destroy()
-            buffer.dealloc(length)
-            buffer = nil
-        }
-        if BIO_gets(bio, buffer, Int32(length)) > 0 {
-            return String.fromCString(buffer)!
-        }
-
-        return ""
+        return string
     }
     
     static func subjectAltNames(cert: UnsafePointer<x509_st>) -> [String] {

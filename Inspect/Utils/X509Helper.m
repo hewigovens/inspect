@@ -30,8 +30,6 @@
         char *hex = EC_POINT_point2hex(key->group, ec_pubkey, POINT_CONVERSION_UNCOMPRESSED, NULL);
         return [[NSString stringWithUTF8String:hex] lowercaseString];
     }
-    
-//    X509_signature_print
     return @"";
 }
 

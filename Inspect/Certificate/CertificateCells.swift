@@ -66,16 +66,13 @@ public class CertificateInfoCell2: UITableViewCell {
 public enum CertificateInfoSection: String {
     case Subject = "Subject Name"
     case Issuer = "Issuer Name"
-    case SignatureAlgorithm = "Signature Algorithm"
+    case Algorithm = "Algorithm"
     case PubKeyInfo = "Public Key Info"
+    case Signature = "Signature"
     case Fingerprints = "Fingerprints"
-    case Extension = "Extended Key Usage"
-    case Misc = "Misc"
-    
-    // todo
-    case AuthorityKeyId = "Authority Key Identifier"
-    case NetscapeCertificateType = "Netscape Certificate Type"
+    case SubjectAltNames = "Subject Alt Names"
     case KeyUsage = "Key Usage"
+    case Misc = "Misc"
 }
 
 extension String {
@@ -154,9 +151,18 @@ extension X509Certificate {
         sectionNames.append(.Issuer)
         sectionDatas.append(self.issuerDict)
         
-        sectionNames.append(.SignatureAlgorithm)
+        sectionNames.append(.Misc)
+        sectionDatas.append([
+            "Version": String(self.version),
+            "Serial Number": self.serialNumber.fingerprintRepresentation(),
+            "Not Valid Before": self.notValidBefore,
+            "Not Valid After": self.notValidAfter,
+        ])
+        
+        sectionNames.append(.Algorithm)
         var datas = [
-            "Algorithm": self.signatureAlgorithm,
+            "Signature Algorithm": self.signatureAlgorithm,
+            "Pub Key Algorithm": self.pubKeyAlgorithm,
             "Pub Key Size": String(self.pubKeySize),
         ]
         if self.pubKeyECCurveName.lengthOfBytesUsingEncoding(NSUTF8StringEncoding) > 0 {
@@ -164,12 +170,9 @@ extension X509Certificate {
         }
         sectionDatas.append(datas)
         
-        sectionNames.append(.Misc)
+        sectionNames.append(.Signature)
         sectionDatas.append([
-            "Version": String(self.version),
-            "Serial Number": self.serialNumber.fingerprintRepresentation(),
-            "Not Valid Before": self.notValidBefore,
-            "Not Valid After": self.notValidAfter,
+            "Signature": self.signature.fingerprintRepresentation(),
         ])
         
         sectionNames.append(.PubKeyInfo)
@@ -182,6 +185,15 @@ extension X509Certificate {
             "md5": self.md5.fingerprintRepresentation(),
             "sha1": self.sha1.fingerprintRepresentation()
         ])
+        
+        if self.subjectAltNames.count > 0 {
+            sectionNames.append(.SubjectAltNames)
+            var datas = [String:String]()
+            for index in 0..<self.subjectAltNames.count {
+                datas["Alt \(index)"] = self.subjectAltNames[index]
+            }
+            sectionDatas.append(datas)
+        }
         
         return (sectionDatas, sectionNames)
     }
