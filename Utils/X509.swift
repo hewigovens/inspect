@@ -9,9 +9,21 @@
 import Foundation
 
 public struct X509Certificate {
-
-    public var subjectName = ""
-    public var issuerName = ""
+    public var subjectTuples: [(String, AnyObject)] = []
+    public var issuerTuples: [(String, AnyObject)] = []
+    
+    // todo
+    public var subjectName: String {
+        get {
+            return ""
+        }
+    }
+    
+    public var issuerName: String {
+        get {
+            return ""
+        }
+    }
     
     public var md5 = ""
     public var sha1 = ""
@@ -46,15 +58,19 @@ public struct X509Certificate {
         let data = SecCertificateCopyData(certificate) as NSData
         var bytes = UnsafePointer<UInt8>(data.bytes)
         let cert = d2i_X509(nil, &bytes, data.length)
-
-        self.subjectName = X509Helper.getSubject(cert)
-        self.issuerName = X509Helper.getIssuer(cert)
+        
+        let subjectDict = X509Helper.subjectOfCert(cert)
+        self.subjectTuples = dictToTupleArray(subjectDict)
+        
+        let issuerDict = X509Helper.issuerOfCert(cert)
+        self.issuerTuples = dictToTupleArray(issuerDict)
+        
         self.version = ASN1_INTEGER_get(cert.memory.cert_info.memory.version) + 1
         let serial = ASN1_INTEGER_to_BN(X509_get_serialNumber(cert), nil)
         self.serialNumber = (String.fromCString(BN_bn2hex(serial))?.lowercaseString)!
         
         let cert_nid = OBJ_obj2nid(cert.memory.sig_alg.memory.algorithm)
-        if let s = String.fromCString(OBJ_nid2ln(cert_nid)) {
+        if let s = String.fromCString(OBJ_nid2sn(cert_nid)) {
             self.signatureAlgorithm = s
         }
         
@@ -82,10 +98,25 @@ public struct X509Certificate {
             self.extensions.append((dict["key"] as! String, dict["value"]!))
         }
         
+        X509Helper.subjectOfCert(cert)
         defer {
             EVP_PKEY_free(pkey)
             X509_free(cert)
         }
+    }
+    
+    private func dictToTupleArray(dict: [NSObject: AnyObject]) -> [(String, AnyObject)] {
+        var array: [(String, AnyObject)] = []
+        for (obj, value) in dict {
+            if let key = obj as? String {
+                if let mappedKey = String.x509EntryMapper[key] {
+                    array.append((mappedKey, value))
+                } else {
+                    array.append((key, value))
+                }
+            }
+        }
+        return array
     }
 }
 
@@ -231,5 +262,62 @@ extension X509Helper {
     
     static func subjectAltNames(cert: UnsafePointer<x509_st>) -> [String] {
         return []
+    }
+}
+
+
+//MARK: String extension for x509
+extension String {
+    static let x509EntryMapper: [String: String] = [
+        "UID": "User ID",
+        "CN": "Common Name",
+        "OU": "Organization Unit",
+        "ST": "State/Province",
+        "O": "Organization",
+        "C": "Country",
+        "L": "Locality",
+        "businessCategory": "Business Category",
+        "street": "Street Address",
+        "jurisdictionST": "Inc. State/Province",
+        "jurisdictionC": "Inc. Country",
+        "postalCode": "Postal Code",
+        "serialNumber": "Serial Number",
+        "rsaEncryption": "RSA Encryption",
+        "dsaEncryption": "DSA Encryption",
+        "dhKeyAgreement": "DH Key Agreement",
+        "id-ecPublicKey": "ECC Public Key"
+    ]
+    
+    func x509Entries() -> [(String, AnyObject)] {
+        var array: [(String, AnyObject)] = []
+        let componments = self.characters.split("/").map(String.init)
+        for componment in componments {
+            let tuples = componment.characters.split("=").map(String.init)
+            if tuples.count == 2 {
+                let rawKey = tuples[0]
+                if let entry = String.x509EntryMapper[rawKey] {
+                    array.append((entry, tuples[1]))
+                } else {
+                    array.append((rawKey, tuples[1]))
+                }
+            } else {
+                print("!!!error parsing \(self)")
+                continue
+            }
+        }
+        return array
+    }
+    
+    func fingerprintRepresentation() -> String {
+        var array: [String] = []
+        var hex = ""
+        for (index, char) in self.characters.enumerate() {
+            hex.append(char)
+            if (index + 1) % 2 == 0 {
+                array.append(hex)
+                hex = ""
+            }
+        }
+        return array.joinWithSeparator(" ")
     }
 }

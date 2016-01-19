@@ -138,9 +138,7 @@
         NSString *value = @"";
         // we only handle these extensions
         if (nid == NID_key_usage ||
-            nid == NID_ext_key_usage ||
-            nid == NID_authority_key_identifier ||
-            nid == NID_subject_key_identifier) {
+            nid == NID_ext_key_usage) {
             const char *c_ext_name = OBJ_nid2ln(nid);
             key = [NSString stringWithFormat:@"%s", c_ext_name];
             value = [NSString stringWithFormat:@"%s", bptr->data];
@@ -151,6 +149,34 @@
 //        NSLog(@"key = %@, value = %@", key, value);
     }
     return array;
+}
+
++ (nonnull NSDictionary *)subjectOfCert:(nonnull X509*)cert
+{
+    X509_NAME *name = X509_get_subject_name(cert);
+    return [[self class] dictFromX509Name:name];
+}
+
++ (nonnull NSDictionary *)issuerOfCert:(nonnull X509*)cert
+{
+    X509_NAME *name = X509_get_issuer_name(cert);
+    return [[self class] dictFromX509Name:name];
+}
+
++ (nonnull NSDictionary *)dictFromX509Name:(nonnull X509_NAME *)x509_name
+{
+    X509_NAME *subj = x509_name;
+    NSMutableDictionary *dict = [NSMutableDictionary new];
+    for (int i = 0; i < X509_NAME_entry_count(subj); i++) {
+        X509_NAME_ENTRY *entry = X509_NAME_get_entry(subj, i);
+        const char *key = OBJ_nid2sn((OBJ_obj2nid(X509_NAME_ENTRY_get_object(entry))));
+        NSString *keyString = [NSString stringWithFormat:@"%s", key];
+        unsigned char *value = 0;
+        ASN1_STRING_to_UTF8(&value, X509_NAME_ENTRY_get_data(entry));
+        NSString *valueString = [NSString stringWithUTF8String:(char *)value];
+        dict[keyString] = valueString;
+    }
+    return [NSDictionary dictionaryWithDictionary:dict];
 }
 
 @end

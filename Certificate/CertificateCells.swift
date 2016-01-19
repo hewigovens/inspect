@@ -75,81 +75,16 @@ public enum CertificateInfoSection: String {
     case Misc = "Misc"
 }
 
-extension String {
-    
-    static let x509EntryMapper: [String: String] = [
-        "UID": "User ID",
-        "CN": "Common Name",
-        "OU": "Organization Unit",
-        "ST": "State/Province",
-        "O": "Organization",
-        "C": "Country",
-        "L": "Locality",
-        "businessCategory": "Business Category",
-        "street": "Street Address",
-        "jurisdictionST": "Inc. State/Province",
-        "jurisdictionC": "Inc. Country",
-        "postalCode": "Postal Code",
-        "serialNumber": "Serial Number"
-    ]
-    
-    func x509Entries() -> [(String, AnyObject)] {
-        var array: [(String, AnyObject)] = []
-        let componments = self.characters.split("/").map(String.init)
-        for componment in componments {
-            let tuples = componment.characters.split("=").map(String.init)
-            if tuples.count == 2 {
-                let rawKey = tuples[0]
-                if let entry = String.x509EntryMapper[rawKey] {
-                    array.append((entry, tuples[1]))
-                } else {
-                    array.append((rawKey, tuples[1]))
-                }
-            } else {
-                print("!!!error parsing \(self)")
-                continue
-            }
-        }
-        return array
-    }
-    
-    func fingerprintRepresentation() -> String {
-        var array: [String] = []
-        var hex = ""
-        for (index, char) in self.characters.enumerate() {
-            hex.append(char)
-            if (index + 1) % 2 == 0 {
-                array.append(hex)
-                hex = ""
-            }
-        }
-        return array.joinWithSeparator(" ")
-    }
-}
-
 extension X509Certificate {
-    
-    public var issuerDict: [(String, AnyObject)] {
-        get {
-            return self.issuerName.x509Entries()
-        }
-    }
-    
-    public var subjectDict: [(String, AnyObject)] {
-        get {
-            return self.subjectName.x509Entries()
-        }
-    }
-    
     public func displaySections() -> ([[(String, AnyObject)]], [CertificateInfoSection]) {
         var sectionDatas: [[(String, AnyObject)]] = []
         var sectionNames: [CertificateInfoSection] = []
         
         sectionNames.append(.Subject)
-        sectionDatas.append(self.subjectDict)
+        sectionDatas.append(self.subjectTuples)
 
         sectionNames.append(.Issuer)
-        sectionDatas.append(self.issuerDict)
+        sectionDatas.append(self.issuerTuples)
         
         sectionNames.append(.Misc)
         sectionDatas.append([
@@ -162,11 +97,11 @@ extension X509Certificate {
         sectionNames.append(.Algorithm)
         var datas: [(String, AnyObject)] = [
             ("Signature Algorithm", self.signatureAlgorithm),
-            ("Pub Key Algorithm", self.pubKeyAlgorithm),
+            ("Pub Key Algorithm", String.x509EntryMapper[self.pubKeyAlgorithm] ?? self.pubKeyAlgorithm),
             ("Pub Key Size", String(self.pubKeySize)),
         ]
         if self.pubKeyECCurveName.lengthOfBytesUsingEncoding(NSUTF8StringEncoding) > 0 {
-            datas.append(("ECCurve Name", self.pubKeyECCurveName))
+            datas.append(("Elliptic Curve Name", self.pubKeyECCurveName.capitalizedString))
         }
         sectionDatas.append(datas)
 

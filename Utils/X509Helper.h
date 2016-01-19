@@ -21,7 +21,13 @@
 + (nonnull NSString *)typeStringOfPubKey:(nonnull EVP_PKEY *)pubKey;
 + (nonnull NSString *)ECCurveNameOfPubKey:(nonnull EVP_PKEY *)pubKey;
 + (size_t)sizeOfPubKey:(nonnull EVP_PKEY *)pkey;
+
+/*
+ * TODO move to X509.swift
+ */
 + (nonnull NSArray<NSString *> *)subjectAltNamesOfCert:(nonnull X509*)cert;
 + (nonnull NSArray<NSDictionary*> *)extensionsOfCert:(nonnull X509*)cert;
++ (nonnull NSDictionary *)subjectOfCert:(nonnull X509*)cert;
++ (nonnull NSDictionary *)issuerOfCert:(nonnull X509*)cert;
 
 @end
