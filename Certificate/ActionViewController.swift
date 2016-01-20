@@ -9,6 +9,7 @@
 import UIKit
 import MobileCoreServices
 import SafariServices
+import HockeySDK
 
 class ActionViewController: UIViewController,
                             UITableViewDelegate,
@@ -21,6 +22,7 @@ class ActionViewController: UIViewController,
     @IBOutlet weak var contentTableView: UITableView!
     @IBOutlet weak var headerHeightConstraint: NSLayoutConstraint!
     
+    private var didSetupHockeySDK = false
     private var contentSections: [[(String, AnyObject)]]?
     private var contentSectionNames: [CertificateInfoSection]?
     private var inspectingUrl: NSURL?
@@ -49,6 +51,13 @@ class ActionViewController: UIViewController,
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if !self.didSetupHockeySDK {
+            BITHockeyManager.sharedHockeyManager().configureWithIdentifier("399c05d7126848fabac6f9e2341880f8")
+            BITHockeyManager.sharedHockeyManager().startManager()
+            self.didSetupHockeySDK = true
+        }
+        
         self.navItem?.title = "Inspect - Certificate"
         var validItemProvider: NSItemProvider?
         nestedLoop: for item: AnyObject in self.extensionContext!.inputItems {
