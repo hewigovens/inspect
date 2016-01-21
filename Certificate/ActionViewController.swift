@@ -15,7 +15,8 @@ import MessageUI
 class ActionViewController: UIViewController,
                             UITableViewDelegate,
                             UITableViewDataSource,
-                            UIActionSheetDelegate {
+                            UIActionSheetDelegate,
+                            MFMailComposeViewControllerDelegate {
     
     @IBOutlet internal weak var navItem: UINavigationItem!
     @IBOutlet weak var stackView: UIStackView!
@@ -164,10 +165,11 @@ class ActionViewController: UIViewController,
             let controller = MFMailComposeViewController()
             controller.setToRecipients(["support@fourplex.in"])
             controller.setSubject("Inspect Feedback")
+            controller.mailComposeDelegate = self
             self.presentViewController(controller, animated: true, completion: nil)
         }))
         
-        sheet.addAction(UIAlertAction(title: "Helpful? Rate us", style: .Default, handler: { (action) -> Void in
+        sheet.addAction(UIAlertAction(title: "Helpful? Rate US", style: .Default, handler: { (action) -> Void in
            self.extensionContext?.openURL(NSURL(string: kAppStoreUrl)!, completionHandler: nil)
         }))
         
@@ -255,6 +257,11 @@ class ActionViewController: UIViewController,
             UIPasteboard.generalPasteboard().setValue(tuple.1, forPasteboardType: kUTTypePlainText as String)
             tableView.deselectRowAtIndexPath(indexPath, animated: true)
         }
+    }
+    
+    // MARK: MFMailComposeViewControllerDelegate
+    func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
     
     // MARK: Private funcs
