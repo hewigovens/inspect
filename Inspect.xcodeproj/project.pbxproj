@@ -42,6 +42,8 @@
 		BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 		BBA1C2531C4F1AB3009EECCC /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB3911111C46813600330E1A /* HockeySDK.framework */; };
 		BBA1C2541C4F1AE2009EECCC /* HockeySDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BB3911131C46813600330E1A /* HockeySDKResources.bundle */; };
+		BBA1C2561C507B34009EECCC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA1C2551C507B34009EECCC /* Constants.swift */; };
+		BBA1C2571C507B34009EECCC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA1C2551C507B34009EECCC /* Constants.swift */; };
 		BBBEA3151C409A8E00F1C3EE /* mac_dev.cer in Resources */ = {isa = PBXBuildFile; fileRef = BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */; };
 		BBBEA3161C409DE000F1C3EE /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 /* End PBXBuildFile section */
@@ -121,6 +123,7 @@
 		BB5DB8641C3974D100219411 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = Dependencies/openssl.framework; sourceTree = "<group>"; };
 		BB5DB8671C397BF200219411 /* X509.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = X509.swift; path = Utils/X509.swift; sourceTree = "<group>"; };
 		BB5DB8861C3AA52900219411 /* Inspect-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Inspect-Bridging-Header.h"; path = "../Inspect-Bridging-Header.h"; sourceTree = "<group>"; };
+		BBA1C2551C507B34009EECCC /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = mac_dev.cer; sourceTree = "<group>"; };
 		BBBEA3191C414B6000F1C3EE /* X509Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = X509Helper.h; path = Utils/X509Helper.h; sourceTree = "<group>"; };
 		BBBEA31A1C414B6000F1C3EE /* X509Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = X509Helper.m; path = Utils/X509Helper.m; sourceTree = "<group>"; };
@@ -276,6 +279,7 @@
 				BBBEA31D1C414CC800F1C3EE /* X509 */,
 				BB1773C41C428227001AAB80 /* SessionManager.swift */,
 				BB2EB67C1C4930B90057929C /* INHUD.swift */,
+				BBA1C2551C507B34009EECCC /* Constants.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -460,6 +464,7 @@
 				BB46EB771C3046B300E156E9 /* ViewController.swift in Sources */,
 				BB46EB751C3046B300E156E9 /* AppDelegate.swift in Sources */,
 				BB1773C51C428227001AAB80 /* SessionManager.swift in Sources */,
+				BBA1C2561C507B34009EECCC /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -485,6 +490,7 @@
 				BB46EB9B1C30492B00E156E9 /* ActionViewController.swift in Sources */,
 				BB2EB67D1C4930B90057929C /* INHUD.swift in Sources */,
 				BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */,
+				BBA1C2571C507B34009EECCC /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

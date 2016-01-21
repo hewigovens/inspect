@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        BITHockeyManager.sharedHockeyManager().configureWithIdentifier("399c05d7126848fabac6f9e2341880f8")
+        BITHockeyManager.sharedHockeyManager().configureWithIdentifier(kHockeyAppId)
         BITHockeyManager.sharedHockeyManager().startManager()
         BITHockeyManager.sharedHockeyManager().authenticator.authenticateInstallation()
         

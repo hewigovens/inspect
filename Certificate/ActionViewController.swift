@@ -10,6 +10,7 @@ import UIKit
 import MobileCoreServices
 import SafariServices
 import HockeySDK
+import MessageUI
 
 class ActionViewController: UIViewController,
                             UITableViewDelegate,
@@ -48,12 +49,11 @@ class ActionViewController: UIViewController,
         }
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         if !self.didSetupHockeySDK {
-            BITHockeyManager.sharedHockeyManager().configureWithIdentifier("399c05d7126848fabac6f9e2341880f8")
+            BITHockeyManager.sharedHockeyManager().configureWithIdentifier(kHockeyAppId)
             BITHockeyManager.sharedHockeyManager().startManager()
             self.didSetupHockeySDK = true
         }
@@ -123,7 +123,7 @@ class ActionViewController: UIViewController,
         let sheet = UIAlertController(title: "More Options", message: nil, preferredStyle: .ActionSheet)
         sheet.addAction(UIAlertAction(title: "Scan in SSLLabs.com", style: .Default, handler: { (action) -> Void in
             if self.inspectingUrl != nil {
-            if let url = SSLLabs.scanUrl((self.inspectingUrl?.host)!) {
+                if let url = SSLLabs.scanUrl((self.inspectingUrl?.host)!) {
                     let vc = SFSafariViewController(URL: url)
                     self.presentViewController(vc, animated: true, completion: nil)
                 }
@@ -158,6 +158,17 @@ class ActionViewController: UIViewController,
                     print("zip cert failed \(error.description)")
                 }
             }
+        }))
+        
+        sheet.addAction(UIAlertAction(title: "Feedback", style: .Default, handler: { (action) -> Void in
+            let controller = MFMailComposeViewController()
+            controller.setToRecipients(["support@fourplex.in"])
+            controller.setSubject("Inspect Feedback")
+            self.presentViewController(controller, animated: true, completion: nil)
+        }))
+        
+        sheet.addAction(UIAlertAction(title: "Helpful? Rate us", style: .Default, handler: { (action) -> Void in
+           self.extensionContext?.openURL(NSURL(string: kAppStoreUrl)!, completionHandler: nil)
         }))
         
         sheet.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
@@ -238,6 +249,10 @@ class ActionViewController: UIViewController,
             self.selectedIndex = indexPath.row
             self.contentTableView.reloadData()
         } else {
+            let sections = self.contentSections!
+            let section = sections[indexPath.section]
+            let tuple = section[indexPath.row]
+            UIPasteboard.generalPasteboard().setValue(tuple.1, forPasteboardType: kUTTypePlainText as String)
             tableView.deselectRowAtIndexPath(indexPath, animated: true)
         }
     }

@@ -280,6 +280,7 @@ extension String {
         "street": "Street Address",
         "jurisdictionST": "Inc. State/Province",
         "jurisdictionC": "Inc. Country",
+        "jurisdictionL": "Inc. Locality",
         "postalCode": "Postal Code",
         "serialNumber": "Serial Number",
         "rsaEncryption": "RSA Encryption",
