@@ -50,6 +50,24 @@ class ActionViewController: UIViewController,
         }
     }
     
+    private func updateStatistics(host: String) {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        var stats = defaults.integerForKey(kStatisticsKey)
+        stats += 1
+        if !defaults.boolForKey(kRatingKey) {
+            if stats >= 2 {
+                let alert = UIAlertController(title: "Rate US", message: "You have inspected \(stats) sites. :)", preferredStyle: .Alert)
+                alert.addAction(UIAlertAction(title: "Next Time", style: .Default, handler: nil))
+                alert.addAction((UIAlertAction(title: "Sure", style: .Default, handler: { (action) -> Void in
+                    self.openAppStoreUrl()
+                })))
+                self.presentViewController(alert, animated: true, completion: nil)
+                defaults.setBool(true, forKey: kRatingKey)
+            }
+        }
+        defaults.setInteger(stats, forKey: kStatisticsKey)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -88,8 +106,11 @@ class ActionViewController: UIViewController,
                         if certs.count > 0 {
                             self.certificates = certs
                             self.selectedIndex = certs.count - 1
+                            
+                            self.updateStatistics((url?.host)!)
                         }
                     })
+                    
                     WOT.query((url?.host)!) { result in
                         print(result)
                         switch result {
@@ -167,10 +188,6 @@ class ActionViewController: UIViewController,
             controller.setSubject("Inspect Feedback")
             controller.mailComposeDelegate = self
             self.presentViewController(controller, animated: true, completion: nil)
-        }))
-        
-        sheet.addAction(UIAlertAction(title: "Helpful? Rate US", style: .Default, handler: { (action) -> Void in
-           self.extensionContext?.openURL(NSURL(string: kAppStoreUrl)!, completionHandler: nil)
         }))
         
         sheet.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
@@ -312,5 +329,17 @@ class ActionViewController: UIViewController,
         textView.attributedText = string
         textView.sizeToFit()
         return textView
+    }
+    
+    private func openAppStoreUrl() {
+        if let url = NSURL(string: kAppStoreUrl) {
+            var responder = self as UIResponder?
+            while let r = responder {
+                if r.respondsToSelector(Selector("openURL:")) {
+                    r.performSelector(Selector("openURL:"), withObject: url)
+                }
+                responder = r.nextResponder()
+            }
+        }
     }
 }

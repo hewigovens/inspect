@@ -72,22 +72,32 @@
     return keysize;
 }
 
-+ (nonnull NSArray<NSString *> *)subjectAltNamesOfCert:(nonnull X509*)cert
++ (nonnull NSArray<NSDictionary *> *)subjectAltNamesOfCert:(nonnull X509*)cert
 {
     NSMutableArray *list = [NSMutableArray new];
     GENERAL_NAMES* subjectAltNames = (GENERAL_NAMES*)X509_get_ext_d2i(cert, NID_subject_alt_name, NULL, NULL);
     for (int i = 0; i < sk_GENERAL_NAME_num(subjectAltNames); i++) {
         GENERAL_NAME* gen = sk_GENERAL_NAME_value(subjectAltNames, i);
+        NSString *typeString = @"";
+        if (gen->type == GEN_URI) {
+            typeString = @"URL";
+        } else if (gen->type == GEN_DNS) {
+            typeString = @"DNS Name";
+        } else if (gen->type == GEN_EMAIL) {
+            typeString = @"Email";
+        } else if (gen->type == GEN_IPADD) {
+            typeString = @"IP Address";
+        }
         if (gen->type == GEN_URI || gen->type == GEN_DNS || gen->type == GEN_EMAIL) {
             ASN1_IA5STRING *asn1_str = gen->d.uniformResourceIdentifier;
-            NSString *san = [NSString stringWithUTF8String:(char*)ASN1_STRING_data(asn1_str)/*ASN1_STRING_length(asn1_str)*/];
-            [list addObject:san];
+            NSString *san = [NSString stringWithUTF8String:(char*)ASN1_STRING_data(asn1_str)];
+            [list addObject:@{@"key": typeString, @"value": san}];
         }
         else if (gen->type == GEN_IPADD) {
             unsigned char *p = gen->d.ip->data;
             if(gen->d.ip->length == 4) {
                 NSString *string = [NSString stringWithFormat:@"%d.%d.%d.%d", p[0], p[1], p[2], p[3]];
-                [list addObject:string];
+                [list addObject:@{@"key": typeString, @"value": string}];
             }
         }
     }

@@ -9,4 +9,6 @@
 import Foundation
 
 let kHockeyAppId = "399c05d7126848fabac6f9e2341880f8"
-let kAppStoreUrl = ""
+let kAppStoreUrl = "itms://itunes.apple.com/us/app/inspect-view-export-certificate/id1074957486mt=8"
+let kRatingKey = "Rating"
+let kStatisticsKey = "Statistics"

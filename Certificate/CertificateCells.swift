@@ -128,11 +128,7 @@ extension X509Certificate {
         
         if self.subjectAltNames.count > 0 {
             sectionNames.append(.SubjectAltNames)
-            var datas: [(String, AnyObject)] = []
-            for index in 0..<self.subjectAltNames.count {
-                datas.append(("No.\(index) Alt Name", self.subjectAltNames[index]))
-            }
-            sectionDatas.append(datas)
+            sectionDatas.append(self.subjectAltNames)
         }
         
         return (sectionDatas, sectionNames)

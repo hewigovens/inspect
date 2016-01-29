@@ -42,7 +42,7 @@ public struct X509Certificate {
     public var notValidAfter = ""
     public var isCA = false
     
-    public var subjectAltNames: [String] = []
+    public var subjectAltNames: [(String, AnyObject)] = []
     public var extensions: [(String, AnyObject)] = []
     
     private var once = dispatch_once_t()
@@ -84,7 +84,10 @@ public struct X509Certificate {
         self.pubKeySize = X509Helper.sizeOfPubKey(pkey)
         self.pubKeyECCurveName = X509Helper.ECCurveNameOfPubKey(pkey)
         
-        self.subjectAltNames = X509Helper.subjectAltNamesOfCert(cert)
+        let generalNames = X509Helper.subjectAltNamesOfCert(cert)
+        for dict in generalNames {
+            self.subjectAltNames.append((dict["key"] as! String, dict["value"]!))
+        }
 
         self.notValidBefore = X509Helper.getNotBefore(cert)
         self.notValidAfter = X509Helper.getNotAfter(cert)
@@ -258,10 +261,6 @@ extension X509Helper {
             string += String(format: "%02x", char)
         }
         return string
-    }
-    
-    static func subjectAltNames(cert: UnsafePointer<x509_st>) -> [String] {
-        return []
     }
 }
 
