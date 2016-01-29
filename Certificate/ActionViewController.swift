@@ -55,7 +55,7 @@ class ActionViewController: UIViewController,
         var stats = defaults.integerForKey(kStatisticsKey)
         stats += 1
         if !defaults.boolForKey(kRatingKey) {
-            if stats >= 2 {
+            if stats >= 5 {
                 let alert = UIAlertController(title: "Rate US", message: "You have inspected \(stats) sites. :)", preferredStyle: .Alert)
                 alert.addAction(UIAlertAction(title: "Next Time", style: .Default, handler: nil))
                 alert.addAction((UIAlertAction(title: "Sure", style: .Default, handler: { (action) -> Void in
