@@ -180,8 +180,11 @@ extension X509Helper {
                 let outFormatter = NSDateFormatter()
                 inFormatter.dateFormat = "MMM dd HH:mm:ss yyyy zzz"
                 outFormatter.dateFormat = "MM/dd/yy, hh:mm:ss a"
-                let date = inFormatter.dateFromString(string)
-                return outFormatter.stringFromDate(date!)
+                if let date = inFormatter.dateFromString(string) {
+                    return outFormatter.stringFromDate(date)
+                } else {
+                    return string
+                }
             }
         }
         return ""

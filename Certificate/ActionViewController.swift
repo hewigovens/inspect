@@ -24,7 +24,7 @@ class ActionViewController: UIViewController,
     @IBOutlet weak var contentTableView: UITableView!
     @IBOutlet weak var headerHeightConstraint: NSLayoutConstraint!
     
-    private var didSetupHockeySDK = false
+    private var didSetupModules = false
     private var contentSections: [[(String, AnyObject)]]?
     private var contentSectionNames: [CertificateInfoSection]?
     private var inspectingUrl: NSURL?
@@ -71,10 +71,11 @@ class ActionViewController: UIViewController,
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if !self.didSetupHockeySDK {
+        if !self.didSetupModules {
             BITHockeyManager.sharedHockeyManager().configureWithIdentifier(kHockeyAppId)
             BITHockeyManager.sharedHockeyManager().startManager()
-            self.didSetupHockeySDK = true
+            
+            self.didSetupModules = true
         }
         
         self.navItem?.title = "Inspect - Certificate"

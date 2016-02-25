@@ -20,6 +20,20 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>Fabric</key>
+	<dict>
+		<key>APIKey</key>
+		<string>ffd1a21a45423d2959636c52dc02535a8fad1b60</string>
+		<key>Kits</key>
+		<array>
+			<dict>
+				<key>KitInfo</key>
+				<dict/>
+				<key>KitName</key>
+				<string>Answers</string>
+			</dict>
+		</array>
+	</dict>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSRequiresIPhoneOS</key>
