@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BB0266D41C7F486B00D2B0FF /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB0266D21C7F486B00D2B0FF /* HockeySDK.framework */; };
+		BB0266D51C7F486B00D2B0FF /* HockeySDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BB0266D31C7F486B00D2B0FF /* HockeySDKResources.bundle */; };
+		BB0266D61C7F487100D2B0FF /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB0266D21C7F486B00D2B0FF /* HockeySDK.framework */; };
+		BB0266D71C7F487500D2B0FF /* HockeySDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BB0266D31C7F486B00D2B0FF /* HockeySDKResources.bundle */; };
 		BB0E298D1C4D1E7600DA2B9A /* ZipZap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB2C5B401C47E85E00911EA4 /* ZipZap.framework */; };
 		BB1773BE1C4280BD001AAB80 /* X509Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = BBBEA31A1C414B6000F1C3EE /* X509Helper.m */; };
 		BB1773BF1C4280BD001AAB80 /* X509.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB8671C397BF200219411 /* X509.swift */; };
@@ -25,8 +29,6 @@
 		BB30DEA21C7F407A00AE0A39 /* Answers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB30DEA01C7F407A00AE0A39 /* Answers.framework */; };
 		BB30DEA31C7F414400AE0A39 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB30DE9F1C7F407A00AE0A39 /* Fabric.framework */; };
 		BB30DEA41C7F414800AE0A39 /* Answers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB30DEA01C7F407A00AE0A39 /* Answers.framework */; };
-		BB3911141C46813600330E1A /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB3911111C46813600330E1A /* HockeySDK.framework */; };
-		BB3911151C46813600330E1A /* HockeySDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BB3911131C46813600330E1A /* HockeySDKResources.bundle */; };
 		BB46EB751C3046B300E156E9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB741C3046B300E156E9 /* AppDelegate.swift */; };
 		BB46EB771C3046B300E156E9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB761C3046B300E156E9 /* ViewController.swift */; };
 		BB46EB7A1C3046B300E156E9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB781C3046B300E156E9 /* Main.storyboard */; };
@@ -45,8 +47,6 @@
 		BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */; };
 		BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 		BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
-		BBA1C2531C4F1AB3009EECCC /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB3911111C46813600330E1A /* HockeySDK.framework */; };
-		BBA1C2541C4F1AE2009EECCC /* HockeySDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BB3911131C46813600330E1A /* HockeySDKResources.bundle */; };
 		BBA1C2561C507B34009EECCC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA1C2551C507B34009EECCC /* Constants.swift */; };
 		BBA1C2571C507B34009EECCC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA1C2551C507B34009EECCC /* Constants.swift */; };
 		BBBEA3151C409A8E00F1C3EE /* mac_dev.cer in Resources */ = {isa = PBXBuildFile; fileRef = BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */; };
@@ -98,6 +98,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BB0266D21C7F486B00D2B0FF /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = "Dependencies/HockeySDK-iOS/HockeySDK.embeddedframework/HockeySDK.framework"; sourceTree = "<group>"; };
+		BB0266D31C7F486B00D2B0FF /* HockeySDKResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = HockeySDKResources.bundle; path = "Dependencies/HockeySDK-iOS/HockeySDK.embeddedframework/HockeySDK.framework/Versions/A/Resources/HockeySDKResources.bundle"; sourceTree = "<group>"; };
 		BB1773C41C428227001AAB80 /* SessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SessionManager.swift; path = Utils/SessionManager.swift; sourceTree = "<group>"; };
 		BB2C5B3B1C469BFE00911EA4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		BB2C5B3D1C469C3200911EA4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -105,10 +107,8 @@
 		BB2C5B421C47EBCD00911EA4 /* Inspect.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Inspect.entitlements; sourceTree = "<group>"; };
 		BB2C5B431C47EBEF00911EA4 /* Certificate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Certificate.entitlements; sourceTree = "<group>"; };
 		BB2EB67C1C4930B90057929C /* INHUD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = INHUD.swift; path = Utils/INHUD.swift; sourceTree = "<group>"; };
-		BB30DE9F1C7F407A00AE0A39 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
-		BB30DEA01C7F407A00AE0A39 /* Answers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Answers.framework; sourceTree = "<group>"; };
-		BB3911111C46813600330E1A /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HockeySDK.framework; sourceTree = "<group>"; };
-		BB3911131C46813600330E1A /* HockeySDKResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = HockeySDKResources.bundle; sourceTree = "<group>"; };
+		BB30DE9F1C7F407A00AE0A39 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Dependencies/Fabric.framework; sourceTree = "<group>"; };
+		BB30DEA01C7F407A00AE0A39 /* Answers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Answers.framework; path = Dependencies/Answers.framework; sourceTree = "<group>"; };
 		BB46EB711C3046B300E156E9 /* Inspect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inspect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB46EB741C3046B300E156E9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BB46EB761C3046B300E156E9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -145,10 +145,10 @@
 				BB46EC761C32C0BD00E156E9 /* Alamofire.framework in Frameworks */,
 				BB30DEA21C7F407A00AE0A39 /* Answers.framework in Frameworks */,
 				BB46EC771C32C0BE00E156E9 /* SwiftyJSON.framework in Frameworks */,
-				BB3911141C46813600330E1A /* HockeySDK.framework in Frameworks */,
 				BB2C5B411C47E85E00911EA4 /* ZipZap.framework in Frameworks */,
 				BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */,
 				BB30DEA11C7F407A00AE0A39 /* Fabric.framework in Frameworks */,
+				BB0266D41C7F486B00D2B0FF /* HockeySDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -167,9 +167,9 @@
 			files = (
 				BB30DEA41C7F414800AE0A39 /* Answers.framework in Frameworks */,
 				BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */,
+				BB0266D61C7F487100D2B0FF /* HockeySDK.framework in Frameworks */,
 				BB30DEA31C7F414400AE0A39 /* Fabric.framework in Frameworks */,
 				BB46EC741C32C0AF00E156E9 /* Alamofire.framework in Frameworks */,
-				BBA1C2531C4F1AB3009EECCC /* HockeySDK.framework in Frameworks */,
 				BB46EC751C32C0AF00E156E9 /* SwiftyJSON.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -177,24 +177,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		BB3911101C46813600330E1A /* HockeySDK.embeddedframework */ = {
-			isa = PBXGroup;
-			children = (
-				BB3911111C46813600330E1A /* HockeySDK.framework */,
-				BB3911121C46813600330E1A /* Resources */,
-			);
-			name = HockeySDK.embeddedframework;
-			path = "HockeySDK-iOS/HockeySDK.embeddedframework";
-			sourceTree = "<group>";
-		};
-		BB3911121C46813600330E1A /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				BB3911131C46813600330E1A /* HockeySDKResources.bundle */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
 		BB46EB681C3046B300E156E9 = {
 			isa = PBXGroup;
 			children = (
@@ -267,10 +249,11 @@
 		BB46EC781C32C8EF00E156E9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BB0266D21C7F486B00D2B0FF /* HockeySDK.framework */,
+				BB0266D31C7F486B00D2B0FF /* HockeySDKResources.bundle */,
 				BB30DE9F1C7F407A00AE0A39 /* Fabric.framework */,
 				BB30DEA01C7F407A00AE0A39 /* Answers.framework */,
 				BB2C5B401C47E85E00911EA4 /* ZipZap.framework */,
-				BB3911101C46813600330E1A /* HockeySDK.embeddedframework */,
 				BB5DB8641C3974D100219411 /* openssl.framework */,
 				BB46EC721C32C0AF00E156E9 /* Alamofire.framework */,
 				BB46EC731C32C0AF00E156E9 /* SwiftyJSON.framework */,
@@ -359,7 +342,6 @@
 				BB46EB941C30492B00E156E9 /* Sources */,
 				BB46EB951C30492B00E156E9 /* Frameworks */,
 				BB46EB961C30492B00E156E9 /* Resources */,
-				BB30DEA51C7F41AB00AE0A39 /* Run Fabric */,
 			);
 			buildRules = (
 			);
@@ -430,7 +412,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BB46EB7F1C3046B300E156E9 /* LaunchScreen.storyboard in Resources */,
-				BB3911151C46813600330E1A /* HockeySDKResources.bundle in Resources */,
+				BB0266D51C7F486B00D2B0FF /* HockeySDKResources.bundle in Resources */,
 				BB2C5B3E1C469C3200911EA4 /* Assets.xcassets in Resources */,
 				BB46EB7A1C3046B300E156E9 /* Main.storyboard in Resources */,
 			);
@@ -448,9 +430,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BBA1C2541C4F1AE2009EECCC /* HockeySDKResources.bundle in Resources */,
 				BB2C5B3C1C469BFE00911EA4 /* Images.xcassets in Resources */,
 				BB46EB9E1C30492B00E156E9 /* MainInterface.storyboard in Resources */,
+				BB0266D71C7F487500D2B0FF /* HockeySDKResources.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -469,21 +451,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./Fabric.framework/run ffd1a21a45423d2959636c52dc02535a8fad1b60 dd1dfceaa343fa98ef49d12fa7f022c135640990742116059b7d05091289834f";
-		};
-		BB30DEA51C7F41AB00AE0A39 /* Run Fabric */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Run Fabric";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "./Fabric.framework/run ffd1a21a45423d2959636c52dc02535a8fad1b60 dd1dfceaa343fa98ef49d12fa7f022c135640990742116059b7d05091289834f";
+			shellScript = "./Dependencies/Fabric.framework/run ffd1a21a45423d2959636c52dc02535a8fad1b60 dd1dfceaa343fa98ef49d12fa7f022c135640990742116059b7d05091289834f";
 		};
 		BB3911081C46810400330E1A /* Run HockeyApp */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -684,6 +652,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)/HockeySDK-iOS/HockeySDK.embeddedframework",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Dependencies/HockeySDK-iOS/HockeySDK.embeddedframework",
 				);
 				INFOPLIST_FILE = Inspect/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -707,6 +676,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)/HockeySDK-iOS/HockeySDK.embeddedframework",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Dependencies/HockeySDK-iOS/HockeySDK.embeddedframework",
 				);
 				INFOPLIST_FILE = Inspect/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -764,6 +734,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)/HockeySDK-iOS/HockeySDK.embeddedframework",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Dependencies/HockeySDK-iOS/HockeySDK.embeddedframework",
 				);
 				INFOPLIST_FILE = Certificate/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
@@ -788,6 +759,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)/HockeySDK-iOS/HockeySDK.embeddedframework",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Dependencies/HockeySDK-iOS/HockeySDK.embeddedframework",
 				);
 				INFOPLIST_FILE = Certificate/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
