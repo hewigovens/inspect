@@ -24,10 +24,10 @@ class ActionViewController: UIViewController,
     @IBOutlet weak var contentTableView: UITableView!
     @IBOutlet weak var headerHeightConstraint: NSLayoutConstraint!
     
-    private var didSetupModules = false
     private var contentSections: [[(String, AnyObject)]]?
     private var contentSectionNames: [CertificateInfoSection]?
     private var inspectingUrl: NSURL?
+    private var targetHost = ""
     private var selectedCertInfo: [[String: String]] = []
     private var x509Certs: [X509Certificate] = []
     private var certificates: [(SecCertificate, SecTrustResultType)] = [] {
@@ -71,11 +71,10 @@ class ActionViewController: UIViewController,
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if !self.didSetupModules {
+        var once: dispatch_once_t = 0
+        dispatch_once(&once) { () -> Void in
             BITHockeyManager.sharedHockeyManager().configureWithIdentifier(kHockeyAppId)
             BITHockeyManager.sharedHockeyManager().startManager()
-            
-            self.didSetupModules = true
         }
         
         self.navItem?.title = "Inspect - Certificate"
@@ -98,6 +97,7 @@ class ActionViewController: UIViewController,
                 self.inspectingUrl = url
                 print("get url \(url), scheme = \(url?.scheme)");
                 if url?.scheme == ("https") {
+                    self.targetHost = (url?.host)!
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         INHUD.sharedHUD.contentView = INHUDTextView(text: "Fetching Certificates…")
                         INHUD.sharedHUD.showInView(self.view)
@@ -108,11 +108,11 @@ class ActionViewController: UIViewController,
                             self.certificates = certs
                             self.selectedIndex = certs.count - 1
                             
-                            self.updateStatistics((url?.host)!)
+                            self.updateStatistics(self.targetHost)
                         }
                     })
                     
-                    WOT.query((url?.host)!) { result in
+                    WOT.query(self.targetHost) { result in
                         print(result)
                         switch result {
                         case .Success(let record):
@@ -160,27 +160,9 @@ class ActionViewController: UIViewController,
             }
             let cert = self.certificates[self.selectedIndex!]
             let data = SecCertificateCopyData(cert.0) as NSData
-            let paths = NSSearchPathForDirectoriesInDomains(.CachesDirectory, .UserDomainMask, true)
-            if let path = paths.first {
-                let file_name = "cert\(self.selectedIndex!).cer";
-                let file_zip_name = "/cert\(self.selectedIndex!).zip"
-                let cert_zip = NSURL(fileURLWithPath: path + file_zip_name);
-                print(cert_zip)
-                do {
-                    let archive = try ZZArchive(URL: cert_zip, options: [ZZOpenOptionsCreateIfMissingKey: NSNumber(bool: true)])
-                    let entry = ZZArchiveEntry(fileName: file_name, compress: true, dataBlock: { (_) -> NSData? in
-                        return data;
-                    })
-                    try archive.updateEntries([entry])
-                    
-                    let items = [cert_zip]
-                    let vc = UIActivityViewController(activityItems: items, applicationActivities: nil)
-                    self.presentViewController(vc, animated: true, completion: nil)
-                    
-                } catch (let error as NSError) {
-                    print("zip cert failed \(error.description)")
-                }
-            }
+            let exportItem = ExportItemSource(data: data, host: self.targetHost, index: self.selectedIndex!)
+            let vc = UIActivityViewController(activityItems: [exportItem], applicationActivities: nil)
+            self.presentViewController(vc, animated: true, completion: nil)
         }))
         
         sheet.addAction(UIAlertAction(title: "Feedback", style: .Default, handler: { (action) -> Void in
