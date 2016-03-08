@@ -30,6 +30,8 @@
 		BB30DEA31C7F414400AE0A39 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB30DE9F1C7F407A00AE0A39 /* Fabric.framework */; };
 		BB30DEA41C7F414800AE0A39 /* Answers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB30DEA01C7F407A00AE0A39 /* Answers.framework */; };
 		BB3CBDAD1C82A68A00DA5F63 /* ExportItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB3CBDAC1C82A68A00DA5F63 /* ExportItemSource.swift */; };
+		BB3CBDAF1C8F11F900DA5F63 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB3CBDAE1C8F11F900DA5F63 /* StoreKit.framework */; };
+		BB3CBDB11C8F16B400DA5F63 /* PurchaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB3CBDB01C8F16B400DA5F63 /* PurchaseHelper.swift */; };
 		BB46EB751C3046B300E156E9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB741C3046B300E156E9 /* AppDelegate.swift */; };
 		BB46EB771C3046B300E156E9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB761C3046B300E156E9 /* ViewController.swift */; };
 		BB46EB7A1C3046B300E156E9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB781C3046B300E156E9 /* Main.storyboard */; };
@@ -111,6 +113,8 @@
 		BB30DE9F1C7F407A00AE0A39 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Dependencies/Fabric.framework; sourceTree = "<group>"; };
 		BB30DEA01C7F407A00AE0A39 /* Answers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Answers.framework; path = Dependencies/Answers.framework; sourceTree = "<group>"; };
 		BB3CBDAC1C82A68A00DA5F63 /* ExportItemSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExportItemSource.swift; sourceTree = "<group>"; };
+		BB3CBDAE1C8F11F900DA5F63 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		BB3CBDB01C8F16B400DA5F63 /* PurchaseHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PurchaseHelper.swift; sourceTree = "<group>"; };
 		BB46EB711C3046B300E156E9 /* Inspect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inspect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB46EB741C3046B300E156E9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BB46EB761C3046B300E156E9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -147,6 +151,7 @@
 				BB46EC761C32C0BD00E156E9 /* Alamofire.framework in Frameworks */,
 				BB30DEA21C7F407A00AE0A39 /* Answers.framework in Frameworks */,
 				BB46EC771C32C0BE00E156E9 /* SwiftyJSON.framework in Frameworks */,
+				BB3CBDAF1C8F11F900DA5F63 /* StoreKit.framework in Frameworks */,
 				BB2C5B411C47E85E00911EA4 /* ZipZap.framework in Frameworks */,
 				BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */,
 				BB30DEA11C7F407A00AE0A39 /* Fabric.framework in Frameworks */,
@@ -237,6 +242,7 @@
 				BB46EB9C1C30492B00E156E9 /* MainInterface.storyboard */,
 				BB46EB9F1C30492B00E156E9 /* Info.plist */,
 				BB2C5B3B1C469BFE00911EA4 /* Images.xcassets */,
+				BB3CBDB01C8F16B400DA5F63 /* PurchaseHelper.swift */,
 			);
 			path = Certificate;
 			sourceTree = "<group>";
@@ -252,6 +258,7 @@
 		BB46EC781C32C8EF00E156E9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BB3CBDAE1C8F11F900DA5F63 /* StoreKit.framework */,
 				BB0266D21C7F486B00D2B0FF /* HockeySDK.framework */,
 				BB0266D31C7F486B00D2B0FF /* HockeySDKResources.bundle */,
 				BB30DE9F1C7F407A00AE0A39 /* Fabric.framework */,
@@ -309,6 +316,7 @@
 				BB46EC791C32CE9E00E156E9 /* Copy Frameworks */,
 				BB3911081C46810400330E1A /* Run HockeyApp */,
 				BB30DE9E1C7F402E00AE0A39 /* Run Fabric */,
+				BB3CBDB21C8F21EF00DA5F63 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -345,6 +353,7 @@
 				BB46EB941C30492B00E156E9 /* Sources */,
 				BB46EB951C30492B00E156E9 /* Frameworks */,
 				BB46EB961C30492B00E156E9 /* Resources */,
+				BB3CBDB31C8F220000DA5F63 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -373,6 +382,9 @@
 								enabled = 1;
 							};
 							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.InAppPurchase = {
 								enabled = 1;
 							};
 							com.apple.Push = {
@@ -476,6 +488,32 @@
 			shellPath = /bin/sh;
 			shellScript = "FILE=\"${SRCROOT}/HockeySDK-iOS/BuildAgent\"\nif [ -f \"$FILE\" ]; then\n\"$FILE\"\nfi";
 		};
+		BB3CBDB21C8F21EF00DA5F63 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+		};
+		BB3CBDB31C8F220000DA5F63 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -511,6 +549,7 @@
 				BB3CBDAD1C82A68A00DA5F63 /* ExportItemSource.swift in Sources */,
 				BB1773C21C4280C6001AAB80 /* X509Helper.m in Sources */,
 				BB1773C31C4280C6001AAB80 /* X509.swift in Sources */,
+				BB3CBDB11C8F16B400DA5F63 /* PurchaseHelper.swift in Sources */,
 				BB46EB9B1C30492B00E156E9 /* ActionViewController.swift in Sources */,
 				BB2EB67D1C4930B90057929C /* INHUD.swift in Sources */,
 				BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */,

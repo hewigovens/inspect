@@ -1,0 +1,9 @@
+disabled_rules:
+  - line_length
+
+excluded:
+  - Carthage
+  - Pods
+  - fastlane
+
+force_cast: warning

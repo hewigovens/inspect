@@ -11,6 +11,7 @@ import MobileCoreServices
 import SafariServices
 import HockeySDK
 import MessageUI
+import StoreKit
 
 class ActionViewController: UIViewController,
                             UITableViewDelegate,
@@ -56,11 +57,16 @@ class ActionViewController: UIViewController,
         stats += 1
         if !defaults.boolForKey(kRatingKey) {
             if stats >= 5 {
-                let alert = UIAlertController(title: "Rate US", message: "You have inspected \(stats) sites. :)", preferredStyle: .Alert)
-                alert.addAction(UIAlertAction(title: "Next Time", style: .Default, handler: nil))
-                alert.addAction((UIAlertAction(title: "Sure", style: .Default, handler: { (action) -> Void in
+                let alert = UIAlertController(title: "Hooray", message: "You have inspected \(stats) sites. :)", preferredStyle: .Alert)
+                if SKPaymentQueue.canMakePayments() {
+                    alert.addAction(UIAlertAction(title: "Buy us a bear", style: .Default, handler: {(_) -> Void in
+                        self.makeDonation()
+                    }))
+                }
+                alert.addAction((UIAlertAction(title: "Rate us", style: .Default, handler: { (action) -> Void in
                     self.openAppStoreUrl()
                 })))
+                alert.addAction(UIAlertAction(title: "Next Time", style: .Default, handler: nil))
                 self.presentViewController(alert, animated: true, completion: nil)
                 defaults.setBool(true, forKey: kRatingKey)
             }
@@ -324,5 +330,9 @@ class ActionViewController: UIViewController,
                 responder = r.nextResponder()
             }
         }
+    }
+    
+    private func makeDonation() {
+        PurchaseHelper.makeDonation()
     }
 }
