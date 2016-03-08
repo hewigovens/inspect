@@ -18,13 +18,13 @@ class ActionViewController: UIViewController,
                             UITableViewDataSource,
                             UIActionSheetDelegate,
                             MFMailComposeViewControllerDelegate {
-    
+
     @IBOutlet internal weak var navItem: UINavigationItem!
     @IBOutlet weak var stackView: UIStackView!
     @IBOutlet weak var headerTableView: UITableView!
     @IBOutlet weak var contentTableView: UITableView!
     @IBOutlet weak var headerHeightConstraint: NSLayoutConstraint!
-    
+
     private var contentSections: [[(String, AnyObject)]]?
     private var contentSectionNames: [CertificateInfoSection]?
     private var inspectingUrl: NSURL?
@@ -50,7 +50,7 @@ class ActionViewController: UIViewController,
             self.contentSectionNames = tuples.1
         }
     }
-    
+
     private func updateStatistics(host: String) {
         let defaults = NSUserDefaults.standardUserDefaults()
         var stats = defaults.integerForKey(kStatisticsKey)
@@ -73,16 +73,16 @@ class ActionViewController: UIViewController,
         }
         defaults.setInteger(stats, forKey: kStatisticsKey)
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         var once: dispatch_once_t = 0
         dispatch_once(&once) { () -> Void in
             BITHockeyManager.sharedHockeyManager().configureWithIdentifier(kHockeyAppId)
             BITHockeyManager.sharedHockeyManager().startManager()
         }
-        
+
         self.navItem?.title = "Inspect - Certificate"
         var validItemProvider: NSItemProvider?
         nestedLoop: for item: AnyObject in self.extensionContext!.inputItems {
@@ -96,12 +96,12 @@ class ActionViewController: UIViewController,
             }
         }
         guard validItemProvider != nil else { return self.showError("no valid item privoder!") }
-        
+
         self.configureTableViews()
         validItemProvider!.loadItemForTypeIdentifier(kUTTypeURL as String, options: nil, completionHandler: { (item, error) -> Void in
             if let url = item as? NSURL? {
                 self.inspectingUrl = url
-                print("get url \(url), scheme = \(url?.scheme)");
+                print("get url \(url), scheme = \(url?.scheme)")
                 if url?.scheme == ("https") {
                     self.targetHost = (url?.host)!
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
@@ -113,11 +113,11 @@ class ActionViewController: UIViewController,
                         if certs.count > 0 {
                             self.certificates = certs
                             self.selectedIndex = certs.count - 1
-                            
+
                             self.updateStatistics(self.targetHost)
                         }
                     })
-                    
+
                     WOT.query(self.targetHost) { result in
                         print(result)
                         switch result {
@@ -129,25 +129,25 @@ class ActionViewController: UIViewController,
                             #endif
                         }
                     }
-                    
+
                 } else {
                     self.showError("\(url!) seems not a https URL")
                 }
             } else {
                 self.showError("url is not valid NSURL object")
             }
-        });
+        })
     }
-    
+
     // MARK: Action
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-    
+
     @IBAction func done() {
         self.extensionContext!.completeRequestReturningItems(self.extensionContext!.inputItems, completionHandler: nil)
     }
-    
+
     @IBAction func share() {
         let sheet = UIAlertController(title: "More Options", message: nil, preferredStyle: .ActionSheet)
         sheet.addAction(UIAlertAction(title: "Scan in SSLLabs.com", style: .Default, handler: { (action) -> Void in
@@ -158,11 +158,11 @@ class ActionViewController: UIViewController,
                 }
             }
         }))
-        
+
         sheet.addAction(UIAlertAction(title: "Export Certificate", style: .Default, handler: { (action) -> Void in
-            
+
             if self.selectedIndex == nil {
-                self.selectedIndex = self.certificates.count - 1;
+                self.selectedIndex = self.certificates.count - 1
             }
             let cert = self.certificates[self.selectedIndex!]
             let data = SecCertificateCopyData(cert.0) as NSData
@@ -170,7 +170,7 @@ class ActionViewController: UIViewController,
             let vc = UIActivityViewController(activityItems: [exportItem], applicationActivities: nil)
             self.presentViewController(vc, animated: true, completion: nil)
         }))
-        
+
         sheet.addAction(UIAlertAction(title: "Feedback", style: .Default, handler: { (action) -> Void in
             let controller = MFMailComposeViewController()
             controller.setToRecipients(["support@fourplex.in"])
@@ -178,14 +178,14 @@ class ActionViewController: UIViewController,
             controller.mailComposeDelegate = self
             self.presentViewController(controller, animated: true, completion: nil)
         }))
-        
+
         sheet.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
-        
+
         self.presentViewController(sheet, animated: true, completion: nil)
     }
-    
+
     // MARK: UITableViewDelegate
-    
+
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         if tableView == self.headerTableView {
             let cert = self.certificates[indexPath.row]
@@ -196,11 +196,11 @@ class ActionViewController: UIViewController,
             return cell!
         } else {
             let cell = tableView.dequeueReusableCellWithIdentifier(CertificateInfoCell.reuseId) as? CertificateInfoCell
-            
+
             guard self.x509Certs.count > 0 else {
                 return cell!
             }
-            
+
             let sections = self.contentSections!
             let section = sections[indexPath.section]
             let tuple = section[indexPath.row]
@@ -225,7 +225,7 @@ class ActionViewController: UIViewController,
             }
         }
     }
-    
+
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         if tableView == self.headerTableView {
             return 1
@@ -233,7 +233,7 @@ class ActionViewController: UIViewController,
             return self.contentSectionNames?.count ?? 0
         }
     }
-    
+
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableView == self.headerTableView {
             return certificates.count
@@ -244,14 +244,14 @@ class ActionViewController: UIViewController,
             return 0
         }
     }
-    
+
     func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if tableView == self.contentTableView {
             return self.contentSectionNames?[section].rawValue ?? nil
         }
         return nil
     }
-    
+
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         if tableView == self.headerTableView {
             self.selectedIndex = indexPath.row
@@ -264,16 +264,16 @@ class ActionViewController: UIViewController,
             tableView.deselectRowAtIndexPath(indexPath, animated: true)
         }
     }
-    
+
     // MARK: MFMailComposeViewControllerDelegate
     func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
-    
+
     // MARK: Private funcs
-    
+
     private func configureTableViews() {
-        
+
         // Certificate Stack View
         self.headerTableView.bounces = false
         self.headerTableView.separatorStyle = .None
@@ -281,45 +281,45 @@ class ActionViewController: UIViewController,
         self.headerTableView.estimatedRowHeight = 44
         self.headerTableView.backgroundColor = UIColor.lightTextColor()
         self.headerTableView.hidden = true
-        
+
         self.contentTableView.estimatedRowHeight = 100
         self.contentTableView.rowHeight = UITableViewAutomaticDimension
         self.contentTableView.hidden = true
     }
-    
+
     private func showWOTRating(record: Record) {
         dispatch_async(dispatch_get_main_queue()) { () -> Void in
             self.navItem?.titleView = self.genTitleView(record)
         }
     }
-    
+
     private func showError(errorMessage: String) {
         print("error \(errorMessage)")
-        
+
         let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .Alert)
         alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
         dispatch_async(dispatch_get_main_queue()) { () -> Void in
             self.presentViewController(alert, animated: true, completion: nil)
         }
     }
-    
+
     private func showError(error: NSError) {
         return self.showError(error.description)
     }
-    
+
     private func genTitleView(record: Record) -> UITextView {
         let textView = UITextView()
         textView.backgroundColor = UIColor.clearColor()
         let string = NSMutableAttributedString(string: "WOT: \(record.reputation.rawValue) ", attributes: [NSFontAttributeName: UIFont.systemFontOfSize(17)])
         let attachment = NSTextAttachment()
         attachment.image = UIImage(named: "WOT\(record.reputation.rawValue)")
-        attachment.bounds = CGRectMake(4, -4, 20, 20)
+        attachment.bounds = CGRect(x: 4, y: -4, width: 20, height: 20)
         string.appendAttributedString(NSAttributedString(attachment: attachment))
         textView.attributedText = string
         textView.sizeToFit()
         return textView
     }
-    
+
     private func openAppStoreUrl() {
         if let url = NSURL(string: kAppStoreUrl) {
             var responder = self as UIResponder?
@@ -331,7 +331,7 @@ class ActionViewController: UIViewController,
             }
         }
     }
-    
+
     private func makeDonation() {
         PurchaseHelper.makeDonation()
     }

@@ -15,16 +15,15 @@ import Answers
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    
+
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        
+
         BITHockeyManager.sharedHockeyManager().configureWithIdentifier(kHockeyAppId)
         BITHockeyManager.sharedHockeyManager().startManager()
         BITHockeyManager.sharedHockeyManager().authenticator.authenticateInstallation()
-        
+
         Fabric.with([Answers.self])
-        
+
         return true
     }
 }
-

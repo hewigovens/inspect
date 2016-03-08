@@ -15,21 +15,21 @@ public class SessionManager: NSObject, NSURLSessionTaskDelegate {
     private var session: NSURLSession?
     private var requestQueue = NSOperationQueue()
     private var callbacks = [NSURL: fetchCertsHandler]()
-    
+
     override init() {
         super.init()
         self.session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: self.requestQueue)
     }
-    
+
     public func fetchCertsForUrl(url: NSURL, completion: fetchCertsHandler) -> Void {
         let task = self.session?.dataTaskWithURL(url)
         guard task != nil else { return completion([]) }
         self.callbacks[url] = completion
         task!.resume()
     }
-    
+
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
-        
+
         let certs = self.certificateDataForTrust(challenge.protectionSpace.serverTrust!)
         if let url = task.originalRequest?.URL {
             if let callback = self.callbacks[url] {
@@ -39,14 +39,14 @@ public class SessionManager: NSObject, NSURLSessionTaskDelegate {
                 }
             }
         }
-        completionHandler(.CancelAuthenticationChallenge, challenge.proposedCredential);
+        completionHandler(.CancelAuthenticationChallenge, challenge.proposedCredential)
     }
 
     private func certificateDataForTrust(trust: SecTrust) -> [(SecCertificate, SecTrustResultType)] {
         var certs: [(SecCertificate, SecTrustResultType)] = []
         for index in 0..<SecTrustGetCertificateCount(trust) {
             if let cert = SecTrustGetCertificateAtIndex(trust, index) {
-                
+
                 var result = UInt32(kSecTrustResultUnspecified)
                 if SecTrustGetTrustResult(trust, &result) == 0 {
                     certs.append((cert, result))
@@ -55,6 +55,6 @@ public class SessionManager: NSObject, NSURLSessionTaskDelegate {
                 }
             }
         }
-        return certs.reverse();
+        return certs.reverse()
     }
 }

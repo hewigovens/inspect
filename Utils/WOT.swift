@@ -18,14 +18,14 @@ public struct Record {
         case Poor
         case VeryPoor
     }
-    
+
     public enum Category: String {
         case Negative
         case Questionable
         case Neutral
         case Positive
     }
-    
+
     var target: String
     var score: Int
     var code: Int
@@ -65,21 +65,21 @@ public enum QueryResult {
 }
 
 public class WOT: NSObject {
-    
-    static func query(host: String, completion:(QueryResult) -> Void) -> Void {
+
+    static func query(host: String, completion: (QueryResult) -> Void) -> Void {
         let key = "e0d9e530f85c4c851e2638b898d4219321c01455"
         let apiUrl = "http://api.mywot.com/0.4/public_link_json2"
         let parameters = [
             "hosts": String(format: "%@/", host),
             "key": key
-        ];
+        ]
         Alamofire.request(.GET, apiUrl, parameters: parameters).responseJSON { response in
             switch response.result {
             case .Success:
               if let value = response.result.value {
                 let json = JSON(value)
                 // todo category check
-                let array = json[host]["0"].array;
+                let array = json[host]["0"].array
                 if let score = array?.first?.int {
                   let record = Record(target: host, score: score, code: 300)
                   completion(QueryResult.Success(record))

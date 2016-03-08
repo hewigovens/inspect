@@ -11,19 +11,19 @@ import UIKit
 // MARK: CertificateStackCell used in header view
 public class CertificateStackCell: UITableViewCell {
     static let reuseId = "kCertificateStackCell"
-    
+
     @IBOutlet public weak var indicatorLabel: UILabel!
     @IBOutlet public weak var iconView: UIImageView!
     @IBOutlet public weak var titleLabel: UILabel!
     @IBOutlet public weak var indicatorLeading: NSLayoutConstraint!
-    
+
     public var trustResult: SecTrustResultType = UInt32(kSecTrustResultUnspecified) {
         didSet {
             if trustResult == UInt32(kSecTrustResultProceed) ||
                trustResult == UInt32(kSecTrustResultUnspecified) {
                 return
             }
-            
+
             self.suffix = "_Invalid"
         }
     }
@@ -43,7 +43,7 @@ public class CertificateStackCell: UITableViewCell {
             self.titleLabel?.numberOfLines = 0
         }
     }
-    
+
     private var suffix = ""
 }
 
@@ -51,14 +51,14 @@ public class CertificateStackCell: UITableViewCell {
 
 public class CertificateInfoCell: UITableViewCell {
     static let reuseId = "kCertificateInfoCell"
-    
+
     @IBOutlet public weak var titleLabel: UILabel!
     @IBOutlet public weak var detailLabel: UILabel!
 }
 
 public class CertificateInfoCell2: UITableViewCell {
     static let reuseId = "kCertificateInfoCell2"
-    
+
     @IBOutlet public weak var titleLabel: UILabel!
     @IBOutlet public weak var longTextLabel: UILabel!
 }
@@ -79,13 +79,13 @@ extension X509Certificate {
     public func displaySections() -> ([[(String, AnyObject)]], [CertificateInfoSection]) {
         var sectionDatas: [[(String, AnyObject)]] = []
         var sectionNames: [CertificateInfoSection] = []
-        
+
         sectionNames.append(.Subject)
         sectionDatas.append(self.subjectTuples)
 
         sectionNames.append(.Issuer)
         sectionDatas.append(self.issuerTuples)
-        
+
         sectionNames.append(.Misc)
         sectionDatas.append([
             ("Serial Number", self.serialNumber.fingerprintRepresentation()),
@@ -93,7 +93,7 @@ extension X509Certificate {
             ("Not Valid Before", self.notValidBefore),
             ("Not Valid After", self.notValidAfter),
         ])
-        
+
         sectionNames.append(.Algorithm)
         var datas: [(String, AnyObject)] = [
             ("Signature Algorithm", self.signatureAlgorithm),
@@ -109,7 +109,7 @@ extension X509Certificate {
         sectionDatas.append([
             ("Signature", self.signature.fingerprintRepresentation()),
         ])
-        
+
         sectionNames.append(.PubKeyInfo)
         sectionDatas.append([
             ("Pub Key", self.pubKey.fingerprintRepresentation()),
@@ -120,17 +120,17 @@ extension X509Certificate {
             ("md5", self.md5.fingerprintRepresentation()),
             ("sha1", self.sha1.fingerprintRepresentation())
         ])
-        
+
         if self.extensions.count > 0 {
             sectionNames.append(.Extensions)
             sectionDatas.append(self.extensions)
         }
-        
+
         if self.subjectAltNames.count > 0 {
             sectionNames.append(.SubjectAltNames)
             sectionDatas.append(self.subjectAltNames)
         }
-        
+
         return (sectionDatas, sectionNames)
     }
 }

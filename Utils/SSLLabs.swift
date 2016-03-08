@@ -15,7 +15,7 @@ public class SSLLabs {
         let url = SSLLabs.testUrl.stringByAppendingString(host)
         return NSURL(string: url)
     }
-    
+
     //todo analyze API
     //https://api.ssllabs.com/api/v2/analyze?host=kyfw.12306.cn
 
