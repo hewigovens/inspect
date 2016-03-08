@@ -99,43 +99,7 @@ class ActionViewController: UIViewController,
 
         self.configureTableViews()
         validItemProvider!.loadItemForTypeIdentifier(kUTTypeURL as String, options: nil, completionHandler: { (item, error) -> Void in
-            if let url = item as? NSURL? {
-                self.inspectingUrl = url
-                print("get url \(url), scheme = \(url?.scheme)")
-                if url?.scheme == ("https") {
-                    self.targetHost = (url?.host)!
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        INHUD.sharedHUD.contentView = INHUDTextView(text: "Fetching Certificates…")
-                        INHUD.sharedHUD.showInView(self.view)
-                    })
-                    SessionManager.sharedManager.fetchCertsForUrl(url!, completion: { (certs) -> Void in
-                        INHUD.sharedHUD.hide()
-                        if certs.count > 0 {
-                            self.certificates = certs
-                            self.selectedIndex = certs.count - 1
-
-                            self.updateStatistics(self.targetHost)
-                        }
-                    })
-
-                    WOT.query(self.targetHost) { result in
-                        print(result)
-                        switch result {
-                        case .Success(let record):
-                            self.showWOTRating(record)
-                        case .Failure(let error):
-                            #if DEBUG
-                            self.showError(error)
-                            #endif
-                        }
-                    }
-
-                } else {
-                    self.showError("\(url!) seems not a https URL")
-                }
-            } else {
-                self.showError("url is not valid NSURL object")
-            }
+            self.parse(item, error: error)
         })
     }
 
@@ -144,6 +108,42 @@ class ActionViewController: UIViewController,
         super.didReceiveMemoryWarning()
     }
 
+    func parse(item: AnyObject?, error: NSError?) {
+        if let url = item as? NSURL? {
+            self.inspectingUrl = url
+            print("get url \(url), scheme = \(url?.scheme)")
+            if url?.scheme == ("https") {
+                self.targetHost = (url?.host)!
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    INHUD.sharedHUD.contentView = INHUDTextView(text: "Fetching Certificates…")
+                    INHUD.sharedHUD.showInView(self.view)
+                })
+                SessionManager.sharedManager.fetchCertsForUrl(url!, completion: { (certs) -> Void in
+                    INHUD.sharedHUD.hide()
+                    if certs.count > 0 {
+                        self.certificates = certs
+                        self.selectedIndex = certs.count - 1
+                        self.updateStatistics(self.targetHost)
+                    }
+                })
+                WOT.query(self.targetHost) { result in
+                    print(result)
+                    switch result {
+                    case .Success(let record):
+                        self.showWOTRating(record)
+                    case .Failure(let error):
+                        #if DEBUG
+                            self.showError(error)
+                        #endif
+                    }
+                }
+            } else {
+                self.showError("\(url!) seems not a https URL")
+            }
+        } else {
+            self.showError("url is not valid NSURL object")
+        }
+    }
     @IBAction func done() {
         self.extensionContext!.completeRequestReturningItems(self.extensionContext!.inputItems, completionHandler: nil)
     }

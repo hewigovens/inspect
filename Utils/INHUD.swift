@@ -30,7 +30,7 @@ public class INHUD: UIView {
     }
 
     public init() {
-        super.init(frame: CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width, UIScreen.mainScreen().bounds.size.height))
+        super.init(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: UIScreen.mainScreen().bounds.size))
         finishInit()
     }
 

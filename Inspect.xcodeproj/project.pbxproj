@@ -699,7 +699,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
-					"$(PROJECT_DIR)/HockeySDK-iOS/HockeySDK.embeddedframework",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Dependencies/HockeySDK-iOS/HockeySDK.embeddedframework",
 				);
@@ -723,7 +722,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
-					"$(PROJECT_DIR)/HockeySDK-iOS/HockeySDK.embeddedframework",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Dependencies/HockeySDK-iOS/HockeySDK.embeddedframework",
 				);
@@ -781,7 +779,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
-					"$(PROJECT_DIR)/HockeySDK-iOS/HockeySDK.embeddedframework",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Dependencies/HockeySDK-iOS/HockeySDK.embeddedframework",
 				);
@@ -806,7 +803,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
-					"$(PROJECT_DIR)/HockeySDK-iOS/HockeySDK.embeddedframework",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Dependencies/HockeySDK-iOS/HockeySDK.embeddedframework",
 				);
