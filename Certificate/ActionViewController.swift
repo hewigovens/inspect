@@ -309,6 +309,8 @@ class ActionViewController: UIViewController,
 
     private func genTitleView(record: Record) -> UITextView {
         let textView = UITextView()
+        textView.editable = false
+        textView.selectable = false
         textView.backgroundColor = UIColor.clearColor()
         let string = NSMutableAttributedString(string: "WOT: \(record.reputation.rawValue) ", attributes: [NSFontAttributeName: UIFont.systemFontOfSize(17)])
         let attachment = NSTextAttachment()
