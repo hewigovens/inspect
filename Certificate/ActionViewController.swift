@@ -61,11 +61,6 @@ class ActionViewController: UIViewController,
         if !defaults.boolForKey(kRatingKey) {
             if stats >= 5 {
                 let alert = UIAlertController(title: "Hooray", message: "You have inspected \(stats) sites. :)", preferredStyle: .Alert)
-                if SKPaymentQueue.canMakePayments() {
-                    alert.addAction(UIAlertAction(title: "Buy us a bear", style: .Default, handler: {(_) -> Void in
-                        self.makeDonation()
-                    }))
-                }
                 alert.addAction((UIAlertAction(title: "Rate us", style: .Default, handler: { (action) -> Void in
                     self.openAppStoreUrl()
                 })))
@@ -256,10 +251,6 @@ class ActionViewController: UIViewController,
                 responder = r.nextResponder()
             }
         }
-    }
-
-    private func makeDonation() {
-        PurchaseHelper.makeDonation()
     }
 }
 

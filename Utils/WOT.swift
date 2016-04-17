@@ -87,6 +87,7 @@ public class WOT: NSObject {
         let apiUrl = "http://api.mywot.com/0.4/public_link_json2"
         let query = "\(apiUrl)?key=\(key)&hosts=\(String(format: "%@/", host))"
         let request = NSMutableURLRequest(URL: NSURL(string: query)!)
+
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { data, response, error in
             if let error = error {
                 completion(QueryResult.Failure(error))
@@ -96,8 +97,10 @@ public class WOT: NSObject {
             guard let data = data else {
                 return
             }
+
             do {
-                guard let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as? [String: AnyObject]    else {
+                guard let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
+                    as? [String: AnyObject] else {
                     return
                 }
 
@@ -105,13 +108,12 @@ public class WOT: NSObject {
                     return
                 }
 
-                if let wot: WOTRecord? = Unbox(target) {
-                    if let wot = wot {
-                        completion(QueryResult.Success(wot.convertToRecord()))
-                    }
+                guard let wot: WOTRecord = Unbox(target) else {
+                    return
                 }
-            } catch {
-            }
+
+                completion(QueryResult.Success(wot.convertToRecord()))
+            } catch {}
         }
         task.resume()
     }
