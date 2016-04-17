@@ -25,9 +25,9 @@
 /*
  * TODO move to X509.swift
  */
-+ (nonnull NSArray<NSDictionary *> *)subjectAltNamesOfCert:(nonnull X509*)cert;
-+ (nonnull NSArray<NSDictionary *> *)extensionsOfCert:(nonnull X509*)cert;
-+ (nonnull NSDictionary *)subjectOfCert:(nonnull X509*)cert;
-+ (nonnull NSDictionary *)issuerOfCert:(nonnull X509*)cert;
++ (nonnull NSArray<NSDictionary<NSString *, NSString *> *> *)subjectAltNamesOfCert:(nonnull X509*)cert;
++ (nonnull NSArray<NSDictionary<NSString *, NSString *> *> *)extensionsOfCert:(nonnull X509*)cert;
++ (nonnull NSDictionary<NSString *, NSString *> *)subjectOfCert:(nonnull X509*)cert;
++ (nonnull NSDictionary<NSString *, NSString *> *)issuerOfCert:(nonnull X509*)cert;
 
 @end

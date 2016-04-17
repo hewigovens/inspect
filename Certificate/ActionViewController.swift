@@ -53,6 +53,9 @@ class ActionViewController: UIViewController,
 
     private func updateStatistics(host: String) {
         let defaults = NSUserDefaults.standardUserDefaults()
+//        #if debug
+            defaults.setBool(false, forKey: kRatingKey)
+//        #endif
         var stats = defaults.integerForKey(kStatisticsKey)
         stats += 1
         if !defaults.boolForKey(kRatingKey) {
@@ -76,7 +79,6 @@ class ActionViewController: UIViewController,
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         var once: dispatch_once_t = 0
         dispatch_once(&once) { () -> Void in
             BITHockeyManager.sharedHockeyManager().configureWithIdentifier(kHockeyAppId)
@@ -86,9 +88,13 @@ class ActionViewController: UIViewController,
         self.navItem?.title = "Inspect - Certificate"
         var validItemProvider: NSItemProvider?
         nestedLoop: for item: AnyObject in self.extensionContext!.inputItems {
-            let inputItem = item as! NSExtensionItem
+            guard let inputItem = item as? NSExtensionItem else {
+                continue
+            }
             for provider: AnyObject in inputItem.attachments! {
-                let itemProvider = provider as! NSItemProvider
+                guard let itemProvider = provider as? NSItemProvider else {
+                    continue
+                }
                 if itemProvider.hasItemConformingToTypeIdentifier(kUTTypeURL as String) {
                     validItemProvider = itemProvider
                     break nestedLoop
@@ -184,6 +190,81 @@ class ActionViewController: UIViewController,
         self.presentViewController(sheet, animated: true, completion: nil)
     }
 
+    // MARK: MFMailComposeViewControllerDelegate
+    func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+
+    // MARK: Private funcs
+
+    private func configureTableViews() {
+
+        // Certificate Stack View
+        self.headerTableView.bounces = false
+        self.headerTableView.separatorStyle = .None
+        self.headerTableView.rowHeight = UITableViewAutomaticDimension
+        self.headerTableView.estimatedRowHeight = 44
+        self.headerTableView.backgroundColor = UIColor.lightTextColor()
+        self.headerTableView.hidden = true
+
+        self.contentTableView.estimatedRowHeight = 100
+        self.contentTableView.rowHeight = UITableViewAutomaticDimension
+        self.contentTableView.hidden = true
+    }
+
+    private func showWOTRating(record: Record) {
+        dispatch_async(dispatch_get_main_queue()) { () -> Void in
+            self.navItem?.titleView = self.genTitleView(record)
+        }
+    }
+
+    private func showError(errorMessage: String) {
+        print("error \(errorMessage)")
+
+        let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+        dispatch_async(dispatch_get_main_queue()) { () -> Void in
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
+    }
+
+    private func showError(error: NSError) {
+        return self.showError(error.description)
+    }
+
+    private func genTitleView(record: Record) -> UITextView {
+        let textView = UITextView()
+        textView.backgroundColor = UIColor.clearColor()
+        let string = NSMutableAttributedString(string: "WOT: \(record.reputation.rawValue) ", attributes: [NSFontAttributeName: UIFont.systemFontOfSize(17)])
+        let attachment = NSTextAttachment()
+        attachment.image = UIImage(named: "WOT\(record.reputation.rawValue)")
+        attachment.bounds = CGRect(x: 4, y: -4, width: 20, height: 20)
+        string.appendAttributedString(NSAttributedString(attachment: attachment))
+        textView.attributedText = string
+        textView.sizeToFit()
+        return textView
+    }
+
+    private func openAppStoreUrl() {
+        if let url = NSURL(string: kAppStoreUrl) {
+            var responder = self as UIResponder?
+            while let r = responder {
+                let sel = NSSelectorFromString("openURL:")
+                if r.respondsToSelector(sel) {
+                    r.performSelector(sel, withObject: url)
+                }
+                responder = r.nextResponder()
+            }
+        }
+    }
+
+    private func makeDonation() {
+        PurchaseHelper.makeDonation()
+    }
+}
+
+
+extension ActionViewController {
     // MARK: UITableViewDelegate
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -192,7 +273,9 @@ class ActionViewController: UIViewController,
             let cell = tableView.dequeueReusableCellWithIdentifier(CertificateStackCell.reuseId) as? CertificateStackCell
             cell?.trustResult = cert.1
             cell?.level = indexPath.row
-            cell?.name = SecCertificateCopySubjectSummary(cert.0) as String
+            if let name = SecCertificateCopySubjectSummary(cert.0) {
+                cell?.name = name as String
+            }
             return cell!
         } else {
             let cell = tableView.dequeueReusableCellWithIdentifier(CertificateInfoCell.reuseId) as? CertificateInfoCell
@@ -263,76 +346,5 @@ class ActionViewController: UIViewController,
             UIPasteboard.generalPasteboard().setValue(tuple.1, forPasteboardType: kUTTypePlainText as String)
             tableView.deselectRowAtIndexPath(indexPath, animated: true)
         }
-    }
-
-    // MARK: MFMailComposeViewControllerDelegate
-    func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
-        self.dismissViewControllerAnimated(true, completion: nil)
-    }
-
-    // MARK: Private funcs
-
-    private func configureTableViews() {
-
-        // Certificate Stack View
-        self.headerTableView.bounces = false
-        self.headerTableView.separatorStyle = .None
-        self.headerTableView.rowHeight = UITableViewAutomaticDimension
-        self.headerTableView.estimatedRowHeight = 44
-        self.headerTableView.backgroundColor = UIColor.lightTextColor()
-        self.headerTableView.hidden = true
-
-        self.contentTableView.estimatedRowHeight = 100
-        self.contentTableView.rowHeight = UITableViewAutomaticDimension
-        self.contentTableView.hidden = true
-    }
-
-    private func showWOTRating(record: Record) {
-        dispatch_async(dispatch_get_main_queue()) { () -> Void in
-            self.navItem?.titleView = self.genTitleView(record)
-        }
-    }
-
-    private func showError(errorMessage: String) {
-        print("error \(errorMessage)")
-
-        let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .Alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
-        dispatch_async(dispatch_get_main_queue()) { () -> Void in
-            self.presentViewController(alert, animated: true, completion: nil)
-        }
-    }
-
-    private func showError(error: NSError) {
-        return self.showError(error.description)
-    }
-
-    private func genTitleView(record: Record) -> UITextView {
-        let textView = UITextView()
-        textView.backgroundColor = UIColor.clearColor()
-        let string = NSMutableAttributedString(string: "WOT: \(record.reputation.rawValue) ", attributes: [NSFontAttributeName: UIFont.systemFontOfSize(17)])
-        let attachment = NSTextAttachment()
-        attachment.image = UIImage(named: "WOT\(record.reputation.rawValue)")
-        attachment.bounds = CGRect(x: 4, y: -4, width: 20, height: 20)
-        string.appendAttributedString(NSAttributedString(attachment: attachment))
-        textView.attributedText = string
-        textView.sizeToFit()
-        return textView
-    }
-
-    private func openAppStoreUrl() {
-        if let url = NSURL(string: kAppStoreUrl) {
-            var responder = self as UIResponder?
-            while let r = responder {
-                if r.respondsToSelector(Selector("openURL:")) {
-                    r.performSelector(Selector("openURL:"), withObject: url)
-                }
-                responder = r.nextResponder()
-            }
-        }
-    }
-
-    private func makeDonation() {
-        PurchaseHelper.makeDonation()
     }
 }

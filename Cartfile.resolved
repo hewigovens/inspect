@@ -1,4 +1,2 @@
-github "Alamofire/Alamofire" "3.2.1"
-github "ReactiveX/RxSwift" "2.2.0"
-github "SwiftyJSON/SwiftyJSON" "2.3.3"
+github "johnsundell/unbox" "1.4"
 github "pixelglow/zipzap" "8.1.1"

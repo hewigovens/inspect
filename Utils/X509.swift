@@ -86,7 +86,7 @@ public struct X509Certificate {
 
         let generalNames = X509Helper.subjectAltNamesOfCert(cert)
         for dict in generalNames {
-            self.subjectAltNames.append((dict["key"] as! String, dict["value"]!))
+            self.subjectAltNames.append((dict["key"] ?? "Error Key", dict["value"]!))
         }
 
         self.notValidBefore = X509Helper.getNotBefore(cert)
@@ -98,7 +98,7 @@ public struct X509Certificate {
 
         let exts = X509Helper.extensionsOfCert(cert)
         for dict in exts {
-            self.extensions.append((dict["key"] as! String, dict["value"]!))
+            self.extensions.append((dict["key"] ?? "Error Key", dict["value"]!))
         }
 
         X509Helper.subjectOfCert(cert)

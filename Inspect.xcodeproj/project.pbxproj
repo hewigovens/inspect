@@ -40,12 +40,6 @@
 		BB46EB9B1C30492B00E156E9 /* ActionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */; };
 		BB46EB9E1C30492B00E156E9 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB9C1C30492B00E156E9 /* MainInterface.storyboard */; };
 		BB46EBA21C30492B00E156E9 /* Certificate.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BB46EB981C30492B00E156E9 /* Certificate.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		BB46EC741C32C0AF00E156E9 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB46EC721C32C0AF00E156E9 /* Alamofire.framework */; };
-		BB46EC751C32C0AF00E156E9 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB46EC731C32C0AF00E156E9 /* SwiftyJSON.framework */; };
-		BB46EC761C32C0BD00E156E9 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB46EC721C32C0AF00E156E9 /* Alamofire.framework */; };
-		BB46EC771C32C0BE00E156E9 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB46EC731C32C0AF00E156E9 /* SwiftyJSON.framework */; };
-		BB46EC7A1C32CEA600E156E9 /* Alamofire.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BB46EC721C32C0AF00E156E9 /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		BB46EC7B1C32CEA600E156E9 /* SwiftyJSON.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BB46EC731C32C0AF00E156E9 /* SwiftyJSON.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BB5991381C644F640026C738 /* TutorialPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5991371C644F640026C738 /* TutorialPageViewController.swift */; };
 		BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */; };
 		BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
@@ -54,6 +48,9 @@
 		BBA1C2571C507B34009EECCC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA1C2551C507B34009EECCC /* Constants.swift */; };
 		BBBEA3151C409A8E00F1C3EE /* mac_dev.cer in Resources */ = {isa = PBXBuildFile; fileRef = BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */; };
 		BBBEA3161C409DE000F1C3EE /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
+		BBDD81671CC3442D00D913C5 /* Unbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBDD81661CC3442D00D913C5 /* Unbox.framework */; };
+		BBDD81681CC3445800D913C5 /* Unbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBDD81661CC3442D00D913C5 /* Unbox.framework */; };
+		BBDD81691CC3508300D913C5 /* Unbox.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BBDD81661CC3442D00D913C5 /* Unbox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,9 +88,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				BBDD81691CC3508300D913C5 /* Unbox.framework in Copy Frameworks */,
 				BB2C5B441C47F53F00911EA4 /* ZipZap.framework in Copy Frameworks */,
-				BB46EC7A1C32CEA600E156E9 /* Alamofire.framework in Copy Frameworks */,
-				BB46EC7B1C32CEA600E156E9 /* SwiftyJSON.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -129,8 +125,6 @@
 		BB46EB9D1C30492B00E156E9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		BB46EB9F1C30492B00E156E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BB46EC6D1C3186A200E156E9 /* WOT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WOT.swift; path = Utils/WOT.swift; sourceTree = "<group>"; };
-		BB46EC721C32C0AF00E156E9 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/iOS/Alamofire.framework; sourceTree = "<group>"; };
-		BB46EC731C32C0AF00E156E9 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
 		BB5991371C644F640026C738 /* TutorialPageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorialPageViewController.swift; sourceTree = "<group>"; };
 		BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificateCells.swift; sourceTree = "<group>"; };
 		BB5DB8611C391F2400219411 /* SSLLabs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SSLLabs.swift; path = Utils/SSLLabs.swift; sourceTree = "<group>"; };
@@ -141,6 +135,7 @@
 		BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = mac_dev.cer; sourceTree = "<group>"; };
 		BBBEA3191C414B6000F1C3EE /* X509Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = X509Helper.h; path = Utils/X509Helper.h; sourceTree = "<group>"; };
 		BBBEA31A1C414B6000F1C3EE /* X509Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = X509Helper.m; path = Utils/X509Helper.m; sourceTree = "<group>"; };
+		BBDD81661CC3442D00D913C5 /* Unbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Unbox.framework; path = Carthage/Build/iOS/Unbox.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,14 +143,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB46EC761C32C0BD00E156E9 /* Alamofire.framework in Frameworks */,
 				BB30DEA21C7F407A00AE0A39 /* Answers.framework in Frameworks */,
-				BB46EC771C32C0BE00E156E9 /* SwiftyJSON.framework in Frameworks */,
 				BB3CBDAF1C8F11F900DA5F63 /* StoreKit.framework in Frameworks */,
 				BB2C5B411C47E85E00911EA4 /* ZipZap.framework in Frameworks */,
 				BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */,
 				BB30DEA11C7F407A00AE0A39 /* Fabric.framework in Frameworks */,
 				BB0266D41C7F486B00D2B0FF /* HockeySDK.framework in Frameworks */,
+				BBDD81671CC3442D00D913C5 /* Unbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -176,8 +170,7 @@
 				BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */,
 				BB0266D61C7F487100D2B0FF /* HockeySDK.framework in Frameworks */,
 				BB30DEA31C7F414400AE0A39 /* Fabric.framework in Frameworks */,
-				BB46EC741C32C0AF00E156E9 /* Alamofire.framework in Frameworks */,
-				BB46EC751C32C0AF00E156E9 /* SwiftyJSON.framework in Frameworks */,
+				BBDD81681CC3445800D913C5 /* Unbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,6 +251,7 @@
 		BB46EC781C32C8EF00E156E9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BBDD81661CC3442D00D913C5 /* Unbox.framework */,
 				BB3CBDAE1C8F11F900DA5F63 /* StoreKit.framework */,
 				BB0266D21C7F486B00D2B0FF /* HockeySDK.framework */,
 				BB0266D31C7F486B00D2B0FF /* HockeySDKResources.bundle */,
@@ -265,8 +259,6 @@
 				BB30DEA01C7F407A00AE0A39 /* Answers.framework */,
 				BB2C5B401C47E85E00911EA4 /* ZipZap.framework */,
 				BB5DB8641C3974D100219411 /* openssl.framework */,
-				BB46EC721C32C0AF00E156E9 /* Alamofire.framework */,
-				BB46EC731C32C0AF00E156E9 /* SwiftyJSON.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -316,7 +308,7 @@
 				BB46EC791C32CE9E00E156E9 /* Copy Frameworks */,
 				BB3911081C46810400330E1A /* Run HockeyApp */,
 				BB30DE9E1C7F402E00AE0A39 /* Run Fabric */,
-				BB3CBDB21C8F21EF00DA5F63 /* ShellScript */,
+				BB3CBDB21C8F21EF00DA5F63 /* Run SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -353,7 +345,7 @@
 				BB46EB941C30492B00E156E9 /* Sources */,
 				BB46EB951C30492B00E156E9 /* Frameworks */,
 				BB46EB961C30492B00E156E9 /* Resources */,
-				BB3CBDB31C8F220000DA5F63 /* ShellScript */,
+				BB3CBDB31C8F220000DA5F63 /* Run SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -488,26 +480,28 @@
 			shellPath = /bin/sh;
 			shellScript = "FILE=\"${SRCROOT}/HockeySDK-iOS/BuildAgent\"\nif [ -f \"$FILE\" ]; then\n\"$FILE\"\nfi";
 		};
-		BB3CBDB21C8F21EF00DA5F63 /* ShellScript */ = {
+		BB3CBDB21C8F21EF00DA5F63 /* Run SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Run SwiftLint";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
 		};
-		BB3CBDB31C8F220000DA5F63 /* ShellScript */ = {
+		BB3CBDB31C8F220000DA5F63 /* Run SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Run SwiftLint";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
