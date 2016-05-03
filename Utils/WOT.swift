@@ -28,7 +28,7 @@ public struct Record {
     var target: String
     var score: Int
     var code: Int
-    
+
     var reputation: Reputation {
         get {
             if self.score >= 80 {

@@ -32,13 +32,11 @@
 		BB3CBDAD1C82A68A00DA5F63 /* ExportItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB3CBDAC1C82A68A00DA5F63 /* ExportItemSource.swift */; };
 		BB46EB751C3046B300E156E9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB741C3046B300E156E9 /* AppDelegate.swift */; };
 		BB46EB771C3046B300E156E9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB761C3046B300E156E9 /* ViewController.swift */; };
-		BB46EB7A1C3046B300E156E9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB781C3046B300E156E9 /* Main.storyboard */; };
 		BB46EB7F1C3046B300E156E9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB7D1C3046B300E156E9 /* LaunchScreen.storyboard */; };
 		BB46EB8A1C3046B300E156E9 /* InspectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB891C3046B300E156E9 /* InspectTests.swift */; };
 		BB46EB9B1C30492B00E156E9 /* ActionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */; };
 		BB46EB9E1C30492B00E156E9 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB9C1C30492B00E156E9 /* MainInterface.storyboard */; };
 		BB46EBA21C30492B00E156E9 /* Certificate.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BB46EB981C30492B00E156E9 /* Certificate.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		BB5991381C644F640026C738 /* TutorialPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5991371C644F640026C738 /* TutorialPageViewController.swift */; };
 		BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */; };
 		BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 		BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
@@ -110,7 +108,6 @@
 		BB46EB711C3046B300E156E9 /* Inspect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inspect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB46EB741C3046B300E156E9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BB46EB761C3046B300E156E9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		BB46EB791C3046B300E156E9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		BB46EB7E1C3046B300E156E9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BB46EB801C3046B300E156E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BB46EB851C3046B300E156E9 /* InspectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InspectTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -121,7 +118,6 @@
 		BB46EB9D1C30492B00E156E9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		BB46EB9F1C30492B00E156E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BB46EC6D1C3186A200E156E9 /* WOT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WOT.swift; path = Utils/WOT.swift; sourceTree = "<group>"; };
-		BB5991371C644F640026C738 /* TutorialPageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorialPageViewController.swift; sourceTree = "<group>"; };
 		BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificateCells.swift; sourceTree = "<group>"; };
 		BB5DB8611C391F2400219411 /* SSLLabs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SSLLabs.swift; path = Utils/SSLLabs.swift; sourceTree = "<group>"; };
 		BB5DB8641C3974D100219411 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = Dependencies/openssl.framework; sourceTree = "<group>"; };
@@ -202,8 +198,6 @@
 				BB5DB8861C3AA52900219411 /* Inspect-Bridging-Header.h */,
 				BB46EB741C3046B300E156E9 /* AppDelegate.swift */,
 				BB46EB761C3046B300E156E9 /* ViewController.swift */,
-				BB5991371C644F640026C738 /* TutorialPageViewController.swift */,
-				BB46EB781C3046B300E156E9 /* Main.storyboard */,
 				BB46EB7D1C3046B300E156E9 /* LaunchScreen.storyboard */,
 				BB46EB801C3046B300E156E9 /* Info.plist */,
 			);
@@ -420,7 +414,6 @@
 				BB46EB7F1C3046B300E156E9 /* LaunchScreen.storyboard in Resources */,
 				BB0266D51C7F486B00D2B0FF /* HockeySDKResources.bundle in Resources */,
 				BB2C5B3E1C469C3200911EA4 /* Assets.xcassets in Resources */,
-				BB46EB7A1C3046B300E156E9 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -509,7 +502,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BB46EB771C3046B300E156E9 /* ViewController.swift in Sources */,
-				BB5991381C644F640026C738 /* TutorialPageViewController.swift in Sources */,
 				BB46EB751C3046B300E156E9 /* AppDelegate.swift in Sources */,
 				BB1773C51C428227001AAB80 /* SessionManager.swift in Sources */,
 				BBA1C2561C507B34009EECCC /* Constants.swift in Sources */,
@@ -559,14 +551,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		BB46EB781C3046B300E156E9 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				BB46EB791C3046B300E156E9 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		BB46EB7D1C3046B300E156E9 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
