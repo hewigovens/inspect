@@ -44,9 +44,6 @@
 		BBA1C2571C507B34009EECCC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA1C2551C507B34009EECCC /* Constants.swift */; };
 		BBBEA3151C409A8E00F1C3EE /* mac_dev.cer in Resources */ = {isa = PBXBuildFile; fileRef = BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */; };
 		BBBEA3161C409DE000F1C3EE /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
-		BBDD81671CC3442D00D913C5 /* Unbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBDD81661CC3442D00D913C5 /* Unbox.framework */; };
-		BBDD81681CC3445800D913C5 /* Unbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBDD81661CC3442D00D913C5 /* Unbox.framework */; };
-		BBDD81691CC3508300D913C5 /* Unbox.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BBDD81661CC3442D00D913C5 /* Unbox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,7 +81,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				BBDD81691CC3508300D913C5 /* Unbox.framework in Copy Frameworks */,
 				BB2C5B441C47F53F00911EA4 /* ZipZap.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
@@ -127,7 +123,6 @@
 		BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = mac_dev.cer; sourceTree = "<group>"; };
 		BBBEA3191C414B6000F1C3EE /* X509Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = X509Helper.h; path = Utils/X509Helper.h; sourceTree = "<group>"; };
 		BBBEA31A1C414B6000F1C3EE /* X509Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = X509Helper.m; path = Utils/X509Helper.m; sourceTree = "<group>"; };
-		BBDD81661CC3442D00D913C5 /* Unbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Unbox.framework; path = Carthage/Build/iOS/Unbox.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,7 +135,6 @@
 				BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */,
 				BB30DEA11C7F407A00AE0A39 /* Fabric.framework in Frameworks */,
 				BB0266D41C7F486B00D2B0FF /* HockeySDK.framework in Frameworks */,
-				BBDD81671CC3442D00D913C5 /* Unbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -161,7 +155,6 @@
 				BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */,
 				BB0266D61C7F487100D2B0FF /* HockeySDK.framework in Frameworks */,
 				BB30DEA31C7F414400AE0A39 /* Fabric.framework in Frameworks */,
-				BBDD81681CC3445800D913C5 /* Unbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,7 +232,6 @@
 		BB46EC781C32C8EF00E156E9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				BBDD81661CC3442D00D913C5 /* Unbox.framework */,
 				BB0266D21C7F486B00D2B0FF /* HockeySDK.framework */,
 				BB0266D31C7F486B00D2B0FF /* HockeySDKResources.bundle */,
 				BB30DE9F1C7F407A00AE0A39 /* Fabric.framework */,

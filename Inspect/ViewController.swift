@@ -14,7 +14,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.whiteColor()
 
-        let bundle = 
+        print(NSBundle.mainBundle().bundlePath)
     }
 
     override func didReceiveMemoryWarning() {

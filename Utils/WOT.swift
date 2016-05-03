@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Unbox
 
 public struct Record {
     public enum Reputation: String {
@@ -64,18 +63,22 @@ public enum QueryResult {
     case Failure(NSError)
 }
 
-struct WOTRecord: Unboxable {
+public struct WOTRecord {
     let trustness: [Int]
     let target: String
     let categories: [String: Int]
 
-    init(unboxer: Unboxer) {
-        self.trustness = unboxer.unbox("0")
-        self.target = unboxer.unbox("target")
-        self.categories = unboxer.unbox("categories")
+    public init?(json: [String: AnyObject]) {
+
+        guard let trustness = json["0"] as? [Int] else { return nil }
+        self.trustness = trustness
+        guard let target = json["target"] as? String else { return nil }
+        self.target = target
+        guard let categories = json["categories"] as? [String: Int] else { return nil }
+        self.categories = categories
     }
 
-    func convertToRecord() -> Record {
+    public func convertToRecord() -> Record {
         return Record(target: self.target, score: self.trustness[0], code: 300)
     }
 }
@@ -94,24 +97,13 @@ public class WOT: NSObject {
                 return
             }
 
-            guard let data = data else {
-                return
-            }
+            guard let data = data else { return }
 
             do {
                 guard let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
-                    as? [String: AnyObject] else {
-                    return
-                }
-
-                guard let target = json[host] as? [String: AnyObject] else {
-                    return
-                }
-
-                guard let wot: WOTRecord = Unbox(target) else {
-                    return
-                }
-
+                    as? [String: AnyObject] else { return }
+                guard let target = json[host] as? [String: AnyObject] else { return }
+                guard let wot = WOTRecord(json: target) else { return }
                 completion(QueryResult.Success(wot.convertToRecord()))
             } catch {}
         }
