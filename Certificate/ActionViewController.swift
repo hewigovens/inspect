@@ -25,6 +25,9 @@ class ActionViewController: UIViewController,
     @IBOutlet weak var contentTableView: UITableView!
     @IBOutlet weak var headerHeightConstraint: NSLayoutConstraint!
 
+    internal var inExtensionContext: Bool {
+        return self.extensionContext != nil
+    }
     private var contentSections: [[(String, AnyObject)]]?
     private var contentSectionNames: [CertificateInfoSection]?
     private var inspectingUrl: NSURL?
@@ -82,7 +85,8 @@ class ActionViewController: UIViewController,
 
         self.navItem?.title = "Inspect - Certificate"
         var validItemProvider: NSItemProvider?
-        nestedLoop: for item: AnyObject in self.extensionContext!.inputItems {
+        guard let extensionContext = self.extensionContext else { return }
+        nestedLoop: for item: AnyObject in extensionContext.inputItems {
             guard let inputItem = item as? NSExtensionItem else {
                 continue
             }
@@ -146,7 +150,11 @@ class ActionViewController: UIViewController,
         }
     }
     @IBAction func done() {
-        self.extensionContext!.completeRequestReturningItems(self.extensionContext!.inputItems, completionHandler: nil)
+        if self.inExtensionContext {
+            self.extensionContext!.completeRequestReturningItems(self.extensionContext!.inputItems, completionHandler: nil)
+        } else {
+            self.dismissViewControllerAnimated(true, completion: nil)
+        }
     }
 
     @IBAction func share() {

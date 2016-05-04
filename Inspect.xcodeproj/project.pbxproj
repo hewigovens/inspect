@@ -40,6 +40,15 @@
 		BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */; };
 		BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 		BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
+		BB8C55D41CD97958004B60E3 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB9C1C30492B00E156E9 /* MainInterface.storyboard */; };
+		BB8C55D51CD9795F004B60E3 /* ActionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */; };
+		BB8C55D61CD97965004B60E3 /* CertificateCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */; };
+		BB8C55D71CD9796C004B60E3 /* ExportItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB3CBDAC1C82A68A00DA5F63 /* ExportItemSource.swift */; };
+		BB8C55D81CD97A23004B60E3 /* INHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB2EB67C1C4930B90057929C /* INHUD.swift */; };
+		BB8C55D91CD97A2C004B60E3 /* X509Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = BBBEA31A1C414B6000F1C3EE /* X509Helper.m */; };
+		BB8C55DA1CD97A2F004B60E3 /* X509.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB8671C397BF200219411 /* X509.swift */; };
+		BB8C55DB1CD97A33004B60E3 /* WOT.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EC6D1C3186A200E156E9 /* WOT.swift */; };
+		BB8C55DC1CD97A37004B60E3 /* SSLLabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB8611C391F2400219411 /* SSLLabs.swift */; };
 		BBA1C2561C507B34009EECCC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA1C2551C507B34009EECCC /* Constants.swift */; };
 		BBA1C2571C507B34009EECCC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA1C2551C507B34009EECCC /* Constants.swift */; };
 		BBBEA3151C409A8E00F1C3EE /* mac_dev.cer in Resources */ = {isa = PBXBuildFile; fileRef = BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */; };
@@ -404,6 +413,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BB46EB7F1C3046B300E156E9 /* LaunchScreen.storyboard in Resources */,
+				BB8C55D41CD97958004B60E3 /* MainInterface.storyboard in Resources */,
 				BB0266D51C7F486B00D2B0FF /* HockeySDKResources.bundle in Resources */,
 				BB2C5B3E1C469C3200911EA4 /* Assets.xcassets in Resources */,
 			);
@@ -493,10 +503,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB8C55DC1CD97A37004B60E3 /* SSLLabs.swift in Sources */,
 				BB46EB771C3046B300E156E9 /* ViewController.swift in Sources */,
+				BB8C55D51CD9795F004B60E3 /* ActionViewController.swift in Sources */,
+				BB8C55D71CD9796C004B60E3 /* ExportItemSource.swift in Sources */,
+				BB8C55D91CD97A2C004B60E3 /* X509Helper.m in Sources */,
 				BB46EB751C3046B300E156E9 /* AppDelegate.swift in Sources */,
+				BB8C55DB1CD97A33004B60E3 /* WOT.swift in Sources */,
+				BB8C55DA1CD97A2F004B60E3 /* X509.swift in Sources */,
 				BB1773C51C428227001AAB80 /* SessionManager.swift in Sources */,
 				BBA1C2561C507B34009EECCC /* Constants.swift in Sources */,
+				BB8C55D81CD97A23004B60E3 /* INHUD.swift in Sources */,
+				BB8C55D61CD97965004B60E3 /* CertificateCells.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

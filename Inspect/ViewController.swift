@@ -14,7 +14,9 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.whiteColor()
 
-        print(NSBundle.mainBundle().bundlePath)
+        let board = UIStoryboard(name: "MainInterface", bundle: NSBundle.mainBundle())
+        let vc = board.instantiateViewControllerWithIdentifier("ActionViewController")
+        self.presentViewController(vc, animated: true, completion: nil)
     }
 
     override func didReceiveMemoryWarning() {
