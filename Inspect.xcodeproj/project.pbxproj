@@ -41,6 +41,7 @@
 		BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 		BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 		BB7E39771CDA361A00C84856 /* UIView+Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7E39761CDA361A00C84856 /* UIView+Frame.swift */; };
+		BB7E39781CDACFF000C84856 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB2C5B3B1C469BFE00911EA4 /* Images.xcassets */; };
 		BB8C55D41CD97958004B60E3 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB9C1C30492B00E156E9 /* MainInterface.storyboard */; };
 		BB8C55D51CD9795F004B60E3 /* ActionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */; };
 		BB8C55D61CD97965004B60E3 /* CertificateCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */; };
@@ -415,6 +416,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB7E39781CDACFF000C84856 /* Images.xcassets in Resources */,
 				BB46EB7F1C3046B300E156E9 /* LaunchScreen.storyboard in Resources */,
 				BB8C55D41CD97958004B60E3 /* MainInterface.storyboard in Resources */,
 				BB0266D51C7F486B00D2B0FF /* HockeySDKResources.bundle in Resources */,

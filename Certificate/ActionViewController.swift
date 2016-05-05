@@ -28,6 +28,8 @@ class ActionViewController: UIViewController,
     internal var inExtensionContext: Bool {
         return self.extensionContext != nil
     }
+    internal var URL: NSURL?
+
     private var contentSections: [[(String, AnyObject)]]?
     private var contentSectionNames: [CertificateInfoSection]?
     private var inspectingUrl: NSURL?
@@ -77,13 +79,28 @@ class ActionViewController: UIViewController,
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        self.navItem?.title = "Inspect - Certificate"
+        if self.inExtensionContext {
+            self.viewDidLoadInExtensionContext()
+        } else {
+            self.configureTableViews()
+            self.parse(self.URL, error: nil)
+        }
+    }
+
+    // MARK: Action
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
+
+    private func viewDidLoadInExtensionContext() {
         var once: dispatch_once_t = 0
         dispatch_once(&once) { () -> Void in
             BITHockeyManager.sharedHockeyManager().configureWithIdentifier(kHockeyAppId)
             BITHockeyManager.sharedHockeyManager().startManager()
         }
 
-        self.navItem?.title = "Inspect - Certificate"
         var validItemProvider: NSItemProvider?
         guard let extensionContext = self.extensionContext else { return }
         nestedLoop: for item: AnyObject in extensionContext.inputItems {
@@ -108,12 +125,7 @@ class ActionViewController: UIViewController,
         })
     }
 
-    // MARK: Action
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
-
-    func parse(item: AnyObject?, error: NSError?) {
+    private func parse(item: AnyObject?, error: NSError?) {
         if let url = item as? NSURL? {
             self.inspectingUrl = url
             print("get url \(url), scheme = \(url?.scheme)")

@@ -11,7 +11,6 @@ import UIKit
 class ViewController: UIViewController, UIScrollViewDelegate {
 
     let steps = 6
-
     lazy var carouselView: UIScrollView = {
         let scrollview = UIScrollView(frame: self.view.bounds)
         scrollview.bounces = false
@@ -32,15 +31,49 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         return indicator
     }()
 
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.whiteColor()
         self.navigationController?.navigationBarHidden = true
         self.view.backgroundColor = UIColor.blackColor()
-        let board = UIStoryboard(name: "MainInterface", bundle: NSBundle.mainBundle())
-        _ = board.instantiateViewControllerWithIdentifier("ActionViewController")
 
         self.automaticallyAdjustsScrollViewInsets = false
+        self.configureSubviews()
+
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(didBecomeActive), name: UIApplicationDidBecomeActiveNotification, object: nil)
+    }
+
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        self.carouselView.contentSize = CGSize(width: self.view.fp_width * 6, height: self.view.fp_height)
+    }
+
+    func didBecomeActive(notification: NSNotification) {
+        guard let pasted = UIPasteboard.generalPasteboard().string else {return}
+        guard let url = NSURL(string: pasted) where url.scheme == "https" else {return}
+        self.inspectURL(url)
+    }
+
+    //MARK: UIScrollViewDelegate
+    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        self.indicator.currentPage = Int(scrollView.contentOffset.x / scrollView.fp_width)
+    }
+}
+
+extension ViewController {
+    private func configureSubviews() {
         var offset: CGFloat = 0
         let leftPadding: CGFloat = 10
         let topPadding: CGFloat = 80
@@ -70,17 +103,20 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         self.view.addSubview(self.carouselView)
         self.view.addSubview(self.indicator)
     }
+}
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
-
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        self.carouselView.contentSize = CGSize(width: self.view.fp_width * 6, height: self.view.fp_height)
-    }
-
-    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        self.indicator.currentPage = Int(scrollView.contentOffset.x / scrollView.fp_width)
+extension UIViewController {
+    private func inspectURL(url: NSURL) {
+        let alert = UIAlertController(title: "", message: "Do you want to Inspect \(url.absoluteString) ?", preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "Next Time", style: .Default, handler: nil))
+        alert.addAction(UIAlertAction(title: "Sure", style: .Default, handler: { _ in
+            let board = UIStoryboard(name: "MainInterface", bundle: NSBundle.mainBundle())
+            guard let vc = board.instantiateViewControllerWithIdentifier("ActionViewController") as? ActionViewController else {return}
+            vc.URL = url
+            dispatch_async(dispatch_get_main_queue(), {
+                self.presentViewController(vc, animated: true, completion: nil)
+            })
+        }))
+        self.presentViewController(alert, animated: true, completion: nil)
     }
 }
