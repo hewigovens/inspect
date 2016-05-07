@@ -8,11 +8,11 @@
 
 import UIKit
 
-class ViewController: UIViewController, UIScrollViewDelegate {
+class TutorialViewController: UIViewController, UIScrollViewDelegate {
 
     let steps = 6
     lazy var carouselView: UIScrollView = {
-        let scrollview = UIScrollView(frame: self.view.bounds)
+        let scrollview = UIScrollView(frame: self.view.frame)
         scrollview.bounces = false
         scrollview.pagingEnabled = true
         scrollview.delegate = self
@@ -22,33 +22,46 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     }()
 
     lazy var indicator: UIPageControl = {
-        let size: CGFloat = 8
-        let width = size * CGFloat(self.steps)
-        let indicator = UIPageControl(frame: CGRect(x: (self.view.fp_width - width) / 2, y: 20, width: width, height: size))
+        let size: CGFloat = 36
+        let width = (self.view.fp_width - 54) / 2
+        let indicator = UIPageControl(frame: CGRect(x: (self.view.fp_width - width) / 2, y: 30, width: width, height: size))
         indicator.numberOfPages = self.steps
         indicator.pageIndicatorTintColor = UIColor.whiteColor()
         indicator.currentPageIndicatorTintColor = UIColor(red:0.44, green:0.51, blue:0.84, alpha:1.00)
+        indicator.addTarget(self, action: #selector(changePage), forControlEvents: .ValueChanged)
         return indicator
+    }()
+
+    lazy var closeButton: UIButton = {
+        let button = UIButton(type: .System)
+        button.setTitle("×", forState: .Normal)
+        button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        button.setTitleColor(UIColor.lightGrayColor(), forState: .Highlighted)
+        button.titleLabel?.font = UIFont.systemFontOfSize(40)
+        button.addTarget(self, action: #selector(closeAction), forControlEvents: .TouchUpInside)
+        button.frame = CGRect(x: 10, y: 20, width: 44, height: 44)
+        return button
     }()
 
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
+        NSUserDefaults.standardUserDefaults().setBool(false, forKey: kFirstRun)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor.whiteColor()
-        self.navigationController?.navigationBarHidden = true
-        self.view.backgroundColor = UIColor.blackColor()
 
+        self.view.backgroundColor = UIColor.blackColor()
         self.automaticallyAdjustsScrollViewInsets = false
         self.configureSubviews()
-
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(didBecomeActive), name: UIApplicationDidBecomeActiveNotification, object: nil)
     }
 
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+    }
+
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
     }
 
     override func didReceiveMemoryWarning() {
@@ -60,19 +73,24 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         self.carouselView.contentSize = CGSize(width: self.view.fp_width * 6, height: self.view.fp_height)
     }
 
-    func didBecomeActive(notification: NSNotification) {
-        guard let pasted = UIPasteboard.generalPasteboard().string else {return}
-        guard let url = NSURL(string: pasted) where url.scheme == "https" else {return}
-        self.inspectURL(url)
-    }
-
-    //MARK: UIScrollViewDelegate
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         self.indicator.currentPage = Int(scrollView.contentOffset.x / scrollView.fp_width)
     }
 }
 
-extension ViewController {
+extension TutorialViewController {
+    @objc func closeAction() {
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+
+    @objc func changePage() {
+        let page = self.indicator.currentPage
+        var frame = self.carouselView.frame
+        frame.origin.x = frame.size.width * CGFloat(page)
+        frame.origin.y = 0
+        self.carouselView.scrollRectToVisible(frame, animated: true)
+    }
+
     private func configureSubviews() {
         var offset: CGFloat = 0
         let leftPadding: CGFloat = 10
@@ -88,7 +106,7 @@ extension ViewController {
             imageView.contentMode = .ScaleAspectFit
 
             let label = UILabel(frame: CGRect.zero)
-            label.text = "Step \(i). Tap Action Icon"
+            label.text = titleForStep(i)
             label.textColor = UIColor.whiteColor()
             label.sizeToFit()
             label.frame = CGRect(x: (containerView.fp_width - label.fp_width) / 2, y: 10, width: label.fp_width, height: label.fp_height)
@@ -102,21 +120,18 @@ extension ViewController {
 
         self.view.addSubview(self.carouselView)
         self.view.addSubview(self.indicator)
+        self.view.addSubview(self.closeButton)
     }
-}
 
-extension UIViewController {
-    private func inspectURL(url: NSURL) {
-        let alert = UIAlertController(title: "", message: "Do you want to Inspect \(url.absoluteString) ?", preferredStyle: .Alert)
-        alert.addAction(UIAlertAction(title: "Next Time", style: .Default, handler: nil))
-        alert.addAction(UIAlertAction(title: "Sure", style: .Default, handler: { _ in
-            let board = UIStoryboard(name: "MainInterface", bundle: NSBundle.mainBundle())
-            guard let vc = board.instantiateViewControllerWithIdentifier("ActionViewController") as? ActionViewController else {return}
-            vc.URL = url
-            dispatch_async(dispatch_get_main_queue(), {
-                self.presentViewController(vc, animated: true, completion: nil)
-            })
-        }))
-        self.presentViewController(alert, animated: true, completion: nil)
+    private func titleForStep(step: Int) -> String {
+        switch step {
+        case 1: return "Step \(step): Tap Action Button"
+        case 2: return "Step \(step): Tap More Button"
+        case 3: return "Step \(step): Enable Certificate"
+        case 4: return "Step \(step): Tap Certificate Button"
+        case 5: return "Step \(step): Tap Share for more options"
+        case 6: return "Step \(step): Export or Feedback :)"
+        default: return ""
+        }
     }
 }

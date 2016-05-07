@@ -29,6 +29,7 @@ class ActionViewController: UIViewController,
         return self.extensionContext != nil
     }
     internal var URL: NSURL?
+    internal var openURLAction: ((NSURL) -> Void)?
 
     private var contentSections: [[(String, AnyObject)]]?
     private var contentSectionNames: [CertificateInfoSection]?
@@ -58,7 +59,7 @@ class ActionViewController: UIViewController,
 
     private func updateStatistics(host: String) {
         let defaults = NSUserDefaults.standardUserDefaults()
-//        #if debug
+//        #if DEBUG
             defaults.setBool(false, forKey: kRatingKey)
 //        #endif
         var stats = defaults.integerForKey(kStatisticsKey)
@@ -261,23 +262,27 @@ class ActionViewController: UIViewController,
     }
 
     private func openAppStoreUrl() {
-        if let url = NSURL(string: kAppStoreUrl) {
-            var responder = self as UIResponder?
-            while let r = responder {
-                let sel = NSSelectorFromString("openURL:")
-                if r.respondsToSelector(sel) {
-                    r.performSelector(sel, withObject: url)
-                }
-                responder = r.nextResponder()
+
+        guard let url = NSURL(string: kAppStoreHTTPUrl) else {return}
+
+        if let action = self.openURLAction {
+            action(url)
+            return
+        }
+
+        var responder = self as UIResponder?
+        while let r = responder {
+            let sel = NSSelectorFromString("openURL:")
+            if r.respondsToSelector(sel) {
+                r.performSelector(sel, withObject: url)
             }
+            responder = r.nextResponder()
         }
     }
 }
 
-
+// MARK: UITableViewDelegate
 extension ActionViewController {
-    // MARK: UITableViewDelegate
-
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         if tableView == self.headerTableView {
             let cert = self.certificates[indexPath.row]
