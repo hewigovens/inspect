@@ -1,5 +1,5 @@
 //
-//  UINavigationController+Transparent.swift
+//  UINavigationController+Extension.swift
 //  Inspect
 //
 //  Created by hewig on 5/7/16.
@@ -20,5 +20,15 @@ extension UINavigationController {
         navigationBar.setBackgroundImage(UINavigationBar.appearance().backgroundImageForBarMetrics(UIBarMetrics.Default), forBarMetrics:UIBarMetrics.Default)
         navigationBar.translucent = UINavigationBar.appearance().translucent
         navigationBar.shadowImage = UINavigationBar.appearance().shadowImage
+    }
+}
+
+extension UIViewController {
+    public func setLightStatusBar() {
+        UIApplication.sharedApplication().statusBarStyle = .LightContent
+    }
+
+    public func setDarkStatusBar() {
+        UIApplication.sharedApplication().statusBarStyle = .Default
     }
 }

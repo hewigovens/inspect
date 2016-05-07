@@ -59,18 +59,18 @@ class ActionViewController: UIViewController,
 
     private func updateStatistics(host: String) {
         let defaults = NSUserDefaults.standardUserDefaults()
-//        #if DEBUG
+        #if DEBUG
             defaults.setBool(false, forKey: kRatingKey)
-//        #endif
+        #endif
         var stats = defaults.integerForKey(kStatisticsKey)
         stats += 1
         if !defaults.boolForKey(kRatingKey) {
             if stats >= 5 {
                 let alert = UIAlertController(title: "Hooray", message: "You have inspected \(stats) sites. :)", preferredStyle: .Alert)
+                alert.addAction(UIAlertAction(title: "Next Time", style: .Default, handler: nil))
                 alert.addAction((UIAlertAction(title: "Rate us", style: .Default, handler: { (action) -> Void in
                     self.openAppStoreUrl()
                 })))
-                alert.addAction(UIAlertAction(title: "Next Time", style: .Default, handler: nil))
                 self.presentViewController(alert, animated: true, completion: nil)
                 defaults.setBool(true, forKey: kRatingKey)
             }

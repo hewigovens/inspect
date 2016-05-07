@@ -53,7 +53,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         let alert = UIAlertController(title: "Aha", message: "Do you want to Inspect \(url.absoluteString) ?", preferredStyle: .Alert)
-        alert.addAction(UIAlertAction(title: "Next Time", style: .Default, handler: nil))
+        alert.addAction(UIAlertAction(title: "Next Time", style: .Default, handler: { _ in
+            UIPasteboard.generalPasteboard().string = ""
+        }))
         alert.addAction(UIAlertAction(title: "Sure", style: .Default, handler: { _ in
             let board = UIStoryboard(name: "MainInterface", bundle: NSBundle.mainBundle())
             guard let vc = board.instantiateViewControllerWithIdentifier("ActionViewController") as? ActionViewController else {return}
@@ -61,6 +63,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             vc.openURLAction = { url in
                 UIApplication.sharedApplication().openURL(url)
             }
+            UIPasteboard.generalPasteboard().string = ""
             dispatch_async(dispatch_get_main_queue(), {
                 self.window?.rootViewController!.presentViewController(vc, animated: true, completion: nil)
             })

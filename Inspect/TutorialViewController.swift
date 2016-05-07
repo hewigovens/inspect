@@ -58,10 +58,12 @@ class TutorialViewController: UIViewController, UIScrollViewDelegate {
 
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        self.setLightStatusBar()
     }
 
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        self.setDarkStatusBar()
     }
 
     override func didReceiveMemoryWarning() {
