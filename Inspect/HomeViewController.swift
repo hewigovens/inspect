@@ -16,8 +16,8 @@ enum HomeSection: Int {
 
     enum Item: String {
         case HowToUseIt = "How to use it"
-        case Feedback = "Feedback"
-        case RateUs = "Rate us"
+        case Feedback = "Send Feedback"
+        case RateUs = "Rate on App Store"
         case OpenSafari = "Open Safari"
     }
 
@@ -92,7 +92,7 @@ class HomeViewController: UIViewController,
         let size = label.sizeThatFits(CGSize(width: self.view.fp_width - 2 * self.sectionLeftPadding, height: CGFloat.max))
         label.frame.size = size
         label.fp_x = (self.view.fp_width - size.width) / 2
-        label.fp_y = self.sectionTopPadding * 2
+        label.fp_y = self.sectionTopPadding * 2 - 10
         view.addSubview(label)
         return view
     }()
@@ -113,7 +113,6 @@ class HomeViewController: UIViewController,
 }
 
 //MARK: UITableViewDelegate / UITableViewDataSource
-
 extension HomeViewController {
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return dataSource.count
@@ -144,6 +143,7 @@ extension HomeViewController {
         default:
             cell.textLabel?.font = font
             cell.textLabel?.text = items[indexPath.row].rawValue
+            cell.textLabel?.textColor = UIColor(red:0.25, green:0.25, blue:0.25, alpha:1.00)
         }
         return cell
     }
@@ -152,7 +152,7 @@ extension HomeViewController {
         guard let section = HomeSection(rawValue: indexPath.section) else {return}
         switch section {
         case .Safari:
-            if let url = NSURL(string: kAppStoreHTTPUrl) {
+            if let url = NSURL(string: "https://www.apple.com") {
                 UIApplication.sharedApplication().openURL(url)
             }
             break
@@ -178,6 +178,10 @@ extension HomeViewController {
 
     func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return sectionHeight
+    }
+
+    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return CGFloat.min
     }
 
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
