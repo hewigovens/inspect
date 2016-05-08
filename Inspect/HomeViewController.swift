@@ -48,8 +48,7 @@ enum HomeSection: Int {
 }
 
 class HomeViewController: UIViewController,
-                          UITableViewDelegate, UITableViewDataSource,
-                          Feedbackable {
+                          UITableViewDelegate, UITableViewDataSource {
 
     private let cellHeight: CGFloat = UIScreen.mainScreen().scale * 22
     private let sectionHeight: CGFloat = 56

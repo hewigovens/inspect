@@ -15,8 +15,7 @@ import StoreKit
 class ActionViewController: UIViewController,
                             UITableViewDelegate,
                             UITableViewDataSource,
-                            UIActionSheetDelegate,
-                            Feedbackable {
+                            UIActionSheetDelegate {
 
     @IBOutlet internal weak var navItem: UINavigationItem!
     @IBOutlet weak var stackView: UIStackView!
