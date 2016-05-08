@@ -19,7 +19,6 @@
 		BB2C5B3C1C469BFE00911EA4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB2C5B3B1C469BFE00911EA4 /* Images.xcassets */; };
 		BB2C5B3E1C469C3200911EA4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB2C5B3D1C469C3200911EA4 /* Assets.xcassets */; };
 		BB2C5B411C47E85E00911EA4 /* ZipZap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB2C5B401C47E85E00911EA4 /* ZipZap.framework */; };
-		BB2C5B441C47F53F00911EA4 /* ZipZap.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = BB2C5B401C47E85E00911EA4 /* ZipZap.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BB2EB67D1C4930B90057929C /* INHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB2EB67C1C4930B90057929C /* INHUD.swift */; };
 		BB30DEA11C7F407A00AE0A39 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB30DE9F1C7F407A00AE0A39 /* Fabric.framework */; };
 		BB30DEA31C7F414400AE0A39 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB30DE9F1C7F407A00AE0A39 /* Fabric.framework */; };
@@ -84,17 +83,6 @@
 				BB46EBA21C30492B00E156E9 /* Certificate.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BB46EC791C32CE9E00E156E9 /* Copy Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				BB2C5B441C47F53F00911EA4 /* ZipZap.framework in Copy Frameworks */,
-			);
-			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -321,8 +309,7 @@
 				BB46EB6E1C3046B300E156E9 /* Frameworks */,
 				BB46EB6F1C3046B300E156E9 /* Resources */,
 				BB46EBA61C30492B00E156E9 /* Embed App Extensions */,
-				BB46EC791C32CE9E00E156E9 /* Copy Frameworks */,
-				BB3911081C46810400330E1A /* Run HockeyApp */,
+				BBD6847C1CDF4E5F00584DA1 /* Copy Carthage Frameworks */,
 				BB30DE9E1C7F402E00AE0A39 /* Run Fabric */,
 				BB3CBDB21C8F21EF00DA5F63 /* Run SwiftLint */,
 			);
@@ -481,20 +468,6 @@
 			shellPath = /bin/sh;
 			shellScript = "./Dependencies/Fabric.framework/run ffd1a21a45423d2959636c52dc02535a8fad1b60 dd1dfceaa343fa98ef49d12fa7f022c135640990742116059b7d05091289834f";
 		};
-		BB3911081C46810400330E1A /* Run HockeyApp */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Run HockeyApp";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "FILE=\"${SRCROOT}/HockeySDK-iOS/BuildAgent\"\nif [ -f \"$FILE\" ]; then\n\"$FILE\"\nfi";
-		};
 		BB3CBDB21C8F21EF00DA5F63 /* Run SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -522,6 +495,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+		};
+		BBD6847C1CDF4E5F00584DA1 /* Copy Carthage Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/ZipZap.framework",
+			);
+			name = "Copy Carthage Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
 		};
 /* End PBXShellScriptBuildPhase section */
 
