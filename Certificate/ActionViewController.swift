@@ -10,14 +10,13 @@ import UIKit
 import MobileCoreServices
 import SafariServices
 import HockeySDK
-import MessageUI
 import StoreKit
 
 class ActionViewController: UIViewController,
                             UITableViewDelegate,
                             UITableViewDataSource,
                             UIActionSheetDelegate,
-                            MFMailComposeViewControllerDelegate {
+                            Feedbackable {
 
     @IBOutlet internal weak var navItem: UINavigationItem!
     @IBOutlet weak var stackView: UIStackView!
@@ -64,7 +63,7 @@ class ActionViewController: UIViewController,
         #endif
         var stats = defaults.integerForKey(kStatisticsKey)
         stats += 1
-        if !defaults.boolForKey(kRatingKey) {
+        if self.inExtensionContext && !defaults.boolForKey(kRatingKey) {
             if stats >= 5 {
                 let alert = UIAlertController(title: "Hooray", message: "You have inspected \(stats) sites. :)", preferredStyle: .Alert)
                 alert.addAction(UIAlertAction(title: "Next Time", style: .Default, handler: nil))
@@ -194,21 +193,12 @@ class ActionViewController: UIViewController,
         }))
 
         sheet.addAction(UIAlertAction(title: "Feedback", style: .Default, handler: { (action) -> Void in
-            let controller = MFMailComposeViewController()
-            controller.setToRecipients(["support@fourplex.in"])
-            controller.setSubject("Inspect Feedback")
-            controller.mailComposeDelegate = self
-            self.presentViewController(controller, animated: true, completion: nil)
+            self.feedbackWithEmail()
         }))
 
         sheet.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
 
         self.presentViewController(sheet, animated: true, completion: nil)
-    }
-
-    // MARK: MFMailComposeViewControllerDelegate
-    func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
-        self.dismissViewControllerAnimated(true, completion: nil)
     }
 
     // MARK: Private funcs

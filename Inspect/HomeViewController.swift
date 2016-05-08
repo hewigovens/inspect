@@ -7,29 +7,75 @@
 //
 
 import UIKit
+import MessageUI
 
-enum HomeSection: String {
-    case Tutorial = "Tutorial"
-    case Safari = "Inspect HTTPS Sites"
+enum HomeSection: Int {
+    case Tutorial = 0
+    case Misc = 1
+    case Safari = 2
+
+    enum Item: String {
+        case HowToUseIt = "How to use it"
+        case Feedback = "Feedback"
+        case RateUs = "Rate us"
+        case OpenSafari = "Open Safari"
+    }
+
+    var reuseId: String {
+        switch self {
+        case .Safari:
+            return "HomeCellForSafari"
+        default:
+            return "HomeCell"
+        }
+    }
+
+    var sectionTitle: String {
+        switch self {
+        case .Tutorial: return "Tutorial".uppercaseString
+        case .Misc: return "Misc".uppercaseString
+        case .Safari: return "Inspect HTTPS Sites".uppercaseString
+        }
+    }
+
+    var sections: [Item] {
+        switch self {
+        case .Tutorial:return [.HowToUseIt]
+        case .Misc: return [.Feedback, .RateUs]
+        case .Safari: return [.OpenSafari]
+        }
+    }
 }
 
-class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class HomeViewController: UIViewController,
+                          UITableViewDelegate, UITableViewDataSource,
+                          Feedbackable {
 
-    private let cellHeight: CGFloat = 44
+    private let cellHeight: CGFloat = UIScreen.mainScreen().scale * 22
     private let sectionHeight: CGFloat = 56
-    private let sectionLeftPadding: CGFloat = 20
+    private let sectionLeftPadding: CGFloat = UIScreen.mainScreen().scale >= 3.0 ? 20: 15
     private let sectionTopPadding: CGFloat = 30
+
     private let footerText: String = {
-        var text = "Version: 1.0\n"
+        var version = "dev"; var build = "9999"
+        if let infoDict = NSBundle.mainBundle().infoDictionary {
+            if let v = infoDict["CFBundleShortVersionString"] as? String {version = v}
+            if let v = infoDict["CFBundleVersion"] as? String { build = v}
+        }
+        var text = "Version: \(version)(\(build))\n"
         text += "Credits: OpenSSL / ZipZap\n"
         text += "Made with ♥ by Fourplex Labs"
         return text
     }()
 
+    private let dataSource: [HomeSection] = {
+        return [.Tutorial, .Misc, .Safari]
+    }()
+
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: self.view.frame, style: .Grouped)
-        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "HomeCell")
-        tableView.separatorStyle = .None
+        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: HomeSection.Tutorial.reuseId)
+        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: HomeSection.Safari.reuseId)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.tableFooterView = self.footerView
@@ -65,41 +111,69 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let vc = TutorialViewController()
         self.navigationController?.presentViewController(vc, animated: true, completion: nil)
     }
+}
 
+//MARK: UITableViewDelegate / UITableViewDataSource
+
+extension HomeViewController {
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 2
+        return dataSource.count
     }
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        let section = dataSource[section]
+        return section.sections.count
     }
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .Default, reuseIdentifier: nil)
         let font = UIFont.systemFontOfSize(20)
-        if indexPath.section == 0 {
-            cell.textLabel?.font = font
-            cell.textLabel?.text = "How to use it"
-        } else {
+        guard let section = HomeSection(rawValue: indexPath.section) else {
+            return UITableViewCell(style: .Default, reuseIdentifier: nil)
+        }
+        let cell = UITableViewCell(style: .Default, reuseIdentifier: section.reuseId)
+        let items = section.sections
+        switch section {
+        case .Safari:
             let label = UILabel()
             label.textColor = self.view.tintColor
             label.font = font
-            label.text = "Open Safari"
+            label.text = items[indexPath.row].rawValue
             label.sizeToFit()
-            label.fp_x = (tableView.fp_width - label.fp_width) / 2
-            label.fp_y = (cellHeight - label.fp_height) / 2
+            label.fp_x = (tableView.fp_width - label.fp_width) / 2; label.fp_y = (cellHeight - label.fp_height) / 2
             cell.addSubview(label)
+            break
+        default:
+            cell.textLabel?.font = font
+            cell.textLabel?.text = items[indexPath.row].rawValue
         }
         return cell
     }
 
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if indexPath.section == 0 {
+        guard let section = HomeSection(rawValue: indexPath.section) else {return}
+        switch section {
+        case .Safari:
+            if let url = NSURL(string: kAppStoreHTTPUrl) {
+                UIApplication.sharedApplication().openURL(url)
+            }
+            break
+        case .Tutorial:
             self.showTutorial()
-        } else {
-            UIApplication.sharedApplication().openURL(NSURL(string: "https://www.apple.com")!)
+            break
+        case .Misc:
+            let item = section.sections[indexPath.row]
+            switch item {
+            case .Feedback:
+                self.feedbackWithEmail()
+                break
+            case .RateUs:
+                if let url = NSURL(string: kAppStoreUrl) {
+                    UIApplication.sharedApplication().openURL(url)
+                }
+            default:break
+            }
+            break
         }
-
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
     }
 
@@ -115,11 +189,9 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         let view = UIView(); let label = UILabel()
         label.textColor = UIColor.darkGrayColor()
         label.font = UIFont.systemFontOfSize(14)
-        if section == 0 {
-            label.text = HomeSection.Tutorial.rawValue.uppercaseString
-        } else {
-            label.text = HomeSection.Safari.rawValue.uppercaseString
-        }
+
+        let s = HomeSection(rawValue: section)
+        label.text = s?.sectionTitle
         label.sizeToFit(); label.fp_x = sectionLeftPadding; label.fp_y = sectionTopPadding
         view.addSubview(label)
         return view

@@ -57,6 +57,8 @@
 		BBA1C2571C507B34009EECCC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA1C2551C507B34009EECCC /* Constants.swift */; };
 		BBBEA3151C409A8E00F1C3EE /* mac_dev.cer in Resources */ = {isa = PBXBuildFile; fileRef = BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */; };
 		BBBEA3161C409DE000F1C3EE /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
+		BBD684741CDEE45900584DA1 /* Feedbackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD684731CDEE45900584DA1 /* Feedbackable.swift */; };
+		BBD684751CDEE68300584DA1 /* Feedbackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD684731CDEE45900584DA1 /* Feedbackable.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -139,6 +141,7 @@
 		BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = mac_dev.cer; sourceTree = "<group>"; };
 		BBBEA3191C414B6000F1C3EE /* X509Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = X509Helper.h; path = Utils/X509Helper.h; sourceTree = "<group>"; };
 		BBBEA31A1C414B6000F1C3EE /* X509Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = X509Helper.m; path = Utils/X509Helper.m; sourceTree = "<group>"; };
+		BBD684731CDEE45900584DA1 /* Feedbackable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Feedbackable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -206,15 +209,10 @@
 				BB2C5B3D1C469C3200911EA4 /* Assets.xcassets */,
 				BB5DB8861C3AA52900219411 /* Inspect-Bridging-Header.h */,
 				BB46EB741C3046B300E156E9 /* AppDelegate.swift */,
-				BB7E39791CDCE94C00C84856 /* HomeViewController.swift */,
-				BB7E39A71CDDF25000C84856 /* TutorialViewController.swift */,
-				BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */,
-				BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */,
-				BB3CBDAC1C82A68A00DA5F63 /* ExportItemSource.swift */,
-				BB46EB9C1C30492B00E156E9 /* MainInterface.storyboard */,
-				BB46EB7D1C3046B300E156E9 /* LaunchScreen.storyboard */,
+				BBD684781CDEE72B00584DA1 /* Extensions */,
+				BBD684761CDEE6BF00584DA1 /* ViewControllers */,
+				BBD684771CDEE70E00584DA1 /* View */,
 				BB46EB801C3046B300E156E9 /* Info.plist */,
-				BB7E397D1CDDC63C00C84856 /* UINavigationController+Extension.swift */,
 			);
 			path = Inspect;
 			sourceTree = "<group>";
@@ -290,6 +288,36 @@
 				BB5DB8671C397BF200219411 /* X509.swift */,
 			);
 			name = X509;
+			sourceTree = "<group>";
+		};
+		BBD684761CDEE6BF00584DA1 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				BB7E39791CDCE94C00C84856 /* HomeViewController.swift */,
+				BB7E39A71CDDF25000C84856 /* TutorialViewController.swift */,
+				BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */,
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		BBD684771CDEE70E00584DA1 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				BB46EB9C1C30492B00E156E9 /* MainInterface.storyboard */,
+				BB46EB7D1C3046B300E156E9 /* LaunchScreen.storyboard */,
+				BB3CBDAC1C82A68A00DA5F63 /* ExportItemSource.swift */,
+				BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		BBD684781CDEE72B00584DA1 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				BBD684731CDEE45900584DA1 /* Feedbackable.swift */,
+				BB7E397D1CDDC63C00C84856 /* UINavigationController+Extension.swift */,
+			);
+			name = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -520,6 +548,7 @@
 				BB7E39771CDA361A00C84856 /* UIView+Frame.swift in Sources */,
 				BB8C55D71CD9796C004B60E3 /* ExportItemSource.swift in Sources */,
 				BB7E397A1CDCE94C00C84856 /* HomeViewController.swift in Sources */,
+				BBD684741CDEE45900584DA1 /* Feedbackable.swift in Sources */,
 				BB8C55D91CD97A2C004B60E3 /* X509Helper.m in Sources */,
 				BB7E39A81CDDF25000C84856 /* TutorialViewController.swift in Sources */,
 				BB46EB751C3046B300E156E9 /* AppDelegate.swift in Sources */,
@@ -550,6 +579,7 @@
 				BB1773C01C4280C6001AAB80 /* SSLLabs.swift in Sources */,
 				BB1773C11C4280C6001AAB80 /* WOT.swift in Sources */,
 				BB3CBDAD1C82A68A00DA5F63 /* ExportItemSource.swift in Sources */,
+				BBD684751CDEE68300584DA1 /* Feedbackable.swift in Sources */,
 				BB1773C21C4280C6001AAB80 /* X509Helper.m in Sources */,
 				BB1773C31C4280C6001AAB80 /* X509.swift in Sources */,
 				BB46EB9B1C30492B00E156E9 /* ActionViewController.swift in Sources */,
