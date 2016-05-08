@@ -21,3 +21,4 @@ Carthage/
 *swp
 xcuserdata/
 *.xcuserdatad/
+output/
