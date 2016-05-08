@@ -9,8 +9,9 @@
 import UIKit
 import MobileCoreServices
 import SafariServices
-import HockeySDK
 import StoreKit
+import Crashlytics
+import Fabric
 
 class ActionViewController: UIViewController,
                             UITableViewDelegate,
@@ -96,8 +97,7 @@ class ActionViewController: UIViewController,
     private func viewDidLoadInExtensionContext() {
         var once: dispatch_once_t = 0
         dispatch_once(&once) { () -> Void in
-            BITHockeyManager.sharedHockeyManager().configureWithIdentifier(kHockeyAppId)
-            BITHockeyManager.sharedHockeyManager().startManager()
+            Fabric.with([Answers.self, Crashlytics.self])
         }
 
         var validItemProvider: NSItemProvider?

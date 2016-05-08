@@ -7,9 +7,8 @@
 //
 
 import UIKit
-import HockeySDK
 import Fabric
-import Answers
+import Crashlytics
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -26,12 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.rootViewController = UINavigationController(rootViewController: HomeViewController())
         self.window?.makeKeyAndVisible()
 
-        BITHockeyManager.sharedHockeyManager().configureWithIdentifier(kHockeyAppId)
-        BITHockeyManager.sharedHockeyManager().startManager()
-        BITHockeyManager.sharedHockeyManager().authenticator.authenticateInstallation()
-
-        Fabric.with([Answers.self])
-
+        Fabric.with([Answers.self, Crashlytics.self])
         return true
     }
 
