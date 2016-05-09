@@ -93,6 +93,10 @@ class HomeViewController: UIViewController,
         label.frame.size = size
         label.fp_x = (self.view.fp_width - size.width) / 2
         label.fp_y = self.sectionTopPadding * 2 - 10
+        if self.view.fp_height <= 480 {
+            // iPhone 4
+            label.fp_y = label.fp_y - 30
+        }
         view.addSubview(label)
         return view
     }()
