@@ -131,8 +131,8 @@ extension TutorialViewController {
         case 2: return "Step \(step): Tap More Button"
         case 3: return "Step \(step): Enable Certificate"
         case 4: return "Step \(step): Tap Certificate Button"
-        case 5: return "Step \(step): Tap Share for more options"
-        case 6: return "Step \(step): Export or Feedback :)"
+        case 5: return "Step \(step): View and Tap for more options"
+        case 6: return "Step \(step): Scan in SSLLabs or Export"
         default: return ""
         }
     }
