@@ -53,6 +53,12 @@ class ActionViewController: UIViewController,
             let tuples = cert.displaySections()
             self.contentSections = tuples.0
             self.contentSectionNames = tuples.1
+
+            guard let index = self.selectedIndex else {
+                return
+            }
+            let indexPath = NSIndexPath(forRow: index, inSection: 0)
+            self.headerTableView.selectRowAtIndexPath(indexPath, animated: false, scrollPosition: .None)
         }
     }
 
@@ -87,6 +93,16 @@ class ActionViewController: UIViewController,
             self.configureTableViews()
             self.parse(self.URL, error: nil)
         }
+    }
+
+    override func viewDidLayoutSubviews() {
+        if self.headerTableView.contentSize.height > self.headerHeightConstraint.constant {
+            dispatch_async(dispatch_get_main_queue(), {
+                //print("set actual height = \(self.headerTableView.contentSize.height)")
+                self.headerHeightConstraint.constant = self.headerTableView.contentSize.height
+            })
+        }
+
     }
 
     // MARK: Action
@@ -247,6 +263,7 @@ class ActionViewController: UIViewController,
         string.appendAttributedString(NSAttributedString(attachment: attachment))
         textView.attributedText = string
         textView.sizeToFit()
+        textView.editable = false
         return textView
     }
 
