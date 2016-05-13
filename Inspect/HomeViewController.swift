@@ -47,13 +47,20 @@ enum HomeSection: Int {
     }
 }
 
+internal let cellHeight: CGFloat = UIScreen.mainScreen().scale * 22
+internal let sectionHeight: CGFloat = 56
+internal let sectionLeftPadding: CGFloat = UIScreen.mainScreen().scale >= 3.0 ? 20: 15
+internal let sectionTopPadding: CGFloat = 30
+
+class HomeCell: UITableViewCell {
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.textLabel?.fp_x = sectionLeftPadding
+    }
+}
+
 class HomeViewController: UIViewController,
                           UITableViewDelegate, UITableViewDataSource {
-
-    private let cellHeight: CGFloat = UIScreen.mainScreen().scale * 22
-    private let sectionHeight: CGFloat = 56
-    private let sectionLeftPadding: CGFloat = UIScreen.mainScreen().scale >= 3.0 ? 20: 15
-    private let sectionTopPadding: CGFloat = 30
 
     private let footerText: String = {
         var version = "dev"; var build = "9999"
@@ -71,35 +78,40 @@ class HomeViewController: UIViewController,
         return [.Tutorial, .Misc, .Safari]
     }()
 
+    var footerTextY: CGFloat {
+        var y = sectionTopPadding * 2 - 10
+        if self.view.fp_height <= 480 {
+            // iPhone 4
+            y -= 30
+        }
+        return y
+    }
+
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: self.view.frame, style: .Grouped)
-        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: HomeSection.Tutorial.reuseId)
+        tableView.registerClass(HomeCell.self, forCellReuseIdentifier: HomeSection.Tutorial.reuseId)
         tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: HomeSection.Safari.reuseId)
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.tableFooterView = self.footerView
+        tableView.rowHeight = cellHeight
         tableView.autoresizingMask = [.FlexibleHeight, .FlexibleWidth]
         return tableView
     }()
 
-    lazy var footerView: UIView = {
+    func createfooterView() -> UIView {
         let view = UIView(); let label = UILabel()
         label.textColor = UIColor.lightGrayColor()
         label.font = UIFont.systemFontOfSize(12)
         label.numberOfLines = 0
         label.textAlignment = .Center
         label.text = self.footerText
-        let size = label.sizeThatFits(CGSize(width: self.view.fp_width - 2 * self.sectionLeftPadding, height: CGFloat.max))
+        let size = label.sizeThatFits(CGSize(width: self.view.fp_width - 2 * sectionLeftPadding, height: CGFloat.max))
         label.frame.size = size
         label.fp_x = (self.view.fp_width - size.width) / 2
-        label.fp_y = self.sectionTopPadding * 2 - 10
-        if self.view.fp_height <= 480 {
-            // iPhone 4
-            label.fp_y = label.fp_y - 30
-        }
+        label.fp_y = self.footerTextY
         view.addSubview(label)
         return view
-    }()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -108,6 +120,13 @@ class HomeViewController: UIViewController,
         if NSUserDefaults.standardUserDefaults().boolForKey(kFirstRun) {
             self.showTutorial()
         }
+    }
+
+    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
+        coordinator.animateAlongsideTransition({ (context) in
+            self.tableView.reloadData()
+        }, completion: nil)
     }
 
     func showTutorial() {
@@ -132,7 +151,7 @@ extension HomeViewController {
         guard let section = HomeSection(rawValue: indexPath.section) else {
             return UITableViewCell(style: .Default, reuseIdentifier: nil)
         }
-        let cell = UITableViewCell(style: .Default, reuseIdentifier: section.reuseId)
+        let cell = HomeCell(style: .Default, reuseIdentifier: section.reuseId)
         let items = section.sections
         switch section {
         case .Safari:
@@ -148,6 +167,7 @@ extension HomeViewController {
             cell.textLabel?.font = font
             cell.textLabel?.text = items[indexPath.row].rawValue
             cell.textLabel?.textColor = UIColor(red:0.25, green:0.25, blue:0.25, alpha:1.00)
+            cell.textLabel?.textAlignment = .Left
         }
         return cell
     }
@@ -185,11 +205,14 @@ extension HomeViewController {
     }
 
     func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return CGFloat.min
-    }
 
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return cellHeight
+        guard let sec = HomeSection(rawValue: section) else {
+            return CGFloat.min
+        }
+        switch sec {
+        case .Safari: return 100
+        default: return CGFloat.min
+        }
     }
 
     func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -202,5 +225,16 @@ extension HomeViewController {
         label.sizeToFit(); label.fp_x = sectionLeftPadding; label.fp_y = sectionTopPadding
         view.addSubview(label)
         return view
+    }
+
+    func tableView(tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+
+        guard let sec = HomeSection(rawValue: section) else {
+            return nil
+        }
+        switch sec {
+        case .Safari: return self.createfooterView()
+        default: return nil
+        }
     }
 }

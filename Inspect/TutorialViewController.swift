@@ -75,6 +75,11 @@ class TutorialViewController: UIViewController, UIScrollViewDelegate {
         self.carouselView.contentSize = CGSize(width: self.view.fp_width * 6, height: self.view.fp_height)
     }
 
+    override func willTransitionToTraitCollection(newCollection: UITraitCollection, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+        super.willTransitionToTraitCollection(newCollection, withTransitionCoordinator: coordinator)
+        self.carouselView.frame = self.view.frame
+    }
+
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         self.indicator.currentPage = Int(scrollView.contentOffset.x / scrollView.fp_width)
     }
