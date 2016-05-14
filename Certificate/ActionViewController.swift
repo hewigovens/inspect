@@ -76,6 +76,8 @@ class ActionViewController: UIViewController,
                 alert.addAction((UIAlertAction(title: "Rate us", style: .Default, handler: { (action) -> Void in
                     self.openAppStoreUrl()
                 })))
+                alert.popoverPresentationController?.sourceView = self.view
+                alert.popoverPresentationController?.sourceRect = self.view.frame
                 self.presentViewController(alert, animated: true, completion: nil)
                 defaults.setBool(true, forKey: kRatingKey)
             }
@@ -204,6 +206,7 @@ class ActionViewController: UIViewController,
             let data = SecCertificateCopyData(cert.0) as NSData
             let exportItem = ExportItemSource(data: data, host: self.targetHost, index: self.selectedIndex!)
             let vc = UIActivityViewController(activityItems: [exportItem], applicationActivities: nil)
+            vc.popoverPresentationController?.barButtonItem = self.navItem.rightBarButtonItem
             self.presentViewController(vc, animated: true, completion: nil)
         }))
 
@@ -211,8 +214,8 @@ class ActionViewController: UIViewController,
             self.feedbackWithEmail()
         }))
 
+        sheet.popoverPresentationController?.barButtonItem = self.navItem.rightBarButtonItem
         sheet.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
-
         self.presentViewController(sheet, animated: true, completion: nil)
     }
 
@@ -244,6 +247,8 @@ class ActionViewController: UIViewController,
 
         let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .Alert)
         alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+        alert.popoverPresentationController?.sourceView = self.view
+        alert.popoverPresentationController?.sourceRect = self.view.frame
         dispatch_async(dispatch_get_main_queue()) { () -> Void in
             self.presentViewController(alert, animated: true, completion: nil)
         }
