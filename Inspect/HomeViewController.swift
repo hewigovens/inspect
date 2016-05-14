@@ -152,6 +152,7 @@ extension HomeViewController {
             return UITableViewCell(style: .Default, reuseIdentifier: nil)
         }
         let cell = HomeCell(style: .Default, reuseIdentifier: section.reuseId)
+        cell.separatorInset = UIEdgeInsets(top: 0, left: sectionLeftPadding, bottom: 0, right: 0)
         let items = section.sections
         switch section {
         case .Safari:
