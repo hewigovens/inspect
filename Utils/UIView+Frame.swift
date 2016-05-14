@@ -53,5 +53,16 @@ extension UIView {
             self.frame = frame
         }
     }
+
+    var fp_size: CGSize {
+        get {
+            return self.frame.size
+        }
+        set {
+            var frame = self.frame
+            frame.size = newValue
+            self.frame = frame
+        }
+    }
 }
 //swiftlint:enable variable_name
