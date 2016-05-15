@@ -55,7 +55,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             guard let vc = board.instantiateViewControllerWithIdentifier("ActionViewController") as? ActionViewController else {return}
             vc.URL = url
             vc.openURLAction = { url in
-                UIApplication.sharedApplication().openURL(url)
+                if UIApplication.sharedApplication().canOpenURL(url) {
+                    UIApplication.sharedApplication().openURL(url)
+                }
             }
             UIPasteboard.generalPasteboard().string = ""
             dispatch_async(dispatch_get_main_queue(), {

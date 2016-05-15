@@ -41,6 +41,8 @@
 		<string>MainInterface</string>
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.ui-services</string>
+        <key>NSExtensionActionWantsFullScreenPresentation</key>
+        <true/>
 	</dict>
     <key>Fabric</key>
     <dict>

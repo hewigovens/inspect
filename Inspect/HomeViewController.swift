@@ -191,8 +191,12 @@ extension HomeViewController {
                 self.feedbackWithEmail()
                 break
             case .RateUs:
-                if let url = NSURL(string: kAppStoreHTTPUrl) {
-                    UIApplication.sharedApplication().openURL(url)
+
+                for url in AppStoreURLs() {
+                    if (UIApplication.sharedApplication().canOpenURL(url)) {
+                        UIApplication.sharedApplication().openURL(url)
+                        break
+                    }
                 }
             default:break
             }

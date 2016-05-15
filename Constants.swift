@@ -14,3 +14,14 @@ let kAppStoreHTTPUrl = "https://itunes.apple.com/us/app/inspect-safari-extension
 let kRatingKey = "Rating"
 let kStatisticsKey = "Statistics"
 let kFirstRun = "FirstRun"
+
+func AppStoreURLs() -> [NSURL] {
+    var urls = [NSURL]()
+    if let url = NSURL(string: kAppStoreUrl) {
+        urls.append(url)
+    }
+    if let url = NSURL(string: kAppStoreHTTPUrl) {
+        urls.append(url)
+    }
+    return urls
+}
