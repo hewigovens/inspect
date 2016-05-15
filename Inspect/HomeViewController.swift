@@ -193,7 +193,7 @@ extension HomeViewController {
             case .RateUs:
 
                 for url in AppStoreURLs() {
-                    if (UIApplication.sharedApplication().canOpenURL(url)) {
+                    if UIApplication.sharedApplication().canOpenURL(url) {
                         UIApplication.sharedApplication().openURL(url)
                         break
                     }
