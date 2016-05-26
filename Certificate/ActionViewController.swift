@@ -74,7 +74,7 @@ class ActionViewController: UIViewController,
                 let alert = UIAlertController(title: "Hooray", message: "You have inspected \(stats) sites. :)", preferredStyle: .Alert)
                 alert.addAction(UIAlertAction(title: "Next Time", style: .Default, handler: nil))
                 alert.addAction((UIAlertAction(title: "Rate us", style: .Default, handler: { (action) -> Void in
-                    self.openAppStoreUrl()
+                    self.extensionOpenUrl(kAppStoreHTTPUrl)
                 })))
                 alert.popoverPresentationController?.sourceView = self.view
                 alert.popoverPresentationController?.sourceRect = self.view.frame
@@ -211,7 +211,11 @@ class ActionViewController: UIViewController,
         }))
 
         sheet.addAction(UIAlertAction(title: "Feedback", style: .Default, handler: { (action) -> Void in
-            self.feedbackWithEmail()
+            if self.feedbackCanSendMail() {
+                self.feedbackWithEmail()
+            } else {
+                self.extensionOpenUrl(self.feedbackMailToString())
+            }
         }))
 
         sheet.popoverPresentationController?.barButtonItem = self.navItem.rightBarButtonItem
@@ -272,9 +276,9 @@ class ActionViewController: UIViewController,
         return textView
     }
 
-    private func openAppStoreUrl() {
+    private func extensionOpenUrl(urlString: String) {
 
-        guard let url = NSURL(string: kAppStoreHTTPUrl) else {return}
+        guard let url = NSURL(string: urlString) else {return}
 
         if let action = self.openURLAction {
             action(url)

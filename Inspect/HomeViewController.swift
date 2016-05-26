@@ -177,9 +177,7 @@ extension HomeViewController {
         guard let section = HomeSection(rawValue: indexPath.section) else {return}
         switch section {
         case .Safari:
-            if let url = NSURL(string: "https://www.apple.com") {
-                UIApplication.sharedApplication().openURL(url)
-            }
+            self.openUrl("https://www.apple.com")
             break
         case .Tutorial:
             self.showTutorial()
@@ -188,10 +186,13 @@ extension HomeViewController {
             let item = section.sections[indexPath.row]
             switch item {
             case .Feedback:
-                self.feedbackWithEmail()
+                if self.feedbackCanSendMail() {
+                    self.feedbackWithEmail()
+                } else {
+                    self.openUrl(self.feedbackMailToString())
+                }
                 break
             case .RateUs:
-
                 for url in AppStoreURLs() {
                     if UIApplication.sharedApplication().canOpenURL(url) {
                         UIApplication.sharedApplication().openURL(url)
@@ -240,6 +241,14 @@ extension HomeViewController {
         switch sec {
         case .Safari: return self.createfooterView()
         default: return nil
+        }
+    }
+
+    func openUrl(urlString: String) {
+        if let url = NSURL(string: urlString) {
+            if UIApplication.sharedApplication().canOpenURL(url) {
+                UIApplication.sharedApplication().openURL(url)
+            }
         }
     }
 }

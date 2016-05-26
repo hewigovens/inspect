@@ -9,16 +9,37 @@
 import UIKit
 import MessageUI
 
+let kFeedbackRecipient = "support@fourplex.in"
+let kFeedbackSubject = "Inspect Feedback"
+
 protocol Feedbackable: MFMailComposeViewControllerDelegate {
+    func feedbackCanSendMail() -> Bool
+    func feedbackMailToString() -> String
     func feedbackWithEmail()
 }
 
 extension UIViewController: Feedbackable {
 
+    func feedbackCanSendMail() -> Bool {
+        return MFMailComposeViewController.canSendMail()
+    }
+
+    func feedbackMailToString() -> String {
+        if let mailTo = "mailto:\(kFeedbackRecipient)?subject=\(kFeedbackSubject)"
+            .stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet()) {
+            return mailTo
+        } else {
+            return ""
+        }
+    }
+
     func feedbackWithEmail() {
+        guard MFMailComposeViewController.canSendMail() else {
+            return
+        }
         let controller = MFMailComposeViewController()
-        controller.setToRecipients(["support@fourplex.in"])
-        controller.setSubject("Inspect Feedback")
+        controller.setToRecipients([kFeedbackRecipient])
+        controller.setSubject(kFeedbackSubject)
         controller.mailComposeDelegate = self
         self.presentViewController(controller, animated: true, completion: nil)
     }
