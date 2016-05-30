@@ -14,10 +14,10 @@ let kRatingKey = "Rating"
 let kStatisticsKey = "Statistics"
 let kFirstRun = "FirstRun"
 
-func AppStoreURLs() -> [NSURL] {
-    var urls = [NSURL]()
-    if let url = NSURL(string: kAppStoreHTTPUrl) {
-        urls.append(url)
-    }
-    return urls
-}
+//MARK: Analytics
+let kActionScanInSSLLabs = "ScanInSSLLabs"
+let kActionFeedback = "Feedback"
+let kActionExport = "Export"
+let kActionInspect = "Inspect"
+let kActionRate = "Rate"
+let kActionTutorial = "Tutorial"

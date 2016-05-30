@@ -145,6 +145,9 @@ class ActionViewController: UIViewController,
     private func parse(item: AnyObject?, error: NSError?) {
         if let url = item as? NSURL? {
             self.inspectingUrl = url
+            if let urlString = url?.absoluteString {
+                Answers.logCustomEventWithName(kActionInspect, customAttributes:["url": urlString, "in_extension": self.inExtensionContext])
+            }
             print("get url \(url), scheme = \(url?.scheme)")
             if url?.scheme == ("https") {
                 self.targetHost = (url?.host)!
@@ -191,6 +194,7 @@ class ActionViewController: UIViewController,
         sheet.addAction(UIAlertAction(title: "Scan in SSLLabs.com", style: .Default, handler: { (action) -> Void in
             if self.inspectingUrl != nil {
                 if let url = SSLLabs.scanUrl((self.inspectingUrl?.host)!) {
+                    Answers.logCustomEventWithName(kActionScanInSSLLabs, customAttributes: ["in_extension": self.inExtensionContext])
                     let vc = SFSafariViewController(URL: url)
                     self.presentViewController(vc, animated: true, completion: nil)
                 }
@@ -198,10 +202,10 @@ class ActionViewController: UIViewController,
         }))
 
         sheet.addAction(UIAlertAction(title: "Export Certificate", style: .Default, handler: { (action) -> Void in
-
             if self.selectedIndex == nil {
                 self.selectedIndex = self.certificates.count - 1
             }
+            Answers.logCustomEventWithName(kActionExport, customAttributes: ["index": self.selectedIndex!, "in_extension": self.inExtensionContext])
             let cert = self.certificates[self.selectedIndex!]
             let data = SecCertificateCopyData(cert.0) as NSData
             let exportItem = ExportItemSource(data: data, host: self.targetHost, index: self.selectedIndex!)
@@ -211,6 +215,7 @@ class ActionViewController: UIViewController,
         }))
 
         sheet.addAction(UIAlertAction(title: "Feedback", style: .Default, handler: { (action) -> Void in
+            Answers.logCustomEventWithName(kActionFeedback, customAttributes: ["in_extension": true])
             if self.feedbackCanSendMail() {
                 self.feedbackWithEmail()
             } else {

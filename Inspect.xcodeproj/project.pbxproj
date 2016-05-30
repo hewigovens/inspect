@@ -349,6 +349,7 @@
 				BB46EB951C30492B00E156E9 /* Frameworks */,
 				BB46EB961C30492B00E156E9 /* Resources */,
 				BB3CBDB31C8F220000DA5F63 /* Run SwiftLint */,
+				BB5273DC1CFBBFCE00947BFD /* Run Fabric */,
 			);
 			buildRules = (
 			);
@@ -495,6 +496,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+		};
+		BB5273DC1CFBBFCE00947BFD /* Run Fabric */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Fabric";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Dependencies/Fabric.framework/run ffd1a21a45423d2959636c52dc02535a8fad1b60 dd1dfceaa343fa98ef49d12fa7f022c135640990742116059b7d05091289834f";
 		};
 		BBD6847C1CDF4E5F00584DA1 /* Copy Carthage Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;

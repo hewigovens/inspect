@@ -8,6 +8,7 @@
 
 import UIKit
 import MessageUI
+import Crashlytics
 
 enum HomeSection: Int {
     case Tutorial = 0
@@ -130,6 +131,7 @@ class HomeViewController: UIViewController,
     }
 
     func showTutorial() {
+        Answers.logCustomEventWithName(kActionTutorial, customAttributes: nil)
         let vc = TutorialViewController()
         self.navigationController?.presentViewController(vc, animated: true, completion: nil)
     }
@@ -186,6 +188,7 @@ extension HomeViewController {
             let item = section.sections[indexPath.row]
             switch item {
             case .Feedback:
+                Answers.logCustomEventWithName(kActionFeedback, customAttributes: ["in_extension": false])
                 if self.feedbackCanSendMail() {
                     self.feedbackWithEmail()
                 } else {
@@ -193,10 +196,10 @@ extension HomeViewController {
                 }
                 break
             case .RateUs:
-                for url in AppStoreURLs() {
+                Answers.logCustomEventWithName(kActionRate, customAttributes: nil)
+                if let url = NSURL(string: kAppStoreHTTPUrl) {
                     if UIApplication.sharedApplication().canOpenURL(url) {
                         UIApplication.sharedApplication().openURL(url)
-                        break
                     }
                 }
             default:break
