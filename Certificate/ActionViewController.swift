@@ -49,16 +49,18 @@ class ActionViewController: UIViewController,
     }
     private var selectedIndex: Int? {
         didSet {
-            let cert = self.x509Certs[self.selectedIndex!]
+            guard let index = self.selectedIndex else { return }
+            if index < 0 || index >= self.x509Certs.count {
+                return
+            }
+            let cert = self.x509Certs[index]
             let tuples = cert.displaySections()
             self.contentSections = tuples.0
             self.contentSectionNames = tuples.1
 
-            guard let index = self.selectedIndex else {
-                return
-            }
             let indexPath = NSIndexPath(forRow: index, inSection: 0)
             self.headerTableView.selectRowAtIndexPath(indexPath, animated: false, scrollPosition: .None)
+
         }
     }
 
@@ -206,9 +208,13 @@ class ActionViewController: UIViewController,
                 self.selectedIndex = self.certificates.count - 1
             }
             Answers.logCustomEventWithName(kActionExport, customAttributes: ["index": self.selectedIndex!, "in_extension": self.inExtensionContext])
-            let cert = self.certificates[self.selectedIndex!]
+            guard let index = self.selectedIndex else { return }
+            if index < 0 || index >= self.certificates.count {
+                return
+            }
+            let cert = self.certificates[index]
             let data = SecCertificateCopyData(cert.0) as NSData
-            let exportItem = ExportItemSource(data: data, host: self.targetHost, index: self.selectedIndex!)
+            let exportItem = ExportItemSource(data: data, host: self.targetHost, index: index)
             let vc = UIActivityViewController(activityItems: [exportItem], applicationActivities: nil)
             vc.popoverPresentationController?.barButtonItem = self.navItem.rightBarButtonItem
             self.presentViewController(vc, animated: true, completion: nil)
