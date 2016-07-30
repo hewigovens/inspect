@@ -177,11 +177,9 @@ extension X509Helper {
 
                 let string = String.fromCString(buffer)!
                 let inFormatter = NSDateFormatter()
-                let outFormatter = NSDateFormatter()
                 inFormatter.dateFormat = "MMM dd HH:mm:ss yyyy zzz"
-                outFormatter.dateFormat = "MM/dd/yy, hh:mm:ss a"
                 if let date = inFormatter.dateFromString(string) {
-                    return outFormatter.stringFromDate(date)
+                    return NSDateFormatter.localizedStringFromDate(date, dateStyle: .ShortStyle, timeStyle: .MediumStyle)
                 } else {
                     return string
                 }
