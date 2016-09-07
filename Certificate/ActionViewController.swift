@@ -12,6 +12,7 @@ import SafariServices
 import StoreKit
 import Crashlytics
 import Fabric
+import SQLite
 
 class ActionViewController: UIViewController,
                             UITableViewDelegate,
@@ -24,6 +25,7 @@ class ActionViewController: UIViewController,
     @IBOutlet weak var contentTableView: UITableView!
     @IBOutlet weak var headerHeightConstraint: NSLayoutConstraint!
 
+    internal var db: Connection? = nil
     internal var inExtensionContext: Bool {
         return self.extensionContext != nil
     }
@@ -96,6 +98,23 @@ class ActionViewController: UIViewController,
         } else {
             self.configureTableViews()
             self.parse(self.URL, error: nil)
+        }
+
+        guard let path = NSBundle.mainBundle().pathForResource("mozilla_trust", ofType: "db") else {
+            return
+        }
+        do {
+            self.db = try Connection(path)
+            let ca_roots = Table("ca_roots")
+            let sha1 = Expression<String>("SHA-1 Fingerprint")
+
+            let query = ca_roots.select(sha1).filter(sha1 == "02faf3e291435468607857694df5e45b68851868" )
+            for row in try self.db!.prepare(query) {
+                debugPrint(row)
+            }
+
+        } catch let error {
+            debugPrint(error)
         }
     }
 
@@ -318,6 +337,8 @@ extension ActionViewController {
             if let name = SecCertificateCopySubjectSummary(cert.0) {
                 cell?.name = name as String
             }
+
+            debugPrint(self.x509Certs[0].sha1)
             return cell!
         } else {
             let cell = tableView.dequeueReusableCellWithIdentifier(CertificateInfoCell.reuseId) as? CertificateInfoCell

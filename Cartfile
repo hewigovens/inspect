@@ -1,1 +1,2 @@
 github "pixelglow/zipzap"
+github "stephencelis/SQLite.swift" ~> 0.10.1
