@@ -19,6 +19,7 @@
 		BB2C5B3C1C469BFE00911EA4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB2C5B3B1C469BFE00911EA4 /* Images.xcassets */; };
 		BB2C5B3E1C469C3200911EA4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB2C5B3D1C469C3200911EA4 /* Assets.xcassets */; };
 		BB2C5B411C47E85E00911EA4 /* ZipZap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB2C5B401C47E85E00911EA4 /* ZipZap.framework */; };
+		BB2C63F31D7FD9D400E145BB /* mozilla_trust.json in Resources */ = {isa = PBXBuildFile; fileRef = BB2C63F21D7FD9D400E145BB /* mozilla_trust.json */; };
 		BB2EB67D1C4930B90057929C /* INHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB2EB67C1C4930B90057929C /* INHUD.swift */; };
 		BB30DEA11C7F407A00AE0A39 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB30DE9F1C7F407A00AE0A39 /* Fabric.framework */; };
 		BB30DEA31C7F414400AE0A39 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB30DE9F1C7F407A00AE0A39 /* Fabric.framework */; };
@@ -50,8 +51,6 @@
 		BBA1C2571C507B34009EECCC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA1C2551C507B34009EECCC /* Constants.swift */; };
 		BBBEA3151C409A8E00F1C3EE /* mac_dev.cer in Resources */ = {isa = PBXBuildFile; fileRef = BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */; };
 		BBBEA3161C409DE000F1C3EE /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
-		BBD3839C1D7F97EE00F9D449 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBD3839B1D7F97EE00F9D449 /* SQLite.framework */; };
-		BBD3839E1D7F98CD00F9D449 /* mozilla_trust.db in Resources */ = {isa = PBXBuildFile; fileRef = BBD3839D1D7F98CD00F9D449 /* mozilla_trust.db */; };
 		BBD684741CDEE45900584DA1 /* Feedbackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD684731CDEE45900584DA1 /* Feedbackable.swift */; };
 		BBD684751CDEE68300584DA1 /* Feedbackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD684731CDEE45900584DA1 /* Feedbackable.swift */; };
 		BBD6847A1CDF428600584DA1 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBD684791CDF428600584DA1 /* Crashlytics.framework */; };
@@ -96,6 +95,7 @@
 		BB2C5B401C47E85E00911EA4 /* ZipZap.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipZap.framework; path = Carthage/Build/iOS/ZipZap.framework; sourceTree = "<group>"; };
 		BB2C5B421C47EBCD00911EA4 /* Inspect.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Inspect.entitlements; sourceTree = "<group>"; };
 		BB2C5B431C47EBEF00911EA4 /* Certificate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Certificate.entitlements; sourceTree = "<group>"; };
+		BB2C63F21D7FD9D400E145BB /* mozilla_trust.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = mozilla_trust.json; sourceTree = "<group>"; };
 		BB2EB67C1C4930B90057929C /* INHUD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = INHUD.swift; path = Utils/INHUD.swift; sourceTree = "<group>"; };
 		BB30DE9F1C7F407A00AE0A39 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Dependencies/Fabric.framework; sourceTree = "<group>"; };
 		BB3CBDAC1C82A68A00DA5F63 /* ExportItemSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ExportItemSource.swift; path = ../Certificate/ExportItemSource.swift; sourceTree = "<group>"; };
@@ -124,8 +124,6 @@
 		BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = mac_dev.cer; sourceTree = "<group>"; };
 		BBBEA3191C414B6000F1C3EE /* X509Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = X509Helper.h; path = Utils/X509Helper.h; sourceTree = "<group>"; };
 		BBBEA31A1C414B6000F1C3EE /* X509Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = X509Helper.m; path = Utils/X509Helper.m; sourceTree = "<group>"; };
-		BBD3839B1D7F97EE00F9D449 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/iOS/SQLite.framework; sourceTree = "<group>"; };
-		BBD3839D1D7F98CD00F9D449 /* mozilla_trust.db */ = {isa = PBXFileReference; lastKnownFileType = file; name = mozilla_trust.db; path = scripts/mozilla_trust.db; sourceTree = SOURCE_ROOT; };
 		BBD684731CDEE45900584DA1 /* Feedbackable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Feedbackable.swift; sourceTree = "<group>"; };
 		BBD684791CDF428600584DA1 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Dependencies/Crashlytics.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -138,7 +136,6 @@
 				BB2C5B411C47E85E00911EA4 /* ZipZap.framework in Frameworks */,
 				BBD6847A1CDF428600584DA1 /* Crashlytics.framework in Frameworks */,
 				BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */,
-				BBD3839C1D7F97EE00F9D449 /* SQLite.framework in Frameworks */,
 				BB30DEA11C7F407A00AE0A39 /* Fabric.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -190,7 +187,7 @@
 		BB46EB731C3046B300E156E9 /* Inspect */ = {
 			isa = PBXGroup;
 			children = (
-				BBD3839D1D7F98CD00F9D449 /* mozilla_trust.db */,
+				BB2C63F21D7FD9D400E145BB /* mozilla_trust.json */,
 				BB2C5B421C47EBCD00911EA4 /* Inspect.entitlements */,
 				BB2C5B3D1C469C3200911EA4 /* Assets.xcassets */,
 				BB5DB8861C3AA52900219411 /* Inspect-Bridging-Header.h */,
@@ -234,7 +231,6 @@
 		BB46EC781C32C8EF00E156E9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				BBD3839B1D7F97EE00F9D449 /* SQLite.framework */,
 				BBD684791CDF428600584DA1 /* Crashlytics.framework */,
 				BB30DE9F1C7F407A00AE0A39 /* Fabric.framework */,
 				BB2C5B401C47E85E00911EA4 /* ZipZap.framework */,
@@ -437,7 +433,7 @@
 			files = (
 				BB7E39781CDACFF000C84856 /* Images.xcassets in Resources */,
 				BB46EB7F1C3046B300E156E9 /* LaunchScreen.storyboard in Resources */,
-				BBD3839E1D7F98CD00F9D449 /* mozilla_trust.db in Resources */,
+				BB2C63F31D7FD9D400E145BB /* mozilla_trust.json in Resources */,
 				BB8C55D41CD97958004B60E3 /* MainInterface.storyboard in Resources */,
 				BB2C5B3E1C469C3200911EA4 /* Assets.xcassets in Resources */,
 			);
@@ -526,7 +522,6 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/ZipZap.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/SQLite.framework",
 			);
 			name = "Copy Carthage Frameworks";
 			outputPaths = (

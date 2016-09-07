@@ -3,7 +3,7 @@
 SOURCE_URL="https://mozillacaprogram.secure.force.com/CA/IncludedCACertificateReportCSVFormat"
 DB_NAME="mozilla_trust"
 DB_PATH="$DB_NAME.db"
-TMP_CSV_PATH="/tmp/$DB_NAME.csv"
+TMP_CSV_PATH="$DB_NAME.csv"
 TABLE_NAME="ca_roots"
 SHA1_COLUMN="SHA-1 Fingerprint"
 
@@ -27,7 +27,6 @@ EOF
 
 function main() {
 	download_csv
-	import_to_db
 }
 
 main

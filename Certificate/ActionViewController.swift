@@ -12,7 +12,6 @@ import SafariServices
 import StoreKit
 import Crashlytics
 import Fabric
-import SQLite
 
 class ActionViewController: UIViewController,
                             UITableViewDelegate,
@@ -25,12 +24,12 @@ class ActionViewController: UIViewController,
     @IBOutlet weak var contentTableView: UITableView!
     @IBOutlet weak var headerHeightConstraint: NSLayoutConstraint!
 
-    internal var db: Connection? = nil
     internal var inExtensionContext: Bool {
         return self.extensionContext != nil
     }
     internal var URL: NSURL?
     internal var openURLAction: ((NSURL) -> Void)?
+    internal var rootCAs: [String: AnyObject]? = nil
 
     private var contentSections: [[(String, AnyObject)]]?
     private var contentSectionNames: [CertificateInfoSection]?
@@ -99,23 +98,7 @@ class ActionViewController: UIViewController,
             self.configureTableViews()
             self.parse(self.URL, error: nil)
         }
-
-        guard let path = NSBundle.mainBundle().pathForResource("mozilla_trust", ofType: "db") else {
-            return
-        }
-        do {
-            self.db = try Connection(path)
-            let ca_roots = Table("ca_roots")
-            let sha1 = Expression<String>("SHA-1 Fingerprint")
-
-            let query = ca_roots.select(sha1).filter(sha1 == "02faf3e291435468607857694df5e45b68851868" )
-            for row in try self.db!.prepare(query) {
-                debugPrint(row)
-            }
-
-        } catch let error {
-            debugPrint(error)
-        }
+        loadRootCAs()
     }
 
     override func viewDidLayoutSubviews() {
@@ -324,6 +307,35 @@ class ActionViewController: UIViewController,
             responder = r.nextResponder()
         }
     }
+
+    private func loadRootCAs() {
+
+        var bundle: NSBundle = NSBundle.mainBundle()
+
+        if self.inExtensionContext {
+            let url = bundle.bundleURL.URLByDeletingLastPathComponent
+            guard let _url = url?.URLByDeletingLastPathComponent else {
+                return
+            }
+            guard let _bundle = NSBundle(URL: _url) else {
+                return
+            }
+            bundle = _bundle
+        }
+
+        guard let path = bundle.pathForResource("mozilla_trust", ofType: "json") else {
+            return
+        }
+        do {
+            guard let data = NSData(contentsOfFile: path) else {
+                return
+            }
+            self.rootCAs = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as? [String: AnyObject]
+
+        } catch let error {
+            debugPrint(error)
+        }
+    }
 }
 
 // MARK: UITableViewDelegate
@@ -333,12 +345,17 @@ extension ActionViewController {
             let cert = self.certificates[indexPath.row]
             let cell = tableView.dequeueReusableCellWithIdentifier(CertificateStackCell.reuseId) as? CertificateStackCell
             cell?.trustResult = cert.1
-            cell?.level = indexPath.row
             if let name = SecCertificateCopySubjectSummary(cert.0) {
                 cell?.name = name as String
             }
-
-            debugPrint(self.x509Certs[0].sha1)
+            if indexPath.row == 0 {
+                if let rootCAs = self.rootCAs {
+                    if rootCAs[self.x509Certs[0].sha1] == nil {
+                        cell?.trustResult = UInt32(kSecTrustResultOtherError)
+                    }
+                }
+            }
+            cell?.level = indexPath.row
             return cell!
         } else {
             let cell = tableView.dequeueReusableCellWithIdentifier(CertificateInfoCell.reuseId) as? CertificateInfoCell
