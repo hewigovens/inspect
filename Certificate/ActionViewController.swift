@@ -259,6 +259,19 @@ class ActionViewController: UIViewController,
         }
     }
 
+    private func showMITMAlert() {
+        if self.presentedViewController == nil {
+            let errorMessage = "The Root CA is not trusted. You may be under MITM attack."
+            let alert = UIAlertController(title: "Warning", message: errorMessage, preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .Destructive, handler: nil))
+            alert.popoverPresentationController?.sourceView = self.view
+            alert.popoverPresentationController?.sourceRect = self.view.frame
+            dispatch_async(dispatch_get_main_queue()) { () -> Void in
+                self.presentViewController(alert, animated: true, completion: nil)
+            }
+        }
+    }
+
     private func showError(errorMessage: String) {
         print("error \(errorMessage)")
 
@@ -345,15 +358,17 @@ extension ActionViewController {
             let cert = self.certificates[indexPath.row]
             let cell = tableView.dequeueReusableCellWithIdentifier(CertificateStackCell.reuseId) as? CertificateStackCell
             cell?.trustResult = cert.1
-            if let name = SecCertificateCopySubjectSummary(cert.0) {
-                cell?.name = name as String
-            }
-            if indexPath.row == 0 {
+            if indexPath.row == 0 && (cert.1 == UInt32(kSecTrustResultUnspecified) ||
+                                      cert.1 == UInt32(kSecTrustResultProceed)) {
                 if let rootCAs = self.rootCAs {
                     if rootCAs[self.x509Certs[0].sha1] == nil {
                         cell?.trustResult = UInt32(kSecTrustResultOtherError)
+                        self.showMITMAlert()
                     }
                 }
+            }
+            if let name = SecCertificateCopySubjectSummary(cert.0) {
+                cell?.name = name as String
             }
             cell?.level = indexPath.row
             return cell!

@@ -26,7 +26,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.makeKeyAndVisible()
 
         Fabric.with([Answers.self, Crashlytics.self])
-        self.inspectURL(NSURL(string: "https://www.shanbay.com")!)
         return true
     }
 
