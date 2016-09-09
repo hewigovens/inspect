@@ -101,7 +101,7 @@ public class INHUDTextView: UIView {
     override public func layoutSubviews() {
         super.layoutSubviews()
         let padding: CGFloat = 10.0
-        self.label.frame = CGRectInset(bounds, padding, padding)
+        self.label.frame = bounds.insetBy(dx: padding, dy: padding)
     }
 
     private func finishInit(text: String?) {

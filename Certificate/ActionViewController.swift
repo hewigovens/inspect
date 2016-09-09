@@ -301,54 +301,6 @@ class ActionViewController: UIViewController,
         textView.editable = false
         return textView
     }
-
-    private func extensionOpenUrl(urlString: String) {
-
-        guard let url = NSURL(string: urlString) else {return}
-
-        if let action = self.openURLAction {
-            action(url)
-            return
-        }
-
-        var responder = self as UIResponder?
-        while let r = responder {
-            let sel = NSSelectorFromString("openURL:")
-            if r.respondsToSelector(sel) {
-                r.performSelector(sel, withObject: url)
-            }
-            responder = r.nextResponder()
-        }
-    }
-
-    private func loadRootCAs() {
-
-        var bundle: NSBundle = NSBundle.mainBundle()
-
-        if self.inExtensionContext {
-            let url = bundle.bundleURL.URLByDeletingLastPathComponent
-            guard let _url = url?.URLByDeletingLastPathComponent else {
-                return
-            }
-            guard let _bundle = NSBundle(URL: _url) else {
-                return
-            }
-            bundle = _bundle
-        }
-
-        guard let path = bundle.pathForResource("mozilla_trust", ofType: "json") else {
-            return
-        }
-        do {
-            guard let data = NSData(contentsOfFile: path) else {
-                return
-            }
-            self.rootCAs = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as? [String: AnyObject]
-
-        } catch let error {
-            debugPrint(error)
-        }
-    }
 }
 
 // MARK: UITableViewDelegate
@@ -358,11 +310,11 @@ extension ActionViewController {
             let cert = self.certificates[indexPath.row]
             let cell = tableView.dequeueReusableCellWithIdentifier(CertificateStackCell.reuseId) as? CertificateStackCell
             cell?.trustResult = cert.1
-            if indexPath.row == 0 && (cert.1 == UInt32(kSecTrustResultUnspecified) ||
-                                      cert.1 == UInt32(kSecTrustResultProceed)) {
+            if indexPath.row == 0 && (cert.1 == .Unspecified ||
+                                      cert.1 == .Proceed) {
                 if let rootCAs = self.rootCAs {
                     if rootCAs[self.x509Certs[0].sha1] == nil {
-                        cell?.trustResult = UInt32(kSecTrustResultOtherError)
+                        cell?.trustResult = .OtherError
                         self.showMITMAlert()
                     }
                 }

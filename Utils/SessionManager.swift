@@ -47,11 +47,11 @@ public class SessionManager: NSObject, NSURLSessionTaskDelegate {
         for index in 0..<SecTrustGetCertificateCount(trust) {
             if let cert = SecTrustGetCertificateAtIndex(trust, index) {
 
-                var result = UInt32(kSecTrustResultUnspecified)
+                var result = SecTrustResultType.Unspecified
                 if SecTrustGetTrustResult(trust, &result) == 0 {
                     certs.append((cert, result))
                 } else {
-                    certs.append((cert, UInt32(kSecTrustResultUnspecified)))
+                    certs.append((cert, SecTrustResultType.Unspecified))
                 }
             }
         }

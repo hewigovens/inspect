@@ -17,10 +17,10 @@ public class CertificateStackCell: UITableViewCell {
     @IBOutlet public weak var titleLabel: UILabel!
     @IBOutlet public weak var indicatorLeading: NSLayoutConstraint!
 
-    public var trustResult: SecTrustResultType = UInt32(kSecTrustResultUnspecified) {
+    public var trustResult: SecTrustResultType = .Unspecified {
         didSet {
-            if trustResult == UInt32(kSecTrustResultProceed) ||
-               trustResult == UInt32(kSecTrustResultUnspecified) {
+            if trustResult == .Proceed ||
+               trustResult == .Unspecified {
                 return
             }
 
