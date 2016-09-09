@@ -12,13 +12,13 @@ import MessageUI
 let kFeedbackRecipient = "support@fourplex.in"
 let kFeedbackSubject = "Inspect Feedback"
 
-protocol Feedbackable: MFMailComposeViewControllerDelegate {
+protocol Feedbackable {
     func feedbackCanSendMail() -> Bool
     func feedbackMailToString() -> String
     func feedbackWithEmail()
 }
 
-extension UIViewController: Feedbackable {
+extension UIViewController: Feedbackable, MFMailComposeViewControllerDelegate {
 
     func feedbackCanSendMail() -> Bool {
         return MFMailComposeViewController.canSendMail()
@@ -26,7 +26,7 @@ extension UIViewController: Feedbackable {
 
     func feedbackMailToString() -> String {
         if let mailTo = "mailto:\(kFeedbackRecipient)?subject=\(kFeedbackSubject)"
-            .stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet()) {
+            .addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) {
             return mailTo
         } else {
             return ""
@@ -41,11 +41,12 @@ extension UIViewController: Feedbackable {
         controller.setToRecipients([kFeedbackRecipient])
         controller.setSubject(kFeedbackSubject)
         controller.mailComposeDelegate = self
-        self.presentViewController(controller, animated: true, completion: nil)
+        self.present(controller, animated: true, completion: nil)
     }
 
     // MARK: MFMailComposeViewControllerDelegate
-    public func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    @objc(mailComposeController:didFinishWithResult:error:)
+    public func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        self.dismiss(animated: true, completion: nil)
     }
 }

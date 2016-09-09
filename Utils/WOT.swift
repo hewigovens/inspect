@@ -59,8 +59,8 @@ public struct Record {
 }
 
 public enum QueryResult {
-    case Success(Record)
-    case Failure(NSError)
+    case success(Record)
+    case failure(NSError)
 }
 
 public struct WOTRecord {
@@ -83,29 +83,30 @@ public struct WOTRecord {
     }
 }
 
-public class WOT: NSObject {
+open class WOT: NSObject {
 
-    static func query(host: String, completion: (QueryResult) -> Void) -> Void {
+    static func query(_ host: String, completion: @escaping (QueryResult) -> Void) -> Void {
         let key = "e0d9e530f85c4c851e2638b898d4219321c01455"
         let apiUrl = "http://api.mywot.com/0.4/public_link_json2"
         let query = "\(apiUrl)?key=\(key)&hosts=\(String(format: "%@/", host))"
-        let request = NSMutableURLRequest(URL: NSURL(string: query)!)
+        let request = URLRequest(url: URL(string: query)!)
 
-        let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { data, response, error in
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let error = error {
-                completion(QueryResult.Failure(error))
+                completion(QueryResult.failure(error as NSError))
                 return
             }
 
             guard let data = data else { return }
 
             do {
-                guard let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
+                guard let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
                     as? [String: AnyObject] else { return }
                 guard let target = json[host] as? [String: AnyObject] else { return }
                 guard let wot = WOTRecord(json: target) else { return }
-                completion(QueryResult.Success(wot.convertToRecord()))
+                completion(QueryResult.success(wot.convertToRecord()))
             } catch {}
+
         }
         task.resume()
     }

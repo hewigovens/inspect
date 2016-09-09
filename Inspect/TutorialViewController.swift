@@ -15,10 +15,10 @@ class TutorialViewController: UIViewController, UIScrollViewDelegate {
     lazy var carouselView: UIScrollView = {
         let scrollview = UIScrollView(frame: self.view.frame)
         scrollview.bounces = false
-        scrollview.pagingEnabled = true
+        scrollview.isPagingEnabled = true
         scrollview.delegate = self
         scrollview.showsHorizontalScrollIndicator = false
-        scrollview.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+        scrollview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         return scrollview
     }()
 
@@ -27,43 +27,43 @@ class TutorialViewController: UIViewController, UIScrollViewDelegate {
         let width = (self.view.fp_width - 54) / 2
         let indicator = UIPageControl(frame: CGRect(x: (self.view.fp_width - width) / 2, y: 30, width: width, height: size))
         indicator.numberOfPages = self.steps
-        indicator.pageIndicatorTintColor = UIColor.whiteColor()
+        indicator.pageIndicatorTintColor = UIColor.white
         indicator.currentPageIndicatorTintColor = UIColor(red:0.44, green:0.51, blue:0.84, alpha:1.00)
-        indicator.addTarget(self, action: #selector(changePage), forControlEvents: .ValueChanged)
+        indicator.addTarget(self, action: #selector(changePage), for: .valueChanged)
         return indicator
     }()
 
     lazy var closeButton: UIButton = {
-        let button = UIButton(type: .System)
-        button.setTitle("×", forState: .Normal)
-        button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        button.setTitleColor(UIColor.lightGrayColor(), forState: .Highlighted)
-        button.titleLabel?.font = UIFont.systemFontOfSize(40)
-        button.addTarget(self, action: #selector(closeAction), forControlEvents: .TouchUpInside)
+        let button = UIButton(type: .system)
+        button.setTitle("×", for: UIControlState())
+        button.setTitleColor(UIColor.white, for: UIControlState())
+        button.setTitleColor(UIColor.lightGray, for: .highlighted)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 40)
+        button.addTarget(self, action: #selector(closeAction), for: .touchUpInside)
         button.frame = CGRect(x: 10, y: 20, width: 44, height: 44)
         return button
     }()
 
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
-        NSUserDefaults.standardUserDefaults().setBool(false, forKey: kFirstRun)
+        NotificationCenter.default.removeObserver(self)
+        UserDefaults.standard.set(false, forKey: kFirstRun)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.view.backgroundColor = UIColor.blackColor()
+        self.view.backgroundColor = UIColor.black
         self.automaticallyAdjustsScrollViewInsets = false
         self.configureSubviews()
         self.layoutContainerView()
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.setLightStatusBar()
     }
 
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.setDarkStatusBar()
     }
@@ -81,19 +81,19 @@ class TutorialViewController: UIViewController, UIScrollViewDelegate {
         self.didRotate = false
     }
 
-    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
         self.didRotate = true
     }
 
-    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         self.indicator.currentPage = Int(scrollView.contentOffset.x / scrollView.fp_width)
     }
 }
 
 extension TutorialViewController {
     @objc func closeAction() {
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
 
     @objc func changePage() {
@@ -104,8 +104,8 @@ extension TutorialViewController {
         self.carouselView.scrollRectToVisible(frame, animated: true)
     }
 
-    private func layoutContainerView() {
-        let size = UIScreen.mainScreen().bounds.size
+    fileprivate func layoutContainerView() {
+        let size = UIScreen.main.bounds.size
         var offset: CGFloat = 0
         let leftPadding: CGFloat = 10
         let topPadding: CGFloat = 80
@@ -129,7 +129,7 @@ extension TutorialViewController {
         self.carouselView.fp_size = size
     }
 
-    private func configureSubviews() {
+    fileprivate func configureSubviews() {
         for i in 1...steps {
             let containerView = UIView()
             containerView.layer.cornerRadius = 12
@@ -138,12 +138,12 @@ extension TutorialViewController {
 
             let imageView = UIImageView(image: UIImage(named: "step\(i)"))
             imageView.clipsToBounds = true
-            imageView.contentMode = .ScaleAspectFit
+            imageView.contentMode = .scaleAspectFit
             imageView.tag = 100 + i
 
             let label = UILabel(frame: CGRect.zero)
             label.text = titleForStep(i)
-            label.textColor = UIColor.whiteColor()
+            label.textColor = UIColor.white
             label.sizeToFit()
             label.tag = 1000 + i
 
@@ -156,7 +156,7 @@ extension TutorialViewController {
         self.view.addSubview(self.closeButton)
     }
 
-    private func titleForStep(step: Int) -> String {
+    fileprivate func titleForStep(_ step: Int) -> String {
         switch step {
         case 1: return "Step \(step): Tap Action Button"
         case 2: return "Step \(step): Tap More Button"

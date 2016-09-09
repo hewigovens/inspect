@@ -8,10 +8,10 @@
 
 import UIKit
 
-public class INHUD: UIView {
+open class INHUD: UIView {
 
     static let sharedHUD = INHUD()
-    public var contentView: UIView? {
+    open var contentView: UIView? {
         willSet {
             self.contentView?.removeFromSuperview()
         }
@@ -22,7 +22,7 @@ public class INHUD: UIView {
         }
     }
 
-    private var backgroundView = UIVisualEffectView(effect: UIBlurEffect(style: .Light))
+    fileprivate var backgroundView = UIVisualEffectView(effect: UIBlurEffect(style: .light))
 
     override public init(frame: CGRect) {
         super.init(frame: frame)
@@ -30,7 +30,7 @@ public class INHUD: UIView {
     }
 
     public init() {
-        super.init(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: UIScreen.mainScreen().bounds.size))
+        super.init(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: UIScreen.main.bounds.size))
         finishInit()
     }
 
@@ -39,16 +39,16 @@ public class INHUD: UIView {
         finishInit()
     }
 
-    public func showInView(view: UIView) {
+    open func showInView(_ view: UIView) {
         view.addSubview(self.backgroundView)
         backgroundView.center = view.center
     }
 
-    public func hide() {
+    open func hide() {
         backgroundView.removeFromSuperview()
     }
 
-    private func finishInit() {
+    fileprivate func finishInit() {
         backgroundView.frame = CGRect(x: 0, y: 0, width: 265, height: 90)
         backgroundView.backgroundColor = UIColor(white:0.0, alpha:0.15)
         backgroundView.layer.cornerRadius = 9.0
@@ -56,11 +56,11 @@ public class INHUD: UIView {
 
         let offset = 20.0
 
-        let motionEffectsX = UIInterpolatingMotionEffect(keyPath: "center.x", type: .TiltAlongHorizontalAxis)
+        let motionEffectsX = UIInterpolatingMotionEffect(keyPath: "center.x", type: .tiltAlongHorizontalAxis)
         motionEffectsX.maximumRelativeValue = offset
         motionEffectsX.minimumRelativeValue = -offset
 
-        let motionEffectsY = UIInterpolatingMotionEffect(keyPath: "center.y", type: .TiltAlongVerticalAxis)
+        let motionEffectsY = UIInterpolatingMotionEffect(keyPath: "center.y", type: .tiltAlongVerticalAxis)
         motionEffectsY.maximumRelativeValue = offset
         motionEffectsY.minimumRelativeValue = -offset
 
@@ -71,13 +71,13 @@ public class INHUD: UIView {
     }
 }
 
-public class INHUDTextView: UIView {
+open class INHUDTextView: UIView {
 
-    public let label: UILabel = {
+    open let label: UILabel = {
         let label = UILabel()
-        label.textAlignment = .Center
-        label.font = UIFont.boldSystemFontOfSize(17.0)
-        label.textColor = UIColor.blackColor().colorWithAlphaComponent(0.85)
+        label.textAlignment = .center
+        label.font = UIFont.boldSystemFont(ofSize: 17.0)
+        label.textColor = UIColor.black.withAlphaComponent(0.85)
         label.adjustsFontSizeToFitWidth = true
         label.numberOfLines = 3
         return label
@@ -98,13 +98,13 @@ public class INHUDTextView: UIView {
         finishInit("")
     }
 
-    override public func layoutSubviews() {
+    override open func layoutSubviews() {
         super.layoutSubviews()
         let padding: CGFloat = 10.0
         self.label.frame = bounds.insetBy(dx: padding, dy: padding)
     }
 
-    private func finishInit(text: String?) {
+    fileprivate func finishInit(_ text: String?) {
         self.label.text = text
         self.addSubview(self.label)
     }

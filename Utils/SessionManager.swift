@@ -10,51 +10,51 @@ import Foundation
 
 public typealias fetchCertsHandler = ([(SecCertificate, SecTrustResultType)]) -> Void
 
-public class SessionManager: NSObject, NSURLSessionTaskDelegate {
+open class SessionManager: NSObject, URLSessionTaskDelegate {
     static let sharedManager = SessionManager()
-    private var session: NSURLSession?
-    private var requestQueue = NSOperationQueue()
-    private var callbacks = [NSURL: fetchCertsHandler]()
+    fileprivate var session: Foundation.URLSession?
+    fileprivate var requestQueue = OperationQueue()
+    fileprivate var callbacks = [URL: fetchCertsHandler]()
 
     override init() {
         super.init()
-        self.session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: self.requestQueue)
+        self.session = Foundation.URLSession(configuration: URLSessionConfiguration.default, delegate: self, delegateQueue: self.requestQueue)
     }
 
-    public func fetchCertsForUrl(url: NSURL, completion: fetchCertsHandler) -> Void {
-        let task = self.session?.dataTaskWithURL(url)
+    open func fetchCertsForUrl(_ url: URL, completion: @escaping fetchCertsHandler) -> Void {
+        let task = self.session?.dataTask(with: url)
         guard task != nil else { return completion([]) }
         self.callbacks[url] = completion
         task!.resume()
     }
 
-    public func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
+    open func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
 
         let certs = self.certificateDataForTrust(challenge.protectionSpace.serverTrust!)
-        if let url = task.originalRequest?.URL {
+        if let url = task.originalRequest?.url {
             if let callback = self.callbacks[url] {
-                dispatch_async(dispatch_get_main_queue()) { () -> Void in
+                DispatchQueue.main.async { () -> Void in
                     callback(certs)
-                    self.callbacks.removeValueForKey(url)
+                    self.callbacks.removeValue(forKey: url)
                 }
             }
         }
-        completionHandler(.CancelAuthenticationChallenge, challenge.proposedCredential)
+        completionHandler(.cancelAuthenticationChallenge, challenge.proposedCredential)
     }
 
-    private func certificateDataForTrust(trust: SecTrust) -> [(SecCertificate, SecTrustResultType)] {
+    fileprivate func certificateDataForTrust(_ trust: SecTrust) -> [(SecCertificate, SecTrustResultType)] {
         var certs: [(SecCertificate, SecTrustResultType)] = []
         for index in 0..<SecTrustGetCertificateCount(trust) {
             if let cert = SecTrustGetCertificateAtIndex(trust, index) {
 
-                var result = SecTrustResultType.Unspecified
+                var result = SecTrustResultType.unspecified
                 if SecTrustGetTrustResult(trust, &result) == 0 {
                     certs.append((cert, result))
                 } else {
-                    certs.append((cert, SecTrustResultType.Unspecified))
+                    certs.append((cert, SecTrustResultType.unspecified))
                 }
             }
         }
-        return certs.reverse()
+        return certs.reversed()
     }
 }
