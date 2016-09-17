@@ -14,12 +14,15 @@ enum HomeSection: Int {
     case tutorial = 0
     case misc = 1
     case safari = 2
+    case history = 3
 
     enum Item: String {
         case HowToUseIt = "How to use it"
         case Feedback = "Send Feedback"
         case RateUs = "Rate on App Store"
         case OpenSafari = "Open Safari"
+        case OpenChrome = "Open Chrome"
+        case History = "History"
     }
 
     var reuseId: String {
@@ -36,14 +39,32 @@ enum HomeSection: Int {
         case .tutorial: return "Tutorial".uppercased()
         case .misc: return "Misc".uppercased()
         case .safari: return "Inspect HTTPS Sites".uppercased()
+        case .history: return "Recent Lookup Histories".uppercased()
         }
     }
 
-    var sections: [Item] {
+    var sections: [String] {
+
+        var browsers = [Item.OpenSafari.rawValue]
+
+        if let url = URL(string: kGoogleChromeScheme) {
+            if UIApplication.shared.canOpenURL(url) {
+                browsers.append(Item.OpenChrome.rawValue)
+            }
+        }
+
+        var history = [String]()
+        if let defaults = UserDefaults.init(suiteName: kInspectGroupId) {
+            if let hosts = defaults.stringArray(forKey: kHistoryKey) {
+                history =  hosts
+            }
+        }
+
         switch self {
-        case .tutorial:return [.HowToUseIt]
-        case .misc: return [.Feedback, .RateUs]
-        case .safari: return [.OpenSafari]
+        case .tutorial:return [Item.HowToUseIt.rawValue]
+        case .misc: return [Item.Feedback.rawValue, Item.RateUs.rawValue]
+        case .safari: return browsers
+        case .history: return history
         }
     }
 }
@@ -63,6 +84,18 @@ class HomeCell: UITableViewCell {
 class HomeViewController: UIViewController,
                           UITableViewDelegate, UITableViewDataSource {
 
+
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        NotificationCenter.default.addObserver(forName: NSNotification.Name.UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
+            self?.reloadHistory()
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     fileprivate let footerText: String = {
         var version = "dev"; var build = "9999"
         if let infoDict = Bundle.main.infoDictionary {
@@ -76,7 +109,7 @@ class HomeViewController: UIViewController,
     }()
 
     fileprivate let dataSource: [HomeSection] = {
-        return [.tutorial, .misc, .safari]
+        return [.tutorial, .misc, .safari, .history]
     }()
 
     var footerTextY: CGFloat {
@@ -123,6 +156,11 @@ class HomeViewController: UIViewController,
         }
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.reloadHistory()
+    }
+
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         coordinator.animate(alongsideTransition: { (context) in
@@ -134,6 +172,10 @@ class HomeViewController: UIViewController,
         Answers.logCustomEvent(withName: kActionTutorial, customAttributes: nil)
         let vc = TutorialViewController()
         self.navigationController?.present(vc, animated: true, completion: nil)
+    }
+
+    func reloadHistory() {
+        self.tableView.reloadSections([3], with: .automatic)
     }
 }
 
@@ -161,14 +203,14 @@ extension HomeViewController {
             let label = UILabel()
             label.textColor = self.view.tintColor
             label.font = font
-            label.text = items[(indexPath as NSIndexPath).row].rawValue
+            label.text = items[(indexPath as NSIndexPath).row]
             label.sizeToFit()
             label.fp_x = (tableView.fp_width - label.fp_width) / 2; label.fp_y = (cellHeight - label.fp_height) / 2
             cell.addSubview(label)
             break
         default:
             cell.textLabel?.font = font
-            cell.textLabel?.text = items[(indexPath as NSIndexPath).row].rawValue
+            cell.textLabel?.text = items[(indexPath as NSIndexPath).row]
             cell.textLabel?.textColor = UIColor(red:0.25, green:0.25, blue:0.25, alpha:1.00)
             cell.textLabel?.textAlignment = .left
         }
@@ -176,37 +218,48 @@ extension HomeViewController {
     }
 
     @objc(tableView:didSelectRowAtIndexPath:) func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
         guard let section = HomeSection(rawValue: (indexPath as NSIndexPath).section) else {return}
+        let item = section.sections[(indexPath as NSIndexPath).row]
         switch section {
         case .safari:
-            self.openUrl("https://www.apple.com")
+            if item == HomeSection.Item.OpenSafari.rawValue {
+                self.openUrl("https://www.apple.com")
+            } else if item == HomeSection.Item.OpenChrome.rawValue {
+                self.openUrlInChrome("www.google.com")
+            }
             break
         case .tutorial:
             self.showTutorial()
             break
         case .misc:
-            let item = section.sections[(indexPath as NSIndexPath).row]
-            switch item {
-            case .Feedback:
+            if item == HomeSection.Item.Feedback.rawValue {
                 Answers.logCustomEvent(withName: kActionFeedback, customAttributes: ["in_extension": false])
                 if self.feedbackCanSendMail() {
                     self.feedbackWithEmail()
                 } else {
                     self.openUrl(self.feedbackMailToString())
                 }
-                break
-            case .RateUs:
+            } else if item == HomeSection.Item.RateUs.rawValue {
                 Answers.logCustomEvent(withName: kActionRate, customAttributes: nil)
                 if let url = URL(string: kAppStoreHTTPUrl) {
                     if UIApplication.shared.canOpenURL(url) {
                         UIApplication.shared.openURL(url)
                     }
                 }
-            default:break
             }
             break
+        case.history:
+            guard let url = URL(string: "https://" + item) else {return}
+            guard let vc = ActionViewController.create(url: url) else {return}
+            vc.openURLAction = { url in
+                if UIApplication.shared.canOpenURL(url as URL) {
+                    UIApplication.shared.openURL(url as URL)
+                }
+            }
+            self.present(vc, animated: true, completion: nil)
+            break
         }
-        tableView.deselectRow(at: indexPath, animated: true)
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -219,7 +272,7 @@ extension HomeViewController {
             return CGFloat.leastNormalMagnitude
         }
         switch sec {
-        case .safari: return 100
+        case .history: return 100
         default: return CGFloat.leastNormalMagnitude
         }
     }
@@ -242,7 +295,7 @@ extension HomeViewController {
             return nil
         }
         switch sec {
-        case .safari: return self.createfooterView()
+        case .history: return self.createfooterView()
         default: return nil
         }
     }
@@ -253,5 +306,9 @@ extension HomeViewController {
                 UIApplication.shared.openURL(url)
             }
         }
+    }
+
+    func openUrlInChrome(_ urlString: String) {
+        self.openUrl(kGoogleChromeScheme + urlString)
     }
 }

@@ -19,7 +19,7 @@ class ActionViewController: UIViewController,
                             UIActionSheetDelegate {
 
     private lazy var __once: () = { () -> Void in
-            Fabric.with([Answers.self, Crashlytics.self])
+        Fabric.with([Answers.self, Crashlytics.self])
     }()
 
     @IBOutlet internal weak var navItem: UINavigationItem!
@@ -67,29 +67,6 @@ class ActionViewController: UIViewController,
             self.headerTableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
 
         }
-    }
-
-    fileprivate func updateStatistics(_ host: String) {
-        let defaults = UserDefaults.standard
-        #if DEBUG
-            defaults.set(false, forKey: kRatingKey)
-        #endif
-        var stats = defaults.integer(forKey: kStatisticsKey)
-        stats += 1
-        if self.inExtensionContext && !defaults.bool(forKey: kRatingKey) {
-            if stats >= 5 {
-                let alert = UIAlertController(title: "Hooray", message: "You have inspected \(stats) sites. :)", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Next Time", style: .default, handler: nil))
-                alert.addAction((UIAlertAction(title: "Rate us", style: .default, handler: { (action) -> Void in
-                    self.extensionOpenUrl(kAppStoreHTTPUrl)
-                })))
-                alert.popoverPresentationController?.sourceView = self.view
-                alert.popoverPresentationController?.sourceRect = self.view.frame
-                self.present(alert, animated: true, completion: nil)
-                defaults.set(true, forKey: kRatingKey)
-            }
-        }
-        defaults.set(stats, forKey: kStatisticsKey)
     }
 
     override func viewDidLoad() {
