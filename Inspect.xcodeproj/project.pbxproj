@@ -53,7 +53,6 @@
 		BBD684751CDEE68300584DA1 /* Feedbackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD684731CDEE45900584DA1 /* Feedbackable.swift */; };
 		BBD6847A1CDF428600584DA1 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBD684791CDF428600584DA1 /* Crashlytics.framework */; };
 		BBD6847B1CDF446000584DA1 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBD684791CDF428600584DA1 /* Crashlytics.framework */; };
-		BBF239091D82341800A75B29 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBF239071D82341800A75B29 /* Crashlytics.framework */; };
 		BBF2390B1D82347300A75B29 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBF2390A1D82347300A75B29 /* Fabric.framework */; };
 		BBF2390C1D82347600A75B29 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBF2390A1D82347300A75B29 /* Fabric.framework */; };
 		BBF2390E1D8235DC00A75B29 /* ActionViewController+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF2390D1D8235DC00A75B29 /* ActionViewController+Utils.swift */; };
@@ -142,7 +141,6 @@
 				BBF2390B1D82347300A75B29 /* Fabric.framework in Frameworks */,
 				BBD6847A1CDF428600584DA1 /* Crashlytics.framework in Frameworks */,
 				BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */,
-				BBF239091D82341800A75B29 /* Crashlytics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -700,7 +698,6 @@
 		BB46EB8F1C3046B300E156E9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Inspect/Inspect.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -727,7 +724,6 @@
 		BB46EB901C3046B300E156E9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Inspect/Inspect.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
