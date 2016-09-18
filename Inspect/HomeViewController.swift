@@ -84,18 +84,6 @@ class HomeCell: UITableViewCell {
 class HomeViewController: UIViewController,
                           UITableViewDelegate, UITableViewDataSource {
 
-
-    init() {
-        super.init(nibName: nil, bundle: nil)
-        NotificationCenter.default.addObserver(forName: NSNotification.Name.UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
-            self?.reloadHistory()
-        }
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     fileprivate let footerText: String = {
         var version = "dev"; var build = "9999"
         if let infoDict = Bundle.main.infoDictionary {
@@ -153,6 +141,9 @@ class HomeViewController: UIViewController,
         self.view.addSubview(tableView)
         if UserDefaults.standard.bool(forKey: kFirstRun) {
             self.showTutorial()
+        }
+        NotificationCenter.default.addObserver(forName: NSNotification.Name.UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
+            self?.reloadHistory()
         }
     }
 
