@@ -31,6 +31,11 @@
 		BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */; };
 		BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 		BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
+		BB6B89751DCCDDFD00B1B627 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6B89741DCCDDFD00B1B627 /* UIColor+Hex.swift */; };
+		BB6B89761DCCDF1F00B1B627 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6B89741DCCDDFD00B1B627 /* UIColor+Hex.swift */; };
+		BB6B89781DCCF26B00B1B627 /* String+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6B89771DCCF26B00B1B627 /* String+Utils.swift */; };
+		BB6B89791DCCF51800B1B627 /* String+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6B89771DCCF26B00B1B627 /* String+Utils.swift */; };
+		BB6B897B1DCCF78D00B1B627 /* mozilla_ev.json in Resources */ = {isa = PBXBuildFile; fileRef = BB6B897A1DCCF78D00B1B627 /* mozilla_ev.json */; };
 		BB7E39771CDA361A00C84856 /* UIView+Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7E39761CDA361A00C84856 /* UIView+Frame.swift */; };
 		BB7E39781CDACFF000C84856 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB2C5B3B1C469BFE00911EA4 /* Images.xcassets */; };
 		BB7E397A1CDCE94C00C84856 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7E39791CDCE94C00C84856 /* HomeViewController.swift */; };
@@ -97,7 +102,7 @@
 		BB2C5B401C47E85E00911EA4 /* ZipZap.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipZap.framework; path = Carthage/Build/iOS/ZipZap.framework; sourceTree = "<group>"; };
 		BB2C5B421C47EBCD00911EA4 /* Inspect.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Inspect.entitlements; sourceTree = "<group>"; };
 		BB2C5B431C47EBEF00911EA4 /* Certificate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Certificate.entitlements; sourceTree = "<group>"; };
-		BB2C63F21D7FD9D400E145BB /* mozilla_trust.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = mozilla_trust.json; sourceTree = "<group>"; };
+		BB2C63F21D7FD9D400E145BB /* mozilla_trust.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = mozilla_trust.json; path = ../scripts/mozilla_trust.json; sourceTree = "<group>"; };
 		BB2EB67C1C4930B90057929C /* INHUD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = INHUD.swift; path = Utils/INHUD.swift; sourceTree = "<group>"; };
 		BB3CBDAC1C82A68A00DA5F63 /* ExportItemSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ExportItemSource.swift; path = ../Certificate/ExportItemSource.swift; sourceTree = "<group>"; };
 		BB46EB711C3046B300E156E9 /* Inspect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inspect.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -117,6 +122,9 @@
 		BB5DB8641C3974D100219411 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = Dependencies/openssl.framework; sourceTree = "<group>"; };
 		BB5DB8671C397BF200219411 /* X509.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = X509.swift; path = Utils/X509.swift; sourceTree = "<group>"; };
 		BB5DB8861C3AA52900219411 /* Inspect-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Inspect-Bridging-Header.h"; path = "../Inspect-Bridging-Header.h"; sourceTree = "<group>"; };
+		BB6B89741DCCDDFD00B1B627 /* UIColor+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
+		BB6B89771DCCF26B00B1B627 /* String+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Utils.swift"; sourceTree = "<group>"; };
+		BB6B897A1DCCF78D00B1B627 /* mozilla_ev.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = mozilla_ev.json; path = scripts/mozilla_ev.json; sourceTree = SOURCE_ROOT; };
 		BB7E39761CDA361A00C84856 /* UIView+Frame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIView+Frame.swift"; path = "Utils/UIView+Frame.swift"; sourceTree = "<group>"; };
 		BB7E39791CDCE94C00C84856 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		BB7E397D1CDDC63C00C84856 /* UINavigationController+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Extension.swift"; sourceTree = "<group>"; };
@@ -191,6 +199,7 @@
 		BB46EB731C3046B300E156E9 /* Inspect */ = {
 			isa = PBXGroup;
 			children = (
+				BB6B897A1DCCF78D00B1B627 /* mozilla_ev.json */,
 				BB2C63F21D7FD9D400E145BB /* mozilla_trust.json */,
 				BB2C5B421C47EBCD00911EA4 /* Inspect.entitlements */,
 				BB2C5B3D1C469C3200911EA4 /* Assets.xcassets */,
@@ -262,6 +271,8 @@
 				BB2EB67C1C4930B90057929C /* INHUD.swift */,
 				BBA1C2551C507B34009EECCC /* Constants.swift */,
 				BB7E39761CDA361A00C84856 /* UIView+Frame.swift */,
+				BB6B89741DCCDDFD00B1B627 /* UIColor+Hex.swift */,
+				BB6B89771DCCF26B00B1B627 /* String+Utils.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -443,6 +454,7 @@
 				BB2C63F31D7FD9D400E145BB /* mozilla_trust.json in Resources */,
 				BB8C55D41CD97958004B60E3 /* MainInterface.storyboard in Resources */,
 				BB2C5B3E1C469C3200911EA4 /* Assets.xcassets in Resources */,
+				BB6B897B1DCCF78D00B1B627 /* mozilla_ev.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -519,6 +531,7 @@
 				BB7E397E1CDDC63C00C84856 /* UINavigationController+Extension.swift in Sources */,
 				BB8C55DC1CD97A37004B60E3 /* SSLLabs.swift in Sources */,
 				BB8C55D51CD9795F004B60E3 /* ActionViewController.swift in Sources */,
+				BB6B89751DCCDDFD00B1B627 /* UIColor+Hex.swift in Sources */,
 				BB7E39771CDA361A00C84856 /* UIView+Frame.swift in Sources */,
 				BB8C55D71CD9796C004B60E3 /* ExportItemSource.swift in Sources */,
 				BB7E397A1CDCE94C00C84856 /* HomeViewController.swift in Sources */,
@@ -527,6 +540,7 @@
 				BB7E39A81CDDF25000C84856 /* TutorialViewController.swift in Sources */,
 				BB46EB751C3046B300E156E9 /* AppDelegate.swift in Sources */,
 				BB8C55DB1CD97A33004B60E3 /* WOT.swift in Sources */,
+				BB6B89781DCCF26B00B1B627 /* String+Utils.swift in Sources */,
 				BBF2390E1D8235DC00A75B29 /* ActionViewController+Utils.swift in Sources */,
 				BB8C55DA1CD97A2F004B60E3 /* X509.swift in Sources */,
 				BB1773C51C428227001AAB80 /* SessionManager.swift in Sources */,
@@ -559,8 +573,10 @@
 				BB1773C21C4280C6001AAB80 /* X509Helper.m in Sources */,
 				BB1773C31C4280C6001AAB80 /* X509.swift in Sources */,
 				BB46EB9B1C30492B00E156E9 /* ActionViewController.swift in Sources */,
+				BB6B89761DCCDF1F00B1B627 /* UIColor+Hex.swift in Sources */,
 				BB2EB67D1C4930B90057929C /* INHUD.swift in Sources */,
 				BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */,
+				BB6B89791DCCF51800B1B627 /* String+Utils.swift in Sources */,
 				BBA1C2571C507B34009EECCC /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

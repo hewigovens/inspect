@@ -148,7 +148,8 @@
         NSString *value = @"";
         // we only handle these extensions
         if (nid == NID_key_usage ||
-            nid == NID_ext_key_usage) {
+            nid == NID_ext_key_usage ||
+            nid == NID_certificate_policies) {
             const char *c_ext_name = OBJ_nid2ln(nid);
             key = [NSString stringWithFormat:@"%s", c_ext_name];
             value = [NSString stringWithFormat:@"%s", bptr->data];

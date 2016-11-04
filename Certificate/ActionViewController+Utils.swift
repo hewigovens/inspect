@@ -86,15 +86,17 @@ extension ActionViewController {
             bundle = _bundle
         }
 
-        guard let path = bundle.path(forResource: "mozilla_trust", ofType: "json") else {
+        guard let path1 = bundle.path(forResource: "mozilla_trust", ofType: "json"),
+              let path2 = bundle.path(forResource: "mozilla_ev", ofType: "json") else {
             return
         }
         do {
-            guard let data = try? Data(contentsOf: Foundation.URL(fileURLWithPath: path)) else {
+            guard let data1 = try? Data(contentsOf: Foundation.URL(fileURLWithPath: path1)), let data2 = try? Data(contentsOf: Foundation.URL(fileURLWithPath: path2))
+                else {
                 return
             }
-            self.rootCAs = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: AnyObject]
-
+            self.rootCAs = try JSONSerialization.jsonObject(with: data1, options: .allowFragments) as? [String: AnyObject]
+            self.evSet = try JSONSerialization.jsonObject(with: data2, options: .allowFragments) as? [String: AnyObject]
         } catch let error {
             debugPrint(error)
         }

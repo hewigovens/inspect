@@ -32,6 +32,7 @@ public struct X509Certificate {
 
     public var md5 = ""
     public var sha1 = ""
+    public var sha256 = ""
     public var version = 1
     public var serialNumber = ""
 
@@ -46,6 +47,7 @@ public struct X509Certificate {
     public var notValidBefore = ""
     public var notValidAfter = ""
     public var isCA = false
+    public var policyIds = [String]()
 
     public var subjectAltNames: [(String, AnyObject)] = []
     public var extensions: [(String, AnyObject)] = []
@@ -101,9 +103,24 @@ public struct X509Certificate {
 
         self.md5 = X509Helper.x509Digest(cert, method: "md5")
         self.sha1 = X509Helper.x509Digest(cert, method: "sha1")
+        self.sha256 = X509Helper.x509Digest(cert, method: "sha256")
 
         let exts = X509Helper.extensions(ofCert: cert)
+        let regex = try? NSRegularExpression(pattern: "^Policy: ((\\S)+)", options: .caseInsensitive)
         for dict in exts {
+            if let str = dict["value"], dict["key"] == "X509v3 Certificate Policies" {
+                regex?.enumerateMatches(in: str, options: [], range: str.range, using: { (result, _, _) in
+                    if let result = result, result.numberOfRanges > 0 {
+                        for i in 1..<result.numberOfRanges {
+                            let capturedRange = result.rangeAt(i)
+                            if !NSEqualRanges(capturedRange, NSMakeRange(NSNotFound, 0)) {
+                                let theResult = (str as NSString).substring(with: result.rangeAt(i))
+                                self.policyIds.append(theResult)
+                            }
+                        }
+                    }
+                })
+            }
             self.extensions.append((dict["key"] ?? "Error Key", dict["value"]! as AnyObject))
         }
 

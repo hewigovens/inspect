@@ -182,7 +182,7 @@ extension HomeViewController {
     }
 
     @objc(tableView:cellForRowAtIndexPath:) func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let font = UIFont.systemFont(ofSize: 20)
+        let font = UIFont.systemFont(ofSize: 17)
         guard let section = HomeSection(rawValue: (indexPath as NSIndexPath).section) else {
             return UITableViewCell(style: .default, reuseIdentifier: nil)
         }

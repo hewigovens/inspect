@@ -17,6 +17,13 @@ open class CertificateStackCell: UITableViewCell {
     @IBOutlet open weak var titleLabel: UILabel!
     @IBOutlet open weak var indicatorLeading: NSLayoutConstraint!
 
+    open var isEV = false {
+        didSet {
+            if self.isEV {
+                self.titleLabel?.textColor = UIColor(hexInt: 0x27c47a)
+            }
+        }
+    }
     open var trustResult: SecTrustResultType = .unspecified {
         didSet {
             if trustResult == .proceed ||
@@ -45,6 +52,10 @@ open class CertificateStackCell: UITableViewCell {
     }
 
     fileprivate var suffix = ""
+
+    open override func prepareForReuse() {
+        self.titleLabel.textColor = self.textLabel?.textColor
+    }
 }
 
 // MARK: CertificateInfoCell used in Content View
@@ -76,7 +87,7 @@ public enum CertificateInfoSection: String {
 }
 
 extension X509Certificate {
-    public func displaySections() -> ([[(String, AnyObject)]], [CertificateInfoSection]) {
+    public func displaySections() -> (sectionData: [[(String, AnyObject)]], sectionName:[CertificateInfoSection]) {
         var sectionDatas: [[(String, AnyObject)]] = []
         var sectionNames: [CertificateInfoSection] = []
 

@@ -34,6 +34,7 @@ class ActionViewController: UIViewController,
     internal var URL: Foundation.URL?
     internal var openURLAction: ((Foundation.URL) -> Void)?
     internal var rootCAs: [String: AnyObject]? = nil
+    internal var evSet: [String: AnyObject]? = nil
 
     fileprivate var contentSections: [[(String, AnyObject)]]?
     fileprivate var contentSectionNames: [CertificateInfoSection]?
@@ -41,7 +42,7 @@ class ActionViewController: UIViewController,
     fileprivate var targetHost = ""
     fileprivate var selectedCertInfo: [[String: String]] = []
     fileprivate var x509Certs: [X509Certificate] = []
-    fileprivate var certificates: [(SecCertificate, SecTrustResultType)] = [] {
+    fileprivate var certificates: [(secCert: SecCertificate, secTrust: SecTrustResultType)] = [] {
         didSet {
             self.x509Certs = self.certificates.map({ (certificate) -> X509Certificate in
                 return X509Certificate(certificate: certificate.0)
@@ -60,8 +61,8 @@ class ActionViewController: UIViewController,
             }
             let cert = self.x509Certs[index]
             let tuples = cert.displaySections()
-            self.contentSections = tuples.0
-            self.contentSectionNames = tuples.1
+            self.contentSections = tuples.sectionData
+            self.contentSectionNames = tuples.sectionName
 
             let indexPath = IndexPath(row: index, section: 0)
             self.headerTableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
@@ -285,21 +286,32 @@ class ActionViewController: UIViewController,
 extension ActionViewController {
     @objc(tableView:cellForRowAtIndexPath:) func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if tableView == self.headerTableView {
-            let cert = self.certificates[(indexPath as NSIndexPath).row]
+            let cert = self.certificates[indexPath.row]
+            let x509Cert = self.x509Certs[indexPath.row]
             let cell = tableView.dequeueReusableCell(withIdentifier: CertificateStackCell.reuseId) as? CertificateStackCell
-            cell?.trustResult = cert.1
-            if (indexPath as NSIndexPath).row == 0 && (cert.1 == .unspecified ||
-                                      cert.1 == .proceed) {
-                if let rootCAs = self.rootCAs {
-                    if rootCAs[self.x509Certs[0].sha1] == nil {
-                        cell?.trustResult = .otherError
-                        self.showMITMAlert()
+            cell?.trustResult = cert.secTrust
+
+            if let rootCAs = self.rootCAs,
+               let evSet = self.evSet {
+                let dict = rootCAs[self.x509Certs[0].sha256] as? [String: AnyObject]
+                // MITM check
+                if indexPath.row == 0 && (cert.secTrust == .unspecified ||
+                    cert.secTrust == .proceed) && dict == nil {
+                    cell?.trustResult = .otherError
+                    self.showMITMAlert()
+                }
+
+                for policy in x509Cert.policyIds {
+                    if evSet[policy] != nil {
+                        cell?.isEV = true
                     }
                 }
             }
-            if let name = SecCertificateCopySubjectSummary(cert.0) {
+
+            if let name = SecCertificateCopySubjectSummary(cert.secCert) {
                 cell?.name = name as String
             }
+
             cell?.level = (indexPath as NSIndexPath).row
             return cell!
         } else {
