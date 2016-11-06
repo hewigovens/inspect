@@ -79,15 +79,18 @@ extension ActionViewController {
         var bundle: Bundle = Bundle.main
 
         if self.inExtensionContext {
-            let url = bundle.bundleURL.deletingLastPathComponent()
+            var url = bundle.bundleURL.deletingLastPathComponent()
+            url = url.deletingLastPathComponent()
             guard let _bundle = Bundle(url: url) else {
                 return
             }
             bundle = _bundle
         }
 
-        guard let path1 = bundle.path(forResource: "mozilla_trust", ofType: "json"),
-              let path2 = bundle.path(forResource: "mozilla_ev", ofType: "json") else {
+        guard let path1 = bundle.path(forResource: "mozilla_trust", ofType: "json") else {
+            return
+        }
+        guard let path2 = bundle.path(forResource: "mozilla_ev", ofType: "json") else {
             return
         }
         do {
