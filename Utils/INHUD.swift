@@ -49,6 +49,8 @@ open class INHUD: UIView {
     }
 
     fileprivate func finishInit() {
+
+        self.autoresizingMask = [.flexibleWidth, .flexibleWidth]
         backgroundView.frame = CGRect(x: 0, y: 0, width: 265, height: 90)
         backgroundView.backgroundColor = UIColor(white:0.0, alpha:0.15)
         backgroundView.layer.cornerRadius = 9.0
@@ -68,6 +70,18 @@ open class INHUD: UIView {
         group.motionEffects = [motionEffectsX, motionEffectsY]
         backgroundView.addMotionEffect(group)
         backgroundView.center = self.center
+
+        NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange(notification:)), name: Notification.Name.UIDeviceOrientationDidChange, object: nil)
+    }
+
+    @objc func orientationDidChange(notification: Notification) {
+        self.frame = UIScreen.main.bounds
+        self.backgroundView.center = self.center
+        self.backgroundView.setNeedsDisplay()
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }
 
