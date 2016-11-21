@@ -87,7 +87,7 @@ open class WOT: NSObject {
 
     static func query(_ host: String, completion: @escaping (QueryResult) -> Void) -> Void {
         let key = "e0d9e530f85c4c851e2638b898d4219321c01455"
-        let apiUrl = "http://api.mywot.com/0.4/public_link_json2"
+        let apiUrl = "https://api.mywot.com/0.4/public_link_json2"
         let query = "\(apiUrl)?key=\(key)&hosts=\(String(format: "%@/", host))"
         let request = URLRequest(url: URL(string: query)!)
 

@@ -28,6 +28,10 @@
 		BB46EB9B1C30492B00E156E9 /* ActionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */; };
 		BB46EB9E1C30492B00E156E9 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB9C1C30492B00E156E9 /* MainInterface.storyboard */; };
 		BB46EBA21C30492B00E156E9 /* Certificate.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BB46EB981C30492B00E156E9 /* Certificate.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BB5C4D0D1DE141790021BCB7 /* nghttp2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5C4D0C1DE141790021BCB7 /* nghttp2.framework */; };
+		BB5C4D111DE142440021BCB7 /* HTTP2Probe.m in Sources */ = {isa = PBXBuildFile; fileRef = BB5C4D101DE142440021BCB7 /* HTTP2Probe.m */; };
+		BB5C4D141DE14E430021BCB7 /* nghttp2client.c in Sources */ = {isa = PBXBuildFile; fileRef = BB5C4D121DE14E430021BCB7 /* nghttp2client.c */; };
+		BB5C4D151DE167820021BCB7 /* nghttp2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5C4D0C1DE141790021BCB7 /* nghttp2.framework */; };
 		BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */; };
 		BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 		BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
@@ -117,6 +121,11 @@
 		BB46EB9D1C30492B00E156E9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		BB46EB9F1C30492B00E156E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BB46EC6D1C3186A200E156E9 /* WOT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WOT.swift; path = Utils/WOT.swift; sourceTree = "<group>"; };
+		BB5C4D0C1DE141790021BCB7 /* nghttp2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = nghttp2.framework; path = Dependencies/nghttp2.framework; sourceTree = "<group>"; };
+		BB5C4D0F1DE142440021BCB7 /* HTTP2Probe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTP2Probe.h; path = Utils/HTTP2Probe.h; sourceTree = "<group>"; };
+		BB5C4D101DE142440021BCB7 /* HTTP2Probe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HTTP2Probe.m; path = Utils/HTTP2Probe.m; sourceTree = "<group>"; };
+		BB5C4D121DE14E430021BCB7 /* nghttp2client.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = nghttp2client.c; path = Utils/nghttp2client.c; sourceTree = "<group>"; };
+		BB5C4D131DE14E430021BCB7 /* nghttp2client.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nghttp2client.h; path = Utils/nghttp2client.h; sourceTree = "<group>"; };
 		BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CertificateCells.swift; path = ../Certificate/CertificateCells.swift; sourceTree = "<group>"; };
 		BB5DB8611C391F2400219411 /* SSLLabs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SSLLabs.swift; path = Utils/SSLLabs.swift; sourceTree = "<group>"; };
 		BB5DB8641C3974D100219411 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = Dependencies/openssl.framework; sourceTree = "<group>"; };
@@ -144,6 +153,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB5C4D151DE167820021BCB7 /* nghttp2.framework in Frameworks */,
 				BB2C5B411C47E85E00911EA4 /* ZipZap.framework in Frameworks */,
 				BBDD04031DCF95380014CAA7 /* Crashlytics.framework in Frameworks */,
 				BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */,
@@ -164,6 +174,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB5C4D0D1DE141790021BCB7 /* nghttp2.framework in Frameworks */,
 				BBDD04051DCF95470014CAA7 /* Crashlytics.framework in Frameworks */,
 				BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */,
 				BBDD04061DCF954C0014CAA7 /* Fabric.framework in Frameworks */,
@@ -243,12 +254,24 @@
 		BB46EC781C32C8EF00E156E9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BB5C4D0C1DE141790021BCB7 /* nghttp2.framework */,
 				BBDD04011DCF95380014CAA7 /* Crashlytics.framework */,
 				BBDD04021DCF95380014CAA7 /* Fabric.framework */,
 				BB2C5B401C47E85E00911EA4 /* ZipZap.framework */,
 				BB5DB8641C3974D100219411 /* openssl.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BB5C4D0E1DE142150021BCB7 /* HTTP2 */ = {
+			isa = PBXGroup;
+			children = (
+				BB5C4D0F1DE142440021BCB7 /* HTTP2Probe.h */,
+				BB5C4D101DE142440021BCB7 /* HTTP2Probe.m */,
+				BB5C4D121DE14E430021BCB7 /* nghttp2client.c */,
+				BB5C4D131DE14E430021BCB7 /* nghttp2client.h */,
+			);
+			name = HTTP2;
 			sourceTree = "<group>";
 		};
 		BB5DB8601C391F0D00219411 /* SSLLabs */ = {
@@ -262,6 +285,7 @@
 		BB5DB8631C393CAA00219411 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				BB5C4D0E1DE142150021BCB7 /* HTTP2 */,
 				BB5DB8601C391F0D00219411 /* SSLLabs */,
 				BB46EC6F1C3186A800E156E9 /* WOT */,
 				BBBEA31D1C414CC800F1C3EE /* X509 */,
@@ -531,6 +555,7 @@
 				BB8C55D51CD9795F004B60E3 /* ActionViewController.swift in Sources */,
 				BB6B89751DCCDDFD00B1B627 /* UIColor+Hex.swift in Sources */,
 				BB7E39771CDA361A00C84856 /* UIView+Frame.swift in Sources */,
+				BB5C4D111DE142440021BCB7 /* HTTP2Probe.m in Sources */,
 				BB8C55D71CD9796C004B60E3 /* ExportItemSource.swift in Sources */,
 				BB7E397A1CDCE94C00C84856 /* HomeViewController.swift in Sources */,
 				BBD684741CDEE45900584DA1 /* Feedbackable.swift in Sources */,
@@ -542,6 +567,7 @@
 				BBF2390E1D8235DC00A75B29 /* ActionViewController+Utils.swift in Sources */,
 				BB8C55DA1CD97A2F004B60E3 /* X509.swift in Sources */,
 				BB1773C51C428227001AAB80 /* SessionManager.swift in Sources */,
+				BB5C4D141DE14E430021BCB7 /* nghttp2client.c in Sources */,
 				BBA1C2561C507B34009EECCC /* Constants.swift in Sources */,
 				BB8C55D81CD97A23004B60E3 /* INHUD.swift in Sources */,
 				BB8C55D61CD97965004B60E3 /* CertificateCells.swift in Sources */,
@@ -721,7 +747,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Dependencies/HockeySDK-iOS/HockeySDK.embeddedframework",
 					"$(PROJECT_DIR)/Dependencies",
 				);
 				INFOPLIST_FILE = Inspect/Info.plist;
@@ -747,7 +772,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Dependencies/HockeySDK-iOS/HockeySDK.embeddedframework",
 					"$(PROJECT_DIR)/Dependencies",
 				);
 				INFOPLIST_FILE = Inspect/Info.plist;
@@ -811,7 +835,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Dependencies/HockeySDK-iOS/HockeySDK.embeddedframework",
 					"$(PROJECT_DIR)/Dependencies",
 				);
 				INFOPLIST_FILE = Certificate/Info.plist;
@@ -839,7 +862,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Dependencies/HockeySDK-iOS/HockeySDK.embeddedframework",
 					"$(PROJECT_DIR)/Dependencies",
 				);
 				INFOPLIST_FILE = Certificate/Info.plist;
