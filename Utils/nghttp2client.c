@@ -183,6 +183,7 @@ static int select_next_proto_cb(SSL *ssl , unsigned char **out,
     rv = nghttp2_select_next_protocol(out, outlen, in, inlen);
     if (rv <= 0) {
         printf("Server did not advertise HTTP/2 protocol");
+        rv = -99;
     }
     return rv;
 }

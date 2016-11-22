@@ -249,9 +249,6 @@ extension HomeViewController {
                 }
             }
             self.present(vc, animated: true, completion: nil)
-            HTTP2Probe.probeURL(url, completion: { r in
-                debugPrint("r = \(r)")
-            })
             break
         }
     }

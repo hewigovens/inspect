@@ -32,6 +32,8 @@
 		BB5C4D111DE142440021BCB7 /* HTTP2Probe.m in Sources */ = {isa = PBXBuildFile; fileRef = BB5C4D101DE142440021BCB7 /* HTTP2Probe.m */; };
 		BB5C4D141DE14E430021BCB7 /* nghttp2client.c in Sources */ = {isa = PBXBuildFile; fileRef = BB5C4D121DE14E430021BCB7 /* nghttp2client.c */; };
 		BB5C4D151DE167820021BCB7 /* nghttp2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5C4D0C1DE141790021BCB7 /* nghttp2.framework */; };
+		BB5C4D161DE3D1B50021BCB7 /* HTTP2Probe.m in Sources */ = {isa = PBXBuildFile; fileRef = BB5C4D101DE142440021BCB7 /* HTTP2Probe.m */; };
+		BB5C4D171DE3D1B80021BCB7 /* nghttp2client.c in Sources */ = {isa = PBXBuildFile; fileRef = BB5C4D121DE14E430021BCB7 /* nghttp2client.c */; };
 		BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */; };
 		BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 		BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
@@ -588,11 +590,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB5C4D161DE3D1B50021BCB7 /* HTTP2Probe.m in Sources */,
 				BB1773C61C428732001AAB80 /* SessionManager.swift in Sources */,
 				BB1773C01C4280C6001AAB80 /* SSLLabs.swift in Sources */,
 				BB1773C11C4280C6001AAB80 /* WOT.swift in Sources */,
 				BB3CBDAD1C82A68A00DA5F63 /* ExportItemSource.swift in Sources */,
 				BBF2390F1D8235DC00A75B29 /* ActionViewController+Utils.swift in Sources */,
+				BB5C4D171DE3D1B80021BCB7 /* nghttp2client.c in Sources */,
 				BBD684751CDEE68300584DA1 /* Feedbackable.swift in Sources */,
 				BB1773C21C4280C6001AAB80 /* X509Helper.m in Sources */,
 				BB1773C31C4280C6001AAB80 /* X509.swift in Sources */,

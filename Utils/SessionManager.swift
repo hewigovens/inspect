@@ -11,7 +11,7 @@ import Foundation
 public typealias fetchCertsHandler = ([(SecCertificate, SecTrustResultType)]) -> Void
 
 open class SessionManager: NSObject, URLSessionTaskDelegate {
-    static let sharedManager = SessionManager()
+    static let shared = SessionManager()
     fileprivate var session: Foundation.URLSession?
     fileprivate var requestQueue = OperationQueue()
     fileprivate var callbacks = [URL: fetchCertsHandler]()

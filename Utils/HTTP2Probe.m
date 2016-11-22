@@ -29,7 +29,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         int result = probe(url_str);
         dispatch_async(dispatch_get_main_queue(), ^{
-            completion ? completion(result > 0) : nil;
+            completion ? completion(result >= 0) : nil;
         });
     });
 }

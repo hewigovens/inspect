@@ -36,6 +36,7 @@ class ActionViewController: UIViewController,
     internal var rootCAs: [String: AnyObject]? = nil
     internal var evSet: [String: AnyObject]? = nil
 
+    fileprivate var http2capable = false
     fileprivate var contentSections: [[(String, AnyObject)]]?
     fileprivate var contentSectionNames: [CertificateInfoSection]?
     fileprivate var inspectingUrl: Foundation.URL?
@@ -138,7 +139,7 @@ class ActionViewController: UIViewController,
                     INHUD.sharedHUD.contentView = INHUDTextView(text: "Fetching Certificates…")
                     INHUD.sharedHUD.showInView(self.view)
                 })
-                SessionManager.sharedManager.fetchCertsForUrl(url!, completion: { (certs) -> Void in
+                SessionManager.shared.fetchCertsForUrl(url!, completion: { (certs) -> Void in
                     INHUD.sharedHUD.hide()
                     if certs.count > 0 {
                         self.certificates = certs
@@ -146,17 +147,21 @@ class ActionViewController: UIViewController,
                         self.updateStatistics(self.targetHost)
                     }
                 })
-                WOT.query(self.targetHost) { result in
-                    print(result)
-                    switch result {
-                    case .success(let record):
-                        self.showWOTRating(record)
-                    case .failure(let error):
-                        #if DEBUG
-                            self.showError(error)
-                        #endif
+
+                HTTP2Probe.probeURL(url!, completion: { result in
+                    self.http2capable = result
+                    WOT.query(self.targetHost) { result in
+                        debugPrint(result)
+                        switch result {
+                        case .success(let record):
+                            self.showWOTRating(record)
+                        case .failure(let error):
+                            #if DEBUG
+                                self.showError(error)
+                            #endif
+                        }
                     }
-                }
+                })
             } else {
                 self.showError("\(url!) seems not a https URL")
             }
@@ -270,7 +275,7 @@ class ActionViewController: UIViewController,
     fileprivate func genTitleView(_ record: Record) -> UITextView {
         let textView = UITextView()
         textView.backgroundColor = UIColor.clear
-        let string = NSMutableAttributedString(string: "WOT: \(record.reputation.rawValue) ", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 17)])
+        let string = NSMutableAttributedString(string: "\(self.http2capable ? "S": "") WOT: \(record.reputation.rawValue) ", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 17)])
         let attachment = NSTextAttachment()
         attachment.image = UIImage(named: "WOT\(record.reputation.rawValue)")
         attachment.bounds = CGRect(x: 4, y: -4, width: 20, height: 20)
