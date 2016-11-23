@@ -9,11 +9,11 @@
 import Foundation
 
 // API docs https://github.com/ssllabs/ssllabs-scan/blob/master/ssllabs-api-docs.md
-public class SSLLabs {
+open class SSLLabs {
     static let testUrl = "https://www.ssllabs.com/ssltest/analyze.html?d="
-    static func scanUrl(host: String) -> NSURL? {
-        let url = SSLLabs.testUrl.stringByAppendingString(host)
-        return NSURL(string: url)
+    static func scanUrl(_ host: String) -> URL? {
+        let url = SSLLabs.testUrl + host
+        return URL(string: url)
     }
 
     //todo analyze API

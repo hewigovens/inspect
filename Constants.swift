@@ -13,6 +13,11 @@ let kAppStoreHTTPUrl = "https://itunes.apple.com/us/app/inspect-safari-extension
 let kRatingKey = "Rating"
 let kStatisticsKey = "Statistics"
 let kFirstRun = "FirstRun"
+let kInspectGroupId = "group.in.fourplex.Inspect"
+let kHistoryKey = "History"
+
+let kGoogleChromeScheme = "googlechromes://"
+
 
 //MARK: Analytics
 let kActionScanInSSLLabs = "ScanInSSLLabs"

@@ -21,8 +21,6 @@
 		BB2C5B411C47E85E00911EA4 /* ZipZap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB2C5B401C47E85E00911EA4 /* ZipZap.framework */; };
 		BB2C63F31D7FD9D400E145BB /* mozilla_trust.json in Resources */ = {isa = PBXBuildFile; fileRef = BB2C63F21D7FD9D400E145BB /* mozilla_trust.json */; };
 		BB2EB67D1C4930B90057929C /* INHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB2EB67C1C4930B90057929C /* INHUD.swift */; };
-		BB30DEA11C7F407A00AE0A39 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB30DE9F1C7F407A00AE0A39 /* Fabric.framework */; };
-		BB30DEA31C7F414400AE0A39 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB30DE9F1C7F407A00AE0A39 /* Fabric.framework */; };
 		BB3CBDAD1C82A68A00DA5F63 /* ExportItemSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB3CBDAC1C82A68A00DA5F63 /* ExportItemSource.swift */; };
 		BB46EB751C3046B300E156E9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB741C3046B300E156E9 /* AppDelegate.swift */; };
 		BB46EB7F1C3046B300E156E9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB7D1C3046B300E156E9 /* LaunchScreen.storyboard */; };
@@ -30,9 +28,20 @@
 		BB46EB9B1C30492B00E156E9 /* ActionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */; };
 		BB46EB9E1C30492B00E156E9 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB9C1C30492B00E156E9 /* MainInterface.storyboard */; };
 		BB46EBA21C30492B00E156E9 /* Certificate.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BB46EB981C30492B00E156E9 /* Certificate.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BB5C4D0D1DE141790021BCB7 /* nghttp2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5C4D0C1DE141790021BCB7 /* nghttp2.framework */; };
+		BB5C4D111DE142440021BCB7 /* HTTP2Probe.m in Sources */ = {isa = PBXBuildFile; fileRef = BB5C4D101DE142440021BCB7 /* HTTP2Probe.m */; };
+		BB5C4D141DE14E430021BCB7 /* nghttp2client.c in Sources */ = {isa = PBXBuildFile; fileRef = BB5C4D121DE14E430021BCB7 /* nghttp2client.c */; };
+		BB5C4D151DE167820021BCB7 /* nghttp2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5C4D0C1DE141790021BCB7 /* nghttp2.framework */; };
+		BB5C4D161DE3D1B50021BCB7 /* HTTP2Probe.m in Sources */ = {isa = PBXBuildFile; fileRef = BB5C4D101DE142440021BCB7 /* HTTP2Probe.m */; };
+		BB5C4D171DE3D1B80021BCB7 /* nghttp2client.c in Sources */ = {isa = PBXBuildFile; fileRef = BB5C4D121DE14E430021BCB7 /* nghttp2client.c */; };
 		BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */; };
 		BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 		BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
+		BB6B89751DCCDDFD00B1B627 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6B89741DCCDDFD00B1B627 /* UIColor+Hex.swift */; };
+		BB6B89761DCCDF1F00B1B627 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6B89741DCCDDFD00B1B627 /* UIColor+Hex.swift */; };
+		BB6B89781DCCF26B00B1B627 /* String+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6B89771DCCF26B00B1B627 /* String+Utils.swift */; };
+		BB6B89791DCCF51800B1B627 /* String+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6B89771DCCF26B00B1B627 /* String+Utils.swift */; };
+		BB6B897B1DCCF78D00B1B627 /* mozilla_ev.json in Resources */ = {isa = PBXBuildFile; fileRef = BB6B897A1DCCF78D00B1B627 /* mozilla_ev.json */; };
 		BB7E39771CDA361A00C84856 /* UIView+Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7E39761CDA361A00C84856 /* UIView+Frame.swift */; };
 		BB7E39781CDACFF000C84856 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB2C5B3B1C469BFE00911EA4 /* Images.xcassets */; };
 		BB7E397A1CDCE94C00C84856 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7E39791CDCE94C00C84856 /* HomeViewController.swift */; };
@@ -53,8 +62,12 @@
 		BBBEA3161C409DE000F1C3EE /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 		BBD684741CDEE45900584DA1 /* Feedbackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD684731CDEE45900584DA1 /* Feedbackable.swift */; };
 		BBD684751CDEE68300584DA1 /* Feedbackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD684731CDEE45900584DA1 /* Feedbackable.swift */; };
-		BBD6847A1CDF428600584DA1 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBD684791CDF428600584DA1 /* Crashlytics.framework */; };
-		BBD6847B1CDF446000584DA1 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBD684791CDF428600584DA1 /* Crashlytics.framework */; };
+		BBDD04031DCF95380014CAA7 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBDD04011DCF95380014CAA7 /* Crashlytics.framework */; };
+		BBDD04041DCF95380014CAA7 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBDD04021DCF95380014CAA7 /* Fabric.framework */; };
+		BBDD04051DCF95470014CAA7 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBDD04011DCF95380014CAA7 /* Crashlytics.framework */; };
+		BBDD04061DCF954C0014CAA7 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBDD04021DCF95380014CAA7 /* Fabric.framework */; };
+		BBF2390E1D8235DC00A75B29 /* ActionViewController+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF2390D1D8235DC00A75B29 /* ActionViewController+Utils.swift */; };
+		BBF2390F1D8235DC00A75B29 /* ActionViewController+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF2390D1D8235DC00A75B29 /* ActionViewController+Utils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,9 +108,8 @@
 		BB2C5B401C47E85E00911EA4 /* ZipZap.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZipZap.framework; path = Carthage/Build/iOS/ZipZap.framework; sourceTree = "<group>"; };
 		BB2C5B421C47EBCD00911EA4 /* Inspect.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Inspect.entitlements; sourceTree = "<group>"; };
 		BB2C5B431C47EBEF00911EA4 /* Certificate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Certificate.entitlements; sourceTree = "<group>"; };
-		BB2C63F21D7FD9D400E145BB /* mozilla_trust.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = mozilla_trust.json; sourceTree = "<group>"; };
+		BB2C63F21D7FD9D400E145BB /* mozilla_trust.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = mozilla_trust.json; path = ../scripts/mozilla_trust.json; sourceTree = "<group>"; };
 		BB2EB67C1C4930B90057929C /* INHUD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = INHUD.swift; path = Utils/INHUD.swift; sourceTree = "<group>"; };
-		BB30DE9F1C7F407A00AE0A39 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Dependencies/Fabric.framework; sourceTree = "<group>"; };
 		BB3CBDAC1C82A68A00DA5F63 /* ExportItemSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ExportItemSource.swift; path = ../Certificate/ExportItemSource.swift; sourceTree = "<group>"; };
 		BB46EB711C3046B300E156E9 /* Inspect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inspect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB46EB741C3046B300E156E9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -111,11 +123,19 @@
 		BB46EB9D1C30492B00E156E9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		BB46EB9F1C30492B00E156E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BB46EC6D1C3186A200E156E9 /* WOT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WOT.swift; path = Utils/WOT.swift; sourceTree = "<group>"; };
+		BB5C4D0C1DE141790021BCB7 /* nghttp2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = nghttp2.framework; path = Dependencies/nghttp2.framework; sourceTree = "<group>"; };
+		BB5C4D0F1DE142440021BCB7 /* HTTP2Probe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTP2Probe.h; path = Utils/HTTP2Probe.h; sourceTree = "<group>"; };
+		BB5C4D101DE142440021BCB7 /* HTTP2Probe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HTTP2Probe.m; path = Utils/HTTP2Probe.m; sourceTree = "<group>"; };
+		BB5C4D121DE14E430021BCB7 /* nghttp2client.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = nghttp2client.c; path = Utils/nghttp2client.c; sourceTree = "<group>"; };
+		BB5C4D131DE14E430021BCB7 /* nghttp2client.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nghttp2client.h; path = Utils/nghttp2client.h; sourceTree = "<group>"; };
 		BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CertificateCells.swift; path = ../Certificate/CertificateCells.swift; sourceTree = "<group>"; };
 		BB5DB8611C391F2400219411 /* SSLLabs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SSLLabs.swift; path = Utils/SSLLabs.swift; sourceTree = "<group>"; };
 		BB5DB8641C3974D100219411 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = Dependencies/openssl.framework; sourceTree = "<group>"; };
 		BB5DB8671C397BF200219411 /* X509.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = X509.swift; path = Utils/X509.swift; sourceTree = "<group>"; };
 		BB5DB8861C3AA52900219411 /* Inspect-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Inspect-Bridging-Header.h"; path = "../Inspect-Bridging-Header.h"; sourceTree = "<group>"; };
+		BB6B89741DCCDDFD00B1B627 /* UIColor+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
+		BB6B89771DCCF26B00B1B627 /* String+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Utils.swift"; sourceTree = "<group>"; };
+		BB6B897A1DCCF78D00B1B627 /* mozilla_ev.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = mozilla_ev.json; path = scripts/mozilla_ev.json; sourceTree = SOURCE_ROOT; };
 		BB7E39761CDA361A00C84856 /* UIView+Frame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIView+Frame.swift"; path = "Utils/UIView+Frame.swift"; sourceTree = "<group>"; };
 		BB7E39791CDCE94C00C84856 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		BB7E397D1CDDC63C00C84856 /* UINavigationController+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Extension.swift"; sourceTree = "<group>"; };
@@ -125,7 +145,9 @@
 		BBBEA3191C414B6000F1C3EE /* X509Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = X509Helper.h; path = Utils/X509Helper.h; sourceTree = "<group>"; };
 		BBBEA31A1C414B6000F1C3EE /* X509Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = X509Helper.m; path = Utils/X509Helper.m; sourceTree = "<group>"; };
 		BBD684731CDEE45900584DA1 /* Feedbackable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Feedbackable.swift; sourceTree = "<group>"; };
-		BBD684791CDF428600584DA1 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Dependencies/Crashlytics.framework; sourceTree = "<group>"; };
+		BBDD04011DCF95380014CAA7 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Dependencies/Crashlytics.framework; sourceTree = "<group>"; };
+		BBDD04021DCF95380014CAA7 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Dependencies/Fabric.framework; sourceTree = "<group>"; };
+		BBF2390D1D8235DC00A75B29 /* ActionViewController+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ActionViewController+Utils.swift"; path = "Certificate/ActionViewController+Utils.swift"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,10 +155,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB5C4D151DE167820021BCB7 /* nghttp2.framework in Frameworks */,
 				BB2C5B411C47E85E00911EA4 /* ZipZap.framework in Frameworks */,
-				BBD6847A1CDF428600584DA1 /* Crashlytics.framework in Frameworks */,
+				BBDD04031DCF95380014CAA7 /* Crashlytics.framework in Frameworks */,
 				BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */,
-				BB30DEA11C7F407A00AE0A39 /* Fabric.framework in Frameworks */,
+				BBDD04041DCF95380014CAA7 /* Fabric.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -153,9 +176,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB5C4D0D1DE141790021BCB7 /* nghttp2.framework in Frameworks */,
+				BBDD04051DCF95470014CAA7 /* Crashlytics.framework in Frameworks */,
 				BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */,
-				BB30DEA31C7F414400AE0A39 /* Fabric.framework in Frameworks */,
-				BBD6847B1CDF446000584DA1 /* Crashlytics.framework in Frameworks */,
+				BBDD04061DCF954C0014CAA7 /* Fabric.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -187,6 +211,7 @@
 		BB46EB731C3046B300E156E9 /* Inspect */ = {
 			isa = PBXGroup;
 			children = (
+				BB6B897A1DCCF78D00B1B627 /* mozilla_ev.json */,
 				BB2C63F21D7FD9D400E145BB /* mozilla_trust.json */,
 				BB2C5B421C47EBCD00911EA4 /* Inspect.entitlements */,
 				BB2C5B3D1C469C3200911EA4 /* Assets.xcassets */,
@@ -231,12 +256,24 @@
 		BB46EC781C32C8EF00E156E9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				BBD684791CDF428600584DA1 /* Crashlytics.framework */,
-				BB30DE9F1C7F407A00AE0A39 /* Fabric.framework */,
+				BB5C4D0C1DE141790021BCB7 /* nghttp2.framework */,
+				BBDD04011DCF95380014CAA7 /* Crashlytics.framework */,
+				BBDD04021DCF95380014CAA7 /* Fabric.framework */,
 				BB2C5B401C47E85E00911EA4 /* ZipZap.framework */,
 				BB5DB8641C3974D100219411 /* openssl.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BB5C4D0E1DE142150021BCB7 /* HTTP2 */ = {
+			isa = PBXGroup;
+			children = (
+				BB5C4D0F1DE142440021BCB7 /* HTTP2Probe.h */,
+				BB5C4D101DE142440021BCB7 /* HTTP2Probe.m */,
+				BB5C4D121DE14E430021BCB7 /* nghttp2client.c */,
+				BB5C4D131DE14E430021BCB7 /* nghttp2client.h */,
+			);
+			name = HTTP2;
 			sourceTree = "<group>";
 		};
 		BB5DB8601C391F0D00219411 /* SSLLabs */ = {
@@ -250,6 +287,7 @@
 		BB5DB8631C393CAA00219411 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				BB5C4D0E1DE142150021BCB7 /* HTTP2 */,
 				BB5DB8601C391F0D00219411 /* SSLLabs */,
 				BB46EC6F1C3186A800E156E9 /* WOT */,
 				BBBEA31D1C414CC800F1C3EE /* X509 */,
@@ -257,6 +295,8 @@
 				BB2EB67C1C4930B90057929C /* INHUD.swift */,
 				BBA1C2551C507B34009EECCC /* Constants.swift */,
 				BB7E39761CDA361A00C84856 /* UIView+Frame.swift */,
+				BB6B89741DCCDDFD00B1B627 /* UIColor+Hex.swift */,
+				BB6B89771DCCF26B00B1B627 /* String+Utils.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -277,6 +317,7 @@
 				BB7E39791CDCE94C00C84856 /* HomeViewController.swift */,
 				BB7E39A71CDDF25000C84856 /* TutorialViewController.swift */,
 				BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */,
+				BBF2390D1D8235DC00A75B29 /* ActionViewController+Utils.swift */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -314,7 +355,6 @@
 				BB46EBA61C30492B00E156E9 /* Embed App Extensions */,
 				BBD6847C1CDF4E5F00584DA1 /* Copy Carthage Frameworks */,
 				BB30DE9E1C7F402E00AE0A39 /* Run Fabric */,
-				BB3CBDB21C8F21EF00DA5F63 /* Run SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -351,7 +391,6 @@
 				BB46EB941C30492B00E156E9 /* Sources */,
 				BB46EB951C30492B00E156E9 /* Frameworks */,
 				BB46EB961C30492B00E156E9 /* Resources */,
-				BB3CBDB31C8F220000DA5F63 /* Run SwiftLint */,
 				BB5273DC1CFBBFCE00947BFD /* Run Fabric */,
 			);
 			buildRules = (
@@ -370,12 +409,13 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 0720;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = fourplex;
 				TargetAttributes = {
 					BB46EB701C3046B300E156E9 = {
 						CreatedOnToolsVersion = 7.2;
 						DevelopmentTeam = FH9QG7ZJR9;
+						LastSwiftMigration = 0800;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 1;
@@ -393,11 +433,13 @@
 					};
 					BB46EB841C3046B300E156E9 = {
 						CreatedOnToolsVersion = 7.2;
+						LastSwiftMigration = 0800;
 						TestTargetID = BB46EB701C3046B300E156E9;
 					};
 					BB46EB971C30492B00E156E9 = {
 						CreatedOnToolsVersion = 7.2;
 						DevelopmentTeam = FH9QG7ZJR9;
+						LastSwiftMigration = 0800;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 1;
@@ -436,6 +478,7 @@
 				BB2C63F31D7FD9D400E145BB /* mozilla_trust.json in Resources */,
 				BB8C55D41CD97958004B60E3 /* MainInterface.storyboard in Resources */,
 				BB2C5B3E1C469C3200911EA4 /* Assets.xcassets in Resources */,
+				BB6B897B1DCCF78D00B1B627 /* mozilla_ev.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -472,34 +515,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "./Dependencies/Fabric.framework/run ffd1a21a45423d2959636c52dc02535a8fad1b60 dd1dfceaa343fa98ef49d12fa7f022c135640990742116059b7d05091289834f";
-		};
-		BB3CBDB21C8F21EF00DA5F63 /* Run SwiftLint */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Run SwiftLint";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
-		};
-		BB3CBDB31C8F220000DA5F63 /* Run SwiftLint */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Run SwiftLint";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
 		};
 		BB5273DC1CFBBFCE00947BFD /* Run Fabric */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -540,7 +555,9 @@
 				BB7E397E1CDDC63C00C84856 /* UINavigationController+Extension.swift in Sources */,
 				BB8C55DC1CD97A37004B60E3 /* SSLLabs.swift in Sources */,
 				BB8C55D51CD9795F004B60E3 /* ActionViewController.swift in Sources */,
+				BB6B89751DCCDDFD00B1B627 /* UIColor+Hex.swift in Sources */,
 				BB7E39771CDA361A00C84856 /* UIView+Frame.swift in Sources */,
+				BB5C4D111DE142440021BCB7 /* HTTP2Probe.m in Sources */,
 				BB8C55D71CD9796C004B60E3 /* ExportItemSource.swift in Sources */,
 				BB7E397A1CDCE94C00C84856 /* HomeViewController.swift in Sources */,
 				BBD684741CDEE45900584DA1 /* Feedbackable.swift in Sources */,
@@ -548,8 +565,11 @@
 				BB7E39A81CDDF25000C84856 /* TutorialViewController.swift in Sources */,
 				BB46EB751C3046B300E156E9 /* AppDelegate.swift in Sources */,
 				BB8C55DB1CD97A33004B60E3 /* WOT.swift in Sources */,
+				BB6B89781DCCF26B00B1B627 /* String+Utils.swift in Sources */,
+				BBF2390E1D8235DC00A75B29 /* ActionViewController+Utils.swift in Sources */,
 				BB8C55DA1CD97A2F004B60E3 /* X509.swift in Sources */,
 				BB1773C51C428227001AAB80 /* SessionManager.swift in Sources */,
+				BB5C4D141DE14E430021BCB7 /* nghttp2client.c in Sources */,
 				BBA1C2561C507B34009EECCC /* Constants.swift in Sources */,
 				BB8C55D81CD97A23004B60E3 /* INHUD.swift in Sources */,
 				BB8C55D61CD97965004B60E3 /* CertificateCells.swift in Sources */,
@@ -570,16 +590,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB5C4D161DE3D1B50021BCB7 /* HTTP2Probe.m in Sources */,
 				BB1773C61C428732001AAB80 /* SessionManager.swift in Sources */,
 				BB1773C01C4280C6001AAB80 /* SSLLabs.swift in Sources */,
 				BB1773C11C4280C6001AAB80 /* WOT.swift in Sources */,
 				BB3CBDAD1C82A68A00DA5F63 /* ExportItemSource.swift in Sources */,
+				BBF2390F1D8235DC00A75B29 /* ActionViewController+Utils.swift in Sources */,
+				BB5C4D171DE3D1B80021BCB7 /* nghttp2client.c in Sources */,
 				BBD684751CDEE68300584DA1 /* Feedbackable.swift in Sources */,
 				BB1773C21C4280C6001AAB80 /* X509Helper.m in Sources */,
 				BB1773C31C4280C6001AAB80 /* X509.swift in Sources */,
 				BB46EB9B1C30492B00E156E9 /* ActionViewController.swift in Sources */,
+				BB6B89761DCCDF1F00B1B627 /* UIColor+Hex.swift in Sources */,
 				BB2EB67D1C4930B90057929C /* INHUD.swift in Sources */,
 				BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */,
+				BB6B89791DCCF51800B1B627 /* String+Utils.swift in Sources */,
 				BBA1C2571C507B34009EECCC /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -633,13 +658,15 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/Dependencies";
@@ -681,8 +708,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -704,6 +733,7 @@
 				OTHER_SWIFT_FLAGS = "-DRELEASE";
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "Inspect-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -717,13 +747,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 11;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Dependencies/HockeySDK-iOS/HockeySDK.embeddedframework",
 					"$(PROJECT_DIR)/Dependencies",
 				);
 				INFOPLIST_FILE = Inspect/Info.plist;
@@ -731,6 +758,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = in.fourplex.Inspect;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -744,13 +772,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 11;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Dependencies/HockeySDK-iOS/HockeySDK.embeddedframework",
 					"$(PROJECT_DIR)/Dependencies",
 				);
 				INFOPLIST_FILE = Inspect/Info.plist;
@@ -758,6 +783,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = in.fourplex.Inspect;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -777,6 +803,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = in.fourplex.InspectTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Inspect.app/Inspect";
 			};
 			name = Debug;
@@ -794,6 +821,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = in.fourplex.InspectTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Inspect.app/Inspect";
 			};
 			name = Release;
@@ -807,12 +835,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 11;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Dependencies/HockeySDK-iOS/HockeySDK.embeddedframework",
 					"$(PROJECT_DIR)/Dependencies",
 				);
 				INFOPLIST_FILE = Certificate/Info.plist;
@@ -822,6 +848,7 @@
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -835,12 +862,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 11;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Dependencies/HockeySDK-iOS/HockeySDK.embeddedframework",
 					"$(PROJECT_DIR)/Dependencies",
 				);
 				INFOPLIST_FILE = Certificate/Info.plist;
@@ -849,6 +874,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

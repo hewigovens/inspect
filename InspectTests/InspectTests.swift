@@ -11,7 +11,7 @@ import XCTest
 
 class InspectTests: XCTestCase {
 
-    private lazy var data: NSData = NSData(contentsOfFile: NSBundle(forClass: InspectTests.self).pathForResource("mac_dev", ofType: "cer")!)!
+    fileprivate lazy var data: Data = try! Data(contentsOf: URL(fileURLWithPath: Bundle(for: InspectTests.self).path(forResource: "mac_dev", ofType: "cer")!))
 
     override func setUp() {
         super.setUp()
@@ -22,9 +22,9 @@ class InspectTests: XCTestCase {
     }
 
     func testParseX509() {
-        let certificate = SecCertificateCreateWithData(nil, self.data)
+        let certificate = SecCertificateCreateWithData(nil, self.data as CFData)
         let cert = X509Certificate(certificate: certificate!)
-        XCTAssert(cert.subjectName.lengthOfBytesUsingEncoding(NSUTF8StringEncoding) > 0)
+        XCTAssert(cert.subjectName.lengthOfBytes(using: String.Encoding.utf8) > 0)
         print(cert.description)
     }
 }

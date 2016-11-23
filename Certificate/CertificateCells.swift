@@ -9,58 +9,69 @@
 import UIKit
 
 // MARK: CertificateStackCell used in header view
-public class CertificateStackCell: UITableViewCell {
+open class CertificateStackCell: UITableViewCell {
     static let reuseId = "kCertificateStackCell"
 
-    @IBOutlet public weak var indicatorLabel: UILabel!
-    @IBOutlet public weak var iconView: UIImageView!
-    @IBOutlet public weak var titleLabel: UILabel!
-    @IBOutlet public weak var indicatorLeading: NSLayoutConstraint!
+    @IBOutlet open weak var indicatorLabel: UILabel!
+    @IBOutlet open weak var iconView: UIImageView!
+    @IBOutlet open weak var titleLabel: UILabel!
+    @IBOutlet open weak var indicatorLeading: NSLayoutConstraint!
 
-    public var trustResult: SecTrustResultType = UInt32(kSecTrustResultUnspecified) {
+    open var isEV = false {
         didSet {
-            if trustResult == UInt32(kSecTrustResultProceed) ||
-               trustResult == UInt32(kSecTrustResultUnspecified) {
+            if self.isEV {
+                self.titleLabel?.textColor = UIColor(hexInt: 0x27c47a)
+            }
+        }
+    }
+    open var trustResult: SecTrustResultType = .unspecified {
+        didSet {
+            if trustResult == .proceed ||
+               trustResult == .unspecified {
                 return
             }
 
             self.suffix = "_Invalid"
         }
     }
-    public var level = 0 {
+    open var level = 0 {
         didSet {
             if self.level == 0 {
-                self.iconView?.image = UIImage(imageLiteral: "CertSmallRoot" + suffix)
+                self.iconView?.image = UIImage(named: "CertSmallRoot" + suffix)
             } else {
                 self.indicatorLeading?.constant = (self.indicatorLeading?.constant)! - CGFloat(self.level) * 35.0
-                self.iconView?.image = UIImage(imageLiteral: "CertSmallStd" + suffix)
+                self.iconView?.image = UIImage(named: "CertSmallStd" + suffix)
             }
         }
     }
-    public var name = "" {
+    open var name = "" {
         didSet {
             self.titleLabel?.text = self.name
             self.titleLabel?.numberOfLines = 0
         }
     }
 
-    private var suffix = ""
+    fileprivate var suffix = ""
+
+    open override func prepareForReuse() {
+        self.titleLabel.textColor = self.textLabel?.textColor
+    }
 }
 
 // MARK: CertificateInfoCell used in Content View
 
-public class CertificateInfoCell: UITableViewCell {
+open class CertificateInfoCell: UITableViewCell {
     static let reuseId = "kCertificateInfoCell"
 
-    @IBOutlet public weak var titleLabel: UILabel!
-    @IBOutlet public weak var detailLabel: UILabel!
+    @IBOutlet open weak var titleLabel: UILabel!
+    @IBOutlet open weak var detailLabel: UILabel!
 }
 
-public class CertificateInfoCell2: UITableViewCell {
+open class CertificateInfoCell2: UITableViewCell {
     static let reuseId = "kCertificateInfoCell2"
 
-    @IBOutlet public weak var titleLabel: UILabel!
-    @IBOutlet public weak var longTextLabel: UILabel!
+    @IBOutlet open weak var titleLabel: UILabel!
+    @IBOutlet open weak var longTextLabel: UILabel!
 }
 
 public enum CertificateInfoSection: String {
@@ -76,7 +87,7 @@ public enum CertificateInfoSection: String {
 }
 
 extension X509Certificate {
-    public func displaySections() -> ([[(String, AnyObject)]], [CertificateInfoSection]) {
+    public func displaySections() -> (sectionData: [[(String, AnyObject)]], sectionName:[CertificateInfoSection]) {
         var sectionDatas: [[(String, AnyObject)]] = []
         var sectionNames: [CertificateInfoSection] = []
 
@@ -88,37 +99,37 @@ extension X509Certificate {
 
         sectionNames.append(.Misc)
         sectionDatas.append([
-            ("Serial Number", self.serialNumber.fingerprintRepresentation()),
-            ("Version", String(self.version)),
-            ("Not Valid Before", self.notValidBefore),
-            ("Not Valid After", self.notValidAfter),
+            ("Serial Number", self.serialNumber.fingerprintRepresentation() as AnyObject),
+            ("Version", String(self.version) as AnyObject),
+            ("Not Valid Before", self.notValidBefore as AnyObject),
+            ("Not Valid After", self.notValidAfter as AnyObject),
         ])
 
         sectionNames.append(.Algorithm)
         var datas: [(String, AnyObject)] = [
-            ("Signature Algorithm", self.signatureAlgorithm),
-            ("Pub Key Algorithm", String.x509EntryMapper[self.pubKeyAlgorithm] ?? self.pubKeyAlgorithm),
-            ("Pub Key Size", String(self.pubKeySize)),
+            ("Signature Algorithm", self.signatureAlgorithm as AnyObject),
+            ("Pub Key Algorithm", String.x509EntryMapper[self.pubKeyAlgorithm] as AnyObject? ?? self.pubKeyAlgorithm as AnyObject),
+            ("Pub Key Size", String(self.pubKeySize) as AnyObject),
         ]
-        if self.pubKeyECCurveName.lengthOfBytesUsingEncoding(NSUTF8StringEncoding) > 0 {
-            datas.append(("Elliptic Curve Name", self.pubKeyECCurveName.capitalizedString))
+        if self.pubKeyECCurveName.lengthOfBytes(using: String.Encoding.utf8) > 0 {
+            datas.append(("Elliptic Curve Name", self.pubKeyECCurveName.capitalized as AnyObject))
         }
         sectionDatas.append(datas)
 
         sectionNames.append(.Signature)
         sectionDatas.append([
-            ("Signature", self.signature.fingerprintRepresentation()),
+            ("Signature", self.signature.fingerprintRepresentation() as AnyObject),
         ])
 
         sectionNames.append(.PubKeyInfo)
         sectionDatas.append([
-            ("Pub Key", self.pubKey.fingerprintRepresentation()),
+            ("Pub Key", self.pubKey.fingerprintRepresentation() as AnyObject),
         ])
 
         sectionNames.append(.Fingerprints)
         sectionDatas.append([
-            ("md5", self.md5.fingerprintRepresentation()),
-            ("sha1", self.sha1.fingerprintRepresentation())
+            ("md5", self.md5.fingerprintRepresentation() as AnyObject),
+            ("sha1", self.sha1.fingerprintRepresentation() as AnyObject)
         ])
 
         if self.extensions.count > 0 {
