@@ -275,7 +275,17 @@ class ActionViewController: UIViewController,
     fileprivate func genTitleView(_ record: Record) -> UITextView {
         let textView = UITextView()
         textView.backgroundColor = UIColor.clear
-        let string = NSMutableAttributedString(string: "\(self.http2capable ? "S": "") WOT: \(record.reputation.rawValue) ", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 17)])
+
+        let h2Attachment = NSTextAttachment()
+        if self.http2capable {
+            h2Attachment.image = #imageLiteral(resourceName: "IndicatorH2")
+        } else {
+            h2Attachment.image = #imageLiteral(resourceName: "IndicatorNone")
+        }
+        h2Attachment.bounds = CGRect(x: 4, y: -4, width: 20, height: 20)
+        let string = NSMutableAttributedString()
+        string.append(NSAttributedString(attachment: h2Attachment))
+        string.append(NSAttributedString(string: "\(record.reputation.rawValue): ", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16)]))
         let attachment = NSTextAttachment()
         attachment.image = UIImage(named: "WOT\(record.reputation.rawValue)")
         attachment.bounds = CGRect(x: 4, y: -4, width: 20, height: 20)
