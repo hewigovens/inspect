@@ -67,11 +67,15 @@ open class CertificateInfoCell: UITableViewCell, Reusable {
 
     lazy var titleLabel: UILabel = {
         let label = UILabel()
+        label.setContentCompressionResistancePriority(1000, for: .horizontal)
         return label
     }()
 
     lazy var detailLabel: UILabel = {
         let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.textColor = UIColor(hexInt: 0xaaaaaa)
+        label.textAlignment = .right
         return label
     }()
 
@@ -85,12 +89,12 @@ open class CertificateInfoCell: UITableViewCell, Reusable {
         self.contentView.addSubview(detailLabel)
 
         titleLabel.snp.makeConstraints { make in
-            make.leading.equalTo(self.contentView).offset(7)
-            make.top.equalTo(self.contentView).offset(10)
+            make.leading.equalTo(self.contentView).offset(15)
+            make.centerY.equalTo(self.contentView)
         }
 
         detailLabel.snp.makeConstraints { make in
-            make.leading.equalTo(self.titleLabel.snp.trailing).offset(7)
+            make.leading.greaterThanOrEqualTo(self.titleLabel.snp.trailing).offset(10).priority(1000)
             make.trailing.equalTo(self.contentView).offset(-7)
             make.top.equalTo(self.contentView).offset(10)
             make.bottom.equalTo(self.contentView).offset(-10)
@@ -112,6 +116,8 @@ open class CertificateInfoCell2: UITableViewCell, Reusable {
 
     lazy var longTextLabel: UILabel = {
         let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.textColor = UIColor(hexInt: 0xaaaaaa)
         return label
     }()
 
@@ -124,13 +130,13 @@ open class CertificateInfoCell2: UITableViewCell, Reusable {
         self.contentView.addSubview(longTextLabel)
 
         titleLabel.snp.makeConstraints { (make) in
-            make.leading.equalTo(self.contentView).offset(7)
+            make.leading.equalTo(self.contentView).offset(15)
             make.trailing.equalTo(self.contentView).offset(-7)
             make.top.equalTo(self.contentView).offset(10)
         }
 
         longTextLabel.snp.makeConstraints { (make) in
-            make.leading.equalTo(self.contentView).offset(7)
+            make.leading.equalTo(self.contentView).offset(15)
             make.trailing.equalTo(self.contentView).offset(-7)
             make.top.equalTo(self.titleLabel.snp.bottom).offset(10)
             make.bottom.equalTo(self.contentView).offset(-10)
