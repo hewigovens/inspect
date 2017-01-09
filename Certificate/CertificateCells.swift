@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import SnapKit
+import Reusable
 
 // MARK: CertificateStackCell used in header view
 open class CertificateStackCell: UITableViewCell {
@@ -60,18 +62,84 @@ open class CertificateStackCell: UITableViewCell {
 
 // MARK: CertificateInfoCell used in Content View
 
-open class CertificateInfoCell: UITableViewCell {
+open class CertificateInfoCell: UITableViewCell, Reusable {
     static let reuseId = "kCertificateInfoCell"
 
-    @IBOutlet open weak var titleLabel: UILabel!
-    @IBOutlet open weak var detailLabel: UILabel!
+    lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        return label
+    }()
+
+    lazy var detailLabel: UILabel = {
+        let label = UILabel()
+        return label
+    }()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+
+        titleLabel.numberOfLines = 1
+        detailLabel.numberOfLines = 0
+
+        self.contentView.addSubview(titleLabel)
+        self.contentView.addSubview(detailLabel)
+
+        titleLabel.snp.makeConstraints { make in
+            make.leading.equalTo(self.contentView).offset(7)
+            make.top.equalTo(self.contentView).offset(10)
+        }
+
+        detailLabel.snp.makeConstraints { make in
+            make.leading.equalTo(self.titleLabel.snp.trailing).offset(7)
+            make.trailing.equalTo(self.contentView).offset(-7)
+            make.top.equalTo(self.contentView).offset(10)
+            make.bottom.equalTo(self.contentView).offset(-10)
+        }
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
-open class CertificateInfoCell2: UITableViewCell {
+open class CertificateInfoCell2: UITableViewCell, Reusable {
     static let reuseId = "kCertificateInfoCell2"
 
-    @IBOutlet open weak var titleLabel: UILabel!
-    @IBOutlet open weak var longTextLabel: UILabel!
+    lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        return label
+    }()
+
+    lazy var longTextLabel: UILabel = {
+        let label = UILabel()
+        return label
+    }()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+
+        longTextLabel.numberOfLines = 0
+
+        self.contentView.addSubview(titleLabel)
+        self.contentView.addSubview(longTextLabel)
+
+        titleLabel.snp.makeConstraints { (make) in
+            make.leading.equalTo(self.contentView).offset(7)
+            make.trailing.equalTo(self.contentView).offset(-7)
+            make.top.equalTo(self.contentView).offset(10)
+        }
+
+        longTextLabel.snp.makeConstraints { (make) in
+            make.leading.equalTo(self.contentView).offset(7)
+            make.trailing.equalTo(self.contentView).offset(-7)
+            make.top.equalTo(self.titleLabel.snp.bottom).offset(10)
+            make.bottom.equalTo(self.contentView).offset(-10)
+        }
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
 public enum CertificateInfoSection: String {

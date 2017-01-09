@@ -12,6 +12,7 @@ import SafariServices
 import StoreKit
 import Crashlytics
 import Fabric
+import Reusable
 
 class ActionViewController: UIViewController,
                             UITableViewDelegate,
@@ -73,7 +74,9 @@ class ActionViewController: UIViewController,
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.contentTableView.rowHeight = UITableViewAutomaticDimension
+        self.contentTableView.register(cellType: CertificateInfoCell.self)
+        self.contentTableView.register(cellType: CertificateInfoCell2.self)
         self.navItem?.title = "Inspect - Certificate"
         if self.inExtensionContext {
             self.viewDidLoadInExtensionContext()
@@ -303,7 +306,7 @@ extension ActionViewController {
         if tableView == self.headerTableView {
             let cert = self.certificates[indexPath.row]
             let x509Cert = self.x509Certs[indexPath.row]
-            let cell = tableView.dequeueReusableCell(withIdentifier: CertificateStackCell.reuseId) as? CertificateStackCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: CertificateStackCell.reuseId, for: indexPath) as? CertificateStackCell
             cell?.trustResult = cert.secTrust
 
             if let rootCAs = self.rootCAs,
@@ -330,10 +333,10 @@ extension ActionViewController {
             cell?.level = (indexPath as NSIndexPath).row
             return cell!
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: CertificateInfoCell.reuseId) as? CertificateInfoCell
+            let cell: CertificateInfoCell = tableView.dequeueReusableCell(for: indexPath)
 
             guard self.x509Certs.count > 0 else {
-                return cell!
+                return cell
             }
 
             let sections = self.contentSections!
@@ -344,19 +347,22 @@ extension ActionViewController {
                 sectionType == .Fingerprints ||
                 sectionType == .Signature ||
                 sectionType == .Extensions {
-                let cell2 = tableView.dequeueReusableCell(withIdentifier: CertificateInfoCell2.reuseId) as? CertificateInfoCell2
-                cell2?.titleLabel?.text = tuple.0
-                cell2?.longTextLabel?.text = tuple.1 as? String
+                let cell2: CertificateInfoCell2 = tableView.dequeueReusableCell(for: indexPath)
+                cell2.titleLabel.text = tuple.0
+                cell2.longTextLabel.numberOfLines = 0
+                cell2.longTextLabel.text = tuple.1 as? String
                 if sectionType != .Extensions {
-                    cell2?.longTextLabel.font = UIFont(name: "Courier", size: 15)
+                    cell2.longTextLabel.font = UIFont(name: "Courier", size: 15)
                 } else {
-                    cell2?.longTextLabel.font = UIFont.systemFont(ofSize: 15)
+                    cell2.longTextLabel.font = UIFont.systemFont(ofSize: 15)
                 }
-                return cell2!
+                cell2.invalidateIntrinsicContentSize()
+                return cell2
             } else {
-                cell?.titleLabel?.text = tuple.0
-                cell?.detailLabel?.text = tuple.1 as? String
-                return cell!
+                cell.titleLabel.text = tuple.0
+                cell.detailLabel.numberOfLines = 0
+                cell.detailLabel.text = tuple.1 as? String
+                return cell
             }
         }
     }
@@ -391,6 +397,8 @@ extension ActionViewController {
         if tableView == self.headerTableView {
             self.selectedIndex = (indexPath as NSIndexPath).row
             self.contentTableView.reloadData()
+            self.contentTableView.setNeedsLayout()
+            self.contentTableView.layoutIfNeeded()
         } else {
             let sections = self.contentSections!
             let section = sections[(indexPath as NSIndexPath).section]

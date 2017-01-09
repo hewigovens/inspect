@@ -47,6 +47,10 @@
 		BB7E397A1CDCE94C00C84856 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7E39791CDCE94C00C84856 /* HomeViewController.swift */; };
 		BB7E397E1CDDC63C00C84856 /* UINavigationController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7E397D1CDDC63C00C84856 /* UINavigationController+Extension.swift */; };
 		BB7E39A81CDDF25000C84856 /* TutorialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7E39A71CDDF25000C84856 /* TutorialViewController.swift */; };
+		BB8745961E2240FB00D87CE8 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB8745951E2240FB00D87CE8 /* SnapKit.framework */; };
+		BB8745971E22411400D87CE8 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB8745951E2240FB00D87CE8 /* SnapKit.framework */; };
+		BB8745991E22436300D87CE8 /* Reusable.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB8745981E22436300D87CE8 /* Reusable.framework */; };
+		BB87459A1E22436700D87CE8 /* Reusable.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB8745981E22436300D87CE8 /* Reusable.framework */; };
 		BB8C55D41CD97958004B60E3 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB9C1C30492B00E156E9 /* MainInterface.storyboard */; };
 		BB8C55D51CD9795F004B60E3 /* ActionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */; };
 		BB8C55D61CD97965004B60E3 /* CertificateCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */; };
@@ -140,6 +144,8 @@
 		BB7E39791CDCE94C00C84856 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		BB7E397D1CDDC63C00C84856 /* UINavigationController+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Extension.swift"; sourceTree = "<group>"; };
 		BB7E39A71CDDF25000C84856 /* TutorialViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorialViewController.swift; sourceTree = "<group>"; };
+		BB8745951E2240FB00D87CE8 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Carthage/Build/iOS/SnapKit.framework; sourceTree = "<group>"; };
+		BB8745981E22436300D87CE8 /* Reusable.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Reusable.framework; path = Carthage/Build/iOS/Reusable.framework; sourceTree = "<group>"; };
 		BBA1C2551C507B34009EECCC /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		BBBEA3141C409A8E00F1C3EE /* mac_dev.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = mac_dev.cer; sourceTree = "<group>"; };
 		BBBEA3191C414B6000F1C3EE /* X509Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = X509Helper.h; path = Utils/X509Helper.h; sourceTree = "<group>"; };
@@ -158,8 +164,10 @@
 				BB5C4D151DE167820021BCB7 /* nghttp2.framework in Frameworks */,
 				BB2C5B411C47E85E00911EA4 /* ZipZap.framework in Frameworks */,
 				BBDD04031DCF95380014CAA7 /* Crashlytics.framework in Frameworks */,
+				BB8745961E2240FB00D87CE8 /* SnapKit.framework in Frameworks */,
 				BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */,
 				BBDD04041DCF95380014CAA7 /* Fabric.framework in Frameworks */,
+				BB8745991E22436300D87CE8 /* Reusable.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -177,7 +185,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				BB5C4D0D1DE141790021BCB7 /* nghttp2.framework in Frameworks */,
+				BB8745971E22411400D87CE8 /* SnapKit.framework in Frameworks */,
 				BBDD04051DCF95470014CAA7 /* Crashlytics.framework in Frameworks */,
+				BB87459A1E22436700D87CE8 /* Reusable.framework in Frameworks */,
 				BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */,
 				BBDD04061DCF954C0014CAA7 /* Fabric.framework in Frameworks */,
 			);
@@ -256,6 +266,8 @@
 		BB46EC781C32C8EF00E156E9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BB8745981E22436300D87CE8 /* Reusable.framework */,
+				BB8745951E2240FB00D87CE8 /* SnapKit.framework */,
 				BB5C4D0C1DE141790021BCB7 /* nghttp2.framework */,
 				BBDD04011DCF95380014CAA7 /* Crashlytics.framework */,
 				BBDD04021DCF95380014CAA7 /* Fabric.framework */,
@@ -537,6 +549,8 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/ZipZap.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SnapKit.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Reusable.framework",
 			);
 			name = "Copy Carthage Frameworks";
 			outputPaths = (
