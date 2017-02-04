@@ -11,8 +11,11 @@ import Foundation
 // API docs https://github.com/ssllabs/ssllabs-scan/blob/master/ssllabs-api-docs.md
 open class SSLLabs {
     static let testUrl = "https://www.ssllabs.com/ssltest/analyze.html?d="
-    static func scanUrl(_ host: String) -> URL? {
-        let url = SSLLabs.testUrl + host
+    static func scanUrl(_ host: String, hideResults: Bool = true) -> URL? {
+        var url = SSLLabs.testUrl + host
+        if hideResults {
+            url += "&hideResults=on"
+        }
         return URL(string: url)
     }
 
