@@ -135,7 +135,7 @@ class ActionViewController: UIViewController,
             if let urlString = url?.absoluteString {
                 Answers.logCustomEvent(withName: kActionInspect, customAttributes:["url": urlString, "in_extension": self.inExtensionContext])
             }
-            print("get url \(url), scheme = \(url?.scheme)")
+            print("get url \(String(describing: url)), scheme = \(String(describing: url?.scheme))")
             if url?.scheme == ("https") {
                 self.targetHost = (url?.host)!
                 DispatchQueue.main.async(execute: { () -> Void in

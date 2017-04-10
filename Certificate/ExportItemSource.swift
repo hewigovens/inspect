@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import zipzap
 
 @objc class ExportItemSource: NSObject, UIActivityItemSource {
 
