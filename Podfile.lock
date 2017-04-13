@@ -1,0 +1,29 @@
+PODS:
+  - Crashlytics (3.8.4):
+    - Fabric (~> 1.6.3)
+  - Fabric (1.6.11)
+  - Reusable (4.0.0):
+    - Reusable/Storyboard (= 4.0.0)
+    - Reusable/View (= 4.0.0)
+  - Reusable/Storyboard (4.0.0)
+  - Reusable/View (4.0.0)
+  - SnapKit (3.2.0)
+  - zipzap (8.1.1)
+
+DEPENDENCIES:
+  - Crashlytics
+  - Fabric
+  - Reusable
+  - SnapKit
+  - zipzap
+
+SPEC CHECKSUMS:
+  Crashlytics: 79e236942ca1e7fc641df1feb9a275360a78ab6a
+  Fabric: 5911403591946b8228ab1c51d98f1d7137e863c6
+  Reusable: 98e5fff1e0e2e00872199699b276dde08ee56c07
+  SnapKit: 1ca44df72cfa543218d177cb8aab029d10d86ea7
+  zipzap: 940162d9c9c60472c2eab341385e4214da0fdf1c
+
+PODFILE CHECKSUM: bf87455bba2add33e7a6548e9b0149231d24d039
+
+COCOAPODS: 1.2.0

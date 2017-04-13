@@ -37,6 +37,7 @@ class ActionViewController: UIViewController,
     internal var rootCAs: [String: AnyObject]? = nil
     internal var evSet: [String: AnyObject]? = nil
 
+    fileprivate var documentController: UIDocumentInteractionController?
     fileprivate var http2capable = false
     fileprivate var contentSections: [[(String, AnyObject)]]?
     fileprivate var contentSectionNames: [CertificateInfoSection]?
@@ -135,7 +136,7 @@ class ActionViewController: UIViewController,
             if let urlString = url?.absoluteString {
                 Answers.logCustomEvent(withName: kActionInspect, customAttributes:["url": urlString, "in_extension": self.inExtensionContext])
             }
-            print("get url \(url), scheme = \(url?.scheme)")
+            print("get url \(String(describing: url)), scheme = \(String(describing: url?.scheme))")
             if url?.scheme == ("https") {
                 self.targetHost = (url?.host)!
                 DispatchQueue.main.async(execute: { () -> Void in
@@ -204,9 +205,13 @@ class ActionViewController: UIViewController,
             let cert = self.certificates[index]
             let data = SecCertificateCopyData(cert.0) as Data
             let exportItem = ExportItemSource(data: data, host: self.targetHost, index: index)
-            let vc = UIActivityViewController(activityItems: [exportItem], applicationActivities: nil)
-            vc.popoverPresentationController?.barButtonItem = self.navItem.rightBarButtonItem
-            self.present(vc, animated: true, completion: nil)
+
+            guard let path = exportItem.saveToDisk() else {
+                return
+            }
+            let vc = UIDocumentInteractionController(url: path)
+            vc.presentOptionsMenu(from: self.navItem.rightBarButtonItem!, animated: true)
+            self.documentController = vc
         }))
 
         sheet.addAction(UIAlertAction(title: "Feedback", style: .default, handler: { (action) -> Void in

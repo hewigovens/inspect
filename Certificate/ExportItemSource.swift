@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import zipzap
 
 @objc class ExportItemSource: NSObject, UIActivityItemSource {
 
@@ -20,8 +21,7 @@ import UIKit
         self.index = index
     }
 
-    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivityType) -> Any? {
-
+    func saveToDisk() -> URL? {
         let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
         guard let path = paths.first else {
             return nil
@@ -30,20 +30,24 @@ import UIKit
         let file_name = "cert\(self.index).cer"
         let file_zip_name = "/cert\(self.index).zip"
         let cert_zip = URL(fileURLWithPath: path + file_zip_name)
-        print(cert_zip)
         do {
             let archive = try ZZArchive(url: cert_zip, options: [ZZOpenOptionsCreateIfMissingKey: NSNumber(value: true as Bool)])
             let entry = ZZArchiveEntry(fileName: file_name, compress: true, dataBlock: { (_) -> Data? in
                 return self.certData
             })
             try archive.updateEntries([entry])
-
             return cert_zip
-
         } catch (let error as NSError) {
             print("zip cert failed \(error.description)")
             return nil
         }
+    }
+
+    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivityType) -> Any? {
+        guard let path = self.saveToDisk() else {
+            return nil
+        }
+        return path
     }
 
     func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {

@@ -22,3 +22,7 @@ Carthage/
 xcuserdata/
 *.xcuserdatad/
 output/
+.history/
+Pods/
+fastlane/README.md
+fastlane/report.xml
