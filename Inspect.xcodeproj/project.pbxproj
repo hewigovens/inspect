@@ -38,6 +38,7 @@
 		BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB85B1C38EC2E00219411 /* CertificateCells.swift */; };
 		BB5DB8651C3974D100219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 		BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
+		BB68423E1EA30B5700EA5977 /* UIApplication+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB68423D1EA30B5700EA5977 /* UIApplication+Utils.swift */; };
 		BB6B89751DCCDDFD00B1B627 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6B89741DCCDDFD00B1B627 /* UIColor+Hex.swift */; };
 		BB6B89761DCCDF1F00B1B627 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6B89741DCCDDFD00B1B627 /* UIColor+Hex.swift */; };
 		BB6B89781DCCF26B00B1B627 /* String+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6B89771DCCF26B00B1B627 /* String+Utils.swift */; };
@@ -137,8 +138,9 @@
 		BB5DB8641C3974D100219411 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = Dependencies/openssl.framework; sourceTree = "<group>"; };
 		BB5DB8671C397BF200219411 /* X509.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = X509.swift; path = Utils/X509.swift; sourceTree = "<group>"; };
 		BB5DB8861C3AA52900219411 /* Inspect-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Inspect-Bridging-Header.h"; path = "../Inspect-Bridging-Header.h"; sourceTree = "<group>"; };
-		BB6B89741DCCDDFD00B1B627 /* UIColor+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
-		BB6B89771DCCF26B00B1B627 /* String+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Utils.swift"; sourceTree = "<group>"; };
+		BB68423D1EA30B5700EA5977 /* UIApplication+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIApplication+Utils.swift"; path = "Utils/UIApplication+Utils.swift"; sourceTree = "<group>"; };
+		BB6B89741DCCDDFD00B1B627 /* UIColor+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Hex.swift"; path = "Utils/UIColor+Hex.swift"; sourceTree = "<group>"; };
+		BB6B89771DCCF26B00B1B627 /* String+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "String+Utils.swift"; path = "Utils/String+Utils.swift"; sourceTree = "<group>"; };
 		BB6B897A1DCCF78D00B1B627 /* mozilla_ev.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = mozilla_ev.json; path = scripts/mozilla_ev.json; sourceTree = SOURCE_ROOT; };
 		BB7E39761CDA361A00C84856 /* UIView+Frame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIView+Frame.swift"; path = "Utils/UIView+Frame.swift"; sourceTree = "<group>"; };
 		BB7E39791CDCE94C00C84856 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
@@ -311,6 +313,7 @@
 				BB7E39761CDA361A00C84856 /* UIView+Frame.swift */,
 				BB6B89741DCCDDFD00B1B627 /* UIColor+Hex.swift */,
 				BB6B89771DCCF26B00B1B627 /* String+Utils.swift */,
+				BB68423D1EA30B5700EA5977 /* UIApplication+Utils.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -688,6 +691,7 @@
 				BB7E397A1CDCE94C00C84856 /* HomeViewController.swift in Sources */,
 				BBD684741CDEE45900584DA1 /* Feedbackable.swift in Sources */,
 				BB8C55D91CD97A2C004B60E3 /* X509Helper.m in Sources */,
+				BB68423E1EA30B5700EA5977 /* UIApplication+Utils.swift in Sources */,
 				BB7E39A81CDDF25000C84856 /* TutorialViewController.swift in Sources */,
 				BB46EB751C3046B300E156E9 /* AppDelegate.swift in Sources */,
 				BB8C55DB1CD97A33004B60E3 /* WOT.swift in Sources */,

@@ -9,6 +9,7 @@
 import UIKit
 import MessageUI
 import Crashlytics
+import StoreKit
 
 enum HomeSection: Int {
     case tutorial = 0
@@ -91,7 +92,7 @@ class HomeViewController: UIViewController,
             if let v = infoDict["CFBundleVersion"] as? String { build = v}
         }
         var text = "Version: \(version)(\(build))\n"
-        text += "Credits: OpenSSL / ZipZap\n"
+        text += "Credits: OpenSSL(1.0.2e) / ZipZap(8.1.1)\n"
         text += "Made with ♥ by Fourplex Labs"
         return text
     }()
@@ -233,9 +234,13 @@ extension HomeViewController {
                 }
             } else if item == HomeSection.Item.RateUs.rawValue {
                 Answers.logCustomEvent(withName: kActionRate, customAttributes: nil)
-                if let url = URL(string: kAppStoreHTTPUrl) {
-                    if UIApplication.shared.canOpenURL(url) {
-                        UIApplication.shared.openURL(url)
+                if #available(iOS 10.3, *) {
+                    SKStoreReviewController.requestReview()
+                } else {
+                    if let url = URL(string: kAppStoreHTTPUrl) {
+                        if UIApplication.shared.canOpenURL(url) {
+                            UIApplication.shared.openURL(url)
+                        }
                     }
                 }
             }

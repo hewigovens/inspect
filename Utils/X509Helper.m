@@ -157,7 +157,9 @@
         } else {
             continue;
         }
-//        NSLog(@"key = %@, value = %@", key, value);
+#ifdef DEBUG
+        NSLog(@"key = %@, value = %@", key, value);
+#endif
     }
     return array;
 }

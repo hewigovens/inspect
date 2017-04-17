@@ -334,6 +334,11 @@ extension ActionViewController {
             if let name = SecCertificateCopySubjectSummary(cert.secCert) {
                 cell?.name = name as String
             }
+            if let isEV = cell?.isEV, isEV == true {
+                if let o = x509Cert.subjectDict["O"] {
+                    cell?.name = "\(o) - \((cell?.name)!)"
+                }
+            }
 
             cell?.level = (indexPath as NSIndexPath).row
             return cell!

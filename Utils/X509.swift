@@ -16,6 +16,7 @@ public struct X509Certificate {
         }()
     public var subjectTuples: [(String, AnyObject)] = []
     public var issuerTuples: [(String, AnyObject)] = []
+    public var subjectDict = [String: String]()
 
     // todo
     public var subjectName: String {
@@ -66,6 +67,7 @@ public struct X509Certificate {
 
 
         let subjectDict = X509Helper.subject(ofCert: cert)
+        self.subjectDict = subjectDict
         self.subjectTuples = dictToTupleArray(subjectDict)
 
         let issuerDict = X509Helper.issuer(ofCert: cert)
@@ -106,9 +108,9 @@ public struct X509Certificate {
         self.sha256 = X509Helper.x509Digest(cert, method: "sha256")
 
         let exts = X509Helper.extensions(ofCert: cert)
-        let regex = try? NSRegularExpression(pattern: "^Policy: ((\\S)+)", options: .caseInsensitive)
+        let regex = try? NSRegularExpression(pattern: "Policy: ([\\d\\.]+)", options: .caseInsensitive)
         for dict in exts {
-            if let str = dict["value"], dict["key"] == "X509v3 Certificate Policies" {
+            if let str = dict["value"], (dict["key"] == "X509v3 Certificate Policies") {
                 regex?.enumerateMatches(in: str, options: [], range: str.range, using: { (result, _, _) in
                     if let result = result, result.numberOfRanges > 0 {
                         for i in 1..<result.numberOfRanges {

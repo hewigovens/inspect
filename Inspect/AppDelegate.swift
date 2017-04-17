@@ -53,9 +53,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         alert.addAction(UIAlertAction(title: "Sure", style: .default, handler: { _ in
             guard let vc = ActionViewController.create(url: url) else {return}
             vc.openURLAction = { url in
-                if UIApplication.shared.canOpenURL(url as URL) {
-                    UIApplication.shared.openURL(url as URL)
-                }
+                _ = UIApplication.fp.openURL(url)
             }
             UIPasteboard.general.string = ""
             DispatchQueue.main.async(execute: {
