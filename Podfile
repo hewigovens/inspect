@@ -7,6 +7,7 @@ def shared_pods
   pod 'SnapKit'
   pod 'Fabric'
   pod 'Crashlytics'
+  pod 'R.swift'
 end
 
 target 'Certificate' do

@@ -87,14 +87,14 @@ extension ActionViewController {
             bundle = _bundle
         }
 
-        guard let path1 = bundle.path(forResource: "mozilla_trust", ofType: "json") else {
+        guard let url1 = R.file.mozilla_trustJson() else {
             return
         }
-        guard let path2 = bundle.path(forResource: "mozilla_ev", ofType: "json") else {
+        guard let url2 = R.file.mozilla_evJson() else {
             return
         }
         do {
-            guard let data1 = try? Data(contentsOf: Foundation.URL(fileURLWithPath: path1)), let data2 = try? Data(contentsOf: Foundation.URL(fileURLWithPath: path2))
+            guard let data1 = try? Data(contentsOf: url1), let data2 = try? Data(contentsOf: url2)
                 else {
                 return
             }
