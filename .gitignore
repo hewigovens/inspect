@@ -26,4 +26,3 @@ output/
 Pods/
 fastlane/README.md
 fastlane/report.xml
-R.generated.swift
