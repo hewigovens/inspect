@@ -21,6 +21,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             defaults: [kFirstRun: true]
         )
 
+        if #available(iOS 11.0, *) {
+            UINavigationBar.appearance().prefersLargeTitles = true
+        }
+
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.rootViewController = UINavigationController(rootViewController: HomeViewController())
         self.window?.makeKeyAndVisible()
@@ -34,7 +38,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return
         }
         guard let pasted = UIPasteboard.general.string else {return}
-        guard let url = URL(string: pasted) , url.scheme == "https" else {return}
+        guard let url = URL(string: pasted), url.scheme == "https" else {return}
         self.inspectURL(url)
     }
 

@@ -8,24 +8,25 @@
 
 import Foundation
 
-public typealias fetchCertsHandler = ([(SecCertificate, SecTrustResultType)]) -> Void
+public typealias FetchCertsHandler = ([(SecCertificate, SecTrustResultType)]) -> Void
 
 open class SessionManager: NSObject, URLSessionTaskDelegate {
     static let shared = SessionManager()
     fileprivate var session: Foundation.URLSession?
     fileprivate var requestQueue = OperationQueue()
-    fileprivate var callbacks = [URL: fetchCertsHandler]()
+    fileprivate var callbacks = [URL: FetchCertsHandler]()
 
     override init() {
         super.init()
         self.session = Foundation.URLSession(configuration: URLSessionConfiguration.default, delegate: self, delegateQueue: self.requestQueue)
     }
 
-    open func fetchCertsForUrl(_ url: URL, completion: @escaping fetchCertsHandler) -> Void {
-        let task = self.session?.dataTask(with: url)
-        guard task != nil else { return completion([]) }
+    open func fetchCertsForUrl(_ url: URL, completion: @escaping FetchCertsHandler) {
+        guard let task = self.session?.dataTask(with: url) else {
+            return completion([])
+        }
         self.callbacks[url] = completion
-        task!.resume()
+        task.resume()
     }
 
     open func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {

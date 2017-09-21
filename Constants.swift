@@ -18,8 +18,7 @@ let kHistoryKey = "History"
 
 let kGoogleChromeScheme = "googlechromes://"
 
-
-//MARK: Analytics
+// MARK: Analytics
 let kActionScanInSSLLabs = "ScanInSSLLabs"
 let kActionFeedback = "Feedback"
 let kActionExport = "Export"

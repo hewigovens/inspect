@@ -17,12 +17,12 @@ enum HomeSection: Int {
     case history = 3
 
     enum Item: String {
-        case HowToUseIt = "How to use it"
-        case Feedback = "Send Feedback"
-        case RateUs = "Rate on App Store"
-        case OpenSafari = "Open Safari"
-        case OpenChrome = "Open Chrome"
-        case History = "History"
+        case howToUseIt = "How to use it"
+        case feedback = "Send Feedback"
+        case rateUs = "Rate on App Store"
+        case openSafari = "Open Safari"
+        case openChrome = "Open Chrome"
+        case history = "History"
     }
 
     var reuseId: String {
@@ -45,11 +45,11 @@ enum HomeSection: Int {
 
     var sections: [String] {
 
-        var browsers = [Item.OpenSafari.rawValue]
+        var browsers = [Item.openSafari.rawValue]
 
         if let url = URL(string: kGoogleChromeScheme) {
             if UIApplication.shared.canOpenURL(url) {
-                browsers.append(Item.OpenChrome.rawValue)
+                browsers.append(Item.openChrome.rawValue)
             }
         }
 
@@ -61,8 +61,8 @@ enum HomeSection: Int {
         }
 
         switch self {
-        case .tutorial:return [Item.HowToUseIt.rawValue]
-        case .misc: return [Item.Feedback.rawValue, Item.RateUs.rawValue]
+        case .tutorial:return [Item.howToUseIt.rawValue]
+        case .misc: return [Item.feedback.rawValue, Item.rateUs.rawValue]
         case .safari: return browsers
         case .history: return history
         }
@@ -95,6 +95,10 @@ class HomeViewController: UIViewController,
         text += "Made with ♥ by Fourplex Labs"
         return text
     }()
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
 
     fileprivate let dataSource: [HomeSection] = {
         return [.tutorial, .misc, .safari, .history]
@@ -142,7 +146,7 @@ class HomeViewController: UIViewController,
         if UserDefaults.standard.bool(forKey: kFirstRun) {
             self.showTutorial()
         }
-        NotificationCenter.default.addObserver(forName: NSNotification.Name.UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
+        _ = NotificationCenter.default.addObserver(forName: NSNotification.Name.UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] _ in
             self?.reloadHistory()
         }
     }
@@ -154,7 +158,7 @@ class HomeViewController: UIViewController,
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        coordinator.animate(alongsideTransition: { (context) in
+        coordinator.animate(alongsideTransition: { _ in
             self.tableView.reloadData()
         }, completion: nil)
     }
@@ -170,9 +174,9 @@ class HomeViewController: UIViewController,
     }
 }
 
-//MARK: UITableViewDelegate / UITableViewDataSource
+// MARK: UITableViewDelegate / UITableViewDataSource
 extension HomeViewController {
-    @objc(numberOfSectionsInTableView:) func numberOfSections(in tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return dataSource.count
     }
 
@@ -181,7 +185,7 @@ extension HomeViewController {
         return section.sections.count
     }
 
-    @objc(tableView:cellForRowAtIndexPath:) func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let font = UIFont.systemFont(ofSize: 17)
         guard let section = HomeSection(rawValue: (indexPath as NSIndexPath).section) else {
             return UITableViewCell(style: .default, reuseIdentifier: nil)
@@ -208,15 +212,15 @@ extension HomeViewController {
         return cell
     }
 
-    @objc(tableView:didSelectRowAtIndexPath:) func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         guard let section = HomeSection(rawValue: (indexPath as NSIndexPath).section) else {return}
         let item = section.sections[(indexPath as NSIndexPath).row]
         switch section {
         case .safari:
-            if item == HomeSection.Item.OpenSafari.rawValue {
+            if item == HomeSection.Item.openSafari.rawValue {
                 self.openUrl("https://www.apple.com")
-            } else if item == HomeSection.Item.OpenChrome.rawValue {
+            } else if item == HomeSection.Item.openChrome.rawValue {
                 self.openUrlInChrome("www.google.com")
             }
             break
@@ -224,14 +228,14 @@ extension HomeViewController {
             self.showTutorial()
             break
         case .misc:
-            if item == HomeSection.Item.Feedback.rawValue {
+            if item == HomeSection.Item.feedback.rawValue {
                 Answers.logCustomEvent(withName: kActionFeedback, customAttributes: ["in_extension": false])
                 if self.feedbackCanSendMail() {
                     self.feedbackWithEmail()
                 } else {
                     self.openUrl(self.feedbackMailToString())
                 }
-            } else if item == HomeSection.Item.RateUs.rawValue {
+            } else if item == HomeSection.Item.rateUs.rawValue {
                 Answers.logCustomEvent(withName: kActionRate, customAttributes: nil)
                 if let url = URL(string: kAppStoreHTTPUrl) {
                     if UIApplication.shared.canOpenURL(url) {

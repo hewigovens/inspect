@@ -28,7 +28,7 @@ extension ActionViewController {
             if stats >= 5 {
                 let alert = UIAlertController(title: "Hooray", message: "You have inspected \(stats) sites. :)", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Next Time", style: .default, handler: nil))
-                alert.addAction((UIAlertAction(title: "Rate us", style: .default, handler: { (action) -> Void in
+                alert.addAction((UIAlertAction(title: "Rate us", style: .default, handler: { _ in
                     self.extensionOpenUrl(kAppStoreHTTPUrl)
                 })))
                 alert.popoverPresentationController?.sourceView = self.view
