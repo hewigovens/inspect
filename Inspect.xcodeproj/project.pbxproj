@@ -18,6 +18,8 @@
 		BB1773C31C4280C6001AAB80 /* X509.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5DB8671C397BF200219411 /* X509.swift */; };
 		BB1773C51C428227001AAB80 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1773C41C428227001AAB80 /* SessionManager.swift */; };
 		BB1773C61C428732001AAB80 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1773C41C428227001AAB80 /* SessionManager.swift */; };
+		BB1C59761F74965500808529 /* catchNSException.m in Sources */ = {isa = PBXBuildFile; fileRef = BB1C59751F74965500808529 /* catchNSException.m */; };
+		BB1C59771F7496E500808529 /* catchNSException.m in Sources */ = {isa = PBXBuildFile; fileRef = BB1C59751F74965500808529 /* catchNSException.m */; };
 		BB2C5B3C1C469BFE00911EA4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB2C5B3B1C469BFE00911EA4 /* Images.xcassets */; };
 		BB2C5B3E1C469C3200911EA4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB2C5B3D1C469C3200911EA4 /* Assets.xcassets */; };
 		BB2C63F31D7FD9D400E145BB /* mozilla_trust.json in Resources */ = {isa = PBXBuildFile; fileRef = BB2C63F21D7FD9D400E145BB /* mozilla_trust.json */; };
@@ -108,6 +110,8 @@
 		9937B139CAFCCEC130B9EC1A /* Pods_Inspect.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Inspect.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B2F290FE5A1C9A1F557EEEEE /* Pods-Certificate.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Certificate.release.xcconfig"; path = "Pods/Target Support Files/Pods-Certificate/Pods-Certificate.release.xcconfig"; sourceTree = "<group>"; };
 		BB1773C41C428227001AAB80 /* SessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SessionManager.swift; path = Utils/SessionManager.swift; sourceTree = "<group>"; };
+		BB1C59741F74965500808529 /* catchNSException.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = catchNSException.h; path = Utils/catchNSException.h; sourceTree = "<group>"; };
+		BB1C59751F74965500808529 /* catchNSException.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = catchNSException.m; path = Utils/catchNSException.m; sourceTree = "<group>"; };
 		BB2C5B3B1C469BFE00911EA4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		BB2C5B3D1C469C3200911EA4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BB2C5B421C47EBCD00911EA4 /* Inspect.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Inspect.entitlements; sourceTree = "<group>"; };
@@ -311,6 +315,8 @@
 				BB7E39761CDA361A00C84856 /* UIView+Frame.swift */,
 				BB6B89741DCCDDFD00B1B627 /* UIColor+Hex.swift */,
 				BB6B89771DCCF26B00B1B627 /* String+Utils.swift */,
+				BB1C59741F74965500808529 /* catchNSException.h */,
+				BB1C59751F74965500808529 /* catchNSException.m */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -710,6 +716,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BB7E397E1CDDC63C00C84856 /* UINavigationController+Extension.swift in Sources */,
+				BB1C59761F74965500808529 /* catchNSException.m in Sources */,
 				BB8C55DC1CD97A37004B60E3 /* SSLLabs.swift in Sources */,
 				BB8C55D51CD9795F004B60E3 /* ActionViewController.swift in Sources */,
 				BB6B89751DCCDDFD00B1B627 /* UIColor+Hex.swift in Sources */,
@@ -747,6 +754,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB1C59771F7496E500808529 /* catchNSException.m in Sources */,
 				BB5C4D161DE3D1B50021BCB7 /* HTTP2Probe.m in Sources */,
 				BB1773C61C428732001AAB80 /* SessionManager.swift in Sources */,
 				BB1773C01C4280C6001AAB80 /* SSLLabs.swift in Sources */,

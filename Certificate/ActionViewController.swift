@@ -125,19 +125,17 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
     }
 
     fileprivate func parse(_ item: AnyObject?, error: Error?) {
-        if let url = item as? Foundation.URL? {
+        if let url = item as? URL {
             self.inspectingUrl = url
-            if let urlString = url?.absoluteString {
-                Answers.logCustomEvent(withName: kActionInspect, customAttributes:["url": urlString, "in_extension": self.inExtensionContext])
-            }
-            print("get url \(String(describing: url)), scheme = \(String(describing: url?.scheme))")
-            if url?.scheme == ("https") {
-                self.targetHost = (url?.host)!
-//                DispatchQueue.main.async(execute: { () -> Void in
-//                    INHUD.sharedHUD.contentView = INHUDTextView(text: "Fetching Certificates…")
-//                    INHUD.sharedHUD.showInView(self.view)
-//                })
-                SessionManager.shared.fetchCertsForUrl(url!, completion: { (certs) -> Void in
+            Answers.logCustomEvent(withName: kActionInspect, customAttributes:["url": url.absoluteString, "in_extension": self.inExtensionContext])
+            print("get url \(String(describing: url)), scheme = \(String(describing: url.scheme))")
+            if url.scheme == ("https") {
+                self.targetHost = url.host!
+                DispatchQueue.main.async(execute: { () -> Void in
+                    INHUD.sharedHUD.contentView = INHUDTextView(text: "Fetching Certificates…")
+                    INHUD.sharedHUD.showInView(self.view)
+                })
+                SessionManager.shared.fetchCertsForUrl(url, completion: { (certs) -> Void in
                     INHUD.sharedHUD.hide()
                     if certs.count > 0 {
                         self.certificates = certs
@@ -146,7 +144,7 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
                     }
                 })
 
-                HTTP2Probe.probeURL(url!, completion: { result in
+                HTTP2Probe.probeURL(url, completion: { result in
                     self.http2capable = result
                     WOT.query(self.targetHost) { result in
                         debugPrint(result)
@@ -161,7 +159,7 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
                     }
                 })
             } else {
-                self.showError("\(url!) seems not a https URL")
+                self.showError("\(url) seems not a https URL")
             }
         } else {
             self.showError("url is not valid NSURL object")
