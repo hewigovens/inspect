@@ -39,20 +39,7 @@ extension ActionViewController {
         }
         defaults.set(stats, forKey: kStatisticsKey)
 
-        guard let shared = UserDefaults.init(suiteName: kInspectGroupId) else {
-            return
-        }
-        var history = shared.stringArray(forKey: kHistoryKey) ?? [String]()
-
-        if let index = history.index(of: host) {
-            history.remove(at: index)
-        }
-        history.insert(host, at: 0)
-        if history.count > 5 {
-            history.remove(at: 5)
-        }
-        shared.setValue(history, forKey: kHistoryKey)
-        shared.synchronize()
+        UserDefaults.add(host: host)
     }
 
     internal func extensionOpenUrl(_ urlString: String) {

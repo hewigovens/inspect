@@ -21,3 +21,17 @@ extension UIColor {
         self.init(red: (hexInt >> 16) & 0xff, green: (hexInt >> 8) & 0xff, blue: hexInt & 0xff, alphaValue: alpha)
     }
 }
+
+extension UIColor {
+    //swiftlint:disable type_name
+    struct fp {
+        static var main: UIColor {
+            return UIColor(hexInt: 0xF0C85F)
+        }
+
+        static var background: UIColor {
+            return UIColor(hexInt: 0xEFEFF4)
+        }
+    }
+    //swiftlint:enable type_name
+}

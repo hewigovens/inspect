@@ -31,6 +31,10 @@
 		BB46EB9B1C30492B00E156E9 /* ActionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */; };
 		BB46EB9E1C30492B00E156E9 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB46EB9C1C30492B00E156E9 /* MainInterface.storyboard */; };
 		BB46EBA21C30492B00E156E9 /* Certificate.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BB46EB981C30492B00E156E9 /* Certificate.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BB57815E1F8912BD0062AD0F /* HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB57815D1F8912BD0062AD0F /* HistoryViewController.swift */; };
+		BB5781601F89148F0062AD0F /* HomeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB57815F1F89148F0062AD0F /* HomeSection.swift */; };
+		BB5781631F89936E0062AD0F /* FAK+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5781621F89936E0062AD0F /* FAK+Utils.swift */; };
+		BB5781651F8994040062AD0F /* UIView+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5781641F8994040062AD0F /* UIView+Utils.swift */; };
 		BB5C4D0D1DE141790021BCB7 /* nghttp2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5C4D0C1DE141790021BCB7 /* nghttp2.framework */; };
 		BB5C4D111DE142440021BCB7 /* HTTP2Probe.m in Sources */ = {isa = PBXBuildFile; fileRef = BB5C4D101DE142440021BCB7 /* HTTP2Probe.m */; };
 		BB5C4D141DE14E430021BCB7 /* nghttp2client.c in Sources */ = {isa = PBXBuildFile; fileRef = BB5C4D121DE14E430021BCB7 /* nghttp2client.c */; };
@@ -67,6 +71,9 @@
 		BBD684751CDEE68300584DA1 /* Feedbackable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD684731CDEE45900584DA1 /* Feedbackable.swift */; };
 		BBF2390E1D8235DC00A75B29 /* ActionViewController+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF2390D1D8235DC00A75B29 /* ActionViewController+Utils.swift */; };
 		BBF2390F1D8235DC00A75B29 /* ActionViewController+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF2390D1D8235DC00A75B29 /* ActionViewController+Utils.swift */; };
+		BBF451B91F89978D00D81CE1 /* HomeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF451B81F89978D00D81CE1 /* HomeCell.swift */; };
+		BBF451BB1F8A112300D81CE1 /* HistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF451BA1F8A112300D81CE1 /* HistoryStore.swift */; };
+		BBF451BC1F8A112800D81CE1 /* HistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF451BA1F8A112300D81CE1 /* HistoryStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -131,6 +138,11 @@
 		BB46EB9D1C30492B00E156E9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		BB46EB9F1C30492B00E156E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BB46EC6D1C3186A200E156E9 /* WOT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WOT.swift; path = Utils/WOT.swift; sourceTree = "<group>"; };
+		BB57815D1F8912BD0062AD0F /* HistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewController.swift; sourceTree = "<group>"; };
+		BB57815F1F89148F0062AD0F /* HomeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSection.swift; sourceTree = "<group>"; };
+		BB5781611F8914950062AD0F /* HomeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSection.swift; sourceTree = "<group>"; };
+		BB5781621F89936E0062AD0F /* FAK+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "FAK+Utils.swift"; path = "Utils/FAK+Utils.swift"; sourceTree = "<group>"; };
+		BB5781641F8994040062AD0F /* UIView+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIView+Utils.swift"; path = "Utils/UIView+Utils.swift"; sourceTree = "<group>"; };
 		BB5C4D0C1DE141790021BCB7 /* nghttp2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = nghttp2.framework; path = Dependencies/nghttp2.framework; sourceTree = "<group>"; };
 		BB5C4D0F1DE142440021BCB7 /* HTTP2Probe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTP2Probe.h; path = Utils/HTTP2Probe.h; sourceTree = "<group>"; };
 		BB5C4D101DE142440021BCB7 /* HTTP2Probe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HTTP2Probe.m; path = Utils/HTTP2Probe.m; sourceTree = "<group>"; };
@@ -141,8 +153,8 @@
 		BB5DB8641C3974D100219411 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = Dependencies/openssl.framework; sourceTree = "<group>"; };
 		BB5DB8671C397BF200219411 /* X509.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = X509.swift; path = Utils/X509.swift; sourceTree = "<group>"; };
 		BB5DB8861C3AA52900219411 /* Inspect-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Inspect-Bridging-Header.h"; path = "../Inspect-Bridging-Header.h"; sourceTree = "<group>"; };
-		BB6B89741DCCDDFD00B1B627 /* UIColor+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
-		BB6B89771DCCF26B00B1B627 /* String+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Utils.swift"; sourceTree = "<group>"; };
+		BB6B89741DCCDDFD00B1B627 /* UIColor+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Hex.swift"; path = "Utils/UIColor+Hex.swift"; sourceTree = "<group>"; };
+		BB6B89771DCCF26B00B1B627 /* String+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "String+Utils.swift"; path = "Utils/String+Utils.swift"; sourceTree = "<group>"; };
 		BB6B897A1DCCF78D00B1B627 /* mozilla_ev.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = mozilla_ev.json; path = scripts/mozilla_ev.json; sourceTree = SOURCE_ROOT; };
 		BB7E39761CDA361A00C84856 /* UIView+Frame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIView+Frame.swift"; path = "Utils/UIView+Frame.swift"; sourceTree = "<group>"; };
 		BB7E39791CDCE94C00C84856 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
@@ -154,6 +166,8 @@
 		BBBEA31A1C414B6000F1C3EE /* X509Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = X509Helper.m; path = Utils/X509Helper.m; sourceTree = "<group>"; };
 		BBD684731CDEE45900584DA1 /* Feedbackable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Feedbackable.swift; sourceTree = "<group>"; };
 		BBF2390D1D8235DC00A75B29 /* ActionViewController+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ActionViewController+Utils.swift"; path = "Certificate/ActionViewController+Utils.swift"; sourceTree = SOURCE_ROOT; };
+		BBF451B81F89978D00D81CE1 /* HomeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCell.swift; sourceTree = "<group>"; };
+		BBF451BA1F8A112300D81CE1 /* HistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStore.swift; sourceTree = "<group>"; };
 		BCCE06D9584BA89B1100F81A /* Pods-Inspect.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Inspect.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Inspect/Pods-Inspect.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -239,6 +253,8 @@
 				BBD684761CDEE6BF00584DA1 /* ViewControllers */,
 				BBD684771CDEE70E00584DA1 /* View */,
 				BB46EB801C3046B300E156E9 /* Info.plist */,
+				BB57815F1F89148F0062AD0F /* HomeSection.swift */,
+				BBF451BA1F8A112300D81CE1 /* HistoryStore.swift */,
 			);
 			path = Inspect;
 			sourceTree = "<group>";
@@ -317,6 +333,8 @@
 				BB6B89771DCCF26B00B1B627 /* String+Utils.swift */,
 				BB1C59741F74965500808529 /* catchNSException.h */,
 				BB1C59751F74965500808529 /* catchNSException.m */,
+				BB5781641F8994040062AD0F /* UIView+Utils.swift */,
+				BB5781621F89936E0062AD0F /* FAK+Utils.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -334,7 +352,10 @@
 		BBD684761CDEE6BF00584DA1 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				BBF451B81F89978D00D81CE1 /* HomeCell.swift */,
+				BB5781611F8914950062AD0F /* HomeSection.swift */,
 				BB7E39791CDCE94C00C84856 /* HomeViewController.swift */,
+				BB57815D1F8912BD0062AD0F /* HistoryViewController.swift */,
 				BB7E39A71CDDF25000C84856 /* TutorialViewController.swift */,
 				BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */,
 				BBF2390D1D8235DC00A75B29 /* ActionViewController+Utils.swift */,
@@ -570,12 +591,16 @@
 				"${BUILT_PRODUCTS_DIR}/Reusable/Reusable.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/zipzap/zipzap.framework",
+				"${BUILT_PRODUCTS_DIR}/FontAwesomeKit/FontAwesomeKit.framework",
+				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reusable.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/zipzap.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FontAwesomeKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -716,20 +741,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				BB7E397E1CDDC63C00C84856 /* UINavigationController+Extension.swift in Sources */,
+				BB57815E1F8912BD0062AD0F /* HistoryViewController.swift in Sources */,
+				BB5781601F89148F0062AD0F /* HomeSection.swift in Sources */,
 				BB1C59761F74965500808529 /* catchNSException.m in Sources */,
 				BB8C55DC1CD97A37004B60E3 /* SSLLabs.swift in Sources */,
 				BB8C55D51CD9795F004B60E3 /* ActionViewController.swift in Sources */,
 				BB6B89751DCCDDFD00B1B627 /* UIColor+Hex.swift in Sources */,
+				BBF451B91F89978D00D81CE1 /* HomeCell.swift in Sources */,
 				BB7E39771CDA361A00C84856 /* UIView+Frame.swift in Sources */,
+				BB5781651F8994040062AD0F /* UIView+Utils.swift in Sources */,
 				BB5C4D111DE142440021BCB7 /* HTTP2Probe.m in Sources */,
 				BB8C55D71CD9796C004B60E3 /* ExportItemSource.swift in Sources */,
 				BB7E397A1CDCE94C00C84856 /* HomeViewController.swift in Sources */,
 				BBD684741CDEE45900584DA1 /* Feedbackable.swift in Sources */,
 				BB8C55D91CD97A2C004B60E3 /* X509Helper.m in Sources */,
+				BB5781631F89936E0062AD0F /* FAK+Utils.swift in Sources */,
 				BB7E39A81CDDF25000C84856 /* TutorialViewController.swift in Sources */,
 				BB46EB751C3046B300E156E9 /* AppDelegate.swift in Sources */,
 				BB8C55DB1CD97A33004B60E3 /* WOT.swift in Sources */,
 				BB6B89781DCCF26B00B1B627 /* String+Utils.swift in Sources */,
+				BBF451BB1F8A112300D81CE1 /* HistoryStore.swift in Sources */,
 				BBF2390E1D8235DC00A75B29 /* ActionViewController+Utils.swift in Sources */,
 				BB8C55DA1CD97A2F004B60E3 /* X509.swift in Sources */,
 				BB1773C51C428227001AAB80 /* SessionManager.swift in Sources */,
@@ -770,6 +801,7 @@
 				BB2EB67D1C4930B90057929C /* INHUD.swift in Sources */,
 				BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */,
 				BB6B89791DCCF51800B1B627 /* String+Utils.swift in Sources */,
+				BBF451BC1F8A112800D81CE1 /* HistoryStore.swift in Sources */,
 				BBA1C2571C507B34009EECCC /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

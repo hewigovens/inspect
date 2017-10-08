@@ -75,9 +75,6 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
         self.contentTableView.register(cellType: CertificateInfoCell.self)
         self.contentTableView.register(cellType: CertificateInfoCell2.self)
         self.navItem?.title = "Certificate"
-        if #available(iOS 11.0, *) {
-            self.navigationController?.navigationBar.prefersLargeTitles = true
-        }
         if self.inExtensionContext {
             self.viewDidLoadInExtensionContext()
         } else {

@@ -10,6 +10,7 @@ import Foundation
 
 let kHockeyAppId = "399c05d7126848fabac6f9e2341880f8"
 let kAppStoreHTTPUrl = "https://itunes.apple.com/us/app/inspect-safari-extension-to/id1074957486?ls=1&mt=8"
+let kAboutUrl = "https://fourplexlabs.github.io/Inspect/about.html"
 let kRatingKey = "Rating"
 let kStatisticsKey = "Statistics"
 let kFirstRun = "FirstRun"

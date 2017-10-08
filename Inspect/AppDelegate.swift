@@ -20,10 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UserDefaults.standard.register(
             defaults: [kFirstRun: true]
         )
-
-        if #available(iOS 11.0, *) {
-            UINavigationBar.appearance().prefersLargeTitles = true
-        }
+        setupAppearance()
 
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.rootViewController = UINavigationController(rootViewController: HomeViewController())
@@ -33,39 +30,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        if UserDefaults.standard.bool(forKey: kFirstRun) {
-            return
+    func setupAppearance() {
+        if #available(iOS 11.0, *) {
+//            UINavigationBar.appearance().prefersLargeTitles = true
+            UINavigationBar.appearance().largeTitleTextAttributes =
+                [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 24, weight: .light)]
         }
-        guard let pasted = UIPasteboard.general.string else {return}
-        guard let url = URL(string: pasted), url.scheme == "https" else {return}
-        self.inspectURL(url)
-    }
-
-    fileprivate func inspectURL(_ url: URL) {
-
-        let presentedViewController = self.window?.rootViewController?.presentedViewController
-        if presentedViewController is ActionViewController ||
-            presentedViewController is TutorialViewController {
-            return
-        }
-
-        let alert = UIAlertController(title: "Aha", message: "Do you want to Inspect \(url.absoluteString) ?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Next Time", style: .default, handler: { _ in
-            UIPasteboard.general.string = ""
-        }))
-        alert.addAction(UIAlertAction(title: "Sure", style: .default, handler: { _ in
-            guard let vc = ActionViewController.create(url: url) else {return}
-            vc.openURLAction = { url in
-                if UIApplication.shared.canOpenURL(url as URL) {
-                    UIApplication.shared.openURL(url as URL)
-                }
-            }
-            UIPasteboard.general.string = ""
-            DispatchQueue.main.async(execute: {
-                self.window?.rootViewController!.present(vc, animated: true, completion: nil)
-            })
-        }))
-        self.window?.rootViewController!.present(alert, animated: true, completion: nil)
+        UINavigationBar.appearance().barTintColor = UIColor.white
+        UINavigationBar.appearance().titleTextAttributes = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 17, weight: .light)]
     }
 }
