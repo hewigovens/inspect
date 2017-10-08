@@ -32,7 +32,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func setupAppearance() {
         if #available(iOS 11.0, *) {
-//            UINavigationBar.appearance().prefersLargeTitles = true
             UINavigationBar.appearance().largeTitleTextAttributes =
                 [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 24, weight: .light)]
         }

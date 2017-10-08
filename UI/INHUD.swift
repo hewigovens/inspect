@@ -46,9 +46,16 @@ open class INHUD: UIView {
         finishInit()
     }
 
-    open func showInView(_ view: UIView) {
+    open func show(in view: UIView) {
         view.addSubview(self.backgroundView)
         backgroundView.center = view.center
+    }
+
+    open func show(in view: UIView, delay: Int) {
+        self.show(in: view)
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(delay)) {
+            self.hide()
+        }
     }
 
     open func hide() {

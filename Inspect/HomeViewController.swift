@@ -19,7 +19,7 @@ class HomeViewController: UIViewController {
         NotificationCenter.default.removeObserver(self)
     }
 
-    let dataSource: [HomeSection] = [.tutorial, .misc]
+    let dataSource: [HomeSection] = [.tutorial, .feedback, .misc]
 
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: self.view.frame, style: .grouped)
@@ -171,37 +171,40 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard let section = HomeSection(rawValue: (indexPath as NSIndexPath).section) else {return}
-        let item = section.sections[(indexPath as NSIndexPath).row]
-        switch section {
+        let item = self.dataSource[indexPath.section].sections[indexPath.row]
+        switch item {
         case .tutorial:
             self.showTutorial()
-            break
-        case .misc:
-            if item == .feedback {
-                Answers.logCustomEvent(withName: kActionFeedback, customAttributes: ["in_extension": false])
-                if self.feedbackCanSendMail() {
-                    self.feedbackWithEmail()
-                } else {
-                    self.openUrl(self.feedbackMailToString())
-                }
-            } else if item == .rateUs {
-                Answers.logCustomEvent(withName: kActionRate, customAttributes: nil)
-                if #available(iOS 10.3, *) {
-                    SKStoreReviewController.requestReview()
-                } else {
-                    if let url = URL(string: kAppStoreHTTPUrl) {
-                        if UIApplication.shared.canOpenURL(url) {
-                            UIApplication.shared.openURL(url)
-                        }
+        case .feedback:
+            Answers.logCustomEvent(withName: kActionFeedback, customAttributes: ["in_extension": false])
+            if self.feedbackCanSendMail() {
+                self.feedbackWithEmail()
+            } else {
+                self.openUrl(self.feedbackMailToString())
+            }
+        case .rateUs:
+            Answers.logCustomEvent(withName: kActionRate, customAttributes: nil)
+            if #available(iOS 10.3, *) {
+                SKStoreReviewController.requestReview()
+            } else {
+                if let url = URL(string: kAppStoreHTTPUrl) {
+                    if UIApplication.shared.canOpenURL(url) {
+                        UIApplication.shared.openURL(url)
                     }
                 }
-            } else if item == .about {
-                guard let url = URL(string: kAboutUrl) else { return }
-                let vc = SFSafariViewController(url: url)
-                self.present(vc, animated: true, completion: nil)
             }
-            break
+        case .about:
+            guard let url = URL(string: kAboutUrl) else { return }
+            let vc = SFSafariViewController(url: url)
+            vc.title = "About"
+            self.present(vc, animated: true, completion: nil)
+        case .ack:
+            guard let url = URL(string: kAckUrl) else { return }
+            let vc = SFSafariViewController(url: url)
+            self.present(vc, animated: true, completion: nil)
+        case .donate:
+            let vc = DonationViewController()
+            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
 

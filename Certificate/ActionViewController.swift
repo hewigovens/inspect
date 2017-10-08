@@ -130,7 +130,7 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
                 self.targetHost = url.host!
                 DispatchQueue.main.async(execute: { () -> Void in
                     INHUD.sharedHUD.contentView = INHUDTextView(text: "Fetching Certificates…")
-                    INHUD.sharedHUD.showInView(self.view)
+                    INHUD.sharedHUD.show(in: self.view)
                 })
                 SessionManager.shared.fetchCertsForUrl(url, completion: { (certs) -> Void in
                     INHUD.sharedHUD.hide()
