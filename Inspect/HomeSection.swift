@@ -20,7 +20,6 @@ enum HomeSection: Int {
         case rateUs = "Rate on App Store"
         case about = "About"
         case ack = "Acknowledgements"
-        case donate = "Donation"
 
         var image: UIImage? {
             switch self {
@@ -34,8 +33,6 @@ enum HomeSection: Int {
                 return FAKIonIcons.image(with: "ion-ios-heart-outline")
             case .ack:
                 return FAKIonIcons.image(with: "ion-social-github-outline")
-            case .donate:
-                return FAKIonIcons.image(with: "ion-social-bitcoin-outline")
             }
         }
     }
@@ -43,7 +40,7 @@ enum HomeSection: Int {
     var sections: [Item] {
         switch self {
         case .tutorial: return [Item.tutorial]
-        case .feedback: return [Item.feedback, Item.donate, Item.rateUs]
+        case .feedback: return [Item.feedback, Item.rateUs]
         case .misc: return [Item.ack, Item.about]
         }
     }

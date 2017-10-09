@@ -202,9 +202,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             guard let url = URL(string: kAckUrl) else { return }
             let vc = SFSafariViewController(url: url)
             self.present(vc, animated: true, completion: nil)
-        case .donate:
-            let vc = DonationViewController()
-            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
 

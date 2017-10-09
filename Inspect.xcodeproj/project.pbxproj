@@ -75,7 +75,6 @@
 		BBF2390E1D8235DC00A75B29 /* ActionViewController+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF2390D1D8235DC00A75B29 /* ActionViewController+Utils.swift */; };
 		BBF2390F1D8235DC00A75B29 /* ActionViewController+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF2390D1D8235DC00A75B29 /* ActionViewController+Utils.swift */; };
 		BBF451B91F89978D00D81CE1 /* HomeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF451B81F89978D00D81CE1 /* HomeCell.swift */; };
-		BBF451BE1F8A3C1100D81CE1 /* DonationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF451BD1F8A3C1100D81CE1 /* DonationViewController.swift */; };
 		BBF451C41F8A3C1D00D81CE1 /* UIImageViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF451C01F8A3C1D00D81CE1 /* UIImageViewExtension.swift */; };
 		BBF451C51F8A3C1D00D81CE1 /* CIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF451C11F8A3C1D00D81CE1 /* CIImageExtension.swift */; };
 		BBF451C61F8A3C1D00D81CE1 /* CIColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF451C21F8A3C1D00D81CE1 /* CIColorExtension.swift */; };
@@ -173,7 +172,6 @@
 		BBEE21571F8A44FD0018625E /* HistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStore.swift; sourceTree = "<group>"; };
 		BBF2390D1D8235DC00A75B29 /* ActionViewController+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ActionViewController+Utils.swift"; path = "Certificate/ActionViewController+Utils.swift"; sourceTree = SOURCE_ROOT; };
 		BBF451B81F89978D00D81CE1 /* HomeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCell.swift; sourceTree = "<group>"; };
-		BBF451BD1F8A3C1100D81CE1 /* DonationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DonationViewController.swift; sourceTree = "<group>"; };
 		BBF451C01F8A3C1D00D81CE1 /* UIImageViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageViewExtension.swift; sourceTree = "<group>"; };
 		BBF451C11F8A3C1D00D81CE1 /* CIImageExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CIImageExtension.swift; sourceTree = "<group>"; };
 		BBF451C21F8A3C1D00D81CE1 /* CIColorExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CIColorExtension.swift; sourceTree = "<group>"; };
@@ -357,7 +355,6 @@
 			isa = PBXGroup;
 			children = (
 				BBEE214C1F8A42630018625E /* Home */,
-				BBF451BD1F8A3C1100D81CE1 /* DonationViewController.swift */,
 				BBEE21581F8A45080018625E /* History */,
 				BB7E39A71CDDF25000C84856 /* TutorialViewController.swift */,
 				BB46EB9A1C30492B00E156E9 /* ActionViewController.swift */,
@@ -814,7 +811,6 @@
 				BBEE21591F8A451F0018625E /* HistoryStore.swift in Sources */,
 				BB8C55DA1CD97A2F004B60E3 /* X509.swift in Sources */,
 				BBF451C61F8A3C1D00D81CE1 /* CIColorExtension.swift in Sources */,
-				BBF451BE1F8A3C1100D81CE1 /* DonationViewController.swift in Sources */,
 				BB1773C51C428227001AAB80 /* SessionManager.swift in Sources */,
 				BB5C4D141DE14E430021BCB7 /* nghttp2client.c in Sources */,
 				BB8C55D81CD97A23004B60E3 /* INHUD.swift in Sources */,
