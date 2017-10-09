@@ -14,12 +14,9 @@ import Crashlytics
 import Fabric
 import Reusable
 
-class ActionViewController: UIViewController,
-                            UITableViewDelegate,
-                            UITableViewDataSource,
-                            UIActionSheetDelegate {
+class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIActionSheetDelegate {
 
-    private lazy var __once: () = { () -> Void in
+    private lazy var _once: () = { () -> Void in
         Fabric.with([Answers.self, Crashlytics.self])
     }()
 
@@ -29,13 +26,11 @@ class ActionViewController: UIViewController,
     @IBOutlet weak var contentTableView: UITableView!
     @IBOutlet weak var headerHeightConstraint: NSLayoutConstraint!
 
-    internal var inExtensionContext: Bool {
-        return self.extensionContext != nil
-    }
+    internal var inExtensionContext: Bool { return self.extensionContext != nil }
     internal var URL: Foundation.URL?
     internal var openURLAction: ((Foundation.URL) -> Void)?
-    internal var rootCAs: [String: AnyObject]? = nil
-    internal var evSet: [String: AnyObject]? = nil
+    internal var rootCAs: [String: AnyObject]?
+    internal var evSet: [String: AnyObject]?
 
     fileprivate var documentController: UIDocumentInteractionController?
     fileprivate var http2capable = false
@@ -75,10 +70,11 @@ class ActionViewController: UIViewController,
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         self.contentTableView.rowHeight = UITableViewAutomaticDimension
         self.contentTableView.register(cellType: CertificateInfoCell.self)
         self.contentTableView.register(cellType: CertificateInfoCell2.self)
-        self.navItem?.title = "Inspect - Certificate"
+        self.navItem?.title = "Certificate"
         if self.inExtensionContext {
             self.viewDidLoadInExtensionContext()
         } else {
@@ -98,13 +94,8 @@ class ActionViewController: UIViewController,
 
     }
 
-    // MARK: Action
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
-
     fileprivate func viewDidLoadInExtensionContext() {
-        _ = self.__once
+        _ = self._once
 
         var validItemProvider: NSItemProvider?
         guard let extensionContext = self.extensionContext else { return }
@@ -131,19 +122,17 @@ class ActionViewController: UIViewController,
     }
 
     fileprivate func parse(_ item: AnyObject?, error: Error?) {
-        if let url = item as? Foundation.URL? {
+        if let url = item as? URL {
             self.inspectingUrl = url
-            if let urlString = url?.absoluteString {
-                Answers.logCustomEvent(withName: kActionInspect, customAttributes:["url": urlString, "in_extension": self.inExtensionContext])
-            }
-            print("get url \(String(describing: url)), scheme = \(String(describing: url?.scheme))")
-            if url?.scheme == ("https") {
-                self.targetHost = (url?.host)!
+            Answers.logCustomEvent(withName: kActionInspect, customAttributes:["url": url.absoluteString, "in_extension": self.inExtensionContext])
+            print("get url \(String(describing: url)), scheme = \(String(describing: url.scheme))")
+            if url.scheme == ("https") {
+                self.targetHost = url.host!
                 DispatchQueue.main.async(execute: { () -> Void in
                     INHUD.sharedHUD.contentView = INHUDTextView(text: "Fetching Certificates…")
-                    INHUD.sharedHUD.showInView(self.view)
+                    INHUD.sharedHUD.show(in: self.view)
                 })
-                SessionManager.shared.fetchCertsForUrl(url!, completion: { (certs) -> Void in
+                SessionManager.shared.fetchCertsForUrl(url, completion: { (certs) -> Void in
                     INHUD.sharedHUD.hide()
                     if certs.count > 0 {
                         self.certificates = certs
@@ -152,7 +141,7 @@ class ActionViewController: UIViewController,
                     }
                 })
 
-                HTTP2Probe.probeURL(url!, completion: { result in
+                HTTP2Probe.probeURL(url, completion: { result in
                     self.http2capable = result
                     WOT.query(self.targetHost) { result in
                         debugPrint(result)
@@ -167,7 +156,7 @@ class ActionViewController: UIViewController,
                     }
                 })
             } else {
-                self.showError("\(url!) seems not a https URL")
+                self.showError("\(url) seems not a https URL")
             }
         } else {
             self.showError("url is not valid NSURL object")
@@ -183,7 +172,7 @@ class ActionViewController: UIViewController,
 
     @IBAction func share() {
         let sheet = UIAlertController(title: "More Options", message: nil, preferredStyle: .actionSheet)
-        sheet.addAction(UIAlertAction(title: "Scan in SSLLabs.com", style: .default, handler: { (action) -> Void in
+        sheet.addAction(UIAlertAction(title: "Scan in SSLLabs.com", style: .default, handler: { _ in
             if self.inspectingUrl != nil {
                 if let url = SSLLabs.scanUrl((self.inspectingUrl?.host)!) {
                     Answers.logCustomEvent(withName: kActionScanInSSLLabs, customAttributes: ["in_extension": self.inExtensionContext])
@@ -193,7 +182,7 @@ class ActionViewController: UIViewController,
             }
         }))
 
-        sheet.addAction(UIAlertAction(title: "Export Certificate", style: .default, handler: { (action) -> Void in
+        sheet.addAction(UIAlertAction(title: "Export Certificate", style: .default, handler: { _ in
             if self.selectedIndex == nil {
                 self.selectedIndex = self.certificates.count - 1
             }
@@ -214,7 +203,7 @@ class ActionViewController: UIViewController,
             self.documentController = vc
         }))
 
-        sheet.addAction(UIAlertAction(title: "Feedback", style: .default, handler: { (action) -> Void in
+        sheet.addAction(UIAlertAction(title: "Feedback", style: .default, handler: { _ in
             Answers.logCustomEvent(withName: kActionFeedback, customAttributes: ["in_extension": true])
             if self.feedbackCanSendMail() {
                 self.feedbackWithEmail()
@@ -293,7 +282,7 @@ class ActionViewController: UIViewController,
         h2Attachment.bounds = CGRect(x: 4, y: -4, width: 20, height: 20)
         let string = NSMutableAttributedString()
         string.append(NSAttributedString(attachment: h2Attachment))
-        string.append(NSAttributedString(string: "\(record.reputation.rawValue): ", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16)]))
+        string.append(NSAttributedString(string: "\(record.reputation.rawValue): ", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 16)]))
         let attachment = NSTextAttachment()
         attachment.image = UIImage(named: "WOT\(record.reputation.rawValue)")
         attachment.bounds = CGRect(x: 4, y: -4, width: 20, height: 20)
@@ -307,56 +296,58 @@ class ActionViewController: UIViewController,
 
 // MARK: UITableViewDelegate
 extension ActionViewController {
-    @objc(tableView:cellForRowAtIndexPath:) func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+
+    fileprivate func headerTableView(cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cert = self.certificates[indexPath.row]
+        let x509Cert = self.x509Certs[indexPath.row]
+        let cell = self.headerTableView.dequeueReusableCell(withIdentifier: CertificateStackCell.reuseId, for: indexPath) as? CertificateStackCell
+        cell?.trustResult = cert.secTrust
+
+        if let rootCAs = self.rootCAs,
+            let evSet = self.evSet {
+            let dict = rootCAs[self.x509Certs[0].sha256] as? [String: AnyObject]
+            // MITM check
+            if indexPath.row == 0 && (cert.secTrust == .unspecified ||
+                cert.secTrust == .proceed) && dict == nil {
+                cell?.trustResult = .otherError
+                self.showMITMAlert()
+            }
+
+            let hits = x509Cert.policyIds.filter { evSet[$0] != nil }
+            if hits.count > 0 {
+                cell?.isEV = true
+            }
+        }
+
+        if let name = SecCertificateCopySubjectSummary(cert.secCert) {
+            cell?.name = name as String
+        }
+
+        cell?.level = (indexPath as NSIndexPath).row
+        return cell!
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if tableView == self.headerTableView {
-            let cert = self.certificates[indexPath.row]
-            let x509Cert = self.x509Certs[indexPath.row]
-            let cell = tableView.dequeueReusableCell(withIdentifier: CertificateStackCell.reuseId, for: indexPath) as? CertificateStackCell
-            cell?.trustResult = cert.secTrust
-
-            if let rootCAs = self.rootCAs,
-               let evSet = self.evSet {
-                let dict = rootCAs[self.x509Certs[0].sha256] as? [String: AnyObject]
-                // MITM check
-                if indexPath.row == 0 && (cert.secTrust == .unspecified ||
-                    cert.secTrust == .proceed) && dict == nil {
-                    cell?.trustResult = .otherError
-                    self.showMITMAlert()
-                }
-
-                for policy in x509Cert.policyIds {
-                    if evSet[policy] != nil {
-                        cell?.isEV = true
-                    }
-                }
-            }
-
-            if let name = SecCertificateCopySubjectSummary(cert.secCert) {
-                cell?.name = name as String
-            }
-
-            cell?.level = (indexPath as NSIndexPath).row
-            return cell!
+            return self.headerTableView(cellForRowAt: indexPath)
         } else {
             let cell: CertificateInfoCell = tableView.dequeueReusableCell(for: indexPath)
-
             guard self.x509Certs.count > 0 else {
                 return cell
             }
-
             let sections = self.contentSections!
             let section = sections[(indexPath as NSIndexPath).section]
             let tuple = section[(indexPath as NSIndexPath).row]
             let sectionType = self.contentSectionNames![(indexPath as NSIndexPath).section]
-            if sectionType == .PubKeyInfo ||
-                sectionType == .Fingerprints ||
-                sectionType == .Signature ||
-                sectionType == .Extensions {
+            if sectionType == .pubKeyInfo ||
+                sectionType == .fingerprints ||
+                sectionType == .signature ||
+                sectionType == .extensions {
                 let cell2: CertificateInfoCell2 = tableView.dequeueReusableCell(for: indexPath)
                 cell2.titleLabel.text = tuple.0
                 cell2.longTextLabel.numberOfLines = 0
                 cell2.longTextLabel.text = tuple.1 as? String
-                if sectionType != .Extensions {
+                if sectionType != .extensions {
                     cell2.longTextLabel.font = UIFont(name: "Courier", size: 15)
                 } else {
                     cell2.longTextLabel.font = UIFont.systemFont(ofSize: 15)
@@ -372,7 +363,7 @@ extension ActionViewController {
         }
     }
 
-    @objc(numberOfSectionsInTableView:) func numberOfSections(in tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         if tableView == self.headerTableView {
             return 1
         } else {
@@ -398,7 +389,7 @@ extension ActionViewController {
         return nil
     }
 
-    @objc(tableView:didSelectRowAtIndexPath:) func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableView == self.headerTableView {
             self.selectedIndex = (indexPath as NSIndexPath).row
             self.contentTableView.reloadData()

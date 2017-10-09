@@ -17,6 +17,8 @@ end
 target 'Inspect' do
   use_frameworks!
   shared_pods
+  pod 'FontAwesomeKit/IonIcons'
+  pod 'Kingfisher'
   target 'InspectTests' do
     inherit! :search_paths
   end

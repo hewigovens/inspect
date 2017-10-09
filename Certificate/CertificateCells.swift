@@ -67,7 +67,7 @@ open class CertificateInfoCell: UITableViewCell, Reusable {
 
     lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.setContentCompressionResistancePriority(1000, for: .horizontal)
+        label.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 1000), for: .horizontal)
         return label
     }()
 
@@ -100,7 +100,7 @@ open class CertificateInfoCell: UITableViewCell, Reusable {
             make.bottom.equalTo(self.contentView).offset(-10)
         }
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -142,77 +142,77 @@ open class CertificateInfoCell2: UITableViewCell, Reusable {
             make.bottom.equalTo(self.contentView).offset(-10)
         }
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
 
 public enum CertificateInfoSection: String {
-    case Subject = "Subject Name"
-    case Issuer = "Issuer Name"
-    case Algorithm = "Algorithm"
-    case PubKeyInfo = "Public Key Info"
-    case Signature = "Signature"
-    case Fingerprints = "Fingerprints"
-    case SubjectAltNames = "Subject Alt Names"
-    case Extensions = "Extensions"
-    case Misc = "Misc"
+    case subject = "Subject Name"
+    case issuer = "Issuer Name"
+    case algorithm = "Algorithm"
+    case pubKeyInfo = "Public Key Info"
+    case signature = "Signature"
+    case fingerprints = "Fingerprints"
+    case subjectAltNames = "Subject Alt Names"
+    case extensions = "Extensions"
+    case misc = "Misc"
 }
 
 extension X509Certificate {
-    public func displaySections() -> (sectionData: [[(String, AnyObject)]], sectionName:[CertificateInfoSection]) {
+    public func displaySections() -> (sectionData: [[(String, AnyObject)]], sectionName: [CertificateInfoSection]) {
         var sectionDatas: [[(String, AnyObject)]] = []
         var sectionNames: [CertificateInfoSection] = []
 
-        sectionNames.append(.Subject)
+        sectionNames.append(.subject)
         sectionDatas.append(self.subjectTuples)
 
-        sectionNames.append(.Issuer)
+        sectionNames.append(.issuer)
         sectionDatas.append(self.issuerTuples)
 
-        sectionNames.append(.Misc)
+        sectionNames.append(.misc)
         sectionDatas.append([
             ("Serial Number", self.serialNumber.fingerprintRepresentation() as AnyObject),
             ("Version", String(self.version) as AnyObject),
             ("Not Valid Before", self.notValidBefore as AnyObject),
-            ("Not Valid After", self.notValidAfter as AnyObject),
+            ("Not Valid After", self.notValidAfter as AnyObject)
         ])
 
-        sectionNames.append(.Algorithm)
+        sectionNames.append(.algorithm)
         var datas: [(String, AnyObject)] = [
             ("Signature Algorithm", self.signatureAlgorithm as AnyObject),
             ("Pub Key Algorithm", String.x509EntryMapper[self.pubKeyAlgorithm] as AnyObject? ?? self.pubKeyAlgorithm as AnyObject),
-            ("Pub Key Size", String(self.pubKeySize) as AnyObject),
+            ("Pub Key Size", String(self.pubKeySize) as AnyObject)
         ]
         if self.pubKeyECCurveName.lengthOfBytes(using: String.Encoding.utf8) > 0 {
             datas.append(("Elliptic Curve Name", self.pubKeyECCurveName.capitalized as AnyObject))
         }
         sectionDatas.append(datas)
 
-        sectionNames.append(.Signature)
+        sectionNames.append(.signature)
         sectionDatas.append([
-            ("Signature", self.signature.fingerprintRepresentation() as AnyObject),
+            ("Signature", self.signature.fingerprintRepresentation() as AnyObject)
         ])
 
-        sectionNames.append(.PubKeyInfo)
+        sectionNames.append(.pubKeyInfo)
         sectionDatas.append([
-            ("Pub Key", self.pubKey.fingerprintRepresentation() as AnyObject),
+            ("Pub Key", self.pubKey.fingerprintRepresentation() as AnyObject)
         ])
 
-        sectionNames.append(.Fingerprints)
+        sectionNames.append(.fingerprints)
         sectionDatas.append([
             ("md5", self.md5.fingerprintRepresentation() as AnyObject),
             ("sha1", self.sha1.fingerprintRepresentation() as AnyObject)
         ])
 
         if self.extensions.count > 0 {
-            sectionNames.append(.Extensions)
+            sectionNames.append(.extensions)
             sectionDatas.append(self.extensions)
         }
 
         if self.subjectAltNames.count > 0 {
-            sectionNames.append(.SubjectAltNames)
+            sectionNames.append(.subjectAltNames)
             sectionDatas.append(self.subjectAltNames)
         }
 

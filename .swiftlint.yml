@@ -5,5 +5,8 @@ excluded:
   - Carthage
   - Pods
   - fastlane
+  - .build
+  - ./QRCode
+
 
 force_cast: warning

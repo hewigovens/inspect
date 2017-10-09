@@ -28,7 +28,7 @@ extension ActionViewController {
             if stats >= 5 {
                 let alert = UIAlertController(title: "Hooray", message: "You have inspected \(stats) sites. :)", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Next Time", style: .default, handler: nil))
-                alert.addAction((UIAlertAction(title: "Rate us", style: .default, handler: { (action) -> Void in
+                alert.addAction((UIAlertAction(title: "Rate us", style: .default, handler: { _ in
                     self.extensionOpenUrl(kAppStoreHTTPUrl)
                 })))
                 alert.popoverPresentationController?.sourceView = self.view
@@ -39,20 +39,7 @@ extension ActionViewController {
         }
         defaults.set(stats, forKey: kStatisticsKey)
 
-        guard let shared = UserDefaults.init(suiteName: kInspectGroupId) else {
-            return
-        }
-        var history = shared.stringArray(forKey: kHistoryKey) ?? [String]()
-
-        if let index = history.index(of: host) {
-            history.remove(at: index)
-        }
-        history.insert(host, at: 0)
-        if history.count > 5 {
-            history.remove(at: 5)
-        }
-        shared.setValue(history, forKey: kHistoryKey)
-        shared.synchronize()
+        UserDefaults.add(host: host)
     }
 
     internal func extensionOpenUrl(_ urlString: String) {

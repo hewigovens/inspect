@@ -43,7 +43,7 @@ import zipzap
         }
     }
 
-    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivityType) -> Any? {
+    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivityType?) -> Any? {
         guard let path = self.saveToDisk() else {
             return nil
         }

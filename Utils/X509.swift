@@ -9,7 +9,7 @@
 import Foundation
 
 public struct X509Certificate {
-    private lazy var __once: () = { () -> Void in
+    private lazy var _once: () = { () -> Void in
             OPENSSL_add_all_algorithms_noconf()
             OpenSSL_add_all_digests()
             OpenSSL_add_all_ciphers()
@@ -19,15 +19,11 @@ public struct X509Certificate {
 
     // todo
     public var subjectName: String {
-        get {
-            return ""
-        }
+        return ""
     }
 
     public var issuerName: String {
-        get {
-            return ""
-        }
+        return ""
     }
 
     public var md5 = ""
@@ -55,15 +51,13 @@ public struct X509Certificate {
     fileprivate var once = Int()
 
     init(certificate: SecCertificate) {
-
-        _ = self.__once
+        _ = self._once
 
         let data = SecCertificateCopyData(certificate) as Data
         var bytes: UnsafePointer<UInt8>? = (data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count)
         guard let cert = d2i_X509(nil, &bytes, data.count) else {
             fatalError("d2i_X509 failed!")
         }
-
 
         let subjectDict = X509Helper.subject(ofCert: cert)
         self.subjectTuples = dictToTupleArray(subjectDict)
@@ -105,6 +99,16 @@ public struct X509Certificate {
         self.sha1 = X509Helper.x509Digest(cert, method: "sha1")
         self.sha256 = X509Helper.x509Digest(cert, method: "sha256")
 
+        self.parsePolicyIds(cert)
+
+        X509Helper.subject(ofCert: cert)
+        defer {
+            EVP_PKEY_free(pkey)
+            X509_free(cert)
+        }
+    }
+
+    fileprivate mutating func parsePolicyIds(_ cert: UnsafeMutablePointer<X509>) {
         let exts = X509Helper.extensions(ofCert: cert)
         let regex = try? NSRegularExpression(pattern: "^Policy: ((\\S)+)", options: .caseInsensitive)
         for dict in exts {
@@ -112,9 +116,9 @@ public struct X509Certificate {
                 regex?.enumerateMatches(in: str, options: [], range: str.range, using: { (result, _, _) in
                     if let result = result, result.numberOfRanges > 0 {
                         for i in 1..<result.numberOfRanges {
-                            let capturedRange = result.rangeAt(i)
-                            if !NSEqualRanges(capturedRange, NSMakeRange(NSNotFound, 0)) {
-                                let theResult = (str as NSString).substring(with: result.rangeAt(i))
+                            let capturedRange = result.range(at: i)
+                            if capturedRange != NSRange(location: NSNotFound, length: 0) {
+                                let theResult = (str as NSString).substring(with: result.range(at: i))
                                 self.policyIds.append(theResult)
                             }
                         }
@@ -122,12 +126,6 @@ public struct X509Certificate {
                 })
             }
             self.extensions.append((dict["key"] ?? "Error Key", dict["value"]! as AnyObject))
-        }
-
-        X509Helper.subject(ofCert: cert)
-        defer {
-            EVP_PKEY_free(pkey)
-            X509_free(cert)
         }
     }
 
@@ -283,8 +281,7 @@ extension X509Helper {
     }
 }
 
-
-//MARK: String extension for x509
+// MARK: String extension for x509
 extension String {
     static let x509EntryMapper: [String: String] = [
         "UID": "User ID",

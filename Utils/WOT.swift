@@ -10,18 +10,18 @@ import Foundation
 
 public struct Record {
     public enum Reputation: String {
-        case Excellent
-        case Good
-        case Unsatisfactory
-        case Poor
-        case VeryPoor
+        case excellent
+        case good
+        case unsatisfactory
+        case poor
+        case veryPoor
     }
 
     public enum Category: String {
-        case Negative
-        case Questionable
-        case Neutral
-        case Positive
+        case negative
+        case questionable
+        case neutral
+        case positive
     }
 
     var target: String
@@ -29,31 +29,27 @@ public struct Record {
     var code: Int
 
     var reputation: Reputation {
-        get {
-            if self.score >= 80 {
-                return .Excellent
-            } else if self.score >= 60 {
-                return .Good
-            } else if self.score >= 40 {
-                return .Unsatisfactory
-            } else if self.score >= 20 {
-                return .Poor
-            } else {
-                return .VeryPoor
-            }
+        if self.score >= 80 {
+            return .excellent
+        } else if self.score >= 60 {
+            return .good
+        } else if self.score >= 40 {
+            return .unsatisfactory
+        } else if self.score >= 20 {
+            return .poor
+        } else {
+            return .veryPoor
         }
     }
     var category: Category {
-        get {
-            if self.code >= 500 {
-                return .Positive
-            } else if self.code >= 300 {
-                return .Neutral
-            } else if self.code >= 200 {
-                return .Questionable
-            } else {
-                return .Negative
-            }
+        if self.code >= 500 {
+            return .positive
+        } else if self.code >= 300 {
+            return .neutral
+        } else if self.code >= 200 {
+            return .questionable
+        } else {
+            return .negative
         }
     }
 }
@@ -85,27 +81,28 @@ public struct WOTRecord {
 
 open class WOT: NSObject {
 
-    static func query(_ host: String, completion: @escaping (QueryResult) -> Void) -> Void {
+    static func query(_ host: String, completion: @escaping (QueryResult) -> Void) {
         let key = "e0d9e530f85c4c851e2638b898d4219321c01455"
         let apiUrl = "https://api.mywot.com/0.4/public_link_json2"
         let query = "\(apiUrl)?key=\(key)&hosts=\(String(format: "%@/", host))"
         let request = URLRequest(url: URL(string: query)!)
 
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
             if let error = error {
                 completion(QueryResult.failure(error as NSError))
                 return
             }
 
             guard let data = data else { return }
-
             do {
                 guard let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
                     as? [String: AnyObject] else { return }
                 guard let target = json[host] as? [String: AnyObject] else { return }
                 guard let wot = WOTRecord(json: target) else { return }
                 completion(QueryResult.success(wot.convertToRecord()))
-            } catch {}
+            } catch {
+
+            }
 
         }
         task.resume()

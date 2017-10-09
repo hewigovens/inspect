@@ -16,8 +16,15 @@ open class INHUD: UIView {
             self.contentView?.removeFromSuperview()
         }
         didSet {
-            if self.contentView != nil {
-                self.backgroundView.addSubview(self.contentView!)
+            guard let contentView = self.contentView else {
+                return
+            }
+            do {
+                try ObjC.catchException {
+                    self.backgroundView.contentView.addSubview(contentView)
+                }
+            } catch {
+                print("An error ocurred: \(error)")
             }
         }
     }
@@ -39,9 +46,16 @@ open class INHUD: UIView {
         finishInit()
     }
 
-    open func showInView(_ view: UIView) {
+    open func show(in view: UIView) {
         view.addSubview(self.backgroundView)
         backgroundView.center = view.center
+    }
+
+    open func show(in view: UIView, delay: Int) {
+        self.show(in: view)
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(delay)) {
+            self.hide()
+        }
     }
 
     open func hide() {
