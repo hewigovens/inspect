@@ -79,7 +79,7 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
             self.viewDidLoadInExtensionContext()
         } else {
             self.configureTableViews()
-            self.parse(self.URL as AnyObject?, error: nil)
+            self.parse(self.URL, error: nil)
         }
         loadRootCAs()
     }
@@ -98,6 +98,7 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
         _ = self._once
 
         var validItemProvider: NSItemProvider?
+        var typeIdentifier = ""
         guard let extensionContext = self.extensionContext else { return }
         nestedLoop: for item: Any in extensionContext.inputItems {
             guard let inputItem = item as? NSExtensionItem else {
@@ -109,57 +110,70 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
                 }
                 if itemProvider.hasItemConformingToTypeIdentifier(kUTTypeURL as String) {
                     validItemProvider = itemProvider
+                    typeIdentifier = kUTTypeURL as String
+                    break nestedLoop
+                } else if itemProvider.hasItemConformingToTypeIdentifier(kUTTypeText as String) {
+                    validItemProvider = itemProvider
+                    typeIdentifier = kUTTypeText as String
                     break nestedLoop
                 }
             }
         }
-        guard validItemProvider != nil else { return self.showError("no valid item privoder!") }
+        guard let itemProvider = validItemProvider else {
+            return self.showError("Not a valid item privoder")
+        }
 
         self.configureTableViews()
-        validItemProvider!.loadItem(forTypeIdentifier: kUTTypeURL as String, options: nil, completionHandler: { (item, error) -> Void in
-            self.parse(item, error: error)
+        itemProvider.loadItem(forTypeIdentifier: typeIdentifier, options: nil, completionHandler: { (item, error) -> Void in
+            var url = item as? URL
+            if url == nil {
+                if let text = item as? String {
+                    url = Foundation.URL(string: text)
+                }
+            }
+            self.parse(url, error: error)
         })
     }
 
-    fileprivate func parse(_ item: AnyObject?, error: Error?) {
-        if let url = item as? URL {
-            self.inspectingUrl = url
-            Answers.logCustomEvent(withName: kActionInspect, customAttributes:["url": url.absoluteString, "in_extension": self.inExtensionContext])
-            print("get url \(String(describing: url)), scheme = \(String(describing: url.scheme))")
-            if url.scheme == ("https") {
-                self.targetHost = url.host!
-                DispatchQueue.main.async(execute: { () -> Void in
-                    INHUD.sharedHUD.contentView = INHUDTextView(text: "Fetching Certificates…")
-                    INHUD.sharedHUD.show(in: self.view)
-                })
-                SessionManager.shared.fetchCertsForUrl(url, completion: { (certs) -> Void in
-                    INHUD.sharedHUD.hide()
-                    if certs.count > 0 {
-                        self.certificates = certs
-                        self.selectedIndex = certs.count - 1
-                        self.updateStatistics(self.targetHost)
-                    }
-                })
+    fileprivate func parse(_ item: URL?, error: Error?) {
+        guard let url = item else {
+            return self.showError("url is not valid object")
+        }
 
-                HTTP2Probe.probeURL(url, completion: { result in
-                    self.http2capable = result
-                    WOT.query(self.targetHost) { result in
-                        debugPrint(result)
-                        switch result {
-                        case .success(let record):
-                            self.showWOTRating(record)
-                        case .failure(let error):
-                            #if DEBUG
-                                self.showError(error)
-                            #endif
-                        }
+        self.inspectingUrl = url
+        Answers.logCustomEvent(withName: kActionInspect, customAttributes:["url": url.absoluteString, "in_extension": self.inExtensionContext])
+        print("get url \(String(describing: url)), scheme = \(String(describing: url.scheme))")
+        if url.scheme == ("https") {
+            self.targetHost = url.host!
+            DispatchQueue.main.async(execute: { () -> Void in
+                INHUD.sharedHUD.contentView = INHUDTextView(text: "Fetching Certificates…")
+                INHUD.sharedHUD.show(in: self.view)
+            })
+            SessionManager.shared.fetchCertsForUrl(url, completion: { (certs) -> Void in
+                INHUD.sharedHUD.hide()
+                if certs.count > 0 {
+                    self.certificates = certs
+                    self.selectedIndex = certs.count - 1
+                    self.updateStatistics(self.targetHost)
+                }
+            })
+
+            HTTP2Probe.probeURL(url, completion: { result in
+                self.http2capable = result
+                WOT.query(self.targetHost) { result in
+                    debugPrint(result)
+                    switch result {
+                    case .success(let record):
+                        self.showWOTRating(record)
+                    case .failure(let error):
+                        #if DEBUG
+                            self.showError(error)
+                        #endif
                     }
-                })
-            } else {
-                self.showError("\(url) seems not a https URL")
-            }
+                }
+            })
         } else {
-            self.showError("url is not valid NSURL object")
+            self.showError("\(url) seems not a https URL")
         }
     }
     @IBAction func done() {
@@ -282,9 +296,9 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
         h2Attachment.bounds = CGRect(x: 4, y: -4, width: 20, height: 20)
         let string = NSMutableAttributedString()
         string.append(NSAttributedString(attachment: h2Attachment))
-        string.append(NSAttributedString(string: "\(record.reputation.rawValue): ", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 16)]))
+        string.append(NSAttributedString(string: "\(record.reputation.rawValue.capitalized): ", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 16)]))
         let attachment = NSTextAttachment()
-        attachment.image = UIImage(named: "WOT\(record.reputation.rawValue)")
+        attachment.image = UIImage(named: "WOT\(record.reputation.rawValue.capitalized)")
         attachment.bounds = CGRect(x: 4, y: -4, width: 20, height: 20)
         string.append(NSAttributedString(attachment: attachment))
         textView.attributedText = string
