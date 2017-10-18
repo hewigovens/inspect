@@ -187,12 +187,13 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
     @IBAction func share() {
         let sheet = UIAlertController(title: "More Options", message: nil, preferredStyle: .actionSheet)
         sheet.addAction(UIAlertAction(title: "Scan in SSLLabs.com", style: .default, handler: { _ in
-            if self.inspectingUrl != nil {
-                if let url = SSLLabs.scanUrl((self.inspectingUrl?.host)!) {
-                    Answers.logCustomEvent(withName: kActionScanInSSLLabs, customAttributes: ["in_extension": self.inExtensionContext])
-                    let vc = SFSafariViewController(url: url)
-                    self.present(vc, animated: true, completion: nil)
-                }
+            guard let host = self.inspectingUrl?.host else {
+                return
+            }
+            if let url = SSLLabs.scanUrl(host) {
+                Answers.logCustomEvent(withName: kActionScanInSSLLabs, customAttributes: ["in_extension": self.inExtensionContext])
+                let vc = SFSafariViewController(url: url)
+                self.present(vc, animated: true, completion: nil)
             }
         }))
 
