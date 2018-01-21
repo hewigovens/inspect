@@ -11,12 +11,14 @@ import FontAwesomeKit
 
 enum HomeSection: Int {
     case tutorial
+    case setting
     case feedback
     case misc
 
     enum Item: String {
         case tutorial = "Tutorial"
         case feedback = "Send Feedback"
+        case mitm = "Enable MITM Detection"
         case rateUs = "Rate on App Store"
         case about = "About"
         case ack = "Acknowledgements"
@@ -33,6 +35,8 @@ enum HomeSection: Int {
                 return FAKIonIcons.image(with: "ion-ios-heart-outline")
             case .ack:
                 return FAKIonIcons.image(with: "ion-social-github-outline")
+            case .mitm:
+                return FAKIonIcons.image(with: "ion-ios-toggle-outline")
             }
         }
     }
@@ -40,6 +44,7 @@ enum HomeSection: Int {
     var sections: [Item] {
         switch self {
         case .tutorial: return [Item.tutorial]
+        case .setting: return [Item.mitm]
         case .feedback: return [Item.feedback, Item.rateUs]
         case .misc: return [Item.ack, Item.about]
         }

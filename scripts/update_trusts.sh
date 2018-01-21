@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SOURCE_URL="https://mozillacaprogram.secure.force.com/CA/IncludedCACertificateReportCSVFormat"
+SOURCE_URL="https://ccadb-public.secure.force.com/mozilla/IncludedCACertificateReportCSVFormat"
 DB_NAME="mozilla_trust"
 DB_PATH="$DB_NAME.db"
 TMP_CSV_PATH="$DB_NAME.csv"

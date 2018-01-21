@@ -44,6 +44,8 @@
 		BB5DB8661C3974DE00219411 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5DB8641C3974D100219411 /* openssl.framework */; };
 		BB6B89751DCCDDFD00B1B627 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6B89741DCCDDFD00B1B627 /* UIColor+Hex.swift */; };
 		BB6B897B1DCCF78D00B1B627 /* mozilla_ev.json in Resources */ = {isa = PBXBuildFile; fileRef = BB6B897A1DCCF78D00B1B627 /* mozilla_ev.json */; };
+		BB74F12D2014244400613FB9 /* SettingStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB74F12C2014244400613FB9 /* SettingStore.swift */; };
+		BB74F12E201429D700613FB9 /* SettingStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB74F12C2014244400613FB9 /* SettingStore.swift */; };
 		BB7E39771CDA361A00C84856 /* UIView+Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7E39761CDA361A00C84856 /* UIView+Frame.swift */; };
 		BB7E39781CDACFF000C84856 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB2C5B3B1C469BFE00911EA4 /* Images.xcassets */; };
 		BB7E397A1CDCE94C00C84856 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7E39791CDCE94C00C84856 /* HomeViewController.swift */; };
@@ -158,6 +160,7 @@
 		BB5DB8861C3AA52900219411 /* Inspect-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Inspect-Bridging-Header.h"; path = "../Inspect-Bridging-Header.h"; sourceTree = "<group>"; };
 		BB6B89741DCCDDFD00B1B627 /* UIColor+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
 		BB6B897A1DCCF78D00B1B627 /* mozilla_ev.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = mozilla_ev.json; path = scripts/mozilla_ev.json; sourceTree = SOURCE_ROOT; };
+		BB74F12C2014244400613FB9 /* SettingStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingStore.swift; sourceTree = "<group>"; };
 		BB7E39761CDA361A00C84856 /* UIView+Frame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Frame.swift"; sourceTree = "<group>"; };
 		BB7E39791CDCE94C00C84856 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		BB7E397D1CDDC63C00C84856 /* UINavigationController+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Extension.swift"; sourceTree = "<group>"; };
@@ -402,6 +405,7 @@
 				BBEE214B1F8A424B0018625E /* HomeSection.swift */,
 				BBF451B81F89978D00D81CE1 /* HomeCell.swift */,
 				BB7E39791CDCE94C00C84856 /* HomeViewController.swift */,
+				BB74F12C2014244400613FB9 /* SettingStore.swift */,
 			);
 			name = Home;
 			sourceTree = "<group>";
@@ -814,6 +818,7 @@
 				BB1773C51C428227001AAB80 /* SessionManager.swift in Sources */,
 				BB5C4D141DE14E430021BCB7 /* nghttp2client.c in Sources */,
 				BB8C55D81CD97A23004B60E3 /* INHUD.swift in Sources */,
+				BB74F12D2014244400613FB9 /* SettingStore.swift in Sources */,
 				BB8C55D61CD97965004B60E3 /* CertificateCells.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -848,6 +853,7 @@
 				BBEE21551F8A44E50018625E /* String+Utils.swift in Sources */,
 				BB1773C21C4280C6001AAB80 /* X509Helper.m in Sources */,
 				BBEE214D1F8A42A00018625E /* INHUD.swift in Sources */,
+				BB74F12E201429D700613FB9 /* SettingStore.swift in Sources */,
 				BB1773C31C4280C6001AAB80 /* X509.swift in Sources */,
 				BB46EB9B1C30492B00E156E9 /* ActionViewController.swift in Sources */,
 				BB5DB85C1C38EC2E00219411 /* CertificateCells.swift in Sources */,

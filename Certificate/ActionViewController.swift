@@ -98,6 +98,8 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
         _ = self._once
 
         var validItemProvider: NSItemProvider?
+        var urlProvider: NSItemProvider?
+        var textProvider: NSItemProvider?
         var typeIdentifier = ""
         guard let extensionContext = self.extensionContext else { return }
         nestedLoop: for item: Any in extensionContext.inputItems {
@@ -108,17 +110,23 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
                 guard let itemProvider = provider as? NSItemProvider else {
                     continue
                 }
+                debugPrint(itemProvider)
                 if itemProvider.hasItemConformingToTypeIdentifier(kUTTypeURL as String) {
-                    validItemProvider = itemProvider
-                    typeIdentifier = kUTTypeURL as String
-                    break nestedLoop
+                    urlProvider = itemProvider
                 } else if itemProvider.hasItemConformingToTypeIdentifier(kUTTypeText as String) {
-                    validItemProvider = itemProvider
-                    typeIdentifier = kUTTypeText as String
-                    break nestedLoop
+                    textProvider = itemProvider
                 }
             }
         }
+
+        if urlProvider != nil {
+            validItemProvider = urlProvider
+            typeIdentifier = kUTTypeURL as String
+        } else if textProvider != nil {
+            validItemProvider = urlProvider
+            typeIdentifier = kUTTypeText as String
+        }
+
         guard let itemProvider = validItemProvider else {
             return self.showError("Not a valid item privoder")
         }
@@ -142,7 +150,8 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
 
         self.inspectingUrl = url
         Answers.logCustomEvent(withName: kActionInspect, customAttributes:["url": url.absoluteString, "in_extension": self.inExtensionContext])
-        print("get url \(String(describing: url)), scheme = \(String(describing: url.scheme))")
+        debugPrint("get url \(String(describing: url)), scheme = \(String(describing: url.scheme))")
+
         if url.scheme == ("https") {
             self.targetHost = url.host!
             DispatchQueue.main.async(execute: { () -> Void in
@@ -321,11 +330,17 @@ extension ActionViewController {
         if let rootCAs = self.rootCAs,
             let evSet = self.evSet {
             let dict = rootCAs[self.x509Certs[0].sha256] as? [String: AnyObject]
+            if UserDefaults.getMITMDetection() {
             // MITM check
-            if indexPath.row == 0 && (cert.secTrust == .unspecified ||
-                cert.secTrust == .proceed) && dict == nil {
+            if indexPath.row == 0 &&
+                dict == nil && (
+                    cert.secTrust == .unspecified ||
+                    cert.secTrust == .proceed ||
+                    cert.secTrust == .recoverableTrustFailure
+                ) {
                 cell?.trustResult = .otherError
                 self.showMITMAlert()
+                }
             }
 
             let hits = x509Cert.policyIds.filter { evSet[$0] != nil }

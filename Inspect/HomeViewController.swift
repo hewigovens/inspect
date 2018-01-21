@@ -19,7 +19,7 @@ class HomeViewController: UIViewController {
         NotificationCenter.default.removeObserver(self)
     }
 
-    let dataSource: [HomeSection] = [.tutorial, .feedback, .misc]
+    let dataSource: [HomeSection] = [.tutorial, .setting, .feedback, .misc]
 
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: self.view.frame, style: .grouped)
@@ -165,6 +165,14 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "9999"
             label?.text = "Version: \(version)(\(build))"
             label?.sizeToFit()
+        } else if item == .mitm {
+            var toggle = cell.accessoryView as? UISwitch
+            if toggle == nil {
+                toggle = UISwitch()
+                toggle?.addTarget(self, action: #selector(toggleMITMDetection), for: .valueChanged)
+                cell.accessoryView = toggle
+            }
+            toggle?.isOn = UserDefaults.getMITMDetection()
         }
         return cell
     }
@@ -175,6 +183,8 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         switch item {
         case .tutorial:
             self.showTutorial()
+        case .mitm:
+            self.toggleMITMDetection()
         case .feedback:
             Answers.logCustomEvent(withName: kActionFeedback, customAttributes: ["in_extension": false])
             if self.feedbackCanSendMail() {
@@ -223,5 +233,9 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
 
     func openUrlInChrome(_ urlString: String) {
         self.openUrl(kGoogleChromeScheme + urlString)
+    }
+
+    @objc func toggleMITMDetection() {
+        UserDefaults.setMITMDetection(!UserDefaults.getMITMDetection())
     }
 }

@@ -9,12 +9,11 @@
 import Foundation
 
 extension UserDefaults {
+    static let shared = UserDefaults.init(suiteName: kInspectGroupId)!
+}
 
+extension UserDefaults {
     static func add(host: String) {
-
-        guard let shared = UserDefaults.init(suiteName: kInspectGroupId) else {
-            return
-        }
         var history = shared.stringArray(forKey: kHistoryKey) ?? [String]()
         if let index = history.index(of: host) {
             history.remove(at: index)
@@ -25,9 +24,6 @@ extension UserDefaults {
     }
 
     static func delete(host: String) {
-        guard let shared = UserDefaults.init(suiteName: kInspectGroupId) else {
-            return
-        }
         var history = shared.stringArray(forKey: kHistoryKey) ?? [String]()
         if let index = history.index(of: host) {
             history.remove(at: index)
