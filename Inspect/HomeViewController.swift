@@ -58,12 +58,12 @@ class HomeViewController: UIViewController {
         self.title = "Inspect"
         let leftSize: CGFloat = 24
         let leftIcon = FAKIonIcons.iosClockOutlineIcon(withSize: leftSize)
-        leftIcon?.addAttribute(NSAttributedStringKey.foregroundColor.rawValue, value: UIColor.black)
+        leftIcon?.addAttribute(NSAttributedString.Key.foregroundColor.rawValue, value: UIColor.black)
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: leftIcon?.image(with: CGSize(width: leftSize, height: leftSize)), style: .plain, target: self, action: #selector(showHistory))
 
         let rightSize: CGFloat = 24
         let rightIcon = FAKIonIcons.iosSearchIcon(withSize: rightSize)
-        rightIcon?.addAttribute(NSAttributedStringKey.foregroundColor.rawValue, value: UIColor.black)
+        rightIcon?.addAttribute(NSAttributedString.Key.foregroundColor.rawValue, value: UIColor.black)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: rightIcon?.image(with: CGSize(width: rightSize, height: rightSize)), style: .plain, target: self, action: #selector(showInspect))
     }
 
@@ -150,7 +150,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         let item = section.sections[indexPath.row]
         cell.textLabel?.font = UIFont.systemFont(ofSize: 15)
         cell.textLabel?.text = item.rawValue
-        cell.textLabel?.textColor = UIColor(white: 0.25, alpha:1.00)
+        cell.textLabel?.textColor = UIColor(white: 0.25, alpha: 1.00)
         cell.textLabel?.textAlignment = .left
         cell.imageView?.image = item.image
         if item == .about {

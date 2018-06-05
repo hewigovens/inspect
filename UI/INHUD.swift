@@ -66,7 +66,7 @@ open class INHUD: UIView {
 
         self.autoresizingMask = [.flexibleWidth, .flexibleWidth]
         backgroundView.frame = CGRect(x: 0, y: 0, width: 265, height: 90)
-        backgroundView.backgroundColor = UIColor(white:0.0, alpha:0.15)
+        backgroundView.backgroundColor = UIColor(white: 0.0, alpha: 0.15)
         backgroundView.layer.cornerRadius = 9.0
         backgroundView.layer.masksToBounds = true
 
@@ -85,7 +85,7 @@ open class INHUD: UIView {
         backgroundView.addMotionEffect(group)
         backgroundView.center = self.center
 
-        NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange(notification:)), name: Notification.Name.UIDeviceOrientationDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange(notification:)), name: UIDevice.orientationDidChangeNotification, object: nil)
     }
 
     @objc func orientationDidChange(notification: Notification) {
@@ -101,7 +101,7 @@ open class INHUD: UIView {
 
 open class INHUDTextView: UIView {
 
-    open let label: UILabel = {
+    public let label: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
         label.font = UIFont.boldSystemFont(ofSize: 17.0)

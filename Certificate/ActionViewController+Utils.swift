@@ -12,9 +12,9 @@ extension ActionViewController {
 
     class func create(url: URL) -> ActionViewController? {
         let board = UIStoryboard(name: "MainInterface", bundle: Bundle.main)
-        guard let vc = board.instantiateViewController(withIdentifier: "ActionViewController") as? ActionViewController else {return nil}
-        vc.URL = url
-        return vc
+        guard let controller = board.instantiateViewController(withIdentifier: "ActionViewController") as? ActionViewController else {return nil}
+        controller.URL = url
+        return controller
     }
 
     internal func updateStatistics(_ host: String) {
@@ -52,12 +52,12 @@ extension ActionViewController {
         }
 
         var responder = self as UIResponder?
-        while let r = responder {
+        while let res = responder {
             let sel = NSSelectorFromString("openURL:")
-            if r.responds(to: sel) {
-                r.perform(sel, with: url)
+            if res.responds(to: sel) {
+                res.perform(sel, with: url)
             }
-            responder = r.next
+            responder = res.next
         }
     }
 
@@ -68,10 +68,10 @@ extension ActionViewController {
         if self.inExtensionContext {
             var url = bundle.bundleURL.deletingLastPathComponent()
             url = url.deletingLastPathComponent()
-            guard let _bundle = Bundle(url: url) else {
+            guard let extBundle = Bundle(url: url) else {
                 return
             }
-            bundle = _bundle
+            bundle = extBundle
         }
 
         guard let path1 = bundle.path(forResource: "mozilla_trust", ofType: "json") else {

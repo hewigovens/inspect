@@ -27,23 +27,23 @@ import zipzap
             return nil
         }
 
-        let file_name = "cert\(self.index).cer"
-        let file_zip_name = "/cert\(self.index).zip"
-        let cert_zip = URL(fileURLWithPath: path + file_zip_name)
+        let fileName = "cert\(self.index).cer"
+        let fileZipName = "/cert\(self.index).zip"
+        let certZip = URL(fileURLWithPath: path + fileZipName)
         do {
-            let archive = try ZZArchive(url: cert_zip, options: [ZZOpenOptionsCreateIfMissingKey: NSNumber(value: true as Bool)])
-            let entry = ZZArchiveEntry(fileName: file_name, compress: true, dataBlock: { (_) -> Data? in
+            let archive = try ZZArchive(url: certZip, options: [ZZOpenOptionsCreateIfMissingKey: NSNumber(value: true as Bool)])
+            let entry = ZZArchiveEntry(fileName: fileName, compress: true, dataBlock: { (_) -> Data? in
                 return self.certData
             })
             try archive.updateEntries([entry])
-            return cert_zip
-        } catch (let error as NSError) {
-            print("zip cert failed \(error.description)")
+            return certZip
+        } catch let error {
+            print("zip cert failed \(error.localizedDescription)")
             return nil
         }
     }
 
-    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivityType?) -> Any? {
+    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
         guard let path = self.saveToDisk() else {
             return nil
         }
@@ -54,7 +54,7 @@ import zipzap
         return ""
     }
 
-    func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivityType?) -> String {
+    func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivity.ActivityType?) -> String {
         return "Exported certificate data for \(self.targetHost)"
     }
 }

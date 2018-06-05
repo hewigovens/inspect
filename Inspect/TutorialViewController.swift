@@ -28,15 +28,15 @@ class TutorialViewController: UIViewController, UIScrollViewDelegate {
         let indicator = UIPageControl(frame: CGRect(x: (self.view.fp_width - width) / 2, y: 30, width: width, height: size))
         indicator.numberOfPages = self.steps
         indicator.pageIndicatorTintColor = UIColor.white
-        indicator.currentPageIndicatorTintColor = UIColor(red:0.44, green:0.51, blue:0.84, alpha:1.00)
+        indicator.currentPageIndicatorTintColor = UIColor(red: 0.44, green: 0.51, blue: 0.84, alpha: 1.00)
         indicator.addTarget(self, action: #selector(changePage), for: .valueChanged)
         return indicator
     }()
 
     lazy var closeButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("×", for: UIControlState())
-        button.setTitleColor(UIColor.white, for: UIControlState())
+        button.setTitle("×", for: UIControl.State())
+        button.setTitleColor(UIColor.white, for: UIControl.State())
         button.setTitleColor(UIColor.lightGray, for: .highlighted)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 40)
         button.addTarget(self, action: #selector(closeAction), for: .touchUpInside)
@@ -133,7 +133,7 @@ extension TutorialViewController {
         for i in 1...steps {
             let containerView = UIView()
             containerView.layer.cornerRadius = 12
-            containerView.backgroundColor = UIColor(red:0.44, green:0.51, blue:0.84, alpha:1.00)
+            containerView.backgroundColor = UIColor(red: 0.44, green: 0.51, blue: 0.84, alpha: 1.00)
             containerView.tag = 10 + i
 
             let imageView = UIImageView(image: UIImage(named: "step\(i)"))
