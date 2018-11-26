@@ -106,10 +106,7 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
             guard let inputItem = item as? NSExtensionItem else {
                 continue
             }
-            for provider in inputItem.attachments! {
-                guard let itemProvider = provider as? NSItemProvider else {
-                    continue
-                }
+            for itemProvider in inputItem.attachments! {
                 debugPrint(itemProvider)
                 if itemProvider.hasItemConformingToTypeIdentifier(kUTTypeURL as String) {
                     urlProvider = itemProvider

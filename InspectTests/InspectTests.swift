@@ -11,15 +11,11 @@ import XCTest
 
 class InspectTests: XCTestCase {
 
-    fileprivate lazy var data: Data? = try? Data(contentsOf: URL(fileURLWithPath: Bundle(for: InspectTests.self).path(forResource: "mac_dev", ofType: "cer")!))
-
-    override func setUp() {
-        super.setUp()
-    }
-
-    override func tearDown() {
-        super.tearDown()
-    }
+    lazy var data: Data? = {
+        let url = Bundle(for: InspectTests.self).url(forResource: "mac_dev", withExtension: "cer")!
+        let data = try? Data(contentsOf: url)
+        return data
+    }()
 
     func testParseX509() {
         guard let data = self.data else {

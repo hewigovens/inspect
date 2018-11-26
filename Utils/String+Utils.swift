@@ -9,13 +9,13 @@
 import Foundation
 
 extension String {
-    var range: NSRange {
+    public var nsRange: NSRange {
         return NSRange(location: 0, length: self.count)
     }
 }
 
 extension String {
-    var length: Int {
+    public var length: Int {
         return self.lengthOfBytes(using: .utf8)
     }
 }

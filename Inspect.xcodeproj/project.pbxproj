@@ -445,7 +445,6 @@
 				BB46EBA61C30492B00E156E9 /* Embed App Extensions */,
 				BB30DE9E1C7F402E00AE0A39 /* Run Fabric */,
 				6883387B6512180A2E4F0032 /* [CP] Embed Pods Frameworks */,
-				89BF54C92A8EB1F91ACF88E2 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -465,8 +464,6 @@
 				BB46EB811C3046B300E156E9 /* Sources */,
 				BB46EB821C3046B300E156E9 /* Frameworks */,
 				BB46EB831C3046B300E156E9 /* Resources */,
-				10A1F15F6BDF5171EF8E9808 /* [CP] Embed Pods Frameworks */,
-				D1FBE8AAB96CBA534687F016 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -487,7 +484,6 @@
 				BB46EB951C30492B00E156E9 /* Frameworks */,
 				BB46EB961C30492B00E156E9 /* Resources */,
 				BB5273DC1CFBBFCE00947BFD /* Run Fabric */,
-				37E5FC7897CCBF256386D115 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -598,36 +594,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		10A1F15F6BDF5171EF8E9808 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-InspectTests/Pods-InspectTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		37E5FC7897CCBF256386D115 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Certificate/Pods-Certificate-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		6883387B6512180A2E4F0032 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -652,21 +618,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Inspect/Pods-Inspect-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		89BF54C92A8EB1F91ACF88E2 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Inspect/Pods-Inspect-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		BA2CEBC236E856F801E4C557 /* [CP] Check Pods Manifest.lock */ = {
@@ -728,21 +679,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "$PODS_ROOT/Fabric/run ffd1a21a45423d2959636c52dc02535a8fad1b60 dd1dfceaa343fa98ef49d12fa7f022c135640990742116059b7d05091289834f";
-		};
-		D1FBE8AAB96CBA534687F016 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-InspectTests/Pods-InspectTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 		E7B9DEA28996DD32817D69E3 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1062,15 +998,12 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 				INFOPLIST_FILE = InspectTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = in.fourplex.InspectTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Inspect.app/Inspect";
 			};
 			name = Debug;
@@ -1081,14 +1014,11 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 				INFOPLIST_FILE = InspectTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = in.fourplex.InspectTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Inspect.app/Inspect";
 			};
 			name = Release;
