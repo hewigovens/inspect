@@ -15,7 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         UserDefaults.standard.register(
             defaults: [kFirstRun: true]
@@ -33,9 +33,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func setupAppearance() {
         if #available(iOS 11.0, *) {
             UINavigationBar.appearance().largeTitleTextAttributes =
-                [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 24, weight: .light)]
+                [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 24, weight: .light)]
         }
         UINavigationBar.appearance().barTintColor = UIColor.white
-        UINavigationBar.appearance().titleTextAttributes = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 17, weight: .light)]
+        UINavigationBar.appearance().titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 17, weight: .light)]
     }
 }

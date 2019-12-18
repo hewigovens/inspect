@@ -71,7 +71,7 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.contentTableView.rowHeight = UITableViewAutomaticDimension
+        self.contentTableView.rowHeight = UITableView.automaticDimension
         self.contentTableView.register(cellType: CertificateInfoCell.self)
         self.contentTableView.register(cellType: CertificateInfoCell2.self)
         self.navItem?.title = "Certificate"
@@ -106,10 +106,7 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
             guard let inputItem = item as? NSExtensionItem else {
                 continue
             }
-            for provider in inputItem.attachments! {
-                guard let itemProvider = provider as? NSItemProvider else {
-                    continue
-                }
+            for itemProvider in inputItem.attachments! {
                 debugPrint(itemProvider)
                 if itemProvider.hasItemConformingToTypeIdentifier(kUTTypeURL as String) {
                     urlProvider = itemProvider
@@ -149,7 +146,7 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
         }
 
         self.inspectingUrl = url
-        Answers.logCustomEvent(withName: kActionInspect, customAttributes:["url": url.absoluteString, "in_extension": self.inExtensionContext])
+        Answers.logCustomEvent(withName: kActionInspect, customAttributes: ["url": url.absoluteString, "in_extension": self.inExtensionContext])
         debugPrint("get url \(String(describing: url)), scheme = \(String(describing: url.scheme))")
 
         if url.scheme == ("https") {
@@ -248,13 +245,13 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
         // Certificate Stack View
         self.headerTableView.bounces = false
         self.headerTableView.separatorStyle = .none
-        self.headerTableView.rowHeight = UITableViewAutomaticDimension
+        self.headerTableView.rowHeight = UITableView.automaticDimension
         self.headerTableView.estimatedRowHeight = 44
         self.headerTableView.backgroundColor = UIColor.lightText
         self.headerTableView.isHidden = true
 
         self.contentTableView.estimatedRowHeight = 100
-        self.contentTableView.rowHeight = UITableViewAutomaticDimension
+        self.contentTableView.rowHeight = UITableView.automaticDimension
         self.contentTableView.isHidden = true
     }
 
@@ -306,7 +303,7 @@ class ActionViewController: UIViewController, UITableViewDelegate, UITableViewDa
         h2Attachment.bounds = CGRect(x: 4, y: -4, width: 20, height: 20)
         let string = NSMutableAttributedString()
         string.append(NSAttributedString(attachment: h2Attachment))
-        string.append(NSAttributedString(string: "\(record.reputation.rawValue.capitalized): ", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 16)]))
+        string.append(NSAttributedString(string: "\(record.reputation.rawValue.capitalized): ", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)]))
         let attachment = NSTextAttachment()
         attachment.image = UIImage(named: "WOT\(record.reputation.rawValue.capitalized)")
         attachment.bounds = CGRect(x: 4, y: -4, width: 20, height: 20)

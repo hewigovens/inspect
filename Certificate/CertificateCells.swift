@@ -79,7 +79,7 @@ open class CertificateInfoCell: UITableViewCell, Reusable {
         return label
     }()
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         titleLabel.numberOfLines = 1
@@ -121,7 +121,7 @@ open class CertificateInfoCell2: UITableViewCell, Reusable {
         return label
     }()
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         longTextLabel.numberOfLines = 0

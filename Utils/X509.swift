@@ -111,15 +111,16 @@ public struct X509Certificate {
     fileprivate mutating func parsePolicyIds(_ cert: UnsafeMutablePointer<X509>) {
         let exts = X509Helper.extensions(ofCert: cert)
         let regex = try? NSRegularExpression(pattern: "^Policy: ((\\S)+)", options: .caseInsensitive)
+        var policyIds = [String]()
         for dict in exts {
             if let str = dict["value"], dict["key"] == "X509v3 Certificate Policies" {
-                regex?.enumerateMatches(in: str, options: [], range: str.range, using: { (result, _, _) in
+                regex?.enumerateMatches(in: str, options: [], range: str.nsRange, using: { (result, _, _) in
                     if let result = result, result.numberOfRanges > 0 {
                         for i in 1..<result.numberOfRanges {
                             let capturedRange = result.range(at: i)
                             if capturedRange != NSRange(location: NSNotFound, length: 0) {
-                                let theResult = (str as NSString).substring(with: result.range(at: i))
-                                self.policyIds.append(theResult)
+                                let result = (str as NSString).substring(with: result.range(at: i))
+                                policyIds.append(result)
                             }
                         }
                     }
@@ -127,6 +128,7 @@ public struct X509Certificate {
             }
             self.extensions.append((dict["key"] ?? "Error Key", dict["value"]! as AnyObject))
         }
+        self.policyIds.append(contentsOf: policyIds)
     }
 
     fileprivate func dictToTupleArray(_ dict: [AnyHashable: Any]) -> [(String, AnyObject)] {
@@ -190,8 +192,7 @@ extension X509Helper {
         if ASN1_TIME_print(bio, time) > 0 {
             var buffer = UnsafeMutablePointer<Int8>.allocate(capacity: 128)
             defer {
-                buffer.deinitialize()
-                buffer.deallocate(capacity: 128)
+                buffer.deallocate()
             }
             if BIO_gets(bio, buffer, 128) > 0 {
 
@@ -212,11 +213,8 @@ extension X509Helper {
         var buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: 64)
         var len_ptr = UnsafeMutablePointer<UInt32>.allocate(capacity: 1)
         defer {
-            buffer.deinitialize()
-            buffer.deallocate(capacity: 64)
-
-            len_ptr.deinitialize()
-            len_ptr.deallocate(capacity: 1)
+            buffer.deallocate()
+            len_ptr.deallocate()
         }
 
         let md = EVP_get_digestbyname(method)
@@ -240,11 +238,8 @@ extension X509Helper {
         var buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: 256)
         var len_ptr = UnsafeMutablePointer<UInt32>.allocate(capacity: 1)
         defer {
-            buffer.deinitialize()
-            buffer.deallocate(capacity: 256)
-
-            len_ptr.deinitialize()
-            len_ptr.deallocate(capacity: 1)
+            buffer.deallocate()
+            len_ptr.deallocate()
         }
         if X509_pubkey_digest(cert, method, buffer, len_ptr) > 0 {
             let p = UnsafePointer<UInt8>(buffer)
@@ -306,9 +301,9 @@ extension String {
 
     func x509Entries() -> [(String, AnyObject)] {
         var array: [(String, AnyObject)] = []
-        let componments = self.characters.split(separator: "/").map(String.init)
+        let componments = self.split(separator: "/").map(String.init)
         for componment in componments {
-            let tuples = componment.characters.split(separator: "=").map(String.init)
+            let tuples = componment.split(separator: "=").map(String.init)
             if tuples.count == 2 {
                 let rawKey = tuples[0]
                 if let entry = String.x509EntryMapper[rawKey] {
@@ -327,7 +322,7 @@ extension String {
     func fingerprintRepresentation() -> String {
         var array: [String] = []
         var hex = ""
-        for (index, char) in self.characters.enumerated() {
+        for (index, char) in self.enumerated() {
             hex.append(char)
             if (index + 1) % 2 == 0 {
                 array.append(hex)

@@ -1,5 +1,9 @@
 disabled_rules:
   - line_length
+  - file_length
+  - type_body_length
+  - identifier_name
+  - cyclomatic_complexity
 
 excluded:
   - Carthage
