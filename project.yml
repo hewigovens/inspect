@@ -1,0 +1,70 @@
+name: Inspect
+
+options:
+  bundleIdPrefix: in.fourplex
+  createIntermediateGroups: true
+  deploymentTarget:
+    iOS: "18.0"
+
+settings:
+  base:
+    CURRENT_PROJECT_VERSION: 70
+    DEVELOPMENT_TEAM: V28VJH6B6S
+    MARKETING_VERSION: 2.1
+    SWIFT_VERSION: 6.0
+    TARGETED_DEVICE_FAMILY: "1,2"
+
+packages:
+  InspectCore:
+    path: Packages/InspectCore
+
+targets:
+  InspectActionExtension:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: Extension/Sources
+      - path: Extension/Resources
+        buildPhase: resources
+        excludes:
+          - Info.plist
+    info:
+      path: Extension/Resources/Info.plist
+    settings:
+      base:
+        ASSETCATALOG_COMPILER_APPICON_NAME: ExtensionIcon
+        PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect.ActionExtension
+        GENERATE_INFOPLIST_FILE: NO
+        SKIP_INSTALL: YES
+    dependencies:
+      - package: InspectCore
+        product: InspectFeature
+
+  Inspect:
+    type: application
+    platform: iOS
+    sources:
+      - path: App/Sources
+      - path: App/Resources
+        buildPhase: resources
+        excludes:
+          - Info.plist
+    info:
+      path: App/Resources/Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: NO
+    dependencies:
+      - package: InspectCore
+        product: InspectFeature
+      - target: InspectActionExtension
+        embed: true
+
+schemes:
+  Inspect:
+    build:
+      targets:
+        Inspect: all
+        InspectActionExtension: all
