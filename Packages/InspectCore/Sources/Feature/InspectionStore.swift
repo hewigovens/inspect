@@ -52,6 +52,11 @@ public final class InspectionStore {
         await inspect(recentInput)
     }
 
+    public func clearRecents() {
+        RecentInputStore.clear()
+        recentInputs = []
+    }
+
     private func inspect(_ candidate: String) async {
         isLoading = true
         errorMessage = nil
@@ -91,5 +96,9 @@ private enum RecentInputStore {
         var values = load().filter { $0.caseInsensitiveCompare(trimmed) != .orderedSame }
         values.insert(trimmed, at: 0)
         UserDefaults.standard.set(Array(values.prefix(limit)), forKey: key)
+    }
+
+    static func clear() {
+        UserDefaults.standard.removeObject(forKey: key)
     }
 }

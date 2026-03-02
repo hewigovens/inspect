@@ -86,6 +86,9 @@ public struct InspectionRootView: View {
                         onInspectRecent: { recentInput in
                             await store.inspectRecent(recentInput)
                         },
+                        onClearRecents: {
+                            store.clearRecents()
+                        },
                         isInputFocused: $isInputFocused
                     )
 

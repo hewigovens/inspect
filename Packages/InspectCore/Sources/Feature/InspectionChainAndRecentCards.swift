@@ -35,13 +35,24 @@ struct InspectionRecentCard: View {
     let items: [RecentLookupItem]
     let currentReportURL: URL?
     let onInspectRecent: (String) async -> Void
+    let onClearRecents: () -> Void
     let isInputFocused: FocusState<Bool>.Binding
 
     var body: some View {
         InspectCard {
             VStack(alignment: .leading, spacing: 14) {
-                Text("Recents")
-                    .font(.inspectRootHeadline)
+                HStack(alignment: .firstTextBaseline) {
+                    Text("Recents")
+                        .font(.inspectRootHeadline)
+
+                    Spacer()
+
+                    Button("Clear", action: onClearRecents)
+                        .font(.inspectRootCaptionSemibold)
+                        .foregroundStyle(.secondary)
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("action.clear-recents")
+                }
 
                 ForEach(Array(items.enumerated()), id: \.element.id) { index, recent in
                     let isCurrent = recent.normalizedURL == currentReportURL

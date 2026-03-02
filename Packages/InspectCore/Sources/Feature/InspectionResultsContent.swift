@@ -8,6 +8,7 @@ struct InspectionResultsContent: View {
     let recentItems: [RecentLookupItem]
     let currentReportURL: URL?
     let onInspectRecent: (String) async -> Void
+    let onClearRecents: () -> Void
     let isInputFocused: FocusState<Bool>.Binding
 
     var body: some View {
@@ -40,6 +41,7 @@ struct InspectionResultsContent: View {
                     items: recentItems,
                     currentReportURL: currentReportURL,
                     onInspectRecent: onInspectRecent,
+                    onClearRecents: onClearRecents,
                     isInputFocused: isInputFocused
                 )
                 .id("recents")
