@@ -50,6 +50,7 @@
 		896956DE6C4F80A54C33ED40 /* InspectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectApp.swift; sourceTree = "<group>"; };
 		AAA869A7EAED3AE014E0B640 /* Inspect.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Inspect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1ED535C6A89AD00E21D35D3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D2434831C88335BE156868E9 /* Project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +73,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0F03ED4FFED1AEC76F8925E9 /* Configs */ = {
+			isa = PBXGroup;
+			children = (
+				D2434831C88335BE156868E9 /* Project.xcconfig */,
+			);
+			path = Configs;
+			sourceTree = "<group>";
+		};
 		22F658AED4E3311FF1E98B52 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -103,6 +112,7 @@
 			isa = PBXGroup;
 			children = (
 				B85F193AFF6D0911033D5CA2 /* App */,
+				0F03ED4FFED1AEC76F8925E9 /* Configs */,
 				42286EE0AC03CBF306EDA3CF /* Extension */,
 				A3E935615329DAA2F15B01DE /* Packages */,
 				22F658AED4E3311FF1E98B52 /* Products */,
@@ -203,14 +213,6 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
-				TargetAttributes = {
-					A395A8FB651D2C69F586341C = {
-						DevelopmentTeam = V28VJH6B6S;
-					};
-					B9ECCC243C5A1194AAC607AF = {
-						DevelopmentTeam = V28VJH6B6S;
-					};
-				};
 			};
 			buildConfigurationList = C4569896782F64ABE15ECFA8 /* Build configuration list for PBXProject "Inspect" */;
 			compatibilityVersion = "Xcode 14.0";
@@ -285,6 +287,7 @@
 /* Begin XCBuildConfiguration section */
 		52F1216B65214D84237A311F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D2434831C88335BE156868E9 /* Project.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -319,7 +322,6 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 70;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = V28VJH6B6S;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -352,6 +354,7 @@
 		};
 		61AD09A1BE7637ACAC929A34 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D2434831C88335BE156868E9 /* Project.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -386,7 +389,6 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 70;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = V28VJH6B6S;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;

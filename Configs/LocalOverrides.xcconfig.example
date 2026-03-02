@@ -1,0 +1,3 @@
+// Copy this file to LocalOverrides.xcconfig for local-only signing overrides.
+DEVELOPMENT_TEAM = V28VJH6B6S
+CODE_SIGN_STYLE = Automatic
