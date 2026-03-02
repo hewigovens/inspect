@@ -17,18 +17,29 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Inspect" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R2J-rf-R6p">
-                                <rect key="frame" x="132.66666666666669" y="407" width="127.66666666666669" height="38.333333333333314"/>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="32"/>
-                                <color key="textColor" systemColor="systemBlueColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="LwW-1u-JmV">
+                                <rect key="frame" x="110.33333333333331" y="384" width="172.33333333333337" height="70"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Inspect" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R2J-rf-R6p">
+                                        <rect key="frame" x="0.0" y="0.0" width="172.33333333333334" height="38.333333333333336"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="32"/>
+                                        <color key="textColor" systemColor="systemBlueColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Certificate Inspector" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AQd-Og-kMt">
+                                        <rect key="frame" x="0.0" y="46.333333333333336" width="172.33333333333334" height="23.666666666666664"/>
+                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="18"/>
+                                        <color key="textColor" white="0.40000000000000002" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="R2J-rf-R6p" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="7fA-lZ-fYj"/>
-                            <constraint firstItem="R2J-rf-R6p" firstAttribute="centerY" secondItem="Bcu-3y-fUS" secondAttribute="centerY" id="i7d-Qb-W6V"/>
+                            <constraint firstItem="LwW-1u-JmV" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="7fA-lZ-fYj"/>
+                            <constraint firstItem="LwW-1u-JmV" firstAttribute="centerY" secondItem="Bcu-3y-fUS" secondAttribute="centerY" id="i7d-Qb-W6V"/>
                         </constraints>
                     </view>
                 </viewController>

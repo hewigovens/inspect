@@ -1,9 +1,5 @@
 import SwiftUI
-#if canImport(UIKit)
 import UIKit
-#elseif canImport(AppKit)
-import AppKit
-#endif
 
 public extension Color {
     static var inspectAccent: Color {
@@ -84,7 +80,6 @@ public extension Color {
     }
 }
 
-#if canImport(UIKit)
 private typealias InspectPlatformColor = UIColor
 
 private func inspectDynamic(light: UIColor, dark: UIColor) -> Color {
@@ -94,18 +89,6 @@ private func inspectDynamic(light: UIColor, dark: UIColor) -> Color {
         }
     )
 }
-#elseif canImport(AppKit)
-private typealias InspectPlatformColor = NSColor
-
-private func inspectDynamic(light: NSColor, dark: NSColor) -> Color {
-    Color(
-        nsColor: NSColor(name: nil) { appearance in
-            let best = appearance.bestMatch(from: [.darkAqua, .aqua])
-            return best == .darkAqua ? dark : light
-        }
-    )
-}
-#endif
 
 private func inspectColor(red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) -> InspectPlatformColor {
     InspectPlatformColor(red: red, green: green, blue: blue, alpha: alpha)
@@ -120,25 +103,13 @@ private func inspectBlack(_ alpha: CGFloat) -> InspectPlatformColor {
 }
 
 private var inspectCardFillDark: InspectPlatformColor {
-    #if canImport(UIKit)
     UIColor.secondarySystemGroupedBackground.withAlphaComponent(0.92)
-    #else
-    inspectColor(red: 0.13, green: 0.14, blue: 0.18, alpha: 0.92)
-    #endif
 }
 
 private var inspectChromeFillDark: InspectPlatformColor {
-    #if canImport(UIKit)
     UIColor.tertiarySystemGroupedBackground.withAlphaComponent(0.98)
-    #else
-    inspectColor(red: 0.16, green: 0.18, blue: 0.22, alpha: 0.98)
-    #endif
 }
 
 private var inspectChromeMutedFillDark: InspectPlatformColor {
-    #if canImport(UIKit)
     UIColor.secondarySystemGroupedBackground.withAlphaComponent(0.98)
-    #else
-    inspectColor(red: 0.13, green: 0.14, blue: 0.18, alpha: 0.98)
-    #endif
 }

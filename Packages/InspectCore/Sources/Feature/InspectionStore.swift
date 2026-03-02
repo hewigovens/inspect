@@ -44,28 +44,12 @@ public final class InspectionStore {
     }
 
     public func inspectRecent(_ recentInput: String) async {
-        guard isCurrentTarget(recentInput) == false else {
+        guard normalizedURL(from: recentInput) != report?.requestedURL else {
             return
         }
 
         input = recentInput
         await inspect(recentInput)
-    }
-
-    public func isCurrentTarget(_ candidate: String) -> Bool {
-        guard let normalizedCandidate = normalizedURL(from: candidate) else {
-            return false
-        }
-
-        if let report {
-            return report.requestedURL == normalizedCandidate
-        }
-
-        guard let normalizedInput = normalizedURL(from: input) else {
-            return false
-        }
-
-        return normalizedInput == normalizedCandidate
     }
 
     private func inspect(_ candidate: String) async {
