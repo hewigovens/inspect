@@ -1,1 +1,0 @@
-Inspect - view and export certificate just works
