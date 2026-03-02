@@ -49,6 +49,8 @@ Generate the Xcode project:
 xcodegen generate
 ```
 
+`Inspect.xcodeproj` is generated from `project.yml` and is not intended to be committed.
+
 Open the project:
 
 ```bash
@@ -69,6 +71,44 @@ Build the app from the command line:
 ```bash
 xcodebuild -scheme Inspect -project Inspect.xcodeproj -destination 'generic/platform=iOS Simulator' build
 ```
+
+## TestFlight Uploads
+
+This repo includes a `just testflight` flow that archives the app, exports an IPA, and uploads it with [`asc`](https://github.com/rudrankriyam/App-Store-Connect-CLI).
+
+One-time setup:
+
+```bash
+cp Configs/LocalOverrides.xcconfig.example Configs/LocalOverrides.xcconfig
+cp .env.example .env
+asc auth login \
+  --name "Inspect" \
+  --key-id "ABC123XYZ" \
+  --issuer-id "00000000-0000-0000-0000-000000000000" \
+  --private-key /path/to/AuthKey_ABC123XYZ.p8
+```
+
+Then update `.env`. `ASC_APP_ID`, `APP_STORE_CONNECT_KEY_ID`, `APP_STORE_CONNECT_ISSUER_ID`, and `APP_STORE_CONNECT_KEY_PATH` are required. If you also set `TESTFLIGHT_GROUP`, the command will distribute the processed build to that group after upload.
+
+Run the full flow:
+
+```bash
+just testflight
+```
+
+Useful variants:
+
+```bash
+just testflight-build
+just testflight-dry-run
+```
+
+Notes:
+
+- `just testflight` regenerates `Inspect.xcodeproj` with XcodeGen before archiving.
+- The archive/export flow uses automatic signing and `-allowProvisioningUpdates` by default. Set `TESTFLIGHT_ALLOW_PROVISIONING_UPDATES=false` in `.env` if you do not want that behavior.
+- Set `TESTFLIGHT_BUILD_NUMBER` in `.env` when you need to override `CURRENT_PROJECT_VERSION` for an upload.
+- `just testflight-build` stops after producing an IPA in `build/testflight/export/`.
 
 ## Status
 
