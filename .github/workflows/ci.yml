@@ -28,11 +28,8 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
 
-      - name: Verify generated project is up to date
-        run: git diff --exit-code -- Inspect.xcodeproj
-
       - name: Build InspectCore package for iOS Simulator
-        run: xcodebuild -scheme InspectCore -project Inspect.xcodeproj -destination 'generic/platform=iOS Simulator' build -quiet
+        run: set -o pipefail && xcodebuild -scheme InspectCore -project Inspect.xcodeproj -destination 'generic/platform=iOS Simulator' build | xcbeautify
 
       - name: Build iOS app for Simulator
-        run: xcodebuild -scheme Inspect -project Inspect.xcodeproj -destination 'generic/platform=iOS Simulator' build -quiet
+        run: set -o pipefail && xcodebuild -scheme Inspect -project Inspect.xcodeproj -destination 'generic/platform=iOS Simulator' build | xcbeautify

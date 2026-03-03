@@ -6,9 +6,11 @@ struct InspectionPageHeader: View {
     var body: some View {
         VStack(spacing: 6) {
             ZStack {
-                Text("Inspect")
-                    .font(.inspectRootTitle)
-                    .frame(maxWidth: .infinity)
+                if !ProcessInfo.processInfo.isiOSAppOnMac {
+                    Text("Inspect")
+                        .font(.inspectRootTitle)
+                        .frame(maxWidth: .infinity)
+                }
 
                 if let closeAction {
                     HStack {

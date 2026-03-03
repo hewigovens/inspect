@@ -1,5 +1,6 @@
 # Xcode
 .DS_Store
+Inspect.xcodeproj/
 build/
 .build/
 Packages/*/.build/
@@ -21,6 +22,7 @@ DerivedData
 Carthage/
 *~
 *swp
+.env
 xcuserdata/
 *.xcuserdatad/
 output/
@@ -29,3 +31,4 @@ Pods/
 fastlane/README.md
 fastlane/report.xml
 Configs/LocalOverrides.xcconfig
+.asc/

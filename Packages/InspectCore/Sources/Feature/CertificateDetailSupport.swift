@@ -60,6 +60,7 @@ enum CertificateExportWriter {
 }
 
 enum InspectClipboard {
+    @MainActor
     static func copy(_ value: String) {
         UIPasteboard.general.string = value
         UINotificationFeedbackGenerator().notificationOccurred(.success)

@@ -40,6 +40,7 @@ This repository reflects a full rewrite around current Apple platform APIs and m
 - Xcode 16 or newer
 - iOS 18 SDK
 - XcodeGen
+- xcbeautify
 
 ## Getting Started
 
@@ -48,6 +49,8 @@ Generate the Xcode project:
 ```bash
 xcodegen generate
 ```
+
+`Inspect.xcodeproj` is generated from `project.yml` and is not intended to be committed.
 
 Open the project:
 
@@ -68,6 +71,71 @@ Build the app from the command line:
 
 ```bash
 xcodebuild -scheme Inspect -project Inspect.xcodeproj -destination 'generic/platform=iOS Simulator' build
+```
+
+For readable `xcodebuild` output in this repo, prefer piping through `xcbeautify`.
+
+## TestFlight Uploads
+
+This repo includes a `just testflight` flow that archives the app, exports an IPA, and uploads it with [`asc`](https://github.com/rudrankriyam/App-Store-Connect-CLI).
+
+One-time setup:
+
+```bash
+cp Configs/LocalOverrides.xcconfig.example Configs/LocalOverrides.xcconfig
+cp .env.example .env
+asc auth login \
+  --name "Inspect" \
+  --key-id "ABC123XYZ" \
+  --issuer-id "00000000-0000-0000-0000-000000000000" \
+  --private-key /path/to/AuthKey_ABC123XYZ.p8
+```
+
+Then update `.env`. `ASC_APP_ID`, `APP_STORE_CONNECT_KEY_ID`, `APP_STORE_CONNECT_ISSUER_ID`, and `APP_STORE_CONNECT_KEY_PATH` are required. If you also set `TESTFLIGHT_GROUP`, the command will distribute the processed build to that group after upload.
+
+Run the full flow:
+
+```bash
+just testflight
+```
+
+Useful variants:
+
+```bash
+just testflight-build
+just testflight-dry-run
+just app-store-screenshots
+```
+
+Notes:
+
+- `just testflight` regenerates `Inspect.xcodeproj` with XcodeGen before archiving.
+- The archive/export flow uses automatic signing and `-allowProvisioningUpdates` by default. Set `TESTFLIGHT_ALLOW_PROVISIONING_UPDATES=false` in `.env` if you do not want that behavior.
+- Set `TESTFLIGHT_BUILD_NUMBER` in `.env` when you need to override `CURRENT_PROJECT_VERSION` for an upload.
+- `just testflight-build` stops after producing an IPA in `build/testflight/export/`.
+
+## App Store Screenshots
+
+This repo includes [`scripts/app_store_screenshots.sh`](/Users/hewig/workspace/h/Inspect/scripts/app_store_screenshots.sh) to capture current App Store screenshots from Simulator using a launch-only screenshot mode built into the app.
+
+Capture fresh screenshots locally:
+
+```bash
+just app-store-screenshots
+```
+
+That writes iPhone and iPad assets under `build/app-store-screenshots/output/`.
+
+To upload them to an App Store version localization:
+
+```bash
+./scripts/app_store_screenshots.sh upload <VERSION_LOCALIZATION_ID>
+```
+
+Or capture and upload in one pass:
+
+```bash
+./scripts/app_store_screenshots.sh capture-upload <VERSION_LOCALIZATION_ID>
 ```
 
 ## Status

@@ -5,7 +5,7 @@ import SwiftUI
 struct InspectApp: App {
     var body: some Scene {
         WindowGroup {
-            InspectionRootView()
+            InspectionRootView(screenshotScenario: .current)
                 .tint(.inspectAccent)
         }
     }
