@@ -40,6 +40,7 @@ This repository reflects a full rewrite around current Apple platform APIs and m
 - Xcode 16 or newer
 - iOS 18 SDK
 - XcodeGen
+- xcbeautify
 
 ## Getting Started
 
@@ -71,6 +72,8 @@ Build the app from the command line:
 ```bash
 xcodebuild -scheme Inspect -project Inspect.xcodeproj -destination 'generic/platform=iOS Simulator' build
 ```
+
+For readable `xcodebuild` output in this repo, prefer piping through `xcbeautify`.
 
 ## TestFlight Uploads
 

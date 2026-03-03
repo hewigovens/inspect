@@ -41,6 +41,17 @@ require_command() {
   fi
 }
 
+run_xcodebuild() {
+  local status
+
+  set +e
+  xcodebuild "$@" 2>&1 | xcbeautify
+  status=${PIPESTATUS[0]}
+  set -e
+
+  return "$status"
+}
+
 require_value() {
   local variable_name="$1"
 
@@ -128,6 +139,7 @@ run_asc() {
 }
 
 configure() {
+  require_command xcbeautify
   app_id="${ASC_APP_ID:-}"
   group="${TESTFLIGHT_GROUP:-}"
 
@@ -160,7 +172,6 @@ archive_build() {
   rm -rf "$archive_path" "$export_path"
 
   archive_command=(
-    xcodebuild
     -scheme "${TESTFLIGHT_SCHEME:-Inspect}"
     -project "$project_path"
     -configuration "${TESTFLIGHT_CONFIGURATION:-$configuration}"
@@ -187,10 +198,9 @@ archive_build() {
   archive_command+=(archive)
 
   log "Archiving Inspect"
-  "${archive_command[@]}"
+  run_xcodebuild "${archive_command[@]}"
 
   export_command=(
-    xcodebuild
     -exportArchive
     -archivePath "$archive_path"
     -exportPath "$export_path"
@@ -206,7 +216,7 @@ archive_build() {
   fi
 
   log "Exporting IPA"
-  "${export_command[@]}"
+  run_xcodebuild "${export_command[@]}"
 
   exported_ipa_path="$(find "$export_path" -maxdepth 1 -type f -name '*.ipa' -print -quit)"
   if [[ -z "$exported_ipa_path" ]]; then
