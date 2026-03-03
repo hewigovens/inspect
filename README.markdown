@@ -104,6 +104,7 @@ Useful variants:
 ```bash
 just testflight-build
 just testflight-dry-run
+just app-store-screenshots
 ```
 
 Notes:
@@ -112,6 +113,30 @@ Notes:
 - The archive/export flow uses automatic signing and `-allowProvisioningUpdates` by default. Set `TESTFLIGHT_ALLOW_PROVISIONING_UPDATES=false` in `.env` if you do not want that behavior.
 - Set `TESTFLIGHT_BUILD_NUMBER` in `.env` when you need to override `CURRENT_PROJECT_VERSION` for an upload.
 - `just testflight-build` stops after producing an IPA in `build/testflight/export/`.
+
+## App Store Screenshots
+
+This repo includes [`scripts/app_store_screenshots.sh`](/Users/hewig/workspace/h/Inspect/scripts/app_store_screenshots.sh) to capture current App Store screenshots from Simulator using a launch-only screenshot mode built into the app.
+
+Capture fresh screenshots locally:
+
+```bash
+just app-store-screenshots
+```
+
+That writes iPhone and iPad assets under `build/app-store-screenshots/output/`.
+
+To upload them to an App Store version localization:
+
+```bash
+./scripts/app_store_screenshots.sh upload <VERSION_LOCALIZATION_ID>
+```
+
+Or capture and upload in one pass:
+
+```bash
+./scripts/app_store_screenshots.sh capture-upload <VERSION_LOCALIZATION_ID>
+```
 
 ## Status
 

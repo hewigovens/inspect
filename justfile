@@ -14,3 +14,6 @@ testflight-build:
 
 testflight-dry-run:
     ./scripts/testflight.sh dry-run
+
+app-store-screenshots:
+    ./scripts/app_store_screenshots.sh capture

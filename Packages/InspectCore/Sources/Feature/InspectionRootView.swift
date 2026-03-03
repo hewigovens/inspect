@@ -9,15 +9,18 @@ public struct InspectionRootView: View {
     private let initialURL: URL?
     private let closeAction: (() -> Void)?
     private let presentation: InspectionPresentation
+    private let screenshotScenario: InspectionScreenshotScenario?
 
     public init(
         initialURL: URL? = nil,
         closeAction: (() -> Void)? = nil,
-        presentation: InspectionPresentation = .app
+        presentation: InspectionPresentation = .app,
+        screenshotScenario: InspectionScreenshotScenario? = nil
     ) {
         self.initialURL = initialURL
         self.closeAction = closeAction
         self.presentation = presentation
+        self.screenshotScenario = screenshotScenario
     }
 
     public var body: some View {
@@ -25,14 +28,17 @@ public struct InspectionRootView: View {
             content
         }
         .tint(.inspectAccent)
-        .task(id: initialURL?.absoluteString) {
-            store.bootstrap(initialURL: initialURL)
+        .task(id: bootstrapURL?.absoluteString) {
+            store.bootstrap(initialURL: bootstrapURL)
         }
     }
 
     @ViewBuilder
     private var content: some View {
-        if presentation == .actionExtension, let report = store.report {
+        if presentation == .app, screenshotScenario?.showsCertificateDetail == true, let report = store.report {
+            CertificateDetailView(report: report, initialSelectionIndex: 0)
+                .ensureNavigationBarVisible()
+        } else if presentation == .actionExtension, let report = store.report {
             CertificateDetailView(report: report, initialSelectionIndex: 0)
                 .toolbar {
                     if let closeAction {
@@ -56,7 +62,9 @@ public struct InspectionRootView: View {
 
     private var rootContent: some View {
         let report = store.report
-        let recentItems = store.recentInputs.map(RecentLookupItem.init)
+        let recentItems = screenshotScenario?.showsRecents == false
+            ? []
+            : store.recentInputs.map(RecentLookupItem.init)
 
         return ZStack {
             Color.clear
@@ -92,8 +100,10 @@ public struct InspectionRootView: View {
                         isInputFocused: $isInputFocused
                     )
 
-                    InspectionAppLinksCard(appVersionText: InspectionAppMetadata.versionText)
-                        .id("about")
+                    if screenshotScenario?.showsAboutCard != false {
+                        InspectionAppLinksCard(appVersionText: InspectionAppMetadata.versionText)
+                            .id("about")
+                    }
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, presentation.topPadding)
@@ -107,6 +117,13 @@ public struct InspectionRootView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .onAppear {
             isInputFocused = false
+            if let screenshotScenario {
+                dismissDemoTarget = screenshotScenario.showsDemoTargets == false
+            }
         }
+    }
+
+    private var bootstrapURL: URL? {
+        screenshotScenario?.initialURL ?? initialURL
     }
 }
