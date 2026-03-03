@@ -126,7 +126,7 @@ capture_device_set() {
   local udid="$1"
   local output_path="$2"
 
-  capture_scenario "$udid" home "$output_path/01-home.png" 2
+  capture_scenario "$udid" home "$output_path/01-home.png" "${APP_STORE_SCREENSHOT_HOME_WAIT_SECONDS:-12}"
   capture_scenario "$udid" summary "$output_path/02-summary.png" "${APP_STORE_SCREENSHOT_REPORT_WAIT_SECONDS:-8}"
   capture_scenario "$udid" detail "$output_path/03-detail.png" "${APP_STORE_SCREENSHOT_REPORT_WAIT_SECONDS:-8}"
 }
