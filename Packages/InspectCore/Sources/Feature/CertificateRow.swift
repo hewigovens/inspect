@@ -33,16 +33,8 @@ struct CertificateRow: View {
                 .foregroundStyle(.secondary)
                 .padding(.top, 4)
         }
-        .padding(14)
+        .padding(.vertical, 8)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Color.inspectChromeMutedFill)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(Color.inspectCardStroke, lineWidth: 1)
-        )
         .contentShape(Rectangle())
     }
 
