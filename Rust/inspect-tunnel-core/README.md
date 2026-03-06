@@ -1,64 +1,76 @@
 # inspect-tunnel-core
 
-Rust tunnel-core scaffold for Inspect.
+Rust packet-tunnel core for Inspect.
 
-Current status:
+## Current architecture
 
-- exports a stable C ABI for the packet-tunnel extension
-- exposes a reusable Rust core API for host-side replay tools
-- persists logs to the App Group log file
-- stores tunnel fd + config
-- can start a live background worker against the real tunnel fd
-- infers packet direction from the configured tunnel addresses
-- exposes packet-analysis replay output for macOS automation
-- includes a first outbound TCP connector abstraction with host-side tests
+The working path is now:
 
-Not implemented yet:
+1. `NEPacketTunnelProvider` in Swift configures the iOS tunnel.
+2. Swift discovers the real `utun` file descriptor.
+3. Swift starts this Rust core through the C ABI bridge.
+4. Rust runs the forwarding plane on top of `tun2proxy`.
+5. Passive TLS observations are drained back into the app and normalized as `TLSFlowObservation` / `TLSInspectionReport`.
+6. Logs are written into the shared App Group container for the in-app Diagnostics view.
 
-- fake DNS pool
-- full TCP packet forwarding / response injection
-- UDP outbound handling
-- Swift callback bridge for outbound connect/data-plane ownership
-- passive TLS observations flowing back into the app UI from Rust
+## What is working
 
-Target architecture:
+- stable C ABI for the packet-tunnel extension
+- shared Rust API for host-side replay and harness testing
+- shared tunnel log output
+- real iOS live worker against the packet-tunnel `utun` fd
+- `tun2proxy`-backed forwarding engine
+- direct upstream DNS on iOS (`1.1.1.1`, `8.8.8.8` configured by Swift)
+- passive TLS ClientHello SNI extraction
+- passive TLS certificate-chain extraction
+- observation drain back into the Swift monitor pipeline
+- host-side replay fixtures for:
+  - synthetic ClientHello
+  - fragmented ClientHello
+  - synthetic certificate records from DER files
+  - fragmented certificate records
+  - raw packet hex files
+  - classic pcap slices
+- host-side `tun2proxy` harness tests for real forwarded TCP sessions
 
-1. `NEPacketTunnelProvider` discovers the real `utun` fd.
-2. Swift bridge passes fd + config JSON into this Rust core.
-3. Rust core owns:
-   - fake DNS and fake-IP mapping
-   - TCP/UDP forwarding
-   - passive TLS observation
-   - stats and structured events
-4. Swift UI reads logs/events through the shared App Group.
+## What is not finished
 
-Local development:
+- UDP/QUIC observation and forwarding strategy beyond whatever `tun2proxy` already provides internally
+- richer per-flow metadata and error reporting back to Swift
+- a Swift-friendly generated bridge such as UniFFI
+- macOS product integration that reuses the same Rust core directly
+
+## Local development
 
 ```bash
 cargo test --manifest-path Rust/inspect-tunnel-core/Cargo.toml
 cargo build --manifest-path Rust/inspect-tunnel-core/Cargo.toml
 cargo run --manifest-path Rust/inspect-tunnel-core/Cargo.toml --bin inspect-tunnel-replay -- fixtures/replay/sample_sni.json --pretty
 cargo run --manifest-path Rust/inspect-tunnel-core/Cargo.toml --bin inspect-tunnel-replay -- fixtures/replay/sample_fragmented_handshake.json --pretty
+cargo run --manifest-path Rust/inspect-tunnel-core/Cargo.toml --bin inspect-tunnel-replay -- fixtures/replay/sample_cert_chain.json --pretty
 ```
 
-Replay harness:
+## Replay fixtures
 
-- scenario fixtures live in `fixtures/replay/`
-- `tlsClientHello` packets are synthesized into IPv4/TCP/TLS packets on the host
-- `tlsClientHelloFragments` split one ClientHello across multiple TCP packets
-- `tlsServerCertificate` packets are synthesized into inbound TLS certificate records from DER files
-- `tlsServerCertificateFragments` split one certificate handshake across multiple TCP packets
-- `rawFile` packets let you replay captured hex slices from disk
-- `pcapFile` imports classic pcap slices (`DLT_RAW`, `DLT_EN10MB`, `DLT_NULL/LOOP`)
-- output is JSON with packet observations, captured certificate chains, and aggregate stats
+Scenario fixtures live in `fixtures/replay/`.
 
-Live worker coverage:
+Supported packet kinds:
 
-- `cargo test` now exercises a real background reader loop using a host pipe as the fake tunnel fd
-- outbound TCP connect requests are emitted once per observed TCP flow
-- the current host implementation uses a plain `TcpStream` connector; iOS still uses a no-op connector until the Swift bridge owns outbound connections
+- `tlsClientHello`
+- `tlsClientHelloFragments`
+- `tlsServerCertificate`
+- `tlsServerCertificateFragments`
+- `rawFile`
+- `pcapFile`
 
-Example:
+Replay output includes:
+
+- packet observations
+- extracted SNI
+- extracted certificate chains
+- aggregate traffic stats
+
+## Example fixture
 
 ```json
 {
@@ -66,8 +78,8 @@ Example:
   "config": {
     "ipv4Address": "198.18.0.1",
     "ipv6Address": "fd00::1",
-    "dnsAddress": "198.18.0.2",
-    "fakeIpRange": "198.18.0.0/16",
+    "dnsAddress": "1.1.1.1",
+    "fakeIpRange": "198.19.0.0/16",
     "mtu": 1500,
     "monitorEnabled": true
   },

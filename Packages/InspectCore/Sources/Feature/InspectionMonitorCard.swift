@@ -61,63 +61,83 @@ struct InspectionMonitorCard: View {
 
     @ViewBuilder
     private var enabledContent: some View {
-        if let refreshAction {
-            Button {
-                refreshAction()
+        HStack(spacing: 12) {
+            if let refreshAction {
+                Button {
+                    refreshAction()
+                } label: {
+                    HStack(spacing: 8) {
+                        if isRefreshing {
+                            ProgressView()
+                                .controlSize(.small)
+                        } else {
+                            Image(systemName: "arrow.clockwise")
+                        }
+                        Text("Refresh")
+                    }
+                    .font(.inspectRootCaptionSemibold)
+                }
+                .buttonStyle(.bordered)
+                .disabled(isRefreshing)
+                .accessibilityIdentifier("monitor.refresh")
+            }
+
+            Spacer()
+
+            NavigationLink {
+                InspectionDiagnosticsView()
             } label: {
                 HStack(spacing: 8) {
-                    if isRefreshing {
-                        ProgressView()
-                            .controlSize(.small)
-                    } else {
-                        Image(systemName: "arrow.clockwise")
-                    }
-                    Text("Refresh")
+                    Image(systemName: "stethoscope")
+                    Text("Diagnostics")
                 }
                 .font(.inspectRootCaptionSemibold)
             }
-            .buttonStyle(.bordered)
-            .disabled(isRefreshing)
-            .accessibilityIdentifier("monitor.refresh")
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("monitor.diagnostics")
         }
 
-        NavigationLink {
-            InspectionMonitorHostsView(store: store)
-        } label: {
-            HStack(spacing: 10) {
-                Text("\(store.monitoredHosts.count) host\(store.monitoredHosts.count == 1 ? "" : "s") found")
-                    .font(.inspectRootSubheadlineSemibold)
-                    .foregroundStyle(.primary)
+        HStack(spacing: 12) {
+            monitorMetric(
+                title: "Hosts",
+                value: "\(store.hostCount)"
+            )
 
-                Spacer()
+            Divider()
+                .frame(height: 34)
 
-                Image(systemName: "chevron.right")
-                    .font(.inspectRootCaptionBold)
-                    .foregroundStyle(.secondary)
-            }
-            .padding(.vertical, 4)
+            monitorMetric(
+                title: "Last Activity",
+                value: store.lastActivityTitle
+            )
         }
-        .buttonStyle(.plain)
-        .accessibilityIdentifier("monitor.hosts-link")
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(Color.inspectChromeFill)
+        )
 
-        if store.entries.isEmpty {
-            Text("No monitor events yet. Browse websites to populate the feed.")
+        if store.hostCount == 0 {
+            Text("Browse websites with Live Monitor enabled to populate the host list below.")
                 .font(.inspectRootCaption)
                 .foregroundStyle(.secondary)
         } else {
-            VStack(alignment: .leading, spacing: 12) {
-                ForEach(store.entries.prefix(6)) { entry in
-                    MonitorEntryRow(entry: entry)
-                }
-
-                Button("Clear Monitor History") {
-                    store.clear()
-                }
-                .font(.inspectRootCaptionSemibold)
-                .buttonStyle(.plain)
+            Text("Tap a host below to open its detail view and inspect the latest captured certificate chain.")
+                .font(.inspectRootCaption)
                 .foregroundStyle(.secondary)
-                .accessibilityIdentifier("monitor.clear")
-            }
+        }
+    }
+
+    private func monitorMetric(title: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title.uppercased())
+                .font(.inspectRootCaptionBold)
+                .foregroundStyle(.secondary)
+
+            Text(value)
+                .font(.inspectRootSubheadlineSemibold)
+                .foregroundStyle(.primary)
         }
     }
 }

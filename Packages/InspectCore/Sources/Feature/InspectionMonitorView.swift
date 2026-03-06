@@ -45,6 +45,9 @@ public struct InspectionMonitorView: View {
                         refreshAction: cardRefreshAction
                     )
                         .id("monitor")
+
+                    InspectionMonitorHostListCard(store: monitorStore)
+                        .id("monitor.hosts")
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 20)

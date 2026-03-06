@@ -17,6 +17,7 @@ struct InspectionMonitoredHost: Identifiable, Equatable {
     let host: String
     let lastEvent: TLSProbeEvent
     let supportsActiveProbe: Bool
+    let latestReport: TLSInspectionReport?
 
     var id: String { host }
 

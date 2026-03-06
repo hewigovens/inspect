@@ -22,8 +22,6 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>InspectAppGroupIdentifier</key>
 	<string>$(INSPECT_APP_GROUP_IDENTIFIER)</string>
-	<key>InspectTunnelForwardingEngine</key>
-	<string>rust</string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionPointIdentifier</key>

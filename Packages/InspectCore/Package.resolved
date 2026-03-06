@@ -1,5 +1,5 @@
 {
-  "originHash" : "221658d7c93b349c30c2014281cf8c926ed726e5715697780a025b0ff5f13dea",
+  "originHash" : "8fb6cc0ae7bb464200bfcde7df51294162157cee29a7cf1862c9094889fde3b8",
   "pins" : [
     {
       "identity" : "swift-asn1",
@@ -26,14 +26,6 @@
       "state" : {
         "revision" : "6f70fa9eab24c1fd982af18c281c4525d05e3095",
         "version" : "4.2.0"
-      }
-    },
-    {
-      "identity" : "tun2sockskit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/EbrahimTahernejad/Tun2SocksKit.git",
-      "state" : {
-        "revision" : "e521c1d4507a077d770c7244b0b0fb97146bb794"
       }
     }
   ],

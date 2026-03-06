@@ -119,9 +119,36 @@ final class InspectionMonitorStore {
         lastLeafFingerprintByHost = [:]
     }
 
+    var hostCount: Int {
+        monitoredHosts.count
+    }
+
+    var lastActivityAt: Date? {
+        entries.first?.event.occurredAt
+    }
+
+    var lastActivityTitle: String {
+        guard let lastActivityAt else {
+            return "Idle"
+        }
+
+        return lastActivityAt.formatted(date: .omitted, time: .shortened)
+    }
+
     var monitoredHosts: [InspectionMonitoredHost] {
         var visitedHosts = Set<String>()
         var hosts: [InspectionMonitoredHost] = []
+        var latestCapturedReportByHost: [String: TLSInspectionReport] = [:]
+
+        for entry in entries {
+            guard case let .captured(report) = entry.event.result,
+                  let normalizedHost = MonitorHostClassifier.normalizedDisplayHost(report.host)?.lowercased(),
+                  latestCapturedReportByHost[normalizedHost] == nil else {
+                continue
+            }
+
+            latestCapturedReportByHost[normalizedHost] = report
+        }
 
         for entry in entries {
             guard let host = host(for: entry.event)?.lowercased(),
@@ -132,11 +159,34 @@ final class InspectionMonitorStore {
             hosts.append(InspectionMonitoredHost(
                 host: host,
                 lastEvent: entry.event,
-                supportsActiveProbe: MonitorHostClassifier.isIPAddressLiteral(host) == false
+                supportsActiveProbe: MonitorHostClassifier.isIPAddressLiteral(host) == false,
+                latestReport: latestCapturedReportByHost[host]
             ))
         }
 
         return hosts
+    }
+
+    func latestCapturedReport(forHost hostName: String) -> TLSInspectionReport? {
+        let normalizedHost = hostName.lowercased()
+
+        for entry in entries {
+            guard case let .captured(report) = entry.event.result,
+                  report.host.lowercased() == normalizedHost else {
+                continue
+            }
+
+            return report
+        }
+
+        return nil
+    }
+
+    func entries(forHost hostName: String) -> [InspectionMonitorEntry] {
+        let normalizedHost = hostName.lowercased()
+        return entries.filter { entry in
+            host(for: entry.event)?.lowercased() == normalizedHost
+        }
     }
 
     func probeHost(_ host: String) async {

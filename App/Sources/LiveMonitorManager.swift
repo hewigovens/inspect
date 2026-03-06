@@ -4,7 +4,7 @@ import Foundation
 import Observation
 import OSLog
 
-enum AppProxyManagerError: LocalizedError {
+enum LiveMonitorManagerError: LocalizedError {
     case capabilityMissing
     case configurationUnavailable
 
@@ -20,7 +20,7 @@ enum AppProxyManagerError: LocalizedError {
 
 @MainActor
 @Observable
-final class AppProxyManager {
+final class LiveMonitorManager {
     static let providerBundleIdentifier = "in.fourplex.Inspect.AppProxyExtension"
     static let localizedDescription = "Inspect Live Monitor"
     private static let liveMonitorEnabledKey = "inspect.monitor.enabled.v1"
@@ -34,7 +34,7 @@ final class AppProxyManager {
     private var configurationObserver: NSObjectProtocol?
     private var desiredLiveMonitorEnabled: Bool?
     private var isReconcilingDesiredState = false
-    private let logger = Logger(subsystem: "in.fourplex.Inspect", category: "AppProxyManager")
+    private let logger = Logger(subsystem: "in.fourplex.Inspect", category: "LiveMonitorManager")
 
     func refresh() async {
         log("Refreshing tunnel manager state")
@@ -44,7 +44,7 @@ final class AppProxyManager {
             configureObservers(for: manager)
             updateState(from: manager)
             if desiredLiveMonitorEnabled == nil {
-                desiredLiveMonitorEnabled = Self.isLiveMonitorActive(for: manager.connection.status)
+                desiredLiveMonitorEnabled = LiveMonitorTunnelState.isActive(for: manager.connection.status)
             }
             self.lastErrorMessage = nil
             log("Refresh complete. status=\(statusDescription(manager.connection.status)) configured=\(manager.isEnabled)")
@@ -177,7 +177,7 @@ final class AppProxyManager {
         status = currentStatus
         isConfigured = manager.isEnabled && manager.protocolConfiguration != nil
         UserDefaults.standard.set(
-            Self.isLiveMonitorActive(for: currentStatus),
+            LiveMonitorTunnelState.isActive(for: currentStatus),
             forKey: Self.liveMonitorEnabledKey
         )
         log("Updated state. status=\(statusDescription(currentStatus)) configured=\(isConfigured)")
@@ -192,46 +192,25 @@ final class AppProxyManager {
         }
 
         let currentStatus = manager.connection.status
-
-        if desiredLiveMonitorEnabled {
-            switch currentStatus {
-            case .connected, .connecting, .reasserting:
+        switch LiveMonitorTunnelState.action(for: currentStatus, desiredEnabled: desiredLiveMonitorEnabled) {
+        case .none:
+            if desiredLiveMonitorEnabled {
                 log("VPN tunnel already active with status=\(statusDescription(currentStatus))")
-            case .disconnecting:
-                log("VPN tunnel is disconnecting; waiting to restart after disconnect completes")
-            case .disconnected, .invalid:
-                isReconcilingDesiredState = true
-                defer { isReconcilingDesiredState = false }
-                log("Starting VPN tunnel")
-                try manager.connection.startVPNTunnel()
-            @unknown default:
-                break
-            }
-        } else {
-            switch currentStatus {
-            case .connected, .connecting, .reasserting:
-                isReconcilingDesiredState = true
-                defer { isReconcilingDesiredState = false }
-                log("Stopping VPN tunnel")
-                manager.connection.stopVPNTunnel()
-            case .disconnecting:
-                log("VPN tunnel is already disconnecting")
-            case .disconnected, .invalid:
+            } else {
                 log("VPN tunnel already inactive with status=\(statusDescription(currentStatus))")
-            @unknown default:
-                break
             }
-        }
-    }
-
-    private static func isLiveMonitorActive(for status: NEVPNStatus) -> Bool {
-        switch status {
-        case .connected, .connecting, .reasserting:
-            return true
-        case .invalid, .disconnected, .disconnecting:
-            return false
-        @unknown default:
-            return false
+        case .waitForDisconnect:
+            log("VPN tunnel is disconnecting; waiting for the next stable state")
+        case .start:
+            isReconcilingDesiredState = true
+            defer { isReconcilingDesiredState = false }
+            log("Starting VPN tunnel")
+            try manager.connection.startVPNTunnel()
+        case .stop:
+            isReconcilingDesiredState = true
+            defer { isReconcilingDesiredState = false }
+            log("Stopping VPN tunnel")
+            manager.connection.stopVPNTunnel()
         }
     }
 
@@ -258,13 +237,13 @@ final class AppProxyManager {
         let message = error.localizedDescription.lowercased()
 
         if message.contains("not entitled") || message.contains("permission denied") {
-            return AppProxyManagerError.capabilityMissing
+            return LiveMonitorManagerError.capabilityMissing
         }
 
         if message.contains("failed to load preferences")
             || message.contains("unable to load")
             || message.contains("unable to save") {
-            return AppProxyManagerError.configurationUnavailable
+            return LiveMonitorManagerError.configurationUnavailable
         }
 
         return error

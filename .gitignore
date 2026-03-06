@@ -34,3 +34,4 @@ Configs/LocalOverrides.xcconfig
 .asc/
 Rust/**/target/
 .codex/
+Inspect.xcodeproj/

@@ -4,7 +4,6 @@ import OSLog
 
 final class RustTunnelForwardingEngine: InspectTunnelForwardingEngine, @unchecked Sendable {
     let displayName = "RustCore"
-    let requiresLocalSocksRelay = false
 
     private let logger: Logger
     private let stateQueue = DispatchQueue(label: "in.fourplex.Inspect.PacketTunnel.RustCore")

@@ -1,61 +1,133 @@
+import InspectFeature
 import NetworkExtension
 import Observation
 import SwiftUI
 
 struct InspectSettingsView: View {
-    @Bindable var manager: AppProxyManager
+    @Bindable var manager: LiveMonitorManager
+    @Environment(\.openURL) private var openURL
 
     var body: some View {
         NavigationStack {
-            List {
-                Section("Live Monitor Tunnel") {
-                    settingsValueRow(
-                        icon: "dot.radiowaves.left.and.right",
-                        title: "Connection",
-                        value: statusTitle(manager.status)
-                    )
-                    settingsValueRow(
-                        icon: "checkmark.shield",
-                        title: "Configured",
-                        value: manager.isConfigured ? "Yes" : "No"
-                    )
-
-                    if manager.status == .invalid {
-                        Label("Use the Live Monitor switch in the Monitor tab to install and control the profile.", systemImage: "info.circle")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
-
-                    if let lastErrorMessage = manager.lastErrorMessage {
-                        Label(lastErrorMessage, systemImage: "exclamationmark.triangle.fill")
-                            .font(.footnote)
-                            .foregroundStyle(.red)
-                    }
-                }
-
-                Section("About") {
-                    settingsValueRow(
-                        icon: "number.circle",
-                        title: "Version",
-                        value: appVersionText
-                    )
-
-                    settingsLinkRow(
-                        icon: "info.circle",
-                        title: "About Inspect",
-                        destination: aboutURL
-                    )
-
-                    settingsLinkRow(
-                        icon: "star.circle",
-                        title: "Rate on App Store",
-                        destination: appStoreURL
-                    )
-                }
+            Form {
+                tunnelSection
+                diagnosticsSection
+                aboutSection
             }
-            .listStyle(.insetGrouped)
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+
+    private var tunnelSection: some View {
+        Section("Live Monitor Tunnel") {
+            LabeledContent {
+                Text(statusTitle(manager.status))
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.primary)
+                    .monospacedDigit()
+            } label: {
+                InspectSettingsRowLabel(
+                    title: "Connection",
+                    systemImage: "dot.radiowaves.left.and.right",
+                    tint: Color.inspectAccent
+                )
+            }
+
+            LabeledContent {
+                Text(manager.isConfigured ? "Yes" : "No")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.primary)
+                    .monospacedDigit()
+            } label: {
+                InspectSettingsRowLabel(
+                    title: "Configured",
+                    systemImage: "checkmark.shield",
+                    tint: .green
+                )
+            }
+
+            if manager.status == .invalid {
+                Label("Use the Live Monitor switch in the Monitor tab to install and control the profile.", systemImage: "info.circle")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+
+            if let lastErrorMessage = manager.lastErrorMessage {
+                Label(lastErrorMessage, systemImage: "exclamationmark.triangle.fill")
+                    .font(.footnote)
+                    .foregroundStyle(.red)
+            }
+        }
+    }
+
+    private var diagnosticsSection: some View {
+        Section {
+            NavigationLink {
+                InspectionDiagnosticsView()
+            } label: {
+                InspectSettingsRowLabel(
+                    title: "Events & Tunnel Log",
+                    systemImage: "stethoscope",
+                    tint: .orange
+                )
+            }
+        } header: {
+            Text("Diagnostics")
+        } footer: {
+            Text("Use Diagnostics for raw monitor events, log export, and tunnel troubleshooting.")
+        }
+    }
+
+    private var aboutSection: some View {
+        Section("About") {
+            LabeledContent {
+                Text(appVersionText)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.primary)
+            } label: {
+                InspectSettingsRowLabel(
+                    title: "Version",
+                    systemImage: "app.badge",
+                    tint: .blue
+                )
+            }
+
+            Button {
+                openURL(aboutURL)
+            } label: {
+                HStack {
+                    InspectSettingsRowLabel(
+                        title: "About Inspect",
+                        systemImage: "info.circle",
+                        tint: .indigo
+                    )
+
+                    Spacer()
+
+                    Text("->")
+                        .font(.callout.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            Button {
+                openURL(appStoreURL)
+            } label: {
+                HStack {
+                    InspectSettingsRowLabel(
+                        title: "Rate on App Store",
+                        systemImage: "star.circle",
+                        tint: .yellow
+                    )
+
+                    Spacer()
+
+                    Text("->")
+                        .font(.callout.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+            }
         }
     }
 
@@ -91,41 +163,27 @@ struct InspectSettingsView: View {
             return "Unknown"
         }
     }
+}
 
-    @ViewBuilder
-    private func settingsValueRow(icon: String, title: String, value: String) -> some View {
-        settingsRow(icon: icon, title: title) {
-            Text(value)
-                .foregroundStyle(.secondary)
-                .monospacedDigit()
-        }
-    }
+private struct InspectSettingsRowLabel: View {
+    let title: String
+    let systemImage: String
+    let tint: Color
 
-    @ViewBuilder
-    private func settingsLinkRow(icon: String, title: String, destination: URL) -> some View {
-        Link(destination: destination) {
-            settingsRow(icon: icon, title: title) {
-                Text("->")
-                    .font(.callout.weight(.semibold))
-                    .foregroundStyle(.secondary)
+    var body: some View {
+        HStack(alignment: .center, spacing: 12) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                    .fill(tint.opacity(0.14))
+
+                Image(systemName: systemImage)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(tint)
+                    .frame(width: 16, height: 16, alignment: .center)
             }
-        }
-    }
-
-    @ViewBuilder
-    private func settingsRow<Trailing: View>(icon: String, title: String, @ViewBuilder trailing: () -> Trailing) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(Color.inspectAccent)
-                .frame(width: 20, height: 20)
+            .frame(width: 28, height: 28)
 
             Text(title)
-                .foregroundStyle(.primary)
-
-            Spacer()
-
-            trailing()
         }
     }
 }

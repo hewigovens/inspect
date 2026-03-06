@@ -4,67 +4,32 @@ import NetworkExtension
 import OSLog
 
 public final class InspectPacketTunnelRuntime: @unchecked Sendable {
-    public typealias OutboundConnectionFactory = (
-        _ host: String,
-        _ port: UInt16,
-        _ stateHandler: @escaping @Sendable (ConnectProxyOutboundConnection.State, Error?) -> Void
-    ) -> ConnectProxyOutboundConnection?
-
     private let provider: NEPacketTunnelProvider
     private let observationFeed: TLSFlowObservationFeed
     private let logger: Logger
-    private let proxyListenPort: UInt16
-    private let makeOutboundConnection: OutboundConnectionFactory
-    private let makeForwardingEngine: (_ logger: Logger, _ localSocksPort: UInt16) -> any InspectTunnelForwardingEngine
+    private let makeForwardingEngine: (_ logger: Logger) -> any InspectTunnelForwardingEngine
     private let stateQueue = DispatchQueue(label: "in.fourplex.Inspect.PacketTunnel.state")
-    private let tunnelIPv4Address = "198.18.0.1"
-    private let tunnelIPv6Address = "fd00::1"
-    private let tunnelDNSServers = ["1.1.1.1", "8.8.8.8"]
-    private let fakeIPAddressRange = "198.19.0.0/16"
-    private let tunnelMTU = 1500
+    private let tunnelConfiguration = InspectPacketTunnelConfiguration.liveMonitor
 
     private var isRunning = false
     private var lastObservationAtByKey: [String: Date] = [:]
     private let flowObservationThrottleInterval: TimeInterval = 12
     private let certificateObservationThrottleInterval: TimeInterval = 45
-    private var localSocksServer: LocalSocks5Server?
     private var diagnosticTimer: DispatchSourceTimer?
     private var observationDrainTimer: DispatchSourceTimer?
     private var loggedObservationCount = 0
-    private lazy var forwardingEngine = makeForwardingEngine(logger, proxyListenPort)
+    private lazy var forwardingEngine = makeForwardingEngine(logger)
 
     public init(
         provider: NEPacketTunnelProvider,
         observationFeed: TLSFlowObservationFeed = TLSFlowObservationFeed(),
         loggerSubsystem: String = "in.fourplex.Inspect",
         loggerCategory: String = "PacketTunnelProvider",
-        proxyListenPort: UInt16 = 9090,
-        makeOutboundConnection: @escaping OutboundConnectionFactory
+        makeForwardingEngine: @escaping (_ logger: Logger) -> any InspectTunnelForwardingEngine
     ) {
         self.provider = provider
         self.observationFeed = observationFeed
         self.logger = Logger(subsystem: loggerSubsystem, category: loggerCategory)
-        self.proxyListenPort = proxyListenPort
-        self.makeOutboundConnection = makeOutboundConnection
-        self.makeForwardingEngine = { logger, localSocksPort in
-            Tun2SocksForwardingEngine(localSocksPort: localSocksPort, logger: logger)
-        }
-    }
-
-    public init(
-        provider: NEPacketTunnelProvider,
-        observationFeed: TLSFlowObservationFeed = TLSFlowObservationFeed(),
-        loggerSubsystem: String = "in.fourplex.Inspect",
-        loggerCategory: String = "PacketTunnelProvider",
-        proxyListenPort: UInt16 = 9090,
-        makeOutboundConnection: @escaping OutboundConnectionFactory,
-        makeForwardingEngine: @escaping (_ logger: Logger, _ localSocksPort: UInt16) -> any InspectTunnelForwardingEngine
-    ) {
-        self.provider = provider
-        self.observationFeed = observationFeed
-        self.logger = Logger(subsystem: loggerSubsystem, category: loggerCategory)
-        self.proxyListenPort = proxyListenPort
-        self.makeOutboundConnection = makeOutboundConnection
         self.makeForwardingEngine = makeForwardingEngine
     }
 
@@ -72,28 +37,14 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
         options: [String: NSObject]?,
         completionHandler: @escaping (Error?) -> Void
     ) {
+        _ = options
         InspectSharedLog.reset()
         logger.info("Starting packet tunnel provider")
-        log("startTunnel called. appGroup=\(InspectSharedContainer.appGroupIdentifier) proxyPort=\(proxyListenPort)")
+        log("startTunnel called. appGroup=\(InspectSharedContainer.appGroupIdentifier)")
         let startCompletion = StartCompletionHandler(callback: completionHandler)
 
-        let settings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: tunnelIPv4Address)
-        settings.mtu = NSNumber(value: tunnelMTU)
-
-        let ipv4Settings = NEIPv4Settings(addresses: [tunnelIPv4Address], subnetMasks: ["255.255.255.0"])
-        ipv4Settings.includedRoutes = [NEIPv4Route.default()]
-        settings.ipv4Settings = ipv4Settings
-
-        let ipv6Settings = NEIPv6Settings(addresses: [tunnelIPv6Address], networkPrefixLengths: [64])
-        ipv6Settings.includedRoutes = [NEIPv6Route.default()]
-        settings.ipv6Settings = ipv6Settings
-        let dnsSettings = NEDNSSettings(servers: tunnelDNSServers)
-        dnsSettings.matchDomains = [""]
-        settings.dnsSettings = dnsSettings
-        let dnsServersDescription = tunnelDNSServers.joined(separator: ",")
-        log(
-            "Applying tunnel settings: mtu=\(tunnelMTU) ipv4=\(ipv4Settings.addresses.joined(separator: ",")) ipv6=\(ipv6Settings.addresses.joined(separator: ",")) dns=\(dnsServersDescription) engine=\(forwardingEngine.displayName)"
-        )
+        let settings = tunnelConfiguration.makeNetworkSettings()
+        log(tunnelConfiguration.logDescription(engineName: forwardingEngine.displayName))
 
         provider.setTunnelNetworkSettings(settings) { [weak self] error in
             guard let self else {
@@ -114,6 +65,7 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
                 self.lastObservationAtByKey.removeAll()
                 self.loggedObservationCount = 0
             }
+
             guard let tunnelFileDescriptor = self.tunnelFileDescriptor else {
                 let error = InspectPacketTunnelRuntimeError.missingTunnelFileDescriptor
                 self.log("forwarding pipeline startup failed: \(error.localizedDescription)")
@@ -122,20 +74,12 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
             }
             self.log("Detected utun file descriptor \(tunnelFileDescriptor)")
 
-            let configuration = InspectTunnelForwardingConfiguration(
+            let configuration = self.tunnelConfiguration.makeForwardingConfiguration(
                 tunFileDescriptor: tunnelFileDescriptor,
-                ipv4Address: self.tunnelIPv4Address,
-                ipv6Address: self.tunnelIPv6Address,
-                dnsAddress: self.tunnelDNSServers[0],
-                fakeIPAddressRange: self.fakeIPAddressRange,
-                mtu: self.tunnelMTU,
                 monitorEnabled: true
             )
 
             do {
-                if self.forwardingEngine.requiresLocalSocksRelay {
-                    try self.startLocalSocksServer()
-                }
                 try self.startForwardingEngine(configuration: configuration)
                 self.startObservationDrain()
                 self.startDiagnosticLogging()
@@ -160,13 +104,10 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
             lastObservationAtByKey.removeAll()
             loggedObservationCount = 0
         }
+
         stopObservationDrain()
         stopDiagnosticLogging()
         stopForwardingEngine()
-        if forwardingEngine.requiresLocalSocksRelay {
-            stopLocalSocksServer()
-        }
-
         completionHandler()
     }
 
@@ -215,28 +156,6 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
         Task {
             await observationFeed.append(observation)
         }
-    }
-
-    private func startLocalSocksServer() throws {
-        stopLocalSocksServer()
-
-        let logger = logger
-        let server = try LocalSocks5Server(
-            listenPort: proxyListenPort,
-            logger: logger,
-            makeOutboundConnection: makeOutboundConnection
-        ) { [weak self] observation in
-            self?.recordObservation(observation)
-        }
-        try server.start()
-        localSocksServer = server
-        log("Local SOCKS5 relay started")
-    }
-
-    private func stopLocalSocksServer() {
-        log("Stopping local SOCKS5 relay")
-        localSocksServer?.stop()
-        localSocksServer = nil
     }
 
     private func startDiagnosticLogging() {
@@ -306,7 +225,6 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
             }
 
             let shouldCancelTunnel = self.stateQueue.sync { self.isRunning }
-
             self.log("Forwarding engine \(self.forwardingEngine.displayName) exited with code \(code)")
 
             if shouldCancelTunnel {

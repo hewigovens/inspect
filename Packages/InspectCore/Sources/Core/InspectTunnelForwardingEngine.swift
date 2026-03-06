@@ -44,7 +44,6 @@ public struct InspectTunnelForwardingConfiguration: Sendable, Equatable {
 
 public protocol InspectTunnelForwardingEngine: AnyObject, Sendable {
     var displayName: String { get }
-    var requiresLocalSocksRelay: Bool { get }
 
     func start(
         configuration: InspectTunnelForwardingConfiguration,

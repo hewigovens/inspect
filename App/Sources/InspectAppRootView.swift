@@ -4,14 +4,13 @@ import SwiftUI
 private enum InspectTab: Hashable {
     case inspect
     case monitor
-    case logs
     case settings
 }
 
 struct InspectAppRootView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var selectedTab: InspectTab = .inspect
-    @State private var appProxyManager = AppProxyManager()
+    @State private var liveMonitorManager = LiveMonitorManager()
 
     var body: some View {
         if InspectionScreenshotScenario.current != nil {
@@ -30,7 +29,7 @@ struct InspectAppRootView: View {
                     .accessibilityIdentifier("tab.inspect")
 
                 InspectionMonitorView {
-                    await appProxyManager.refresh()
+                    await liveMonitorManager.refresh()
                 }
                     .tabItem {
                         Label("Monitor", systemImage: "wave.3.right.circle")
@@ -38,14 +37,7 @@ struct InspectAppRootView: View {
                     .tag(InspectTab.monitor)
                     .accessibilityIdentifier("tab.monitor")
 
-                InspectLogsView()
-                    .tabItem {
-                        Label("Logs", systemImage: "doc.text.magnifyingglass")
-                    }
-                    .tag(InspectTab.logs)
-                    .accessibilityIdentifier("tab.logs")
-
-                InspectSettingsView(manager: appProxyManager)
+                InspectSettingsView(manager: liveMonitorManager)
                     .tabItem {
                         Label("Settings", systemImage: "gearshape")
                     }
@@ -54,7 +46,7 @@ struct InspectAppRootView: View {
             }
             .tint(.inspectAccent)
             .task {
-                let manager = appProxyManager
+                let manager = liveMonitorManager
                 InspectionLiveMonitorCoordinator.configure { isEnabled in
                     try await manager.setLiveMonitorEnabled(isEnabled)
                 }
@@ -66,7 +58,7 @@ struct InspectAppRootView: View {
                 }
 
                 Task {
-                    await appProxyManager.refresh()
+                    await liveMonitorManager.refresh()
                 }
             }
             .onDisappear {
