@@ -16,12 +16,44 @@ settings:
     MARKETING_VERSION: 2.2
     SWIFT_VERSION: 6.0
     TARGETED_DEVICE_FAMILY: "1,2"
+    INSPECT_APP_GROUP_IDENTIFIER: group.in.fourplex.inspect.monitor
 
 packages:
   InspectCore:
     path: Packages/InspectCore
 
 targets:
+  InspectAppProxyExtension:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: AppProxyExtension/Sources
+      - path: AppProxyExtension/Resources
+        buildPhase: resources
+        excludes:
+          - Info.plist
+          - InspectAppProxyExtension.entitlements
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect.AppProxyExtension
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: AppProxyExtension/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: AppProxyExtension/Resources/InspectAppProxyExtension.entitlements
+        SWIFT_OBJC_BRIDGING_HEADER: AppProxyExtension/Sources/InspectAppProxyExtension-Bridging-Header.h
+        HEADER_SEARCH_PATHS: $(inherited) "$(PROJECT_DIR)/Rust/inspect-tunnel-core/include"
+        LIBRARY_SEARCH_PATHS: $(inherited) "$(BUILT_PRODUCTS_DIR)"
+        OTHER_LDFLAGS: $(inherited) -linspect_tunnel_core
+        SKIP_INSTALL: YES
+    preBuildScripts:
+      - name: Build Rust Tunnel Core
+        script: ./scripts/build_rust_ios_lib.sh
+        basedOnDependencyAnalysis: false
+        outputFiles:
+          - $(BUILT_PRODUCTS_DIR)/libinspect_tunnel_core.a
+    dependencies:
+      - package: InspectCore
+        product: InspectCore
+
   InspectActionExtension:
     type: app-extension
     platform: iOS
@@ -51,15 +83,19 @@ targets:
         buildPhase: resources
         excludes:
           - Info.plist
+          - Inspect.entitlements
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: App/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: App/Resources/Inspect.entitlements
     dependencies:
       - package: InspectCore
         product: InspectFeature
+      - target: InspectAppProxyExtension
+        embed: true
       - target: InspectActionExtension
         embed: true
 
@@ -68,4 +104,5 @@ schemes:
     build:
       targets:
         Inspect: all
+        InspectAppProxyExtension: all
         InspectActionExtension: all

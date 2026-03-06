@@ -14,14 +14,19 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-certificates.git", from: "1.18.0"),
         .package(url: "https://github.com/apple/swift-asn1.git", from: "1.5.1"),
-        .package(url: "https://github.com/apple/swift-crypto.git", from: "4.2.0")
+        .package(url: "https://github.com/apple/swift-crypto.git", from: "4.2.0"),
+        .package(
+            url: "https://github.com/EbrahimTahernejad/Tun2SocksKit.git",
+            revision: "e521c1d4507a077d770c7244b0b0fb97146bb794"
+        )
     ],
     targets: [
         .target(
             name: "InspectCore",
             dependencies: [
                 .product(name: "SwiftASN1", package: "swift-asn1"),
-                .product(name: "X509", package: "swift-certificates")
+                .product(name: "X509", package: "swift-certificates"),
+                .product(name: "Tun2SocksKit", package: "Tun2SocksKit")
             ],
             path: "Sources/Core"
         ),

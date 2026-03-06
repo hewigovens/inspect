@@ -1,26 +1,44 @@
 import Observation
 import SwiftUI
 
+@MainActor
 public struct InspectionRootView: View {
     @AppStorage("inspect.dismiss-demo-target") private var dismissDemoTarget = false
     @FocusState private var isInputFocused: Bool
     @State private var store = InspectionStore()
+    @State private var monitorStore: InspectionMonitorStore
 
     private let initialURL: URL?
     private let closeAction: (() -> Void)?
     private let presentation: InspectionPresentation
     private let screenshotScenario: InspectionScreenshotScenario?
+    private let showsMonitorCard: Bool
+    private let showsAboutCard: Bool
 
     public init(
         initialURL: URL? = nil,
         closeAction: (() -> Void)? = nil,
         presentation: InspectionPresentation = .app,
-        screenshotScenario: InspectionScreenshotScenario? = nil
+        screenshotScenario: InspectionScreenshotScenario? = nil,
+        showsMonitorCard: Bool = true,
+        showsAboutCard: Bool = true
     ) {
         self.initialURL = initialURL
         self.closeAction = closeAction
         self.presentation = presentation
         self.screenshotScenario = screenshotScenario
+        self.showsMonitorCard = showsMonitorCard
+        self.showsAboutCard = showsAboutCard
+
+        let monitorStore: InspectionMonitorStore
+        if presentation == .app, screenshotScenario == nil {
+            monitorStore = InspectionMonitorSharedStore.shared
+        } else {
+            monitorStore = InspectionMonitorStore(
+                enableNetworkFeedPolling: presentation == .app && screenshotScenario == nil
+            )
+        }
+        _monitorStore = State(initialValue: monitorStore)
     }
 
     public var body: some View {
@@ -30,6 +48,13 @@ public struct InspectionRootView: View {
         .tint(.inspectAccent)
         .task(id: bootstrapURL?.absoluteString) {
             store.bootstrap(initialURL: bootstrapURL)
+        }
+        .onChange(of: store.report?.id) { _, _ in
+            guard screenshotScenario == nil, let report = store.report else {
+                return
+            }
+
+            monitorStore.recordInspection(report)
         }
     }
 
@@ -85,6 +110,13 @@ public struct InspectionRootView: View {
                     )
                     .id("input")
 
+                    if presentation == .app,
+                       showsMonitorCard,
+                       screenshotScenario?.showsMonitorCard != false {
+                        InspectionMonitorCard(store: monitorStore)
+                            .id("monitor")
+                    }
+
                     InspectionResultsContent(
                         isLoading: store.isLoading,
                         errorMessage: store.errorMessage,
@@ -100,7 +132,7 @@ public struct InspectionRootView: View {
                         isInputFocused: $isInputFocused
                     )
 
-                    if screenshotScenario?.showsAboutCard != false {
+                    if showsAboutCard, screenshotScenario?.showsAboutCard != false {
                         InspectionAppLinksCard(appVersionText: InspectionAppMetadata.versionText)
                             .id("about")
                     }

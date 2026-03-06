@@ -1,0 +1,35 @@
+{
+  "tunFd": 5,
+  "config": {
+    "ipv4Address": "198.18.0.1",
+    "ipv6Address": "fd00::1",
+    "dnsAddress": "198.18.0.2",
+    "fakeIpRange": "198.18.0.0/16",
+    "mtu": 1500,
+    "monitorEnabled": true
+  },
+  "packets": [
+    {
+      "kind": "tlsClientHelloFragments",
+      "direction": "outbound",
+      "serverName": "example.com",
+      "remoteHost": "93.184.216.34",
+      "remotePort": 443,
+      "sourceHost": "10.0.0.2",
+      "fragmentSizes": [20, 15],
+      "note": "Fragmented outbound ClientHello across three packets"
+    },
+    {
+      "kind": "tlsServerCertificateFragments",
+      "direction": "inbound",
+      "remoteHost": "93.184.216.34",
+      "remotePort": 443,
+      "sourceHost": "10.0.0.2",
+      "certificateFiles": [
+        "../certs/mac_dev.cer"
+      ],
+      "fragmentSizes": [40, 200],
+      "note": "Fragmented inbound TLS certificate message"
+    }
+  ]
+}
