@@ -1,133 +1,131 @@
 import Foundation
-import OSLog
-
-public enum InspectSharedContainer {
-    private static let infoDictionaryKey = "InspectAppGroupIdentifier"
-    private static let defaultAppGroupIdentifier = "group.in.fourplex.inspect.monitor"
-    private static let bootstrapLogger = Logger(
-        subsystem: "in.fourplex.Inspect",
-        category: "InspectSharedContainer"
-    )
-
-    public static let appGroupIdentifier: String = {
-        if let value = ProcessInfo.processInfo.environment["INSPECT_APP_GROUP_IDENTIFIER"]?
-            .trimmingCharacters(in: .whitespacesAndNewlines),
-           value.isEmpty == false {
-            bootstrapLogger.debug("Using app group from environment: \(value, privacy: .public)")
-            return value
-        }
-
-        if let value = Bundle.main.object(forInfoDictionaryKey: infoDictionaryKey) as? String {
-            let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-            if trimmed.isEmpty == false {
-                bootstrapLogger.debug(
-                    "Using app group from Info.plist: \(trimmed, privacy: .public) bundle=\(Bundle.main.bundleIdentifier ?? "nil", privacy: .public)"
-                )
-                return trimmed
-            }
-        }
-
-        bootstrapLogger.debug(
-            "Falling back to default app group: \(defaultAppGroupIdentifier, privacy: .public) bundle=\(Bundle.main.bundleIdentifier ?? "nil", privacy: .public)"
-        )
-        return defaultAppGroupIdentifier
-    }()
-}
 
 public actor TLSFlowObservationFeed {
-    private let defaults: UserDefaults?
+    private let storage: TLSFlowObservationFeedStorage?
     private let key: String
-    private let maximumPendingItems: Int
-    private let encoder = JSONEncoder()
-    private let decoder = JSONDecoder()
     private var appendCount = 0
     private var drainCount = 0
     private let logger = InspectRuntimeLogger(category: "TLSFlowObservationFeed", scope: "InspectFeed")
 
     public init(
-        suiteName: String = InspectSharedContainer.appGroupIdentifier,
+        appGroupIdentifier: String = InspectSharedContainer.appGroupIdentifier,
         key: String = "inspect.monitor.flow-observations.v1",
         maximumPendingItems: Int = 200
     ) {
-        self.defaults = UserDefaults(suiteName: suiteName)
         self.key = key
-        self.maximumPendingItems = maximumPendingItems
-        let defaultsState = self.defaults == nil ? "nil" : "ok"
-        logger.verbose(
-            "init suite=\(suiteName) key=\(key) defaults=\(defaultsState) bundle=\(Bundle.main.bundleIdentifier ?? "nil")"
+        let bundleIdentifier = Bundle.main.bundleIdentifier ?? "nil"
+
+        if let containerURL = InspectSharedContainer.containerURL(appGroupIdentifier: appGroupIdentifier) {
+            let fileURL = containerURL.appendingPathComponent(Self.fileName(for: key))
+            self.storage = TLSFlowObservationFeedStorage(
+                fileURL: fileURL,
+                maximumPendingItems: maximumPendingItems
+            )
+            logger.verbose(
+                "init appGroup=\(appGroupIdentifier) key=\(key) path=\(fileURL.path) bundle=\(bundleIdentifier)"
+            )
+        } else {
+            self.storage = nil
+            logger.critical(
+                "init failed appGroup=\(appGroupIdentifier) key=\(key) because shared container URL is unavailable"
+            )
+        }
+    }
+
+    init(
+        fileURL: URL,
+        key: String = "inspect.monitor.flow-observations.v1",
+        maximumPendingItems: Int = 200
+    ) {
+        self.key = key
+        let bundleIdentifier = Bundle.main.bundleIdentifier ?? "nil"
+        self.storage = TLSFlowObservationFeedStorage(
+            fileURL: fileURL,
+            maximumPendingItems: maximumPendingItems
         )
+        logger.verbose("init key=\(key) path=\(fileURL.path) bundle=\(bundleIdentifier)")
     }
 
     public func append(_ observation: TLSFlowObservation) {
-        guard let defaults,
-              let encoded = encode(observation) else {
-            logger.critical(
-                "append skipped defaults=\(defaults == nil ? "nil" : "ok") encoded=\(encode(observation) == nil ? "nil" : "ok")"
-            )
+        guard let storage else {
+            logger.critical("append skipped because shared observation storage is unavailable")
             return
         }
 
-        var payloads = defaults.stringArray(forKey: key) ?? []
-        payloads.append(encoded)
-
-        if payloads.count > maximumPendingItems {
-            payloads.removeFirst(payloads.count - maximumPendingItems)
-        }
-
-        defaults.set(payloads, forKey: key)
-        appendCount += 1
-        if appendCount <= 10 || appendCount.isMultiple(of: 25) {
-            logger.verbose(
-                "append count=\(appendCount) pending=\(payloads.count) host=\(observation.remoteHost ?? "nil") sni=\(observation.serverName ?? "nil") port=\(observation.remotePort.map(String.init) ?? "nil") certs=\(observation.capturedCertificateChainDER.map { String($0.count) } ?? "nil")"
-            )
+        do {
+            let pendingCount = try storage.append(observation)
+            let remoteHost = observation.remoteHost ?? "nil"
+            let serverName = observation.serverName ?? "nil"
+            let remotePort = observation.remotePort.map(String.init) ?? "nil"
+            let certificateCount = observation.capturedCertificateChainDER.map { String($0.count) } ?? "nil"
+            appendCount += 1
+            if appendCount <= 10 || appendCount.isMultiple(of: 25) {
+                logger.verbose(
+                    "append count=\(appendCount) pending=\(pendingCount) host=\(remoteHost) sni=\(serverName) port=\(remotePort) certs=\(certificateCount)"
+                )
+            }
+        } catch {
+            logger.critical("append failed key=\(key): \(error.localizedDescription)")
         }
     }
 
     public func drain(maxCount: Int = 20) -> [TLSFlowObservation] {
-        guard let defaults else {
-            logger.critical("drain skipped because defaults is nil")
+        guard let storage else {
+            logger.critical("drain skipped because shared observation storage is unavailable")
             return []
         }
 
-        var payloads = defaults.stringArray(forKey: key) ?? []
-        guard payloads.isEmpty == false else {
+        do {
+            let result = try storage.drain(maxCount: maxCount)
+            guard result.observations.isEmpty == false else {
+                return []
+            }
+
+            drainCount += 1
+            logger.verbose(
+                "drain #\(drainCount) requested=\(maxCount) consumed=\(result.observations.count) remaining=\(result.remainingCount)"
+            )
+            return result.observations
+        } catch {
+            logger.critical("drain failed key=\(key): \(error.localizedDescription)")
             return []
         }
-
-        let count = max(0, min(maxCount, payloads.count))
-        let consumed = Array(payloads.prefix(count))
-        payloads.removeFirst(count)
-        defaults.set(payloads, forKey: key)
-        drainCount += 1
-        logger.verbose(
-            "drain #\(drainCount) requested=\(maxCount) consumed=\(consumed.count) remaining=\(payloads.count)"
-        )
-
-        return consumed.compactMap(decode)
     }
 
     public func reset() {
-        defaults?.removeObject(forKey: key)
-        logger.verbose("reset key=\(key)")
+        guard let storage else {
+            logger.critical("reset skipped because shared observation storage is unavailable")
+            return
+        }
+
+        do {
+            try storage.reset()
+            logger.verbose("reset key=\(key)")
+        } catch {
+            logger.critical("reset failed key=\(key): \(error.localizedDescription)")
+        }
     }
 
     public func pendingCount() -> Int {
-        defaults?.stringArray(forKey: key)?.count ?? 0
-    }
-
-    private func encode(_ observation: TLSFlowObservation) -> String? {
-        guard let data = try? encoder.encode(observation) else {
-            return nil
+        guard let storage else {
+            return 0
         }
 
-        return data.base64EncodedString()
+        do {
+            return try storage.pendingCount()
+        } catch {
+            logger.critical("pendingCount failed key=\(key): \(error.localizedDescription)")
+            return 0
+        }
     }
 
-    private func decode(_ payload: String) -> TLSFlowObservation? {
-        guard let data = Data(base64Encoded: payload) else {
-            return nil
-        }
-
-        return try? decoder.decode(TLSFlowObservation.self, from: data)
+    private static func fileName(for key: String) -> String {
+        let allowed = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-_."))
+        let sanitized = String(
+            key.unicodeScalars.map { scalar in
+                allowed.contains(scalar) ? Character(scalar) : "_"
+            }
+        )
+        return sanitized + ".json"
     }
 }

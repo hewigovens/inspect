@@ -27,7 +27,10 @@ impl Tun2ProxySessionObserverAdapter {
     }
 
     pub fn take_observations(&self) -> Vec<PacketObservation> {
-        let mut observations = self.observations.lock().expect("observations lock poisoned");
+        let mut observations = self
+            .observations
+            .lock()
+            .expect("observations lock poisoned");
         std::mem::take(&mut *observations)
     }
 
@@ -96,8 +99,16 @@ fn parsed_packet_from_session(
     data: Vec<u8>,
 ) -> ParsedPacket {
     let (packet_direction, source, destination) = match direction {
-        ObservedDirection::ClientToServer => (PacketDirection::Outbound, session.source, session.destination),
-        ObservedDirection::ServerToClient => (PacketDirection::Inbound, session.destination, session.source),
+        ObservedDirection::ClientToServer => (
+            PacketDirection::Outbound,
+            session.source,
+            session.destination,
+        ),
+        ObservedDirection::ServerToClient => (
+            PacketDirection::Inbound,
+            session.destination,
+            session.source,
+        ),
     };
 
     ParsedPacket {
@@ -119,14 +130,17 @@ fn parsed_packet_from_session(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::packet::{build_tls_client_hello_packet, build_tls_server_certificate_packet, parse_packet};
+    use crate::packet::{
+        build_tls_client_hello_packet, build_tls_server_certificate_packet, parse_packet,
+    };
 
     #[test]
     fn extracts_sni_from_tun2proxy_client_to_server_data() {
         let adapter = Tun2ProxySessionObserverAdapter::new();
         let packet = build_tls_client_hello_packet("10.0.0.2", "93.184.216.34", 443, "example.com")
             .expect("build packet");
-        let parsed_packet = parse_packet(&packet, PacketDirection::Outbound).expect("parsed packet");
+        let parsed_packet =
+            parse_packet(&packet, PacketDirection::Outbound).expect("parsed packet");
         let payload = parsed_packet.tcp_payload.expect("tcp payload");
 
         adapter.on_event(SessionEvent::Data {

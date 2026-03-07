@@ -1,9 +1,9 @@
-use tunnel_core::core::InspectTunnelCore;
-use tunnel_core::model::ReplayScenario;
 use std::env;
 use std::fs;
 use std::path::Path;
 use std::process::ExitCode;
+use tunnel_core::core::InspectTunnelCore;
+use tunnel_core::model::ReplayScenario;
 
 fn main() -> ExitCode {
     match run() {

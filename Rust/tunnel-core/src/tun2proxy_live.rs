@@ -4,20 +4,23 @@ use crate::packet::strip_utun_header;
 use crate::tun2proxy_observer::Tun2ProxySessionObserverAdapter;
 use std::io;
 use std::os::fd::{AsRawFd, FromRawFd, OwnedFd};
-use std::pin::Pin;
 use std::path::PathBuf;
+use std::pin::Pin;
 use std::str::FromStr;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 use std::task::{Context, Poll};
 use std::thread::{self, JoinHandle};
 use tokio::io::unix::AsyncFd;
 use tokio::io::{AsyncRead, AsyncWrite, ReadBuf};
-use tun2proxy::{ArgDns, ArgProxy, ArgVerbosity, Args, CancellationToken, run, set_session_observer};
+use tun2proxy::{
+    ArgDns, ArgProxy, ArgVerbosity, Args, CancellationToken, run, set_session_observer,
+};
 
 pub struct Tun2ProxyLiveEngine {
     shutdown_token: CancellationToken,
     observer: Arc<Tun2ProxySessionObserverAdapter>,
     worker_handle: Option<JoinHandle<()>>,
+    exit_code: Arc<Mutex<Option<i32>>>,
 }
 
 impl Tun2ProxyLiveEngine {
@@ -31,6 +34,7 @@ impl Tun2ProxyLiveEngine {
 
         let shutdown_token = CancellationToken::new();
         let worker_shutdown = shutdown_token.clone();
+        let exit_code = Arc::new(Mutex::new(None));
         let args = build_args(&config)?;
         let mtu = config.mtu;
         configure_rust_logger(log_file.clone(), args.verbosity.into());
@@ -46,7 +50,9 @@ impl Tun2ProxyLiveEngine {
 
         let worker_handle = thread::Builder::new()
             .name("inspect-tun2proxy-live".to_string())
-            .spawn(move || {
+            .spawn({
+                let exit_code = Arc::clone(&exit_code);
+                move || {
                 append_verbose_log(log_file.as_deref(), "RustTun2Proxy", "worker thread entered");
                 let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
                     append_verbose_log(log_file.as_deref(), "RustTun2Proxy", "building tokio runtime");
@@ -85,19 +91,29 @@ impl Tun2ProxyLiveEngine {
                         run(device, mtu, args, worker_shutdown).await
                     });
 
-                    match result {
-                        Ok(session_count) => append_verbose_log(
-                            log_file.as_deref(),
-                            "RustTun2Proxy",
-                            &format!(
-                                "tun2proxy engine exited cleanly remaining_sessions={session_count}"
-                            ),
-                        ),
-                        Err(error) => append_critical_log(
-                            log_file.as_deref(),
-                            "RustTun2Proxy",
-                            &format!("tun2proxy engine exited with error: {error}"),
-                        ),
+                    let code = match result {
+                        Ok(session_count) => {
+                            append_verbose_log(
+                                log_file.as_deref(),
+                                "RustTun2Proxy",
+                                &format!(
+                                    "tun2proxy engine exited cleanly remaining_sessions={session_count}"
+                                ),
+                            );
+                            0
+                        }
+                        Err(error) => {
+                            append_critical_log(
+                                log_file.as_deref(),
+                                "RustTun2Proxy",
+                                &format!("tun2proxy engine exited with error: {error}"),
+                            );
+                            -1
+                        }
+                    };
+
+                    if let Ok(mut stored_exit_code) = exit_code.lock() {
+                        *stored_exit_code = Some(code);
                     }
                 }));
 
@@ -114,9 +130,13 @@ impl Tun2ProxyLiveEngine {
                         "RustTun2Proxy",
                         &format!("worker thread panicked: {message}"),
                     );
+                    if let Ok(mut stored_exit_code) = exit_code.lock() {
+                        *stored_exit_code = Some(-2);
+                    }
                 }
 
                 set_session_observer(None);
+            }
             })
             .map_err(|error| format!("failed to spawn tun2proxy worker: {error}"))?;
 
@@ -124,6 +144,7 @@ impl Tun2ProxyLiveEngine {
             shutdown_token,
             observer,
             worker_handle: Some(worker_handle),
+            exit_code,
         })
     }
 
@@ -141,6 +162,10 @@ impl Tun2ProxyLiveEngine {
 
     pub fn observations(&self) -> Vec<PacketObservation> {
         self.observer.take_observations()
+    }
+
+    pub fn take_exit_code(&self) -> Option<i32> {
+        self.exit_code.lock().ok()?.take()
     }
 }
 
@@ -194,8 +219,13 @@ impl RawUtunDevice {
             return Err(format!("failed to read fd flags: {error}"));
         }
 
-        let set_flags_result =
-            unsafe { libc::fcntl(duplicated_fd, libc::F_SETFL, current_flags | libc::O_NONBLOCK) };
+        let set_flags_result = unsafe {
+            libc::fcntl(
+                duplicated_fd,
+                libc::F_SETFL,
+                current_flags | libc::O_NONBLOCK,
+            )
+        };
         if set_flags_result < 0 {
             let error = io::Error::last_os_error();
             unsafe {
@@ -563,7 +593,10 @@ mod tests {
             }
         }
 
-        assert!(server_data_seq.is_some(), "expected tunneled server payload");
+        assert!(
+            server_data_seq.is_some(),
+            "expected tunneled server payload"
+        );
 
         let observations = wait_for_observations(&observer, 2, Duration::from_secs(2)).await;
         assert!(
@@ -617,8 +650,7 @@ mod tests {
                 let mut header_rest = [0u8; 19];
                 stream.read_exact(&mut header_rest).await?;
 
-                let total_length =
-                    u16::from_be_bytes([header_rest[1], header_rest[2]]) as usize;
+                let total_length = u16::from_be_bytes([header_rest[1], header_rest[2]]) as usize;
                 if total_length < 20 {
                     return Err(io::Error::new(
                         io::ErrorKind::InvalidData,

@@ -46,7 +46,11 @@ fn append_log(path: Option<&Path>, scope: &str, level: Level, message: &str) {
         .unwrap_or_default();
 
     if let Ok(mut file) = OpenOptions::new().create(true).append(true).open(path) {
-        let _ = writeln!(file, "[{timestamp:.3}] [{scope}] [{}] {message}", level.as_str());
+        let _ = writeln!(
+            file,
+            "[{timestamp:.3}] [{scope}] [{}] {message}",
+            level.as_str()
+        );
     }
 }
 

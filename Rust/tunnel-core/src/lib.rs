@@ -148,6 +148,26 @@ pub extern "C" fn tunnel_core_get_stats(out_stats: *mut InspectTunnelCoreStats) 
 }
 
 #[unsafe(no_mangle)]
+pub extern "C" fn tunnel_core_take_exit_code(out_code: *mut c_int) -> c_int {
+    let mut state = CORE_STATE.lock().expect("core state mutex poisoned");
+    clear_error(&mut state);
+
+    if out_code.is_null() {
+        return set_error(&mut state, "exit code output pointer must not be null");
+    }
+
+    match state.core.take_live_exit_code() {
+        Some(code) => {
+            unsafe {
+                std::ptr::write(out_code, code);
+            }
+            1
+        }
+        None => 0,
+    }
+}
+
+#[unsafe(no_mangle)]
 pub extern "C" fn tunnel_core_drain_observations_json() -> *const c_char {
     let mut state = CORE_STATE.lock().expect("core state mutex poisoned");
     clear_error(&mut state);

@@ -23,6 +23,7 @@ int32_t tunnel_core_start(const char *config_json);
 int32_t tunnel_core_start_live_loop(void);
 void tunnel_core_stop(void);
 int32_t tunnel_core_get_stats(InspectTunnelCoreStats *out_stats);
+int32_t tunnel_core_take_exit_code(int32_t *out_code);
 const char *tunnel_core_drain_observations_json(void);
 
 #ifdef __cplusplus

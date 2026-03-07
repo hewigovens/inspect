@@ -127,6 +127,12 @@ impl InspectTunnelCore {
             .unwrap_or_default()
     }
 
+    pub fn take_live_exit_code(&self) -> Option<i32> {
+        self.live_engine
+            .as_ref()
+            .and_then(Tun2ProxyLiveEngine::take_exit_code)
+    }
+
     pub fn ingest_packet(
         &mut self,
         packet: &[u8],
@@ -226,7 +232,6 @@ impl InspectTunnelCore {
     fn write_log(&self, scope: &str, message: &str) {
         append_verbose_log(self.log_file.as_deref(), scope, message);
     }
-
 }
 
 #[cfg(test)]
@@ -387,5 +392,4 @@ mod tests {
 
         bytes
     }
-
 }

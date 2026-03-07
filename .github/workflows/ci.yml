@@ -39,22 +39,10 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          LOG_FILE="$(mktemp)"
-          if ! xcodebuild -scheme InspectCore -project Inspect.xcodeproj -destination 'generic/platform=iOS Simulator' build 2>&1 | tee "$LOG_FILE" | xcbeautify; then
-            echo "::group::InspectCore raw xcodebuild log"
-            cat "$LOG_FILE"
-            echo "::endgroup::"
-            exit 1
-          fi
+          xcodebuild -scheme InspectCore -project Inspect.xcodeproj -destination 'generic/platform=iOS Simulator' build | xcbeautify
 
       - name: Build iOS app for Simulator
         shell: bash
         run: |
           set -o pipefail
-          LOG_FILE="$(mktemp)"
-          if ! xcodebuild -scheme Inspect -project Inspect.xcodeproj -destination 'generic/platform=iOS Simulator' build 2>&1 | tee "$LOG_FILE" | xcbeautify; then
-            echo "::group::Inspect raw xcodebuild log"
-            cat "$LOG_FILE"
-            echo "::endgroup::"
-            exit 1
-          fi
+          xcodebuild -scheme Inspect -project Inspect.xcodeproj -destination 'generic/platform=iOS Simulator' build | xcbeautify

@@ -8,6 +8,7 @@ final class TunnelForwardingEngine: InspectTunnelForwardingEngine, @unchecked Se
     private let core: TunnelCore
     private let stateQueue = DispatchQueue(label: "in.fourplex.Inspect.PacketTunnel.TunnelCore")
     private var isRunning = false
+    private var exitMonitor: DispatchSourceTimer?
 
     init(
         logger: InspectRuntimeLogger,
@@ -21,8 +22,6 @@ final class TunnelForwardingEngine: InspectTunnelForwardingEngine, @unchecked Se
         configuration: InspectTunnelForwardingConfiguration,
         exitHandler: @escaping @Sendable (Int32) -> Void
     ) throws {
-        _ = exitHandler
-
         let shouldStart = stateQueue.sync { () -> Bool in
             guard isRunning == false else {
                 return false
@@ -51,12 +50,14 @@ final class TunnelForwardingEngine: InspectTunnelForwardingEngine, @unchecked Se
                 )
             )
             try core.startLiveLoop()
+            startExitMonitor(exitHandler: exitHandler)
 
             logger.verbose("Started tunnel core version=\(core.version)")
         } catch {
             stateQueue.sync {
                 isRunning = false
             }
+            stopExitMonitor()
             throw error
         }
     }
@@ -75,6 +76,7 @@ final class TunnelForwardingEngine: InspectTunnelForwardingEngine, @unchecked Se
             return
         }
 
+        stopExitMonitor()
         core.stop()
         logger.verbose("Stopped tunnel core")
     }
@@ -101,6 +103,46 @@ final class TunnelForwardingEngine: InspectTunnelForwardingEngine, @unchecked Se
             logger.critical("Failed to decode tunnel core observations: \(error.localizedDescription)")
             return []
         }
+    }
+
+    private func startExitMonitor(exitHandler: @escaping @Sendable (Int32) -> Void) {
+        stopExitMonitor()
+
+        let timer = DispatchSource.makeTimerSource(queue: stateQueue)
+        timer.schedule(deadline: .now() + .seconds(1), repeating: .seconds(1))
+        timer.setEventHandler { [weak self] in
+            guard let self else {
+                return
+            }
+            guard self.isRunning else {
+                return
+            }
+
+            do {
+                guard let code = try self.core.takeExitCode() else {
+                    return
+                }
+
+                self.isRunning = false
+                self.stopExitMonitorLocked()
+                exitHandler(code)
+            } catch {
+                self.logger.critical("Failed to poll tunnel core exit code: \(error.localizedDescription)")
+            }
+        }
+        exitMonitor = timer
+        timer.resume()
+    }
+
+    private func stopExitMonitor() {
+        stateQueue.sync {
+            stopExitMonitorLocked()
+        }
+    }
+
+    private func stopExitMonitorLocked() {
+        exitMonitor?.cancel()
+        exitMonitor = nil
     }
 }
 
