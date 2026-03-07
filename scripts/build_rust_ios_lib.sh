@@ -29,6 +29,20 @@ resolve_cargo() {
   return 1
 }
 
+resolve_rustup() {
+  if command -v rustup >/dev/null 2>&1; then
+    command -v rustup
+    return
+  fi
+
+  if [[ -x "${HOME:-}/.cargo/bin/rustup" ]]; then
+    echo "${HOME}/.cargo/bin/rustup"
+    return
+  fi
+
+  return 1
+}
+
 if ! CARGO_BIN="$(resolve_cargo)"; then
   echo "cargo not found. Install Rust and ensure ~/.cargo/bin is available to Xcode build scripts." >&2
   exit 1
@@ -89,9 +103,21 @@ fi
 MANIFEST_PATH="$SRCROOT/Rust/tunnel-core/Cargo.toml"
 DEST_PATH="$BUILT_PRODUCTS_DIR/libtunnel_core.a"
 LIB_INPUTS=()
+RUSTUP_BIN="$(resolve_rustup || true)"
+
+if [[ -n "$RUSTUP_BIN" ]]; then
+  INSTALLED_RUST_TARGETS="$("$RUSTUP_BIN" target list --installed)"
+else
+  INSTALLED_RUST_TARGETS=""
+fi
 
 for rust_target in "${RUST_TARGETS[@]}"; do
   echo "Building tunnel-core for $rust_target ($PROFILE)"
+  if [[ -n "$RUSTUP_BIN" ]] && ! grep -qx "$rust_target" <<<"$INSTALLED_RUST_TARGETS"; then
+    echo "Missing Rust target: $rust_target" >&2
+    echo "Install it with: rustup target add $rust_target" >&2
+    exit 1
+  fi
   if [[ ${#CARGO_ARGS[@]} -gt 0 ]]; then
     "$CARGO_BIN" build --manifest-path "$MANIFEST_PATH" --target "$rust_target" "${CARGO_ARGS[@]}"
   else

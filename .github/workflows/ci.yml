@@ -23,6 +23,8 @@ jobs:
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios,aarch64-apple-ios-sim,x86_64-apple-ios
 
       - name: Show Xcode version
         run: xcodebuild -version
@@ -33,11 +35,26 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
 
-      - name: Fetch Rust dependencies
-        run: cargo fetch --manifest-path Rust/tunnel-core/Cargo.toml
-
       - name: Build InspectCore package for iOS Simulator
-        run: set -o pipefail && xcodebuild -scheme InspectCore -project Inspect.xcodeproj -destination 'generic/platform=iOS Simulator' build | xcbeautify
+        shell: bash
+        run: |
+          set -o pipefail
+          LOG_FILE="$(mktemp)"
+          if ! xcodebuild -scheme InspectCore -project Inspect.xcodeproj -destination 'generic/platform=iOS Simulator' build 2>&1 | tee "$LOG_FILE" | xcbeautify; then
+            echo "::group::InspectCore raw xcodebuild log"
+            cat "$LOG_FILE"
+            echo "::endgroup::"
+            exit 1
+          fi
 
       - name: Build iOS app for Simulator
-        run: set -o pipefail && xcodebuild -scheme Inspect -project Inspect.xcodeproj -destination 'generic/platform=iOS Simulator' build | xcbeautify
+        shell: bash
+        run: |
+          set -o pipefail
+          LOG_FILE="$(mktemp)"
+          if ! xcodebuild -scheme Inspect -project Inspect.xcodeproj -destination 'generic/platform=iOS Simulator' build 2>&1 | tee "$LOG_FILE" | xcbeautify; then
+            echo "::group::Inspect raw xcodebuild log"
+            cat "$LOG_FILE"
+            echo "::endgroup::"
+            exit 1
+          fi
