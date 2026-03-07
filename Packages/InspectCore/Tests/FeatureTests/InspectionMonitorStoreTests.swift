@@ -87,6 +87,49 @@ func monitorEntriesPersistAcrossStoreInstances() {
     #expect(secondStore.latestCapturedReport(forHost: "example.com")?.leafCertificate?.issuerSummary == "CA 1")
 }
 
+@MainActor
+@Test
+func monitoredHostsExposeStableActivitySummary() {
+    let defaults = makeUserDefaults(suiteName: #function)
+    let store = InspectionMonitorStore(
+        flowObservationFeed: nil,
+        enableNetworkFeedPolling: false,
+        userDefaults: defaults
+    )
+    store.setEnabled(true)
+
+    store.recordInspection(makeReport(host: "example.com", issuer: "CA 1", fingerprint: "aa"))
+    store.recordInspection(makeReport(host: "example.com", issuer: "CA 2", fingerprint: "bb"))
+
+    let host = store.monitoredHosts.first
+    #expect(host?.statusTitle == "Trusted")
+    #expect(host?.certificateAvailability == .captured)
+    #expect(host?.firstSeenAt ?? .distantFuture <= host?.lastSeenAt ?? .distantPast)
+}
+
+@MainActor
+@Test
+func monitoredHostsHideRawProbeFailureLanguage() async {
+    let defaults = makeUserDefaults(suiteName: #function)
+    let monitorEngine = TLSMonitorProbeEngine(
+        inspectionClient: FailingTLSInspectionClient()
+    )
+    let store = InspectionMonitorStore(
+        monitorEngine: monitorEngine,
+        flowObservationFeed: nil,
+        enableNetworkFeedPolling: false,
+        userDefaults: defaults
+    )
+    store.setEnabled(true)
+
+    await store.probeHost("example.com")
+
+    let host = try #require(store.monitoredHosts.first)
+    #expect(host.statusTitle == "Seen")
+    #expect(host.certificateAvailability == .pending)
+    #expect(host.subtitle.contains("Awaiting certificate capture"))
+}
+
 private func makeReport(host: String, issuer: String, fingerprint: String) -> TLSInspectionReport {
     let normalizedHost = host.lowercased()
     return TLSInspectionReport(
@@ -135,4 +178,10 @@ private func makeUserDefaults(suiteName: String) -> UserDefaults {
     let defaults = UserDefaults(suiteName: suite)!
     defaults.removePersistentDomain(forName: suite)
     return defaults
+}
+
+private struct FailingTLSInspectionClient: TLSInspectionClient {
+    func inspect(url: URL) async throws -> TLSInspectionReport {
+        throw URLError(.cannotConnectToHost)
+    }
 }

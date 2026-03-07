@@ -305,10 +305,10 @@ Validation loop after each cleanup:
 
 ## Immediate Next Step
 
-Continue with `7. Runtime/Extension Simplification`.
+Continue with `9. Validation and Safety`.
 
 Reason:
 
-1. navigation cleanup, host detail, dead runtime cleanup, and symbol rename are already in place
-2. the remaining architecture work is now about reducing configuration noise, not changing behavior
-3. target and bundle renames should still wait until after another device pass
+1. the runtime path is now explicitly one packet-tunnel runtime plus one Rust forwarding engine
+2. the main monitor UI now uses host summaries while diagnostics keeps the raw event/log detail
+3. the remaining architectural cleanup is mostly provisioning-sensitive naming and should wait for another device pass

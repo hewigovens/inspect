@@ -18,16 +18,20 @@ public struct InspectTunnelForwardingConfiguration: Sendable, Equatable {
     public let tunFileDescriptor: Int32
     public let ipv4Address: String
     public let ipv6Address: String
-    public let dnsAddress: String
+    public let dnsServers: [String]
     public let fakeIPAddressRange: String
     public let mtu: Int
     public let monitorEnabled: Bool
+
+    public var primaryDNSAddress: String {
+        dnsServers.first ?? "1.1.1.1"
+    }
 
     public init(
         tunFileDescriptor: Int32,
         ipv4Address: String,
         ipv6Address: String,
-        dnsAddress: String,
+        dnsServers: [String],
         fakeIPAddressRange: String,
         mtu: Int,
         monitorEnabled: Bool
@@ -35,7 +39,7 @@ public struct InspectTunnelForwardingConfiguration: Sendable, Equatable {
         self.tunFileDescriptor = tunFileDescriptor
         self.ipv4Address = ipv4Address
         self.ipv6Address = ipv6Address
-        self.dnsAddress = dnsAddress
+        self.dnsServers = dnsServers
         self.fakeIPAddressRange = fakeIPAddressRange
         self.mtu = mtu
         self.monitorEnabled = monitorEnabled

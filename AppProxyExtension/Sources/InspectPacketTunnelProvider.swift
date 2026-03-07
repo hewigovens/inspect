@@ -3,7 +3,7 @@ import NetworkExtension
 import OSLog
 
 final class InspectPacketTunnelProvider: NEPacketTunnelProvider, @unchecked Sendable {
-    private let logger = Logger(subsystem: "in.fourplex.Inspect", category: "PacketTunnelProviderWrapper")
+    private let logger = Logger(subsystem: "in.fourplex.Inspect", category: "PacketTunnelExtension")
     private lazy var runtime = makeRuntime()
 
     override func startTunnel(options: [String: NSObject]?, completionHandler: @escaping (Error?) -> Void) {
@@ -28,9 +28,7 @@ final class InspectPacketTunnelProvider: NEPacketTunnelProvider, @unchecked Send
         log("Selected forwarding engine: rust")
         return InspectPacketTunnelRuntime(
             provider: self,
-            makeForwardingEngine: { logger in
-                RustTunnelForwardingEngine(logger: logger)
-            }
+            forwardingEngine: RustTunnelForwardingEngine(logger: logger)
         )
     }
 }

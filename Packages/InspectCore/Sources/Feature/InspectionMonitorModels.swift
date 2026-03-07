@@ -13,45 +13,72 @@ struct InspectionMonitorEntry: Identifiable, Equatable {
     }
 }
 
+enum InspectionMonitoredHostState: Equatable {
+    case trusted
+    case needsReview
+    case awaitingCertificate
+    case hostnameUnavailable
+
+    var title: String {
+        switch self {
+        case .trusted:
+            return "Trusted"
+        case .needsReview:
+            return "Review"
+        case .awaitingCertificate:
+            return "Seen"
+        case .hostnameUnavailable:
+            return "IP Only"
+        }
+    }
+}
+
+enum InspectionMonitoredHostCertificateAvailability: Equatable {
+    case captured
+    case pending
+
+    var title: String {
+        switch self {
+        case .captured:
+            return "Captured"
+        case .pending:
+            return "Pending"
+        }
+    }
+}
+
 struct InspectionMonitoredHost: Identifiable, Equatable {
     let host: String
     let lastEvent: TLSProbeEvent
-    let supportsActiveProbe: Bool
+    let firstSeenAt: Date
+    let lastSeenAt: Date
     let latestReport: TLSInspectionReport?
+    let state: InspectionMonitoredHostState
+    let certificateAvailability: InspectionMonitoredHostCertificateAvailability
 
     var id: String { host }
 
     var statusTitle: String {
-        switch lastEvent.result {
-        case let .captured(report):
-            return report.trust.badgeText
-        case .skippedMissingHost:
-            return supportsActiveProbe ? "No Host" : "IP Only"
-        case .skippedThrottled:
-            return "Throttled"
-        case .failed:
-            return "Probe Failed"
-        }
+        state.title
     }
 
     var subtitle: String {
-        let timestamp = lastEvent.occurredAt.formatted(date: .omitted, time: .shortened)
+        let timestamp = lastSeenAt.formatted(date: .omitted, time: .shortened)
 
-        switch lastEvent.result {
-        case let .captured(report):
+        if let report = latestReport {
             if let issuer = report.leafCertificate?.issuerSummary {
                 return "\(timestamp) • \(issuer)"
             }
             return "\(timestamp) • Certificate chain captured"
-        case let .failed(reason):
-            return "\(timestamp) • \(reason)"
-        case .skippedMissingHost:
-            if supportsActiveProbe {
-                return "\(timestamp) • Flow did not include host metadata."
-            }
-            return "\(timestamp) • Endpoint observed without hostname (SNI missing)."
-        case let .skippedThrottled(until):
-            return "\(timestamp) • Next probe after \(until.formatted(date: .omitted, time: .shortened))."
+        }
+
+        switch state {
+        case .trusted, .needsReview:
+            return "\(timestamp) • Certificate chain captured"
+        case .awaitingCertificate:
+            return "\(timestamp) • Awaiting certificate capture"
+        case .hostnameUnavailable:
+            return "\(timestamp) • Hostname unavailable in observed flow"
         }
     }
 }

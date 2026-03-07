@@ -48,7 +48,9 @@ struct InspectionMonitorHostDetailView: View {
                     .font(.inspectRootHeadline)
 
                 monitorMetricRow(label: "Status", value: host.statusTitle)
-                monitorMetricRow(label: "Last Seen", value: host.lastEvent.occurredAt.formatted(date: .abbreviated, time: .shortened))
+                monitorMetricRow(label: "Certificate", value: host.certificateAvailability.title)
+                monitorMetricRow(label: "First Seen", value: host.firstSeenAt.formatted(date: .abbreviated, time: .shortened))
+                monitorMetricRow(label: "Last Seen", value: host.lastSeenAt.formatted(date: .abbreviated, time: .shortened))
 
                 if let remoteHost = host.lastEvent.observation.remoteHost {
                     monitorMetricRow(label: "Endpoint", value: remoteHost)
@@ -84,7 +86,7 @@ struct InspectionMonitorHostDetailView: View {
                         monitorMetricRow(label: "Issuer", value: leaf.issuerSummary)
                     }
 
-                    monitorMetricRow(label: "Trust", value: report.trust.badgeText)
+                    monitorMetricRow(label: "Trust", value: host.statusTitle)
 
                     Button {
                         selectedReport = report
@@ -106,7 +108,7 @@ struct InspectionMonitorHostDetailView: View {
                     }
                     .buttonStyle(.plain)
                 } else {
-                    Text("No certificate chain has been captured for this host yet.")
+                    Text("No certificate chain has been captured for this host yet. Keep Live Monitor running or inspect it manually.")
                         .font(.inspectRootCaption)
                         .foregroundStyle(.secondary)
                 }

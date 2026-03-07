@@ -21,7 +21,7 @@ enum LiveMonitorManagerError: LocalizedError {
 @MainActor
 @Observable
 final class LiveMonitorManager {
-    static let providerBundleIdentifier = "in.fourplex.Inspect.AppProxyExtension"
+    static let tunnelProviderBundleIdentifier = "in.fourplex.Inspect.AppProxyExtension"
     static let localizedDescription = "Inspect Live Monitor"
     private static let liveMonitorEnabledKey = "inspect.monitor.enabled.v1"
 
@@ -140,12 +140,12 @@ final class LiveMonitorManager {
         manager.localizedDescription = Self.localizedDescription
 
         let protocolConfiguration = NETunnelProviderProtocol()
-        protocolConfiguration.providerBundleIdentifier = Self.providerBundleIdentifier
+        protocolConfiguration.providerBundleIdentifier = Self.tunnelProviderBundleIdentifier
         protocolConfiguration.serverAddress = "Inspect Live Monitor"
 
         manager.protocolConfiguration = protocolConfiguration
         manager.isEnabled = true
-        log("Configured manager with providerBundleIdentifier=\(Self.providerBundleIdentifier)")
+        log("Configured manager with providerBundleIdentifier=\(Self.tunnelProviderBundleIdentifier)")
     }
 
     private func needsConfiguration(_ manager: NETunnelProviderManager) -> Bool {
@@ -161,7 +161,7 @@ final class LiveMonitorManager {
             return true
         }
 
-        return configuration.providerBundleIdentifier != Self.providerBundleIdentifier
+        return configuration.providerBundleIdentifier != Self.tunnelProviderBundleIdentifier
     }
 
     private func matchesProvider(_ manager: NETunnelProviderManager) -> Bool {
@@ -169,7 +169,7 @@ final class LiveMonitorManager {
             return false
         }
 
-        return configuration.providerBundleIdentifier == Self.providerBundleIdentifier
+        return configuration.providerBundleIdentifier == Self.tunnelProviderBundleIdentifier
     }
 
     private func updateState(from manager: NETunnelProviderManager) {

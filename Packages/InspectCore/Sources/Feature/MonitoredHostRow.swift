@@ -40,15 +40,15 @@ struct MonitoredHostRow: View {
     }
 
     private var statusTint: Color {
-        switch host.lastEvent.result {
-        case let .captured(report):
-            return report.trust.isTrusted ? .green : .orange
-        case .skippedMissingHost:
-            return host.supportsActiveProbe ? .secondary : .orange
-        case .skippedThrottled:
+        switch host.state {
+        case .trusted:
+            return .green
+        case .needsReview:
+            return .orange
+        case .awaitingCertificate:
             return .blue
-        case .failed:
-            return .red
+        case .hostnameUnavailable:
+            return .secondary
         }
     }
 }

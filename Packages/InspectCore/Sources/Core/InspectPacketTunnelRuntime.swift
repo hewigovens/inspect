@@ -7,7 +7,7 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
     private let provider: NEPacketTunnelProvider
     private let observationFeed: TLSFlowObservationFeed
     private let logger: Logger
-    private let makeForwardingEngine: (_ logger: Logger) -> any InspectTunnelForwardingEngine
+    private let forwardingEngine: any InspectTunnelForwardingEngine
     private let stateQueue = DispatchQueue(label: "in.fourplex.Inspect.PacketTunnel.state")
     private let tunnelConfiguration = InspectPacketTunnelConfiguration.liveMonitor
 
@@ -18,19 +18,18 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
     private var diagnosticTimer: DispatchSourceTimer?
     private var observationDrainTimer: DispatchSourceTimer?
     private var loggedObservationCount = 0
-    private lazy var forwardingEngine = makeForwardingEngine(logger)
 
     public init(
         provider: NEPacketTunnelProvider,
         observationFeed: TLSFlowObservationFeed = TLSFlowObservationFeed(),
         loggerSubsystem: String = "in.fourplex.Inspect",
         loggerCategory: String = "PacketTunnelProvider",
-        makeForwardingEngine: @escaping (_ logger: Logger) -> any InspectTunnelForwardingEngine
+        forwardingEngine: any InspectTunnelForwardingEngine
     ) {
         self.provider = provider
         self.observationFeed = observationFeed
         self.logger = Logger(subsystem: loggerSubsystem, category: loggerCategory)
-        self.makeForwardingEngine = makeForwardingEngine
+        self.forwardingEngine = forwardingEngine
     }
 
     public func startTunnel(

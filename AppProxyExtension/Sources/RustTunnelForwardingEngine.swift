@@ -50,7 +50,7 @@ final class RustTunnelForwardingEngine: InspectTunnelForwardingEngine, @unchecke
             let payload = RustTunnelCoreStartConfiguration(
                 ipv4Address: configuration.ipv4Address,
                 ipv6Address: configuration.ipv6Address,
-                dnsAddress: configuration.dnsAddress,
+                dnsAddress: configuration.primaryDNSAddress,
                 fakeIpRange: configuration.fakeIPAddressRange,
                 mtu: configuration.mtu,
                 monitorEnabled: configuration.monitorEnabled

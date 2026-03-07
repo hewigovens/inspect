@@ -143,35 +143,36 @@ final class InspectionMonitorStore {
     }
 
     var monitoredHosts: [InspectionMonitoredHost] {
+        var hostOrder: [String] = []
         var visitedHosts = Set<String>()
-        var hosts: [InspectionMonitoredHost] = []
+        var entriesByHost: [String: [InspectionMonitorEntry]] = [:]
         var latestCapturedReportByHost: [String: TLSInspectionReport] = [:]
 
         for entry in entries {
+            guard let host = host(for: entry.event)?.lowercased() else {
+                continue
+            }
+
+            entriesByHost[host, default: []].append(entry)
+            if visitedHosts.insert(host).inserted {
+                hostOrder.append(host)
+            }
+
             guard case let .captured(report) = entry.event.result,
-                  let normalizedHost = MonitorHostClassifier.normalizedDisplayHost(report.host)?.lowercased(),
-                  latestCapturedReportByHost[normalizedHost] == nil else {
+                  latestCapturedReportByHost[host] == nil else {
                 continue
             }
 
-            latestCapturedReportByHost[normalizedHost] = report
+            latestCapturedReportByHost[host] = report
         }
 
-        for entry in entries {
-            guard let host = host(for: entry.event)?.lowercased(),
-                  visitedHosts.insert(host).inserted else {
-                continue
-            }
-
-            hosts.append(InspectionMonitoredHost(
+        return hostOrder.compactMap { host in
+            makeMonitoredHost(
                 host: host,
-                lastEvent: entry.event,
-                supportsActiveProbe: MonitorHostClassifier.isIPAddressLiteral(host) == false,
+                entries: entriesByHost[host] ?? [],
                 latestReport: latestCapturedReportByHost[host]
-            ))
+            )
         }
-
-        return hosts
     }
 
     func latestCapturedReport(forHost hostName: String) -> TLSInspectionReport? {
@@ -274,6 +275,39 @@ final class InspectionMonitorStore {
             return MonitorHostClassifier.normalizedDisplayHost(event.observation.probeHost)
                 ?? MonitorHostClassifier.normalizedDisplayHost(event.observation.remoteHost)
         }
+    }
+
+    private func makeMonitoredHost(
+        host: String,
+        entries: [InspectionMonitorEntry],
+        latestReport: TLSInspectionReport?
+    ) -> InspectionMonitoredHost? {
+        guard let lastEntry = entries.first else {
+            return nil
+        }
+
+        let supportsActiveProbe = MonitorHostClassifier.isIPAddressLiteral(host) == false
+        let firstSeenAt = entries.last?.event.occurredAt ?? lastEntry.event.occurredAt
+        let state: InspectionMonitoredHostState
+        let certificateAvailability: InspectionMonitoredHostCertificateAvailability
+
+        if let latestReport {
+            certificateAvailability = .captured
+            state = latestReport.trust.isTrusted ? .trusted : .needsReview
+        } else {
+            certificateAvailability = .pending
+            state = supportsActiveProbe ? .awaitingCertificate : .hostnameUnavailable
+        }
+
+        return InspectionMonitoredHost(
+            host: host,
+            lastEvent: lastEntry.event,
+            firstSeenAt: firstSeenAt,
+            lastSeenAt: lastEntry.event.occurredAt,
+            latestReport: latestReport,
+            state: state,
+            certificateAvailability: certificateAvailability
+        )
     }
 
     private func makeNoteIfNeeded(for event: TLSProbeEvent) -> String? {

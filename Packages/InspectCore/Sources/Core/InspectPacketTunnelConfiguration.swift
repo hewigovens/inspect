@@ -20,10 +20,6 @@ struct InspectPacketTunnelConfiguration: Equatable, Sendable {
     let fakeIPAddressRange: String
     let mtu: Int
 
-    var primaryDNSAddress: String {
-        dnsServers.first ?? "1.1.1.1"
-    }
-
     func makeNetworkSettings() -> NEPacketTunnelNetworkSettings {
         let settings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: ipv4Address)
         settings.mtu = NSNumber(value: mtu)
@@ -51,7 +47,7 @@ struct InspectPacketTunnelConfiguration: Equatable, Sendable {
             tunFileDescriptor: tunFileDescriptor,
             ipv4Address: ipv4Address,
             ipv6Address: ipv6Address,
-            dnsAddress: primaryDNSAddress,
+            dnsServers: dnsServers,
             fakeIPAddressRange: fakeIPAddressRange,
             mtu: mtu,
             monitorEnabled: monitorEnabled
