@@ -70,11 +70,6 @@ struct InspectionTunnelLogCard: View {
                     }
 
                     Spacer()
-
-                    Toggle(isOn: $store.autoRefresh) {
-                        Image(systemName: "arrow.clockwise")
-                    }
-                    .toggleStyle(.button)
                 }
 
                 Text(store.text)
@@ -111,21 +106,6 @@ struct InspectionTunnelLogCard: View {
                             Label("Reset", systemImage: "trash")
                         }
                     }
-
-                HStack(spacing: 14) {
-                    Button("Copy Log") {
-                        store.copyToClipboard()
-                    }
-                    .font(.inspectRootCaptionSemibold)
-                    .buttonStyle(.plain)
-
-                    Button("Clear Log") {
-                        store.clear()
-                    }
-                    .font(.inspectRootCaptionSemibold)
-                    .buttonStyle(.plain)
-                    .foregroundStyle(.secondary)
-                }
             }
         }
         .task {

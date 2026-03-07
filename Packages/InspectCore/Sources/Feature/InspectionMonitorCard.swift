@@ -29,7 +29,7 @@ struct InspectionMonitorCard: View {
                 if store.isEnabled {
                     enabledContent
                 } else {
-                    Text("Enable Live Monitor to track observed hosts and probe their certificates.")
+                    Text("Turn on Live Monitor to populate hosts.")
                         .font(.inspectRootCaption)
                         .foregroundStyle(.secondary)
                 }
@@ -42,7 +42,7 @@ struct InspectionMonitorCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Live Monitor")
                     .font(.inspectRootHeadline)
-                Text("Track discovered hosts and certificate changes.")
+                Text("Observed hosts and latest certificates.")
                     .font(.inspectRootCaption)
                     .foregroundStyle(.secondary)
             }
@@ -119,11 +119,11 @@ struct InspectionMonitorCard: View {
         )
 
         if store.hostCount == 0 {
-            Text("Browse websites with Live Monitor enabled to populate the host list below.")
+            Text("Browse with Live Monitor on to populate hosts.")
                 .font(.inspectRootCaption)
                 .foregroundStyle(.secondary)
         } else {
-            Text("Tap a host below to open its detail view and inspect the latest captured certificate chain.")
+            Text("Tap a host for details.")
                 .font(.inspectRootCaption)
                 .foregroundStyle(.secondary)
         }

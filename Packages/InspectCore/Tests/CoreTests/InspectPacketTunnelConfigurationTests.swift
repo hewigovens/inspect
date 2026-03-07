@@ -18,7 +18,8 @@ func liveMonitorTunnelConfigurationBuildsExpectedForwardingConfig() {
     let configuration = InspectPacketTunnelConfiguration.liveMonitor
     let forwarding = configuration.makeForwardingConfiguration(
         tunFileDescriptor: 42,
-        monitorEnabled: true
+        monitorEnabled: true,
+        logVerbosity: .verbose
     )
 
     #expect(forwarding.tunFileDescriptor == 42)
@@ -29,6 +30,7 @@ func liveMonitorTunnelConfigurationBuildsExpectedForwardingConfig() {
     #expect(forwarding.fakeIPAddressRange == "198.19.0.0/16")
     #expect(forwarding.mtu == 1500)
     #expect(forwarding.monitorEnabled)
+    #expect(forwarding.logVerbosity == .verbose)
 }
 
 @Test

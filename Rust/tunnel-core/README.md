@@ -1,4 +1,4 @@
-# inspect-tunnel-core
+# tunnel-core
 
 Rust packet-tunnel core for Inspect.
 
@@ -32,6 +32,7 @@ The working path is now:
   - raw packet hex files
   - classic pcap slices
 - host-side `tun2proxy` harness tests for real forwarded TCP sessions
+- critical-only shared logging by default, with optional verbose forwarding logs
 
 ## What is not finished
 
@@ -43,11 +44,11 @@ The working path is now:
 ## Local development
 
 ```bash
-cargo test --manifest-path Rust/inspect-tunnel-core/Cargo.toml
-cargo build --manifest-path Rust/inspect-tunnel-core/Cargo.toml
-cargo run --manifest-path Rust/inspect-tunnel-core/Cargo.toml --bin inspect-tunnel-replay -- fixtures/replay/sample_sni.json --pretty
-cargo run --manifest-path Rust/inspect-tunnel-core/Cargo.toml --bin inspect-tunnel-replay -- fixtures/replay/sample_fragmented_handshake.json --pretty
-cargo run --manifest-path Rust/inspect-tunnel-core/Cargo.toml --bin inspect-tunnel-replay -- fixtures/replay/sample_cert_chain.json --pretty
+cargo test --manifest-path Rust/tunnel-core/Cargo.toml
+cargo build --manifest-path Rust/tunnel-core/Cargo.toml
+cargo run --manifest-path Rust/tunnel-core/Cargo.toml --bin tunnel-core-replay -- fixtures/replay/sample_sni.json --pretty
+cargo run --manifest-path Rust/tunnel-core/Cargo.toml --bin tunnel-core-replay -- fixtures/replay/sample_fragmented_handshake.json --pretty
+cargo run --manifest-path Rust/tunnel-core/Cargo.toml --bin tunnel-core-replay -- fixtures/replay/sample_cert_chain.json --pretty
 ```
 
 ## Replay fixtures
@@ -81,7 +82,8 @@ Replay output includes:
     "dnsAddress": "1.1.1.1",
     "fakeIpRange": "198.19.0.0/16",
     "mtu": 1500,
-    "monitorEnabled": true
+    "monitorEnabled": true,
+    "verboseLoggingEnabled": false
   },
   "packets": [
     {

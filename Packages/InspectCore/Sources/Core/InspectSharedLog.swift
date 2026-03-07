@@ -3,13 +3,17 @@ import Foundation
 public enum InspectSharedLog {
     public static let fileName = "tunnel.log"
 
-    public static func append(scope: String, message: String) {
+    public static func append(
+        scope: String,
+        severity: InspectLogSeverity = .critical,
+        message: String
+    ) {
         guard let fileURL = logFileURL() else {
             return
         }
 
         let timestamp = ISO8601DateFormatter().string(from: Date())
-        let line = "[\(timestamp)] [\(scope)] \(message)\n"
+        let line = "[\(timestamp)] [\(scope)] [\(severity.rawValue)] \(message)\n"
         guard let data = line.data(using: .utf8) else {
             return
         }

@@ -1,5 +1,5 @@
 use crate::flow::FlowTracker;
-use crate::logging::append_log;
+use crate::logging::{append_critical_log, append_verbose_log};
 use crate::model::{
     InspectTunnelCoreConfig, InspectTunnelCoreStats, PacketObservation, TransportProtocol,
 };
@@ -93,7 +93,7 @@ impl LiveEngine {
         let stats = Arc::new(LiveStats::default());
         let observations = Arc::new(Mutex::new(Vec::new()));
 
-        append_log(
+        append_verbose_log(
             log_file.as_deref(),
             "RustLive",
             &format!(
@@ -117,7 +117,7 @@ impl LiveEngine {
                     let mut requested_connects = HashSet::new();
                     let mut read_buffer = vec![0u8; usize::from(config.mtu).max(2048) + 4];
 
-                    append_log(
+                    append_verbose_log(
                         log_file.as_deref(),
                         "RustLive",
                         &format!("live loop thread started fd={}", owned_fd.as_raw_fd()),
@@ -139,7 +139,7 @@ impl LiveEngine {
                             if error.kind() == std::io::ErrorKind::Interrupted {
                                 continue;
                             }
-                            append_log(
+                            append_critical_log(
                                 log_file.as_deref(),
                                 "RustLive",
                                 &format!("poll failed: {error}"),
@@ -165,7 +165,7 @@ impl LiveEngine {
                                     continue;
                                 }
                                 _ => {
-                                    append_log(
+                                    append_critical_log(
                                         log_file.as_deref(),
                                         "RustLive",
                                         &format!("read failed: {error}"),
@@ -208,7 +208,7 @@ impl LiveEngine {
                                     remote_port,
                                 };
                                 if requested_connects.insert(request.clone()) {
-                                    append_log(
+                                    append_verbose_log(
                                         log_file.as_deref(),
                                         "RustLive",
                                         &format!(
@@ -225,7 +225,7 @@ impl LiveEngine {
                         if observation.server_name.is_some()
                             || observation.captured_certificate_chain_der_hex.is_some()
                         {
-                            append_log(
+                            append_verbose_log(
                                 log_file.as_deref(),
                                 "RustLive",
                                 &format!(
@@ -255,7 +255,7 @@ impl LiveEngine {
                         }
                     }
 
-                    append_log(log_file.as_deref(), "RustLive", "live loop thread stopped");
+                    append_verbose_log(log_file.as_deref(), "RustLive", "live loop thread stopped");
                 })
                 .map_err(|error| format!("failed to spawn live loop thread: {error}"))?
         };
@@ -362,6 +362,7 @@ mod tests {
             fake_ip_range: "198.18.0.0/16".to_string(),
             mtu: 1500,
             monitor_enabled: true,
+            verbose_logging_enabled: false,
         };
 
         let mut live_engine =

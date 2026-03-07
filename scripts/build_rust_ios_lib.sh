@@ -6,6 +6,34 @@ if [[ -z "${SRCROOT:-}" || -z "${BUILT_PRODUCTS_DIR:-}" || -z "${PLATFORM_NAME:-
   exit 1
 fi
 
+resolve_cargo() {
+  if command -v cargo >/dev/null 2>&1; then
+    command -v cargo
+    return
+  fi
+
+  if [[ -x "${HOME:-}/.cargo/bin/cargo" ]]; then
+    echo "${HOME}/.cargo/bin/cargo"
+    return
+  fi
+
+  if [[ -f "${HOME:-}/.cargo/env" ]]; then
+    # shellcheck disable=SC1090
+    source "${HOME}/.cargo/env"
+    if command -v cargo >/dev/null 2>&1; then
+      command -v cargo
+      return
+    fi
+  fi
+
+  return 1
+}
+
+if ! CARGO_BIN="$(resolve_cargo)"; then
+  echo "cargo not found. Install Rust and ensure ~/.cargo/bin is available to Xcode build scripts." >&2
+  exit 1
+fi
+
 ARCH="${CURRENT_ARCH:-}"
 if [[ -z "$ARCH" || "$ARCH" == "undefined_arch" ]]; then
   ARCH="${ARCHS%% *}"
@@ -56,18 +84,18 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   CARGO_ARGS+=(--release)
 fi
 
-MANIFEST_PATH="$SRCROOT/Rust/inspect-tunnel-core/Cargo.toml"
-DEST_PATH="$BUILT_PRODUCTS_DIR/libinspect_tunnel_core.a"
+MANIFEST_PATH="$SRCROOT/Rust/tunnel-core/Cargo.toml"
+DEST_PATH="$BUILT_PRODUCTS_DIR/libtunnel_core.a"
 LIB_INPUTS=()
 
 for rust_target in "${RUST_TARGETS[@]}"; do
-  echo "Building inspect-tunnel-core for $rust_target ($PROFILE)"
+  echo "Building tunnel-core for $rust_target ($PROFILE)"
   if [[ ${#CARGO_ARGS[@]} -gt 0 ]]; then
-    cargo build --manifest-path "$MANIFEST_PATH" --target "$rust_target" "${CARGO_ARGS[@]}"
+    "$CARGO_BIN" build --manifest-path "$MANIFEST_PATH" --target "$rust_target" "${CARGO_ARGS[@]}"
   else
-    cargo build --manifest-path "$MANIFEST_PATH" --target "$rust_target"
+    "$CARGO_BIN" build --manifest-path "$MANIFEST_PATH" --target "$rust_target"
   fi
-  LIB_INPUTS+=("$SRCROOT/Rust/inspect-tunnel-core/target/$rust_target/$PROFILE/libinspect_tunnel_core.a")
+  LIB_INPUTS+=("$SRCROOT/Rust/tunnel-core/target/$rust_target/$PROFILE/libtunnel_core.a")
 done
 
 mkdir -p "$BUILT_PRODUCTS_DIR"
@@ -76,4 +104,4 @@ if [[ ${#LIB_INPUTS[@]} -eq 1 ]]; then
 else
   xcrun lipo -create "${LIB_INPUTS[@]}" -output "$DEST_PATH"
 fi
-echo "Copied inspect-tunnel-core to $DEST_PATH"
+echo "Copied tunnel-core to $DEST_PATH"

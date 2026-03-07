@@ -41,7 +41,8 @@ struct InspectPacketTunnelConfiguration: Equatable, Sendable {
 
     func makeForwardingConfiguration(
         tunFileDescriptor: Int32,
-        monitorEnabled: Bool
+        monitorEnabled: Bool,
+        logVerbosity: InspectLogVerbosity
     ) -> InspectTunnelForwardingConfiguration {
         InspectTunnelForwardingConfiguration(
             tunFileDescriptor: tunFileDescriptor,
@@ -50,7 +51,8 @@ struct InspectPacketTunnelConfiguration: Equatable, Sendable {
             dnsServers: dnsServers,
             fakeIPAddressRange: fakeIPAddressRange,
             mtu: mtu,
-            monitorEnabled: monitorEnabled
+            monitorEnabled: monitorEnabled,
+            logVerbosity: logVerbosity
         )
     }
 

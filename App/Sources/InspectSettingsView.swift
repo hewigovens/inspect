@@ -1,3 +1,4 @@
+import InspectCore
 import InspectFeature
 import NetworkExtension
 import Observation
@@ -6,6 +7,7 @@ import SwiftUI
 struct InspectSettingsView: View {
     @Bindable var manager: LiveMonitorManager
     @Environment(\.openURL) private var openURL
+    @State private var verboseTunnelLogsEnabled = InspectLogConfiguration.current().includesVerboseMessages
 
     var body: some View {
         NavigationStack {
@@ -16,6 +18,9 @@ struct InspectSettingsView: View {
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                verboseTunnelLogsEnabled = InspectLogConfiguration.current().includesVerboseMessages
+            }
         }
     }
 
@@ -82,10 +87,18 @@ struct InspectSettingsView: View {
                     tint: .orange
                 )
             }
+
+            Toggle(isOn: verboseTunnelLogsBinding) {
+                InspectSettingsRowLabel(
+                    title: "Toggle Debug",
+                    systemImage: "ladybug",
+                    tint: .pink
+                )
+            }
         } header: {
             Text("Diagnostics")
         } footer: {
-            Text("Use Diagnostics for raw monitor events, log export, and tunnel troubleshooting.")
+            Text("Use Events and Tunnel Log for troubleshooting. Debug applies on the next Live Monitor start.")
         }
     }
 
@@ -156,6 +169,16 @@ struct InspectSettingsView: View {
         @unknown default:
             return "Unknown"
         }
+    }
+
+    private var verboseTunnelLogsBinding: Binding<Bool> {
+        Binding(
+            get: { verboseTunnelLogsEnabled },
+            set: { newValue in
+                verboseTunnelLogsEnabled = newValue
+                InspectLogConfiguration.set(newValue ? .verbose : .criticalOnly)
+            }
+        )
     }
 }
 

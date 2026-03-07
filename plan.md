@@ -141,7 +141,7 @@ Every cleanup step should preserve:
 
 Validation loop after each cleanup:
 
-1. `cargo test --manifest-path Rust/inspect-tunnel-core/Cargo.toml`
+1. `cargo test --manifest-path Rust/tunnel-core/Cargo.toml`
 2. `xcodebuild -project Inspect.xcodeproj -scheme Inspect -destination 'generic/platform=iOS Simulator' build | xcbeautify`
 3. `xcodebuild -project Inspect.xcodeproj -scheme Inspect -destination 'platform=iOS Simulator,id=<simulator-id>' test | xcbeautify`
 4. targeted device smoke test only for changes that affect tunnel behavior
@@ -160,3 +160,24 @@ Reason:
 1. the runtime path is now explicitly one packet-tunnel runtime plus one Rust forwarding engine
 2. the renamed packet tunnel extension works on device
 3. `xcodebuild test -scheme Inspect` now runs the key Swift-side tests on simulator
+
+## Future Network Work
+
+### UDP and QUIC
+
+Treat these as two different follow-ups:
+
+1. UDP flow observation
+2. QUIC/HTTP3 certificate capture
+
+Scope:
+
+1. UDP flow observation is moderate and can be added later by extending the `tun2proxy` observer seam and Inspect's adapter/store models.
+2. QUIC/HTTP3 certificate capture is a separate, harder feature and should not be bundled into the basic UDP follow-up.
+
+Implementation order:
+
+1. Reintroduce UDP transport metadata in `tun2proxy` observer types.
+2. Emit UDP session events from the `tun2proxy` UDP handling path.
+3. Decide how Inspect should surface UDP observations in Monitor and Diagnostics.
+4. Evaluate a dedicated QUIC strategy only after the TCP/UDP monitor product shape is stable.

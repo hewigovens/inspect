@@ -40,16 +40,16 @@ targets:
         INFOPLIST_FILE: PacketTunnelExtension/Resources/Info.plist
         CODE_SIGN_ENTITLEMENTS: PacketTunnelExtension/Resources/InspectPacketTunnelExtension.entitlements
         SWIFT_OBJC_BRIDGING_HEADER: PacketTunnelExtension/Sources/InspectPacketTunnelExtension-Bridging-Header.h
-        HEADER_SEARCH_PATHS: $(inherited) "$(PROJECT_DIR)/Rust/inspect-tunnel-core/include"
+        HEADER_SEARCH_PATHS: $(inherited) "$(PROJECT_DIR)/Rust/tunnel-core/include"
         LIBRARY_SEARCH_PATHS: $(inherited) "$(BUILT_PRODUCTS_DIR)"
-        OTHER_LDFLAGS: $(inherited) -linspect_tunnel_core
+        OTHER_LDFLAGS: $(inherited) -ltunnel_core
         SKIP_INSTALL: YES
     preBuildScripts:
       - name: Build Rust Tunnel Core
         script: ./scripts/build_rust_ios_lib.sh
         basedOnDependencyAnalysis: false
         outputFiles:
-          - $(BUILT_PRODUCTS_DIR)/libinspect_tunnel_core.a
+          - $(BUILT_PRODUCTS_DIR)/libtunnel_core.a
     dependencies:
       - package: InspectCore
         product: InspectCore
@@ -108,6 +108,7 @@ targets:
     platform: iOS
     sources:
       - path: Packages/InspectCore/Tests/CoreTests/InspectPacketTunnelConfigurationTests.swift
+      - path: Packages/InspectCore/Tests/CoreTests/InspectLogConfigurationTests.swift
       - path: Packages/InspectCore/Tests/CoreTests/LiveMonitorTunnelStateTests.swift
       - path: Packages/InspectCore/Tests/CoreTests/TLSMonitorProbeEngineTests.swift
       - path: Packages/InspectCore/Tests/FeatureTests/InspectionMonitorStoreTests.swift

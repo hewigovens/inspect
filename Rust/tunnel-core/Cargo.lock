@@ -950,21 +950,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "inspect-tunnel-core"
-version = "0.1.0"
-dependencies = [
- "hex",
- "libc",
- "log",
- "once_cell",
- "serde",
- "serde_json",
- "tempfile",
- "tokio",
- "tun2proxy",
-]
-
-[[package]]
 name = "ipnet"
 version = "2.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1918,6 +1903,21 @@ dependencies = [
  "unicase",
  "url",
  "windows-service",
+]
+
+[[package]]
+name = "tunnel-core"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "libc",
+ "log",
+ "once_cell",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "tun2proxy",
 ]
 
 [[package]]

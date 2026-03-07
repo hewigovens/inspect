@@ -1,4 +1,4 @@
-use crate::logging::{append_log, configure_rust_logger};
+use crate::logging::{append_critical_log, append_verbose_log, configure_rust_logger};
 use crate::model::{InspectTunnelCoreConfig, InspectTunnelCoreStats, PacketObservation};
 use crate::packet::strip_utun_header;
 use crate::tun2proxy_observer::Tun2ProxySessionObserverAdapter;
@@ -35,7 +35,7 @@ impl Tun2ProxyLiveEngine {
         let mtu = config.mtu;
         configure_rust_logger(log_file.clone(), args.verbosity.into());
 
-        append_log(
+        append_verbose_log(
             log_file.as_deref(),
             "RustTun2Proxy",
             &format!(
@@ -47,16 +47,16 @@ impl Tun2ProxyLiveEngine {
         let worker_handle = thread::Builder::new()
             .name("inspect-tun2proxy-live".to_string())
             .spawn(move || {
-                append_log(log_file.as_deref(), "RustTun2Proxy", "worker thread entered");
+                append_verbose_log(log_file.as_deref(), "RustTun2Proxy", "worker thread entered");
                 let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                    append_log(log_file.as_deref(), "RustTun2Proxy", "building tokio runtime");
+                    append_verbose_log(log_file.as_deref(), "RustTun2Proxy", "building tokio runtime");
                     let runtime = match tokio::runtime::Builder::new_current_thread()
                         .enable_all()
                         .build()
                     {
                         Ok(runtime) => runtime,
                         Err(error) => {
-                            append_log(
+                            append_critical_log(
                                 log_file.as_deref(),
                                 "RustTun2Proxy",
                                 &format!("failed to create tokio runtime: {error}"),
@@ -64,12 +64,12 @@ impl Tun2ProxyLiveEngine {
                             return;
                         }
                     };
-                    append_log(log_file.as_deref(), "RustTun2Proxy", "tokio runtime ready");
+                    append_verbose_log(log_file.as_deref(), "RustTun2Proxy", "tokio runtime ready");
 
-                    append_log(log_file.as_deref(), "RustTun2Proxy", "entering tun2proxy run loop");
+                    append_verbose_log(log_file.as_deref(), "RustTun2Proxy", "entering tun2proxy run loop");
                     let log_file_for_run = log_file.clone();
                     let result = runtime.block_on(async move {
-                        append_log(
+                        append_verbose_log(
                             log_file_for_run.as_deref(),
                             "RustTun2Proxy",
                             &format!("creating raw utun wrapper from fd={tun_fd}"),
@@ -77,7 +77,7 @@ impl Tun2ProxyLiveEngine {
                         let device = RawUtunDevice::new(tun_fd, usize::from(mtu)).map_err(|error| {
                             io::Error::new(io::ErrorKind::Other, format!("raw utun wrapper: {error}"))
                         })?;
-                        append_log(
+                        append_verbose_log(
                             log_file_for_run.as_deref(),
                             "RustTun2Proxy",
                             &format!("using raw utun wrapper duplicated_fd={}", device.as_raw_fd()),
@@ -86,14 +86,14 @@ impl Tun2ProxyLiveEngine {
                     });
 
                     match result {
-                        Ok(session_count) => append_log(
+                        Ok(session_count) => append_verbose_log(
                             log_file.as_deref(),
                             "RustTun2Proxy",
                             &format!(
                                 "tun2proxy engine exited cleanly remaining_sessions={session_count}"
                             ),
                         ),
-                        Err(error) => append_log(
+                        Err(error) => append_critical_log(
                             log_file.as_deref(),
                             "RustTun2Proxy",
                             &format!("tun2proxy engine exited with error: {error}"),
@@ -109,7 +109,7 @@ impl Tun2ProxyLiveEngine {
                     } else {
                         "unknown panic payload".to_string()
                     };
-                    append_log(
+                    append_critical_log(
                         log_file.as_deref(),
                         "RustTun2Proxy",
                         &format!("worker thread panicked: {message}"),
@@ -162,7 +162,11 @@ fn build_args(config: &InspectTunnelCoreConfig) -> Result<Args, String> {
         .parse()
         .map_err(|error| format!("invalid fake IP range '{}': {error}", config.fake_ip_range))?;
     args.ipv6_enabled = true;
-    args.verbosity = ArgVerbosity::Debug;
+    args.verbosity = if config.verbose_logging_enabled {
+        ArgVerbosity::Debug
+    } else {
+        ArgVerbosity::Error
+    };
     Ok(args)
 }
 
@@ -380,6 +384,7 @@ mod tests {
             fake_ip_range: "198.19.0.0/16".to_string(),
             mtu: 1500,
             monitor_enabled: true,
+            verbose_logging_enabled: false,
         })
         .expect("build args");
 
@@ -389,6 +394,7 @@ mod tests {
         assert_eq!(args.setup, false);
         assert_eq!(args.tun_fd, None);
         assert_eq!(args.close_fd_on_drop, None);
+        assert_eq!(args.verbosity, ArgVerbosity::Error);
     }
 
     #[tokio::test(flavor = "current_thread")]

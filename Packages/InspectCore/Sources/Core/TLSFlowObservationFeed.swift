@@ -1,26 +1,35 @@
 import Foundation
+import OSLog
 
 public enum InspectSharedContainer {
     private static let infoDictionaryKey = "InspectAppGroupIdentifier"
     private static let defaultAppGroupIdentifier = "group.in.fourplex.inspect.monitor"
+    private static let bootstrapLogger = Logger(
+        subsystem: "in.fourplex.Inspect",
+        category: "InspectSharedContainer"
+    )
 
     public static let appGroupIdentifier: String = {
         if let value = ProcessInfo.processInfo.environment["INSPECT_APP_GROUP_IDENTIFIER"]?
             .trimmingCharacters(in: .whitespacesAndNewlines),
            value.isEmpty == false {
-            NSLog("[InspectFeed] Using app group from environment: %@", value)
+            bootstrapLogger.debug("Using app group from environment: \(value, privacy: .public)")
             return value
         }
 
         if let value = Bundle.main.object(forInfoDictionaryKey: infoDictionaryKey) as? String {
             let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
             if trimmed.isEmpty == false {
-                NSLog("[InspectFeed] Using app group from Info.plist: %@ bundle=%@", trimmed, Bundle.main.bundleIdentifier ?? "nil")
+                bootstrapLogger.debug(
+                    "Using app group from Info.plist: \(trimmed, privacy: .public) bundle=\(Bundle.main.bundleIdentifier ?? "nil", privacy: .public)"
+                )
                 return trimmed
             }
         }
 
-        NSLog("[InspectFeed] Falling back to default app group: %@ bundle=%@", defaultAppGroupIdentifier, Bundle.main.bundleIdentifier ?? "nil")
+        bootstrapLogger.debug(
+            "Falling back to default app group: \(defaultAppGroupIdentifier, privacy: .public) bundle=\(Bundle.main.bundleIdentifier ?? "nil", privacy: .public)"
+        )
         return defaultAppGroupIdentifier
     }()
 }
@@ -33,6 +42,7 @@ public actor TLSFlowObservationFeed {
     private let decoder = JSONDecoder()
     private var appendCount = 0
     private var drainCount = 0
+    private let logger = InspectRuntimeLogger(category: "TLSFlowObservationFeed", scope: "InspectFeed")
 
     public init(
         suiteName: String = InspectSharedContainer.appGroupIdentifier,
@@ -42,19 +52,18 @@ public actor TLSFlowObservationFeed {
         self.defaults = UserDefaults(suiteName: suiteName)
         self.key = key
         self.maximumPendingItems = maximumPendingItems
-        NSLog(
-            "[InspectFeed] init suite=%@ key=%@ defaults=%@ bundle=%@",
-            suiteName,
-            key,
-            self.defaults == nil ? "nil" : "ok",
-            Bundle.main.bundleIdentifier ?? "nil"
+        let defaultsState = self.defaults == nil ? "nil" : "ok"
+        logger.verbose(
+            "init suite=\(suiteName) key=\(key) defaults=\(defaultsState) bundle=\(Bundle.main.bundleIdentifier ?? "nil")"
         )
     }
 
     public func append(_ observation: TLSFlowObservation) {
         guard let defaults,
               let encoded = encode(observation) else {
-            NSLog("[InspectFeed] append skipped defaults=%@ encoded=%@", defaults == nil ? "nil" : "ok", encode(observation) == nil ? "nil" : "ok")
+            logger.critical(
+                "append skipped defaults=\(defaults == nil ? "nil" : "ok") encoded=\(encode(observation) == nil ? "nil" : "ok")"
+            )
             return
         }
 
@@ -68,21 +77,15 @@ public actor TLSFlowObservationFeed {
         defaults.set(payloads, forKey: key)
         appendCount += 1
         if appendCount <= 10 || appendCount.isMultiple(of: 25) {
-            NSLog(
-                "[InspectFeed] append count=%ld pending=%ld host=%@ sni=%@ port=%@ certs=%@",
-                appendCount,
-                payloads.count,
-                observation.remoteHost ?? "nil",
-                observation.serverName ?? "nil",
-                observation.remotePort.map(String.init) ?? "nil",
-                observation.capturedCertificateChainDER.map { String($0.count) } ?? "nil"
+            logger.verbose(
+                "append count=\(appendCount) pending=\(payloads.count) host=\(observation.remoteHost ?? "nil") sni=\(observation.serverName ?? "nil") port=\(observation.remotePort.map(String.init) ?? "nil") certs=\(observation.capturedCertificateChainDER.map { String($0.count) } ?? "nil")"
             )
         }
     }
 
     public func drain(maxCount: Int = 20) -> [TLSFlowObservation] {
         guard let defaults else {
-            NSLog("[InspectFeed] drain skipped because defaults is nil")
+            logger.critical("drain skipped because defaults is nil")
             return []
         }
 
@@ -96,12 +99,8 @@ public actor TLSFlowObservationFeed {
         payloads.removeFirst(count)
         defaults.set(payloads, forKey: key)
         drainCount += 1
-        NSLog(
-            "[InspectFeed] drain #%ld requested=%ld consumed=%ld remaining=%ld",
-            drainCount,
-            maxCount,
-            consumed.count,
-            payloads.count
+        logger.verbose(
+            "drain #\(drainCount) requested=\(maxCount) consumed=\(consumed.count) remaining=\(payloads.count)"
         )
 
         return consumed.compactMap(decode)
@@ -109,7 +108,7 @@ public actor TLSFlowObservationFeed {
 
     public func reset() {
         defaults?.removeObject(forKey: key)
-        NSLog("[InspectFeed] reset key=%@", key)
+        logger.verbose("reset key=\(key)")
     }
 
     public func pendingCount() -> Int {

@@ -1,5 +1,5 @@
 use crate::flow::FlowTracker;
-use crate::logging::append_log;
+use crate::logging::append_verbose_log;
 use crate::model::{
     InspectTunnelCoreConfig, InspectTunnelCoreStats, PacketObservation, ReplayResult,
     ReplayScenario,
@@ -8,7 +8,7 @@ use crate::packet::{materialize_replay_packets, parse_packet};
 use crate::tun2proxy_live::Tun2ProxyLiveEngine;
 use std::path::{Path, PathBuf};
 
-pub const CORE_VERSION: &str = "inspect-tunnel-core/0.2.0-dev";
+pub const CORE_VERSION: &str = "tunnel-core/0.2.0-dev";
 
 #[derive(Default)]
 pub struct InspectTunnelCore {
@@ -224,8 +224,9 @@ impl InspectTunnelCore {
     }
 
     fn write_log(&self, scope: &str, message: &str) {
-        append_log(self.log_file.as_deref(), scope, message);
+        append_verbose_log(self.log_file.as_deref(), scope, message);
     }
+
 }
 
 #[cfg(test)]
@@ -244,6 +245,7 @@ mod tests {
             fake_ip_range: "198.18.0.0/16".to_string(),
             mtu: 1500,
             monitor_enabled: true,
+            verbose_logging_enabled: false,
         }
     }
 
@@ -310,7 +312,7 @@ mod tests {
         };
 
         let base_dir =
-            Path::new("/Users/hewig/workspace/h/Inspect/Rust/inspect-tunnel-core/fixtures/replay");
+            Path::new("/Users/hewig/workspace/h/Inspect/Rust/tunnel-core/fixtures/replay");
         let result = core
             .run_replay_with_base_dir(replay, Some(base_dir))
             .expect("run replay");

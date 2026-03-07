@@ -81,7 +81,8 @@ public struct InspectionRootView: View {
         } else {
             rootContent
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .hideRootNavigationBar()
+                .navigationTitle("Inspect")
+                .inlineRootNavigationTitle()
         }
     }
 
@@ -100,9 +101,6 @@ public struct InspectionRootView: View {
 
             ScrollView {
                 LazyVStack(spacing: 18) {
-                    InspectionPageHeader(closeAction: closeAction)
-                        .id("header")
-
                     InspectionInputCard(
                         store: store,
                         dismissDemoTarget: $dismissDemoTarget,

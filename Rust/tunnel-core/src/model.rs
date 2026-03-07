@@ -18,6 +18,8 @@ pub struct InspectTunnelCoreConfig {
     pub fake_ip_range: String,
     pub mtu: u16,
     pub monitor_enabled: bool,
+    #[serde(default)]
+    pub verbose_logging_enabled: bool,
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, Serialize, PartialEq, Eq)]

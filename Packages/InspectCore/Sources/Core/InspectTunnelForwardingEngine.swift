@@ -22,6 +22,7 @@ public struct InspectTunnelForwardingConfiguration: Sendable, Equatable {
     public let fakeIPAddressRange: String
     public let mtu: Int
     public let monitorEnabled: Bool
+    public let logVerbosity: InspectLogVerbosity
 
     public var primaryDNSAddress: String {
         dnsServers.first ?? "1.1.1.1"
@@ -34,7 +35,8 @@ public struct InspectTunnelForwardingConfiguration: Sendable, Equatable {
         dnsServers: [String],
         fakeIPAddressRange: String,
         mtu: Int,
-        monitorEnabled: Bool
+        monitorEnabled: Bool,
+        logVerbosity: InspectLogVerbosity
     ) {
         self.tunFileDescriptor = tunFileDescriptor
         self.ipv4Address = ipv4Address
@@ -43,6 +45,7 @@ public struct InspectTunnelForwardingConfiguration: Sendable, Equatable {
         self.fakeIPAddressRange = fakeIPAddressRange
         self.mtu = mtu
         self.monitorEnabled = monitorEnabled
+        self.logVerbosity = logVerbosity
     }
 }
 

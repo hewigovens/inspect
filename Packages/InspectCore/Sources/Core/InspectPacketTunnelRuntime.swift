@@ -1,12 +1,11 @@
 import Darwin
 import Foundation
 import NetworkExtension
-import OSLog
 
 public final class InspectPacketTunnelRuntime: @unchecked Sendable {
     private let provider: NEPacketTunnelProvider
     private let observationFeed: TLSFlowObservationFeed
-    private let logger: Logger
+    private let logger: InspectRuntimeLogger
     private let forwardingEngine: any InspectTunnelForwardingEngine
     private let stateQueue = DispatchQueue(label: "in.fourplex.Inspect.PacketTunnel.state")
     private let tunnelConfiguration = InspectPacketTunnelConfiguration.liveMonitor
@@ -28,7 +27,11 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
     ) {
         self.provider = provider
         self.observationFeed = observationFeed
-        self.logger = Logger(subsystem: loggerSubsystem, category: loggerCategory)
+        self.logger = InspectRuntimeLogger(
+            subsystem: loggerSubsystem,
+            category: loggerCategory,
+            scope: "InspectTunnel"
+        )
         self.forwardingEngine = forwardingEngine
     }
 
@@ -38,12 +41,12 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
     ) {
         _ = options
         InspectSharedLog.reset()
-        logger.info("Starting packet tunnel provider")
-        log("startTunnel called. appGroup=\(InspectSharedContainer.appGroupIdentifier)")
+        logger.verbose("Starting packet tunnel provider")
+        logger.verbose("startTunnel called. appGroup=\(InspectSharedContainer.appGroupIdentifier)")
         let startCompletion = StartCompletionHandler(callback: completionHandler)
 
         let settings = tunnelConfiguration.makeNetworkSettings()
-        log(tunnelConfiguration.logDescription(engineName: forwardingEngine.displayName))
+        logger.verbose(tunnelConfiguration.logDescription(engineName: forwardingEngine.displayName))
 
         provider.setTunnelNetworkSettings(settings) { [weak self] error in
             guard let self else {
@@ -52,12 +55,11 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
             }
 
             if let error {
-                self.logger.error("Failed to configure packet tunnel settings: \(error.localizedDescription, privacy: .public)")
-                self.log("setTunnelNetworkSettings failed: \(error.localizedDescription)")
+                self.logger.critical("setTunnelNetworkSettings failed: \(error.localizedDescription)")
                 startCompletion.callback(error)
                 return
             }
-            self.log("setTunnelNetworkSettings succeeded")
+            self.logger.verbose("setTunnelNetworkSettings succeeded")
 
             self.stateQueue.sync {
                 self.isRunning = true
@@ -67,15 +69,16 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
 
             guard let tunnelFileDescriptor = self.tunnelFileDescriptor else {
                 let error = InspectPacketTunnelRuntimeError.missingTunnelFileDescriptor
-                self.log("forwarding pipeline startup failed: \(error.localizedDescription)")
+                self.logger.critical("forwarding pipeline startup failed: \(error.localizedDescription)")
                 startCompletion.callback(error)
                 return
             }
-            self.log("Detected utun file descriptor \(tunnelFileDescriptor)")
+            self.logger.verbose("Detected utun file descriptor \(tunnelFileDescriptor)")
 
             let configuration = self.tunnelConfiguration.makeForwardingConfiguration(
                 tunFileDescriptor: tunnelFileDescriptor,
-                monitorEnabled: true
+                monitorEnabled: true,
+                logVerbosity: InspectLogConfiguration.current()
             )
 
             do {
@@ -83,20 +86,18 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
                 self.startObservationDrain()
                 self.startDiagnosticLogging()
             } catch {
-                self.logger.error("Failed to start forwarding pipeline: \(error.localizedDescription, privacy: .public)")
-                self.log("forwarding pipeline startup failed: \(error.localizedDescription)")
+                self.logger.critical("forwarding pipeline startup failed: \(error.localizedDescription)")
                 startCompletion.callback(error)
                 return
             }
 
-            self.log("Packet tunnel runtime started successfully")
+            self.logger.verbose("Packet tunnel runtime started successfully")
             startCompletion.callback(nil)
         }
     }
 
     public func stopTunnel(with reason: NEProviderStopReason, completionHandler: @escaping () -> Void) {
-        logger.info("Stopping packet tunnel provider. reason=\(String(describing: reason.rawValue), privacy: .public)")
-        log("stopTunnel called. reason=\(reason.rawValue)")
+        logger.verbose("Stopping packet tunnel provider. reason=\(reason.rawValue)")
 
         stateQueue.sync {
             isRunning = false
@@ -141,15 +142,17 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
             return
         }
 
-        let shouldLogObservation = stateQueue.sync { () -> Bool in
-            loggedObservationCount += 1
-            return loggedObservationCount <= 12 || loggedObservationCount.isMultiple(of: 25)
-        }
+        if InspectLogConfiguration.current().includesVerboseMessages {
+            let shouldLogObservation = stateQueue.sync { () -> Bool in
+                loggedObservationCount += 1
+                return loggedObservationCount <= 12 || loggedObservationCount.isMultiple(of: 25)
+            }
 
-        if shouldLogObservation {
-            log(
-                "Observed flow transport=\(observation.transport.rawValue) host=\(observation.remoteHost ?? "nil") port=\(observation.remotePort.map(String.init) ?? "nil") sni=\(observation.serverName ?? "nil") certs=\(observation.capturedCertificateChainDER?.count ?? 0)"
-            )
+            if shouldLogObservation {
+                logger.verbose(
+                    "Observed flow transport=\(observation.transport.rawValue) host=\(observation.remoteHost ?? "nil") port=\(observation.remotePort.map(String.init) ?? "nil") sni=\(observation.serverName ?? "nil") certs=\(observation.capturedCertificateChainDER?.count ?? 0)"
+                )
+            }
         }
 
         Task {
@@ -158,6 +161,10 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
     }
 
     private func startDiagnosticLogging() {
+        guard InspectLogConfiguration.current().includesVerboseMessages else {
+            return
+        }
+
         stopDiagnosticLogging()
 
         let timer = DispatchSource.makeTimerSource(queue: .global(qos: .utility))
@@ -169,14 +176,14 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
             }
 
             let stats = self.forwardingEngine.stats()
-            self.log(
+            self.logger.verbose(
                 "\(self.forwardingEngine.displayName) stats[\(tick)] upPackets=\(stats.txPackets) upBytes=\(stats.txBytes) downPackets=\(stats.rxPackets) downBytes=\(stats.rxBytes)"
             )
 
             tick += 1
             if tick >= 20 {
                 self.stopDiagnosticLogging()
-                self.log("Forwarding engine diagnostic logging stopped after 60s")
+                self.logger.verbose("Forwarding engine diagnostic logging stopped after 60s")
             }
         }
         timer.resume()
@@ -217,14 +224,18 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
     }
 
     private func startForwardingEngine(configuration: InspectTunnelForwardingConfiguration) throws {
-        log("Starting forwarding engine \(forwardingEngine.displayName)")
+        logger.verbose("Starting forwarding engine \(forwardingEngine.displayName)")
         try forwardingEngine.start(configuration: configuration) { [weak self] code in
             guard let self else {
                 return
             }
 
             let shouldCancelTunnel = self.stateQueue.sync { self.isRunning }
-            self.log("Forwarding engine \(self.forwardingEngine.displayName) exited with code \(code)")
+            if shouldCancelTunnel {
+                self.logger.critical("Forwarding engine \(self.forwardingEngine.displayName) exited with code \(code)")
+            } else {
+                self.logger.verbose("Forwarding engine \(self.forwardingEngine.displayName) exited with code \(code)")
+            }
 
             if shouldCancelTunnel {
                 self.provider.cancelTunnelWithError(
@@ -238,7 +249,7 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
     }
 
     private func stopForwardingEngine() {
-        log("Stopping forwarding engine \(forwardingEngine.displayName)")
+        logger.verbose("Stopping forwarding engine \(forwardingEngine.displayName)")
         forwardingEngine.stop()
     }
 
@@ -273,12 +284,6 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
         }
 
         return "flow|\(observation.transport.rawValue)|\(endpointIdentity)|\(observation.remotePort ?? 0)"
-    }
-
-    private func log(_ message: String) {
-        logger.info("\(message, privacy: .public)")
-        NSLog("[InspectTunnel] %@", message)
-        InspectSharedLog.append(scope: "InspectTunnel", message: message)
     }
 }
 

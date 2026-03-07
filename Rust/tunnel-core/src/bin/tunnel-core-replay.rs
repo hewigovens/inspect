@@ -1,5 +1,5 @@
-use inspect_tunnel_core::core::InspectTunnelCore;
-use inspect_tunnel_core::model::ReplayScenario;
+use tunnel_core::core::InspectTunnelCore;
+use tunnel_core::model::ReplayScenario;
 use std::env;
 use std::fs;
 use std::path::Path;
@@ -9,7 +9,7 @@ fn main() -> ExitCode {
     match run() {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
-            eprintln!("inspect-tunnel-replay: {error}");
+            eprintln!("tunnel-core-replay: {error}");
             ExitCode::FAILURE
         }
     }
@@ -21,7 +21,7 @@ fn run() -> Result<(), String> {
         Some(value) => value,
         None => {
             return Err(
-                "usage: cargo run --manifest-path Rust/inspect-tunnel-core/Cargo.toml --bin inspect-tunnel-replay -- <scenario.json> [--pretty]".to_string(),
+                "usage: cargo run --manifest-path Rust/tunnel-core/Cargo.toml --bin tunnel-core-replay -- <scenario.json> [--pretty]".to_string(),
             )
         }
     };

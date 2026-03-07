@@ -7,22 +7,22 @@ generate:
     xcodegen generate
 
 rust-core-check:
-    cargo check --manifest-path Rust/inspect-tunnel-core/Cargo.toml
+    cargo check --manifest-path Rust/tunnel-core/Cargo.toml
 
 rust-core-test:
-    cargo test --manifest-path Rust/inspect-tunnel-core/Cargo.toml
+    cargo test --manifest-path Rust/tunnel-core/Cargo.toml
 
 rust-core-build:
-    cargo build --manifest-path Rust/inspect-tunnel-core/Cargo.toml
+    cargo build --manifest-path Rust/tunnel-core/Cargo.toml
 
-rust-core-replay fixture="Rust/inspect-tunnel-core/fixtures/replay/sample_sni.json":
-    cargo run --manifest-path Rust/inspect-tunnel-core/Cargo.toml --bin inspect-tunnel-replay -- {{fixture}} --pretty
+rust-core-replay fixture="Rust/tunnel-core/fixtures/replay/sample_sni.json":
+    cargo run --manifest-path Rust/tunnel-core/Cargo.toml --bin tunnel-core-replay -- {{fixture}} --pretty
 
 rust-core-integration:
-    cargo test --manifest-path Rust/inspect-tunnel-core/Cargo.toml -- --nocapture
+    cargo test --manifest-path Rust/tunnel-core/Cargo.toml -- --nocapture
 
 rust-core-tun2proxy-harness:
-    cargo test --manifest-path Rust/inspect-tunnel-core/Cargo.toml tun2proxy_run_forwards_tcp_and_emits_tls_observations -- --nocapture
+    cargo test --manifest-path Rust/tunnel-core/Cargo.toml tun2proxy_run_forwards_tcp_and_emits_tls_observations -- --nocapture
 
 test-ios-sim device_id="863DCA4D-25BC-4E56-B6DA-D94FEC42A174":
     xcodegen generate

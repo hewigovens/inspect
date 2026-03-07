@@ -2,7 +2,6 @@ import InspectCore
 import Foundation
 @preconcurrency import NetworkExtension
 import Observation
-import OSLog
 
 enum LiveMonitorManagerError: LocalizedError {
     case capabilityMissing
@@ -34,10 +33,13 @@ final class LiveMonitorManager {
     private var configurationObserver: NSObjectProtocol?
     private var desiredLiveMonitorEnabled: Bool?
     private var isReconcilingDesiredState = false
-    private let logger = Logger(subsystem: "in.fourplex.Inspect", category: "LiveMonitorManager")
+    private let logger = InspectRuntimeLogger(
+        category: "LiveMonitorManager",
+        scope: "InspectApp"
+    )
 
     func refresh() async {
-        log("Refreshing tunnel manager state")
+        logger.verbose("Refreshing tunnel manager state")
         do {
             let manager = try await loadOrCreateManager()
             self.manager = manager
@@ -47,30 +49,30 @@ final class LiveMonitorManager {
                 desiredLiveMonitorEnabled = LiveMonitorTunnelState.isActive(for: manager.connection.status)
             }
             self.lastErrorMessage = nil
-            log("Refresh complete. status=\(statusDescription(manager.connection.status)) configured=\(manager.isEnabled)")
+            logger.verbose("Refresh complete. status=\(statusDescription(manager.connection.status)) configured=\(manager.isEnabled)")
         } catch {
             let normalized = normalize(error)
             self.lastErrorMessage = normalized.localizedDescription
-            log("Refresh failed: \(normalized.localizedDescription)")
+            logger.critical("Refresh failed: \(normalized.localizedDescription)")
         }
     }
 
     func setLiveMonitorEnabled(_ enabled: Bool) async throws {
-        log("setLiveMonitorEnabled(\(enabled))")
+        logger.verbose("setLiveMonitorEnabled(\(enabled))")
         desiredLiveMonitorEnabled = enabled
         if enabled {
             do {
                 let manager = try await cachedOrLoadedManager()
-                log("Loaded tunnel manager. currentStatus=\(statusDescription(manager.connection.status))")
+                logger.verbose("Loaded tunnel manager. currentStatus=\(statusDescription(manager.connection.status))")
 
                 if needsConfiguration(manager) {
                     configure(manager)
-                    log("Saving tunnel preferences")
+                    logger.verbose("Saving tunnel preferences")
                     try await saveToPreferences(manager)
-                    log("Reloading tunnel preferences")
+                    logger.verbose("Reloading tunnel preferences")
                     try await manager.loadFromPreferences()
                 } else {
-                    log("Tunnel manager already configured; skipping preference rewrite")
+                    logger.verbose("Tunnel manager already configured; skipping preference rewrite")
                 }
 
                 self.manager = manager
@@ -78,16 +80,16 @@ final class LiveMonitorManager {
                 updateState(from: manager)
                 try await reconcileDesiredStateIfNeeded(using: manager)
                 lastErrorMessage = nil
-                log("Live Monitor enabled. status=\(statusDescription(manager.connection.status)) configured=\(manager.isEnabled)")
+                logger.verbose("Live Monitor enabled. status=\(statusDescription(manager.connection.status)) configured=\(manager.isEnabled)")
             } catch {
                 let normalized = normalize(error)
                 lastErrorMessage = normalized.localizedDescription
-                log("Enabling Live Monitor failed: \(normalized.localizedDescription)")
+                logger.critical("Enabling Live Monitor failed: \(normalized.localizedDescription)")
                 throw normalized
             }
         } else {
             if manager == nil {
-                log("No cached manager while disabling; reloading manager")
+                logger.verbose("No cached manager while disabling; reloading manager")
                 manager = try? await loadOrCreateManager()
                 if let manager {
                     configureObservers(for: manager)
@@ -102,25 +104,25 @@ final class LiveMonitorManager {
             }
 
             lastErrorMessage = nil
-            log("Live Monitor disabled. status=\(statusDescription(status))")
+            logger.verbose("Live Monitor disabled. status=\(statusDescription(status))")
         }
     }
 
     private func loadOrCreateManager() async throws -> NETunnelProviderManager {
         let managers = try await loadAllManagers()
-        log("Loaded \(managers.count) tunnel manager(s) from preferences")
+        logger.verbose("Loaded \(managers.count) tunnel manager(s) from preferences")
         if let manager = managers.first(where: matchesProvider) {
-            log("Found existing Inspect tunnel manager")
+            logger.verbose("Found existing Inspect tunnel manager")
             return manager
         }
 
-        log("Creating new Inspect tunnel manager")
+        logger.verbose("Creating new Inspect tunnel manager")
         return NETunnelProviderManager()
     }
 
     private func cachedOrLoadedManager() async throws -> NETunnelProviderManager {
         if let manager, matchesProvider(manager) {
-            log("Using cached Inspect tunnel manager")
+            logger.verbose("Using cached Inspect tunnel manager")
             return manager
         }
 
@@ -133,7 +135,7 @@ final class LiveMonitorManager {
 
     private func saveToPreferences(_ manager: NETunnelProviderManager) async throws {
         try await manager.saveToPreferences()
-        log("Saved tunnel preferences successfully")
+        logger.verbose("Saved tunnel preferences successfully")
     }
 
     private func configure(_ manager: NETunnelProviderManager) {
@@ -145,7 +147,7 @@ final class LiveMonitorManager {
 
         manager.protocolConfiguration = protocolConfiguration
         manager.isEnabled = true
-        log("Configured manager with providerBundleIdentifier=\(Self.tunnelProviderBundleIdentifier)")
+        logger.verbose("Configured manager with providerBundleIdentifier=\(Self.tunnelProviderBundleIdentifier)")
     }
 
     private func needsConfiguration(_ manager: NETunnelProviderManager) -> Bool {
@@ -180,7 +182,7 @@ final class LiveMonitorManager {
             LiveMonitorTunnelState.isActive(for: currentStatus),
             forKey: Self.liveMonitorEnabledKey
         )
-        log("Updated state. status=\(statusDescription(currentStatus)) configured=\(isConfigured)")
+        logger.verbose("Updated state. status=\(statusDescription(currentStatus)) configured=\(isConfigured)")
     }
 
     private func reconcileDesiredStateIfNeeded(using manager: NETunnelProviderManager) async throws {
@@ -195,21 +197,21 @@ final class LiveMonitorManager {
         switch LiveMonitorTunnelState.action(for: currentStatus, desiredEnabled: desiredLiveMonitorEnabled) {
         case .none:
             if desiredLiveMonitorEnabled {
-                log("VPN tunnel already active with status=\(statusDescription(currentStatus))")
+                logger.verbose("VPN tunnel already active with status=\(statusDescription(currentStatus))")
             } else {
-                log("VPN tunnel already inactive with status=\(statusDescription(currentStatus))")
+                logger.verbose("VPN tunnel already inactive with status=\(statusDescription(currentStatus))")
             }
         case .waitForDisconnect:
-            log("VPN tunnel is disconnecting; waiting for the next stable state")
+            logger.verbose("VPN tunnel is disconnecting; waiting for the next stable state")
         case .start:
             isReconcilingDesiredState = true
             defer { isReconcilingDesiredState = false }
-            log("Starting VPN tunnel")
+            logger.verbose("Starting VPN tunnel")
             try manager.connection.startVPNTunnel()
         case .stop:
             isReconcilingDesiredState = true
             defer { isReconcilingDesiredState = false }
-            log("Stopping VPN tunnel")
+            logger.verbose("Stopping VPN tunnel")
             manager.connection.stopVPNTunnel()
         }
     }
@@ -266,7 +268,7 @@ final class LiveMonitorManager {
                 guard let self, let manager = self.manager else {
                     return
                 }
-                self.log("Received NEVPNStatusDidChange")
+                self.logger.verbose("Received NEVPNStatusDidChange")
                 self.updateState(from: manager)
                 try? await self.reconcileDesiredStateIfNeeded(using: manager)
             }
@@ -278,15 +280,9 @@ final class LiveMonitorManager {
             queue: .main
         ) { [weak self] _ in
             Task { @MainActor [weak self] in
-                self?.log("Received NEVPNConfigurationChange")
+                self?.logger.verbose("Received NEVPNConfigurationChange")
                 await self?.refresh()
             }
         }
-    }
-
-    private func log(_ message: String) {
-        logger.info("\(message, privacy: .public)")
-        NSLog("[InspectApp] %@", message)
-        InspectSharedLog.append(scope: "InspectApp", message: message)
     }
 }
