@@ -21,7 +21,7 @@ func rejectsNonHTTPSURLs() throws {
 
 @Test
 func parsesEmbeddedFixtureCertificate() throws {
-    let fixtureURL = try #require(Bundle.module.url(forResource: "mac_dev", withExtension: "cer"))
+    let fixtureURL = try #require(inspectTestFixtureURL(named: "mac_dev", extension: "cer"))
     let data = try Data(contentsOf: fixtureURL) as CFData
     let certificate = try #require(SecCertificateCreateWithData(nil, data))
 

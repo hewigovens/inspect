@@ -1,7 +1,7 @@
 import Foundation
 
-public struct TLSInspectionReport: Identifiable, Sendable, Equatable {
-    public let id = UUID()
+public struct TLSInspectionReport: Identifiable, Sendable, Equatable, Codable {
+    public let id: UUID
     public let requestedURL: URL
     public let host: String
     public let networkProtocolName: String?
@@ -10,6 +10,7 @@ public struct TLSInspectionReport: Identifiable, Sendable, Equatable {
     public let certificates: [CertificateDetails]
 
     public init(
+        id: UUID = UUID(),
         requestedURL: URL,
         host: String,
         networkProtocolName: String?,
@@ -17,6 +18,7 @@ public struct TLSInspectionReport: Identifiable, Sendable, Equatable {
         security: SecurityAssessment,
         certificates: [CertificateDetails]
     ) {
+        self.id = id
         self.requestedURL = requestedURL
         self.host = host
         self.networkProtocolName = networkProtocolName
@@ -34,7 +36,7 @@ public struct TLSInspectionReport: Identifiable, Sendable, Equatable {
     }
 }
 
-public struct TrustSummary: Sendable, Equatable {
+public struct TrustSummary: Sendable, Equatable, Codable {
     public let evaluated: Bool
     public let isTrusted: Bool
     public let failureReason: String?

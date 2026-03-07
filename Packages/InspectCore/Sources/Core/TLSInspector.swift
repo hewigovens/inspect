@@ -40,6 +40,7 @@ private final class RequestRunner: NSObject, URLSessionDataDelegate, URLSessionT
             configuration.timeoutIntervalForRequest = 20
             configuration.timeoutIntervalForResource = 20
             configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+            configuration.connectionProxyDictionary = [:]
 
             let session = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
             self.session = session

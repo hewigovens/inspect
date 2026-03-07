@@ -37,4 +37,8 @@ public enum InspectionScreenshotScenario: String {
     var showsRecents: Bool {
         false
     }
+
+    var showsMonitorCard: Bool {
+        false
+    }
 }

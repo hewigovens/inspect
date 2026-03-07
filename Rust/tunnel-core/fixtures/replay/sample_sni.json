@@ -1,0 +1,31 @@
+{
+  "tunFd": 5,
+  "config": {
+    "ipv4Address": "198.18.0.1",
+    "ipv6Address": "fd00::1",
+    "dnsAddress": "198.18.0.2",
+    "fakeIpRange": "198.18.0.0/16",
+    "mtu": 1500,
+    "monitorEnabled": true
+  },
+  "packets": [
+    {
+      "kind": "tlsClientHello",
+      "direction": "outbound",
+      "serverName": "example.com",
+      "remoteHost": "93.184.216.34",
+      "remotePort": 443,
+      "sourceHost": "10.0.0.2",
+      "note": "Synthetic Safari-like HTTPS handshake"
+    },
+    {
+      "kind": "tlsClientHello",
+      "direction": "outbound",
+      "serverName": "api.github.com",
+      "remoteHost": "140.82.112.5",
+      "remotePort": 443,
+      "sourceHost": "10.0.0.2",
+      "note": "Second outbound TLS flow"
+    }
+  ]
+}

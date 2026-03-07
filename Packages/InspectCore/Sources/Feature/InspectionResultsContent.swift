@@ -28,12 +28,12 @@ struct InspectionResultsContent: View {
             }
 
             if let report {
+                InspectionChainCard(report: report)
+                    .id("chain")
                 InspectionSummaryCard(report: report)
                     .id("summary")
                 InspectionSecurityCard(assessment: report.security)
                     .id("security")
-                InspectionChainCard(report: report)
-                    .id("chain")
             }
 
             if recentItems.isEmpty == false {
