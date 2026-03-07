@@ -116,176 +116,18 @@ These are the constraints for cleanup work.
 
 ## Cleanup Order
 
-### 1. Navigation Cleanup
+### Completed
 
-Goal:
-
-Reduce top-level complexity and move diagnostics out of the main tab bar.
-
-Tasks:
-
-1. Remove `Logs` tab from `InspectAppRootView`
-2. Add `Diagnostics` destination inside `Settings`
-3. Move current log viewer into that destination
-4. Keep copy/clear/export actions in diagnostics
-
-Done when:
-
-1. Top-level tabs are `Inspect`, `Monitor`, `Settings`
-2. Logs are still accessible from Settings
-
-### 2. Monitor Screen Cleanup
-
-Goal:
-
-Make Monitor host-centered instead of event-centered.
-
-Tasks:
-
-1. Keep the Live Monitor card at the top
-2. Add a dedicated host list below the card
-3. Remove the raw event list from the main monitor surface
-4. Add a `Diagnostics` section or button at the bottom for raw events/logs
-5. Keep host count and last activity visible near the top
-
-Done when:
-
-1. Monitor reads like a host inventory, not a debug feed
-2. Event history is still available, but secondary
-
-### 3. Host Detail
-
-Goal:
-
-Make host rows open a proper detail screen.
-
-Tasks:
-
-1. Introduce `HostDetailView`
-2. Route monitor host taps to `HostDetailView`
-3. Show latest report summary in host detail
-4. Show recent observations for that host
-5. Link from host detail to `CertificateDetailView`
-
-Done when:
-
-1. Monitor list is a stable browsing surface
-2. Certificate detail becomes one level deeper and more intentional
-
-### 4. Settings Redesign
-
-Goal:
-
-Adopt the cleaner AnyTime-style settings structure.
-
-Tasks:
-
-1. Replace plain SF Symbol rows with icon-tile labels
-2. Add sections:
-   - Tunnel
-   - Diagnostics
-   - About
-3. Move log viewer/export into Diagnostics
-4. Show error state more cleanly
-5. Keep version/about/rate links in About
-
-Done when:
-
-1. Settings feels like product UI, not temporary admin UI
-
-### 5. Rename Proxy-Era Types
-
-Goal:
-
-Match names to the actual architecture.
-
-Tasks:
-
-1. Rename `AppProxyManager` to `LiveMonitorManager`
-2. Rename any remaining `AppProxy`-named Swift symbols that no longer represent an app proxy
-3. Keep target names, bundle identifiers, entitlements, and extension product names stable until signing/profiles are intentionally migrated
-
-Important:
-
-1. Rename code symbols first
-2. Delay risky target/product renames until after UI cleanup and another device pass
-
-Done when:
-
-1. Source symbols match packet tunnel reality
-2. Provisioning-sensitive identifiers remain unchanged until a deliberate migration
-
-### 6. Remove Dead Runtime Paths
-
-Goal:
-
-Delete code from abandoned pivots.
-
-Candidates:
-
-1. `Tun2SocksKit` SwiftPM dependency
-2. `LocalConnectProxyServer`
-3. `LocalSocks5Server`
-4. `Tun2SocksForwardingEngine`
-5. Old proxy-port-specific plumbing that is no longer part of the live path
-6. Forwarding-engine selector code now that Rust is the only supported path
-
-Tasks:
-
-1. Verify each candidate is unused
-2. Remove `Tun2SocksKit` from SwiftPM and lockfiles
-3. Remove the dead local relay/proxy files
-4. Remove old proxy-port-specific config, logs, and selector code
-
-Done when:
-
-1. There is one active forwarding path
-2. No confusing proxy-era leftovers remain
-
-### 7. Runtime/Extension Simplification
-
-Goal:
-
-Make the extension wrapper minimal and the core runtime easier to reason about.
-
-Tasks:
-
-1. Keep `InspectPacketTunnelRuntime` as the shared orchestration layer
-2. Keep `RustTunnelForwardingEngine` as the active engine
-3. Remove engine-selection complexity if no longer needed
-4. Make config explicit:
-   - tunnel addresses
-   - DNS servers
-   - MTU
-   - monitoring enabled
-5. Audit whether fake IP range is still needed in the direct-DNS path
-
-Done when:
-
-1. The extension starts one runtime path only
-2. Device logs are easier to read
-
-### 8. Diagnostics Model Cleanup
-
-Goal:
-
-Separate product-facing state from debug-facing state.
-
-Tasks:
-
-1. Keep `entries` for diagnostics/history
-2. Keep `monitoredHosts` for the primary monitor UI
-3. Add lightweight host activity summaries:
-   - first seen
-   - last seen
-   - latest trust state
-   - latest cert availability
-4. Avoid surfacing raw probe failure wording in the main host list unless needed
-
-Done when:
-
-1. Diagnostics remains powerful
-2. Main UI remains clean
+1. Navigation cleanup
+2. Monitor screen cleanup
+3. Host detail routing
+4. Settings redesign
+5. Proxy-era symbol cleanup
+6. Dead runtime path removal
+7. Runtime and extension simplification
+8. Diagnostics model cleanup
+9. Packet tunnel extension target rename
+10. iOS simulator test target for Swift-side monitor/runtime tests
 
 ### 9. Validation and Safety
 
@@ -301,14 +143,20 @@ Validation loop after each cleanup:
 
 1. `cargo test --manifest-path Rust/inspect-tunnel-core/Cargo.toml`
 2. `xcodebuild -project Inspect.xcodeproj -scheme Inspect -destination 'generic/platform=iOS Simulator' build | xcbeautify`
-3. targeted device smoke test only for changes that affect tunnel behavior
+3. `xcodebuild -project Inspect.xcodeproj -scheme Inspect -destination 'platform=iOS Simulator,id=<simulator-id>' test | xcbeautify`
+4. targeted device smoke test only for changes that affect tunnel behavior
+
+Current note:
+
+1. The iOS test target intentionally covers the Swift-side runtime/monitor tests.
+2. The heavier certificate parser fixture tests remain in SwiftPM for now.
 
 ## Immediate Next Step
 
-Continue with `9. Validation and Safety`.
+Continue with product polish and feature work rather than structural cleanup.
 
 Reason:
 
 1. the runtime path is now explicitly one packet-tunnel runtime plus one Rust forwarding engine
-2. the main monitor UI now uses host summaries while diagnostics keeps the raw event/log detail
-3. the remaining architectural cleanup is mostly provisioning-sensitive naming and should wait for another device pass
+2. the renamed packet tunnel extension works on device
+3. `xcodebuild test -scheme Inspect` now runs the key Swift-side tests on simulator

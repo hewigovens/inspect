@@ -24,6 +24,10 @@ rust-core-integration:
 rust-core-tun2proxy-harness:
     cargo test --manifest-path Rust/inspect-tunnel-core/Cargo.toml tun2proxy_run_forwards_tcp_and_emits_tls_observations -- --nocapture
 
+test-ios-sim device_id="863DCA4D-25BC-4E56-B6DA-D94FEC42A174":
+    xcodegen generate
+    xcodebuild -project Inspect.xcodeproj -scheme Inspect -destination "platform=iOS Simulator,id={{device_id}}" test | xcbeautify
+
 testflight:
     ./scripts/testflight.sh upload
 

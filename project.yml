@@ -98,11 +98,25 @@ targets:
         embed: true
       - target: InspectActionExtension
         embed: true
+    scheme:
+      gatherCoverageData: false
+      testTargets:
+        - InspectAppTests
 
-schemes:
-  Inspect:
-    build:
-      targets:
-        Inspect: all
-        InspectPacketTunnelExtension: all
-        InspectActionExtension: all
+  InspectAppTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Packages/InspectCore/Tests/CoreTests/InspectPacketTunnelConfigurationTests.swift
+      - path: Packages/InspectCore/Tests/CoreTests/LiveMonitorTunnelStateTests.swift
+      - path: Packages/InspectCore/Tests/CoreTests/TLSMonitorProbeEngineTests.swift
+      - path: Packages/InspectCore/Tests/FeatureTests/InspectionMonitorStoreTests.swift
+    dependencies:
+      - package: InspectCore
+        product: InspectCore
+      - package: InspectCore
+        product: InspectFeature
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect.tests

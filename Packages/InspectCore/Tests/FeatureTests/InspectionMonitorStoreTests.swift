@@ -109,7 +109,7 @@ func monitoredHostsExposeStableActivitySummary() {
 
 @MainActor
 @Test
-func monitoredHostsHideRawProbeFailureLanguage() async {
+func monitoredHostsHideRawProbeFailureLanguage() async throws {
     let defaults = makeUserDefaults(suiteName: #function)
     let monitorEngine = TLSMonitorProbeEngine(
         inspectionClient: FailingTLSInspectionClient()
