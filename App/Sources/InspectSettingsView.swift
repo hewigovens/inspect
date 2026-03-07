@@ -64,11 +64,21 @@ struct InspectSettingsView: View {
     private var diagnosticsSection: some View {
         Section {
             NavigationLink {
-                InspectionDiagnosticsView()
+                InspectionDiagnosticsView(mode: .events)
             } label: {
                 InspectSettingsRowLabel(
-                    title: "Events & Tunnel Log",
-                    systemImage: "stethoscope",
+                    title: "Events",
+                    systemImage: "waveform.path.ecg",
+                    tint: .orange
+                )
+            }
+
+            NavigationLink {
+                InspectionDiagnosticsView(mode: .tunnelLog)
+            } label: {
+                InspectSettingsRowLabel(
+                    title: "Tunnel Log",
+                    systemImage: "doc.text.magnifyingglass",
                     tint: .orange
                 )
             }
@@ -96,37 +106,21 @@ struct InspectSettingsView: View {
             Button {
                 openURL(aboutURL)
             } label: {
-                HStack {
-                    InspectSettingsRowLabel(
-                        title: "About Inspect",
-                        systemImage: "info.circle",
-                        tint: .indigo
-                    )
-
-                    Spacer()
-
-                    Text("->")
-                        .font(.callout.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                }
+                InspectSettingsButtonRowLabel(
+                    title: "About Inspect",
+                    systemImage: "info.circle",
+                    tint: .indigo
+                )
             }
 
             Button {
                 openURL(appStoreURL)
             } label: {
-                HStack {
-                    InspectSettingsRowLabel(
-                        title: "Rate on App Store",
-                        systemImage: "star.circle",
-                        tint: .yellow
-                    )
-
-                    Spacer()
-
-                    Text("->")
-                        .font(.callout.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                }
+                InspectSettingsButtonRowLabel(
+                    title: "Rate on App Store",
+                    systemImage: "star.circle",
+                    tint: .yellow
+                )
             }
         }
     }
@@ -184,6 +178,28 @@ private struct InspectSettingsRowLabel: View {
             .frame(width: 28, height: 28)
 
             Text(title)
+        }
+    }
+}
+
+private struct InspectSettingsButtonRowLabel: View {
+    let title: String
+    let systemImage: String
+    let tint: Color
+
+    var body: some View {
+        HStack {
+            InspectSettingsRowLabel(
+                title: title,
+                systemImage: systemImage,
+                tint: tint
+            )
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.tertiary)
         }
     }
 }

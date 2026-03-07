@@ -3,12 +3,21 @@ import SwiftUI
 
 @MainActor
 public struct InspectionDiagnosticsView: View {
+    public enum Mode: Equatable {
+        case all
+        case events
+        case tunnelLog
+    }
+
     @State private var monitorStore = InspectionMonitorSharedStore.shared
     @State private var logText = "No tunnel log yet. Start Live Monitor to generate logs."
     @State private var autoRefresh = true
+    private let mode: Mode
     private let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
 
-    public init() {}
+    public init(mode: Mode = .all) {
+        self.mode = mode
+    }
 
     public var body: some View {
         ZStack {
@@ -17,8 +26,15 @@ public struct InspectionDiagnosticsView: View {
 
             ScrollView {
                 LazyVStack(spacing: 18) {
-                    eventsCard
-                    logCard
+                    switch mode {
+                    case .all:
+                        eventsCard
+                        logCard
+                    case .events:
+                        eventsCard
+                    case .tunnelLog:
+                        logCard
+                    }
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 20)
@@ -26,7 +42,7 @@ public struct InspectionDiagnosticsView: View {
             }
             .scrollBounceBehavior(.basedOnSize)
         }
-        .navigationTitle("Diagnostics")
+        .navigationTitle(navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .task {
             loadLog()
@@ -37,6 +53,17 @@ public struct InspectionDiagnosticsView: View {
             }
 
             loadLog()
+        }
+    }
+
+    private var navigationTitle: String {
+        switch mode {
+        case .all:
+            return "Diagnostics"
+        case .events:
+            return "Events"
+        case .tunnelLog:
+            return "Tunnel Log"
         }
     }
 

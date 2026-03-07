@@ -6,7 +6,12 @@ import Testing
 @MainActor
 @Test
 func monitoredHostsCollapseCaseAndKeepLatestReport() {
-    let store = InspectionMonitorStore(flowObservationFeed: nil, enableNetworkFeedPolling: false)
+    let defaults = makeUserDefaults(suiteName: #function)
+    let store = InspectionMonitorStore(
+        flowObservationFeed: nil,
+        enableNetworkFeedPolling: false,
+        userDefaults: defaults
+    )
     store.setEnabled(true)
 
     store.recordInspection(makeReport(host: "Example.com", issuer: "CA 1", fingerprint: "aa"))
@@ -24,7 +29,12 @@ func monitoredHostsCollapseCaseAndKeepLatestReport() {
 @MainActor
 @Test
 func recordInspectionAddsFingerprintChangeNoteForSameHost() {
-    let store = InspectionMonitorStore(flowObservationFeed: nil, enableNetworkFeedPolling: false)
+    let defaults = makeUserDefaults(suiteName: #function)
+    let store = InspectionMonitorStore(
+        flowObservationFeed: nil,
+        enableNetworkFeedPolling: false,
+        userDefaults: defaults
+    )
     store.setEnabled(true)
 
     store.recordInspection(makeReport(host: "example.com", issuer: "CA 1", fingerprint: "aa"))
@@ -37,7 +47,12 @@ func recordInspectionAddsFingerprintChangeNoteForSameHost() {
 @MainActor
 @Test
 func monitoredHostsRemainDistinctAcrossDifferentHosts() {
-    let store = InspectionMonitorStore(flowObservationFeed: nil, enableNetworkFeedPolling: false)
+    let defaults = makeUserDefaults(suiteName: #function)
+    let store = InspectionMonitorStore(
+        flowObservationFeed: nil,
+        enableNetworkFeedPolling: false,
+        userDefaults: defaults
+    )
     store.setEnabled(true)
 
     store.recordInspection(makeReport(host: "example.com", issuer: "CA 1", fingerprint: "aa"))
@@ -46,6 +61,30 @@ func monitoredHostsRemainDistinctAcrossDifferentHosts() {
     let hosts = store.monitoredHosts.map(\.host)
     #expect(hosts.count == 2)
     #expect(hosts == ["api.example.com", "example.com"])
+}
+
+@MainActor
+@Test
+func monitorEntriesPersistAcrossStoreInstances() {
+    let defaults = makeUserDefaults(suiteName: #function)
+
+    let firstStore = InspectionMonitorStore(
+        flowObservationFeed: nil,
+        enableNetworkFeedPolling: false,
+        userDefaults: defaults
+    )
+    firstStore.setEnabled(true)
+    firstStore.recordInspection(makeReport(host: "example.com", issuer: "CA 1", fingerprint: "aa"))
+
+    let secondStore = InspectionMonitorStore(
+        flowObservationFeed: nil,
+        enableNetworkFeedPolling: false,
+        userDefaults: defaults
+    )
+
+    #expect(secondStore.hostCount == 1)
+    #expect(secondStore.monitoredHosts.first?.host == "example.com")
+    #expect(secondStore.latestCapturedReport(forHost: "example.com")?.leafCertificate?.issuerSummary == "CA 1")
 }
 
 private func makeReport(host: String, issuer: String, fingerprint: String) -> TLSInspectionReport {
@@ -89,4 +128,11 @@ private func makeReport(host: String, issuer: String, fingerprint: String) -> TL
             )
         ]
     )
+}
+
+private func makeUserDefaults(suiteName: String) -> UserDefaults {
+    let suite = "InspectionMonitorStoreTests.\(suiteName)"
+    let defaults = UserDefaults(suiteName: suite)!
+    defaults.removePersistentDomain(forName: suite)
+    return defaults
 }

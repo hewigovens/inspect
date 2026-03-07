@@ -1,6 +1,6 @@
 import Foundation
 
-public struct SecurityAssessment: Sendable, Equatable {
+public struct SecurityAssessment: Sendable, Equatable, Codable {
     public let findings: [SecurityFinding]
 
     public init(findings: [SecurityFinding]) {
@@ -44,20 +44,21 @@ public struct SecurityAssessment: Sendable, Equatable {
     }
 }
 
-public struct SecurityFinding: Identifiable, Sendable, Equatable {
-    public let id = UUID()
+public struct SecurityFinding: Identifiable, Sendable, Equatable, Codable {
+    public let id: UUID
     public let severity: SecurityFindingSeverity
     public let title: String
     public let message: String
 
-    public init(severity: SecurityFindingSeverity, title: String, message: String) {
+    public init(id: UUID = UUID(), severity: SecurityFindingSeverity, title: String, message: String) {
+        self.id = id
         self.severity = severity
         self.title = title
         self.message = message
     }
 }
 
-public enum SecurityFindingSeverity: String, Sendable {
+public enum SecurityFindingSeverity: String, Sendable, Codable {
     case good = "Good"
     case info = "Info"
     case warning = "Warning"

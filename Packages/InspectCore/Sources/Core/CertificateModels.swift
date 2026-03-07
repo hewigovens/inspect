@@ -1,6 +1,6 @@
 import Foundation
 
-public struct CertificateDetails: Identifiable, Sendable, Equatable {
+public struct CertificateDetails: Identifiable, Sendable, Equatable, Codable {
     public let id: String
     public let title: String
     public let isLeaf: Bool
@@ -111,7 +111,7 @@ public struct CertificateDetails: Identifiable, Sendable, Equatable {
     }
 }
 
-public struct PublicKeyDetails: Sendable, Equatable {
+public struct PublicKeyDetails: Sendable, Equatable, Codable {
     public let algorithm: String
     public let bitSize: Int?
     public let hexRepresentation: String
@@ -125,7 +125,7 @@ public struct PublicKeyDetails: Sendable, Equatable {
     }
 }
 
-public struct ValidityPeriod: Sendable, Equatable {
+public struct ValidityPeriod: Sendable, Equatable, Codable {
     public let notBefore: Date?
     public let notAfter: Date?
 
@@ -149,18 +149,19 @@ public struct ValidityPeriod: Sendable, Equatable {
     }
 }
 
-public enum CertificateValidityStatus: String, Sendable {
+public enum CertificateValidityStatus: String, Sendable, Codable {
     case valid = "Valid"
     case expired = "Expired"
     case notYetValid = "Not Yet Valid"
 }
 
-public struct LabeledValue: Identifiable, Sendable, Equatable {
-    public let id = UUID()
+public struct LabeledValue: Identifiable, Sendable, Equatable, Codable {
+    public let id: UUID
     public let label: String
     public let value: String
 
-    public init(label: String, value: String) {
+    public init(id: UUID = UUID(), label: String, value: String) {
+        self.id = id
         self.label = label
         self.value = value
     }

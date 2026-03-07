@@ -13,26 +13,32 @@ final class InspectionMonitorStore {
     private let monitorEngine: TLSMonitorProbeEngine
     private let flowObservationFeed: TLSFlowObservationFeed?
     private let enableNetworkFeedPolling: Bool
+    private let userDefaults: UserDefaults
     private var lastLeafFingerprintByHost: [String: String] = [:]
     private var feedPollingTask: Task<Void, Never>?
     private var defaultsObserver: NSObjectProtocol?
 
     private static let enabledKey = "inspect.monitor.enabled.v1"
+    private static let entriesKey = "inspect.monitor.entries.v1"
     private static let historyLimit = 24
 
     init(
         monitorEngine: TLSMonitorProbeEngine = TLSMonitorProbeEngine(),
         flowObservationFeed: TLSFlowObservationFeed? = TLSFlowObservationFeed(),
-        enableNetworkFeedPolling: Bool = true
+        enableNetworkFeedPolling: Bool = true,
+        userDefaults: UserDefaults = .standard
     ) {
         self.monitorEngine = monitorEngine
         self.flowObservationFeed = flowObservationFeed
         self.enableNetworkFeedPolling = enableNetworkFeedPolling
-        self.isEnabled = UserDefaults.standard.bool(forKey: Self.enabledKey)
+        self.userDefaults = userDefaults
+        self.isEnabled = userDefaults.bool(forKey: Self.enabledKey)
+        self.entries = Self.loadPersistedEntries(from: userDefaults)
+        self.lastLeafFingerprintByHost = Self.makeFingerprintIndex(from: entries)
         let enabledKey = Self.enabledKey
         defaultsObserver = NotificationCenter.default.addObserver(
             forName: UserDefaults.didChangeNotification,
-            object: UserDefaults.standard,
+            object: userDefaults,
             queue: .main
         ) { [weak self] _ in
             Task { @MainActor [weak self] in
@@ -40,7 +46,7 @@ final class InspectionMonitorStore {
                     return
                 }
 
-                let latest = UserDefaults.standard.bool(forKey: enabledKey)
+                let latest = self.userDefaults.bool(forKey: enabledKey)
                 if self.isEnabled != latest, self.isApplyingLiveMonitorToggle == false {
                     self.isEnabled = latest
                 }
@@ -117,6 +123,7 @@ final class InspectionMonitorStore {
     func clear() {
         entries = []
         lastLeafFingerprintByHost = [:]
+        persistEntries()
     }
 
     var hostCount: Int {
@@ -251,11 +258,12 @@ final class InspectionMonitorStore {
         let note = makeNoteIfNeeded(for: event)
         entries.insert(InspectionMonitorEntry(event: event, note: note), at: 0)
         entries = Array(entries.prefix(Self.historyLimit))
+        persistEntries()
     }
 
     private func applyEnabledState(_ enabled: Bool) {
         isEnabled = enabled
-        UserDefaults.standard.set(enabled, forKey: Self.enabledKey)
+        userDefaults.set(enabled, forKey: Self.enabledKey)
     }
 
     private func host(for event: TLSProbeEvent) -> String? {
@@ -291,4 +299,52 @@ final class InspectionMonitorStore {
         return "Leaf certificate fingerprint changed since the previous probe."
     }
 
+    private func persistEntries() {
+        let snapshots = entries.map(InspectionMonitorEntrySnapshot.init)
+        guard let data = try? JSONEncoder().encode(snapshots) else {
+            return
+        }
+
+        userDefaults.set(data, forKey: Self.entriesKey)
+    }
+
+    private static func loadPersistedEntries(from userDefaults: UserDefaults) -> [InspectionMonitorEntry] {
+        guard let data = userDefaults.data(forKey: entriesKey),
+              let snapshots = try? JSONDecoder().decode([InspectionMonitorEntrySnapshot].self, from: data) else {
+            return []
+        }
+
+        return snapshots.map(\.entry)
+    }
+
+    private static func makeFingerprintIndex(from entries: [InspectionMonitorEntry]) -> [String: String] {
+        var index: [String: String] = [:]
+
+        for entry in entries.reversed() {
+            guard case let .captured(report) = entry.event.result,
+                  let leafFingerprint = report.leafCertificate?.fingerprints.first(where: {
+                      $0.label.caseInsensitiveCompare("SHA-256") == .orderedSame
+                  })?.value else {
+                continue
+            }
+
+            index[report.host.lowercased()] = leafFingerprint
+        }
+
+        return index
+    }
+}
+
+private struct InspectionMonitorEntrySnapshot: Codable {
+    let event: TLSProbeEvent
+    let note: String?
+
+    init(entry: InspectionMonitorEntry) {
+        self.event = entry.event
+        self.note = entry.note
+    }
+
+    var entry: InspectionMonitorEntry {
+        InspectionMonitorEntry(event: event, note: note)
+    }
 }

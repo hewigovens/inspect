@@ -131,14 +131,14 @@ public struct TLSFlowObservation: Identifiable, Sendable, Equatable, Codable {
     }
 }
 
-public enum TLSProbeResult: Sendable, Equatable {
+public enum TLSProbeResult: Sendable, Equatable, Codable {
     case captured(TLSInspectionReport)
     case skippedMissingHost
     case skippedThrottled(until: Date)
     case failed(reason: String)
 }
 
-public struct TLSProbeEvent: Identifiable, Sendable, Equatable {
+public struct TLSProbeEvent: Identifiable, Sendable, Equatable, Codable {
     public let id: UUID
     public let observation: TLSFlowObservation
     public let occurredAt: Date
