@@ -64,7 +64,7 @@ struct InspectSettingsView: View {
     private var diagnosticsSection: some View {
         Section {
             NavigationLink {
-                InspectionDiagnosticsView(mode: .events)
+                InspectionEventsView()
             } label: {
                 InspectSettingsRowLabel(
                     title: "Events",
@@ -74,7 +74,7 @@ struct InspectSettingsView: View {
             }
 
             NavigationLink {
-                InspectionDiagnosticsView(mode: .tunnelLog)
+                InspectionTunnelLogView()
             } label: {
                 InspectSettingsRowLabel(
                     title: "Tunnel Log",

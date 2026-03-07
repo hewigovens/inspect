@@ -3,38 +3,65 @@ import SwiftUI
 
 @MainActor
 public struct InspectionDiagnosticsView: View {
-    public enum Mode: Equatable {
-        case all
-        case events
-        case tunnelLog
-    }
-
     @State private var monitorStore = InspectionMonitorSharedStore.shared
-    @State private var logText = "No tunnel log yet. Start Live Monitor to generate logs."
+    @State private var logText = InspectionTunnelLogCard.emptyStateText
     @State private var autoRefresh = true
-    private let mode: Mode
-    private let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
 
-    public init(mode: Mode = .all) {
-        self.mode = mode
-    }
+    public init() {}
 
     public var body: some View {
+        InspectionDiagnosticsContainer(title: "Diagnostics") {
+            InspectionEventsCard(store: monitorStore)
+            InspectionTunnelLogCard(
+                logText: $logText,
+                autoRefresh: $autoRefresh
+            )
+        }
+    }
+}
+
+@MainActor
+public struct InspectionEventsView: View {
+    @State private var monitorStore = InspectionMonitorSharedStore.shared
+
+    public init() {}
+
+    public var body: some View {
+        InspectionDiagnosticsContainer(title: "Events") {
+            InspectionEventsCard(store: monitorStore)
+        }
+    }
+}
+
+@MainActor
+public struct InspectionTunnelLogView: View {
+    @State private var logText = InspectionTunnelLogCard.emptyStateText
+    @State private var autoRefresh = true
+
+    public init() {}
+
+    public var body: some View {
+        InspectionDiagnosticsContainer(title: "Tunnel Log") {
+            InspectionTunnelLogCard(
+                logText: $logText,
+                autoRefresh: $autoRefresh
+            )
+        }
+    }
+}
+
+private struct InspectionDiagnosticsContainer<Content: View>: View {
+    let title: String
+    @ViewBuilder let content: Content
+
+    var body: some View {
         ZStack {
             InspectBackground()
                 .ignoresSafeArea()
 
             ScrollView {
                 LazyVStack(spacing: 18) {
-                    switch mode {
-                    case .all:
-                        eventsCard
-                        logCard
-                    case .events:
-                        eventsCard
-                    case .tunnelLog:
-                        logCard
-                    }
+                    content
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 20)
@@ -42,32 +69,16 @@ public struct InspectionDiagnosticsView: View {
             }
             .scrollBounceBehavior(.basedOnSize)
         }
-        .navigationTitle(navigationTitle)
+        .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
-        .task {
-            loadLog()
-        }
-        .onReceive(timer) { _ in
-            guard autoRefresh else {
-                return
-            }
-
-            loadLog()
-        }
     }
+}
 
-    private var navigationTitle: String {
-        switch mode {
-        case .all:
-            return "Diagnostics"
-        case .events:
-            return "Events"
-        case .tunnelLog:
-            return "Tunnel Log"
-        }
-    }
+@MainActor
+private struct InspectionEventsCard: View {
+    @Bindable var store: InspectionMonitorStore
 
-    private var eventsCard: some View {
+    var body: some View {
         InspectCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .firstTextBaseline, spacing: 12) {
@@ -82,25 +93,25 @@ public struct InspectionDiagnosticsView: View {
 
                     Spacer()
 
-                    Text("\(monitorStore.entries.count)")
+                    Text("\(store.entries.count)")
                         .font(.inspectRootCaptionSemibold)
                         .foregroundStyle(.secondary)
                 }
 
-                if monitorStore.entries.isEmpty {
+                if store.entries.isEmpty {
                     Text("No monitor events yet.")
                         .font(.inspectRootCaption)
                         .foregroundStyle(.secondary)
                 } else {
                     VStack(alignment: .leading, spacing: 12) {
-                        ForEach(monitorStore.entries) { entry in
+                        ForEach(store.entries) { entry in
                             MonitorEntryRow(entry: entry)
                         }
                     }
                 }
 
                 Button("Clear Event History") {
-                    monitorStore.clear()
+                    store.clear()
                 }
                 .font(.inspectRootCaptionSemibold)
                 .buttonStyle(.plain)
@@ -108,8 +119,17 @@ public struct InspectionDiagnosticsView: View {
             }
         }
     }
+}
 
-    private var logCard: some View {
+@MainActor
+private struct InspectionTunnelLogCard: View {
+    static let emptyStateText = "No tunnel log yet. Start Live Monitor to generate logs."
+
+    @Binding var logText: String
+    @Binding var autoRefresh: Bool
+    private let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
+
+    var body: some View {
         InspectCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .firstTextBaseline, spacing: 12) {
@@ -153,13 +173,23 @@ public struct InspectionDiagnosticsView: View {
                 }
             }
         }
+        .task {
+            loadLog()
+        }
+        .onReceive(timer) { _ in
+            guard autoRefresh else {
+                return
+            }
+
+            loadLog()
+        }
     }
 
     private func loadLog() {
         DispatchQueue.global(qos: .utility).async {
             let text = InspectSharedLog.readTail()
             DispatchQueue.main.async {
-                logText = text ?? "No tunnel log yet. Start Live Monitor to generate logs."
+                logText = text ?? Self.emptyStateText
             }
         }
     }
