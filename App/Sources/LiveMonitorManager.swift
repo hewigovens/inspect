@@ -21,7 +21,7 @@ enum LiveMonitorManagerError: LocalizedError {
 @MainActor
 @Observable
 final class LiveMonitorManager {
-    static let tunnelProviderBundleIdentifier = "in.fourplex.Inspect.AppProxyExtension"
+    static let tunnelProviderBundleIdentifier = "in.fourplex.Inspect.PacketTunnelExtension"
     static let localizedDescription = "Inspect Live Monitor"
     private static let liveMonitorEnabledKey = "inspect.monitor.enabled.v1"
 

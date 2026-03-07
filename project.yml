@@ -23,23 +23,23 @@ packages:
     path: Packages/InspectCore
 
 targets:
-  InspectAppProxyExtension:
+  InspectPacketTunnelExtension:
     type: app-extension
     platform: iOS
     sources:
-      - path: AppProxyExtension/Sources
-      - path: AppProxyExtension/Resources
+      - path: PacketTunnelExtension/Sources
+      - path: PacketTunnelExtension/Resources
         buildPhase: resources
         excludes:
           - Info.plist
-          - InspectAppProxyExtension.entitlements
+          - InspectPacketTunnelExtension.entitlements
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect.AppProxyExtension
+        PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect.PacketTunnelExtension
         GENERATE_INFOPLIST_FILE: NO
-        INFOPLIST_FILE: AppProxyExtension/Resources/Info.plist
-        CODE_SIGN_ENTITLEMENTS: AppProxyExtension/Resources/InspectAppProxyExtension.entitlements
-        SWIFT_OBJC_BRIDGING_HEADER: AppProxyExtension/Sources/InspectAppProxyExtension-Bridging-Header.h
+        INFOPLIST_FILE: PacketTunnelExtension/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: PacketTunnelExtension/Resources/InspectPacketTunnelExtension.entitlements
+        SWIFT_OBJC_BRIDGING_HEADER: PacketTunnelExtension/Sources/InspectPacketTunnelExtension-Bridging-Header.h
         HEADER_SEARCH_PATHS: $(inherited) "$(PROJECT_DIR)/Rust/inspect-tunnel-core/include"
         LIBRARY_SEARCH_PATHS: $(inherited) "$(BUILT_PRODUCTS_DIR)"
         OTHER_LDFLAGS: $(inherited) -linspect_tunnel_core
@@ -94,7 +94,7 @@ targets:
     dependencies:
       - package: InspectCore
         product: InspectFeature
-      - target: InspectAppProxyExtension
+      - target: InspectPacketTunnelExtension
         embed: true
       - target: InspectActionExtension
         embed: true
@@ -104,5 +104,5 @@ schemes:
     build:
       targets:
         Inspect: all
-        InspectAppProxyExtension: all
+        InspectPacketTunnelExtension: all
         InspectActionExtension: all
