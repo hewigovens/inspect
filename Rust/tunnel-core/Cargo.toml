@@ -16,7 +16,7 @@ once_cell = "1.21.3"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.145"
 tokio = { version = "1", features = ["full"] }
-tun2proxy = { path = "../../../tun2proxy" }
+tun2proxy = { git = "https://github.com/hewigovens/tun2proxy", branch = "observer" }
 
 [dev-dependencies]
 tempfile = "3.23.0"

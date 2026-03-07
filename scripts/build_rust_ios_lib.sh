@@ -34,6 +34,8 @@ if ! CARGO_BIN="$(resolve_cargo)"; then
   exit 1
 fi
 
+export CARGO_NET_GIT_FETCH_WITH_CLI="${CARGO_NET_GIT_FETCH_WITH_CLI:-true}"
+
 ARCH="${CURRENT_ARCH:-}"
 if [[ -z "$ARCH" || "$ARCH" == "undefined_arch" ]]; then
   ARCH="${ARCHS%% *}"

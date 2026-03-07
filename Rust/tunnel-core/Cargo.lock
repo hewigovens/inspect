@@ -1870,6 +1870,7 @@ dependencies = [
 [[package]]
 name = "tun2proxy"
 version = "0.7.19"
+source = "git+https://github.com/hewigovens/tun2proxy?branch=observer#e1758c1860b245f30bffca9e813509eeea6fbc58"
 dependencies = [
  "android_logger",
  "async-trait",

@@ -1,183 +1,102 @@
-# Inspect Cleanup Plan
+# Inspect Plan
 
-## Product Direction
+## Product Goals
 
-Inspect should feel like one product with two core jobs:
+Inspect has two product jobs:
 
-1. Manual certificate inspection
+1. Manual TLS certificate inspection
 2. Passive system-wide host and certificate monitoring
 
-The app should be organized around a small set of stable concepts:
+Everything in the app should reinforce one of those jobs.
 
-1. Host
-2. Observation
-3. Report
-4. Certificate
-5. Tunnel
+## Current Baseline
 
-Manual inspect and live monitor should both converge on the same `TLSInspectionReport` model.
+The current working baseline is:
 
-## Target Navigation
+1. Manual inspect works on device.
+2. Live Monitor works on device through the packet tunnel.
+3. Safari traffic reaches the tunnel path.
+4. Hosts persist across launches.
+5. Host detail and certificate detail are wired.
+6. Diagnostics and shared tunnel logs are available in-app.
+7. Simulator build and simulator test flows are in place.
 
-### Tabs
+## Architecture Direction
 
-Keep only three top-level tabs:
+Keep these constraints stable:
 
-1. Inspect
-2. Monitor
-3. Settings
+1. Keep `InspectCore` as the shared Swift package for models, monitor state, UI, and runtime orchestration.
+2. Keep `InspectPacketTunnelExtension` thin.
+3. Keep `Rust/tunnel-core` as the forwarding and passive-observation core.
+4. Keep `tun2proxy` as the forwarding base.
+5. Keep one logging path through the shared App Group log.
+6. Do not reintroduce proxy-based fallback paths into the main live-monitor flow.
 
-Remove `Logs` as a top-level tab. Logs are diagnostics, not core navigation.
+## Active Workstreams
 
-### Inspect
+### 1. Product Polish
 
-Purpose:
+Focus:
 
-1. Enter host or URL
-2. Run one-shot inspection
-3. View report summary
-4. Open certificate detail
-5. Access recent lookups
+1. Refine Inspect, Monitor, and Settings copy.
+2. Polish host detail and certificate-detail transitions.
+3. Keep diagnostics useful without leaking low-level implementation details into the main UI.
+4. Improve launch and app-store presentation assets.
 
-### Monitor
+### 2. Tunnel Stability
 
-Purpose:
+Focus:
 
-1. Turn live monitor on/off
-2. See tunnel health and activity
-3. Browse a host-centered inventory
-4. Open host detail
-5. Open certificate detail from host detail
+1. Preserve the current working iOS packet-tunnel path.
+2. Keep restart/stop/start behavior reliable.
+3. Improve error reporting only when it helps product-level diagnosis.
+4. Avoid risky structural changes unless they clearly improve stability.
 
-Primary layout:
+### 3. UDP Observation
 
-1. Live Monitor card
-2. Host list directly below the card
-3. Diagnostics entry point at the bottom
+Goal:
 
-Do not lead with raw event history on the main monitor screen.
+Add UDP flow observation without blocking current TCP/TLS monitoring.
 
-### Settings
+Plan:
 
-Purpose:
+1. Extend the `tun2proxy` observer seam to expose UDP session metadata and payload direction.
+2. Map UDP observer events into `tunnel-core` and then into Inspect's monitor pipeline.
+3. Decide how UDP observations should appear in Monitor and Diagnostics.
+4. Keep certificate detail disabled for UDP-only observations unless a later protocol-specific parser exists.
 
-1. Show tunnel/config status
-2. Provide diagnostics and log export
-3. Show app version/about
-4. Link to App Store rating
+### 4. QUIC and HTTP/3
 
-Visual direction:
+Treat this as a separate track from basic UDP observation.
 
-Follow the row-label style from `/Users/hewig/workspace/h/AnyTime/App/Features/SettingsView.swift`:
+Scope:
 
-1. Rounded square icon tile
-2. Section-based grouped layout
-3. Clear trailing affordances
-4. Diagnostics treated as a first-class settings section
+1. Determine what metadata is realistically observable.
+2. Evaluate whether passive QUIC handshake parsing is worth the complexity.
+3. Do not bundle QUIC certificate capture into the first UDP milestone.
 
-## Target Information Architecture
+### 5. Documentation and Release Hygiene
 
-### Main Models
+Focus:
 
-1. `TLSFlowObservation`
-   - raw passive event
-2. `TLSInspectionReport`
-   - normalized inspection result
-3. `InspectionMonitoredHost`
-   - host-centered aggregation of latest report + latest event + status
-4. `Host Detail`
-   - screen model built from a monitored host and related history
+1. Keep architecture docs current.
+2. Keep the device and simulator workflows documented.
+3. Keep TestFlight and screenshot flows easy to run from `just`.
 
-### Host Detail Screen
+## Validation Loop
 
-This should become the monitor destination instead of jumping straight from the list into certificate detail.
-
-Host Detail should show:
-
-1. Host name
-2. Latest trust badge
-3. Last seen time
-4. Endpoint and SNI summary
-5. Latest certificate chain summary
-6. Button/link to full `CertificateDetailView`
-7. Recent observation timeline
-8. Optional `Inspect Again` action
-
-## Simplification Decisions
-
-These are the constraints for cleanup work.
-
-1. Preserve the currently working tunnel path.
-2. Do not reintroduce proxy-based fallback paths into the main flow.
-3. Keep direct DNS as the active iOS path unless a later regression forces reconsideration.
-4. Keep the packet tunnel extension thin.
-5. Keep Rust as the forwarding/observation core.
-6. Keep one diagnostics/logging path through the shared app group log.
-
-## Cleanup Order
-
-### Completed
-
-1. Navigation cleanup
-2. Monitor screen cleanup
-3. Host detail routing
-4. Settings redesign
-5. Proxy-era symbol cleanup
-6. Dead runtime path removal
-7. Runtime and extension simplification
-8. Diagnostics model cleanup
-9. Packet tunnel extension target rename
-10. iOS simulator test target for Swift-side monitor/runtime tests
-
-### 9. Validation and Safety
-
-Every cleanup step should preserve:
-
-1. manual inspect works
-2. Safari/live traffic still works
-3. monitor host list still updates
-4. certificate detail still opens
-5. live monitor can stop and restart
-
-Validation loop after each cleanup:
+Use this validation loop for non-trivial changes:
 
 1. `cargo test --manifest-path Rust/tunnel-core/Cargo.toml`
 2. `xcodebuild -project Inspect.xcodeproj -scheme Inspect -destination 'generic/platform=iOS Simulator' build | xcbeautify`
 3. `xcodebuild -project Inspect.xcodeproj -scheme Inspect -destination 'platform=iOS Simulator,id=<simulator-id>' test | xcbeautify`
-4. targeted device smoke test only for changes that affect tunnel behavior
+4. targeted device smoke test when tunnel behavior, app-group logging, or monitor behavior changes
 
-Current note:
+## Near-Term Priorities
 
-1. The iOS test target intentionally covers the Swift-side runtime/monitor tests.
-2. The heavier certificate parser fixture tests remain in SwiftPM for now.
+Next practical steps:
 
-## Immediate Next Step
-
-Continue with product polish and feature work rather than structural cleanup.
-
-Reason:
-
-1. the runtime path is now explicitly one packet-tunnel runtime plus one Rust forwarding engine
-2. the renamed packet tunnel extension works on device
-3. `xcodebuild test -scheme Inspect` now runs the key Swift-side tests on simulator
-
-## Future Network Work
-
-### UDP and QUIC
-
-Treat these as two different follow-ups:
-
-1. UDP flow observation
-2. QUIC/HTTP3 certificate capture
-
-Scope:
-
-1. UDP flow observation is moderate and can be added later by extending the `tun2proxy` observer seam and Inspect's adapter/store models.
-2. QUIC/HTTP3 certificate capture is a separate, harder feature and should not be bundled into the basic UDP follow-up.
-
-Implementation order:
-
-1. Reintroduce UDP transport metadata in `tun2proxy` observer types.
-2. Emit UDP session events from the `tun2proxy` UDP handling path.
-3. Decide how Inspect should surface UDP observations in Monitor and Diagnostics.
-4. Evaluate a dedicated QUIC strategy only after the TCP/UDP monitor product shape is stable.
+1. Continue UI polish on Monitor and Host Detail.
+2. Keep the live-monitor tunnel path stable while improving diagnostics.
+3. Add UDP observation through the `tun2proxy` observer branch.
+4. Revisit QUIC only after UDP observation and product presentation are clear.
