@@ -126,9 +126,10 @@ capture_device_set() {
   local udid="$1"
   local output_path="$2"
 
-  capture_scenario "$udid" home "$output_path/01-home.png" 2
-  capture_scenario "$udid" summary "$output_path/02-summary.png" "${APP_STORE_SCREENSHOT_REPORT_WAIT_SECONDS:-8}"
-  capture_scenario "$udid" detail "$output_path/03-detail.png" "${APP_STORE_SCREENSHOT_REPORT_WAIT_SECONDS:-8}"
+  capture_scenario "$udid" inspect-tab "$output_path/01-inspect-tab.png" 2
+  capture_scenario "$udid" monitor-tab "$output_path/02-live-monitor.png" 2
+  capture_scenario "$udid" host-detail "$output_path/03-host-detail.png" 2
+  capture_scenario "$udid" certificate-chain "$output_path/04-cert-chain.png" 2
 }
 
 upload_screenshots() {

@@ -7,11 +7,20 @@ enum InspectionMonitorSharedStore {
 
 @MainActor
 public struct InspectionMonitorView: View {
-    @State private var monitorStore = InspectionMonitorSharedStore.shared
+    @State private var monitorStore: InspectionMonitorStore
     @State private var isRefreshing = false
     private let refreshAction: (@MainActor () async -> Void)?
 
     public init(refreshAction: (@MainActor () async -> Void)? = nil) {
+        _monitorStore = State(initialValue: InspectionMonitorSharedStore.shared)
+        self.refreshAction = refreshAction
+    }
+
+    init(
+        monitorStore: InspectionMonitorStore,
+        refreshAction: (@MainActor () async -> Void)? = nil
+    ) {
+        _monitorStore = State(initialValue: monitorStore)
         self.refreshAction = refreshAction
     }
 

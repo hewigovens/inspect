@@ -83,6 +83,19 @@ Focus:
 2. Keep the device and simulator workflows documented.
 3. Keep TestFlight and screenshot flows easy to run from `just`.
 
+### 6. macOS Reuse
+
+Goal:
+
+Extend Inspect to macOS without forking the core monitor and certificate logic.
+
+Plan:
+
+1. Keep `InspectCore` UI models and report building platform-neutral where possible.
+2. Reuse `Rust/tunnel-core` for host observation and passive certificate capture.
+3. Add a macOS app shell and a macOS packet-tunnel target only after the iOS path stays stable.
+4. Design screenshot, diagnostics, and monitor flows so they can map cleanly onto macOS later.
+
 ## Validation Loop
 
 Use this validation loop for non-trivial changes:
@@ -91,6 +104,7 @@ Use this validation loop for non-trivial changes:
 2. `xcodebuild -project Inspect.xcodeproj -scheme Inspect -destination 'generic/platform=iOS Simulator' build | xcbeautify`
 3. `xcodebuild -project Inspect.xcodeproj -scheme Inspect -destination 'platform=iOS Simulator,id=<simulator-id>' test | xcbeautify`
 4. targeted device smoke test when tunnel behavior, app-group logging, or monitor behavior changes
+5. macOS smoke test once the macOS shell and tunnel target exist
 
 ## Near-Term Priorities
 
@@ -100,3 +114,4 @@ Next practical steps:
 2. Keep the live-monitor tunnel path stable while improving diagnostics.
 3. Add UDP observation through the `tun2proxy` observer branch.
 4. Revisit QUIC only after UDP observation and product presentation are clear.
+5. Start macOS shell planning only after the iOS release path stays repeatable.

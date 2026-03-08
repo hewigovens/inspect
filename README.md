@@ -81,3 +81,7 @@ Today:
 2. Passive SNI and certificate-chain capture work for the current TCP path.
 3. UDP forwarding exists in `tun2proxy`, but Inspect does not yet surface UDP observations.
 4. QUIC/HTTP3 certificate capture is not implemented.
+
+## License
+
+Inspect is licensed under GPLv3. See [LICENSE](/Users/hewig/workspace/h/Inspect/LICENSE).

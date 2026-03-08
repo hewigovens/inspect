@@ -13,8 +13,8 @@ struct InspectAppRootView: View {
     @State private var liveMonitorManager = LiveMonitorManager()
 
     var body: some View {
-        if InspectionScreenshotScenario.current != nil {
-            InspectionRootView(screenshotScenario: .current)
+        if let screenshotScenario = InspectionScreenshotScenario.current {
+            InspectionAppStoreScreenshotView(scenario: screenshotScenario)
                 .tint(.inspectAccent)
         } else {
             TabView(selection: $selectedTab) {
