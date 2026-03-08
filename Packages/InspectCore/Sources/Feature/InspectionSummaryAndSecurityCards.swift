@@ -23,9 +23,12 @@ struct InspectionSummaryCard: View {
                 }
 
                 if let leaf = report.leafCertificate {
-                    LabeledContent("Issued To", value: leaf.subjectSummary)
-                    LabeledContent("Issued By", value: leaf.issuerSummary)
-                    LabeledContent("Validity", value: leaf.validity.status.rawValue)
+                    VStack(alignment: .leading, spacing: 12) {
+                        InspectionSummaryField(title: "Issued To", value: leaf.subjectSummary)
+                        InspectionSummaryField(title: "Issued By", value: leaf.issuerSummary)
+                        InspectionSummaryField(title: "Validity", value: leaf.validity.status.rawValue)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
                 if let failureReason = report.trust.failureReason, report.trust.isTrusted == false {
@@ -58,6 +61,25 @@ struct InspectionSummaryCard: View {
         default:
             return "Protocol Unknown"
         }
+    }
+}
+
+private struct InspectionSummaryField: View {
+    let title: String
+    let value: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(title)
+                .font(.inspectRootCaptionBold)
+                .foregroundStyle(.secondary)
+
+            Text(value)
+                .font(.inspectRootSubheadline)
+                .foregroundStyle(.primary)
+                .multilineTextAlignment(.leading)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 

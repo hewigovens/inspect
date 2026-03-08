@@ -42,6 +42,14 @@ let package = Package(
             resources: [
                 .copy("Fixtures/mac_dev.cer")
             ]
+        ),
+        .testTarget(
+            name: "InspectFeatureTests",
+            dependencies: [
+                "InspectFeature",
+                "InspectCore"
+            ],
+            path: "Tests/FeatureTests"
         )
     ]
 )

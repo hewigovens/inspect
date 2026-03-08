@@ -1,10 +1,10 @@
 import Foundation
 
 public enum InspectionScreenshotScenario: String {
-    case home
-    case summary
-    case risk
-    case detail
+    case inspectTab = "inspect-tab"
+    case monitorTab = "monitor-tab"
+    case hostDetail = "host-detail"
+    case certificateChain = "certificate-chain"
 
     public static var current: InspectionScreenshotScenario? {
         ProcessInfo.processInfo.environment["INSPECT_SCREENSHOT_SCENARIO"]
@@ -13,12 +13,8 @@ public enum InspectionScreenshotScenario: String {
 
     var initialURL: URL? {
         switch self {
-        case .home:
+        case .inspectTab, .monitorTab, .hostDetail, .certificateChain:
             return nil
-        case .summary, .detail:
-            return URL(string: "https://hewig.dev")
-        case .risk:
-            return URL(string: "https://untrusted-root.badssl.com")
         }
     }
 
@@ -27,14 +23,18 @@ public enum InspectionScreenshotScenario: String {
     }
 
     var showsCertificateDetail: Bool {
-        self == .detail
+        false
     }
 
     var showsDemoTargets: Bool {
-        self == .home
+        self == .inspectTab
     }
 
     var showsRecents: Bool {
+        false
+    }
+
+    var showsMonitorCard: Bool {
         false
     }
 }
