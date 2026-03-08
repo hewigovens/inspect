@@ -1,6 +1,5 @@
 import InspectCore
 import SwiftUI
-import UIKit
 
 enum AppLinks {
     static let appStore = URL(string: "https://apps.apple.com/us/app/inspect-view-tls-certificate/id1074957486")
@@ -62,11 +61,7 @@ struct RecentLookupItem: Identifiable, Equatable {
 
 extension View {
     func inspectURLField() -> some View {
-        self
-            .textInputAutocapitalization(.never)
-            .keyboardType(.URL)
-            .autocorrectionDisabled()
-            .submitLabel(.go)
+        inspectPlatformURLField()
     }
 
     @ViewBuilder
@@ -79,18 +74,15 @@ extension View {
     }
 
     func hideRootNavigationBar() -> some View {
-        self.toolbar(.hidden, for: .navigationBar)
+        inspectNavigationBarHidden()
     }
 
     func inlineRootNavigationTitle() -> some View {
-        self.navigationBarTitleDisplayMode(.inline)
+        inspectInlineNavigationTitle()
     }
 
     func extensionGroupedListStyle() -> some View {
-        self
-            .listStyle(.insetGrouped)
-            .scrollContentBackground(.hidden)
-            .background(Color(uiColor: .systemGroupedBackground))
+        inspectGroupedListStyle(background: InspectPlatform.groupedBackground)
     }
 }
 

@@ -2,53 +2,21 @@
 set -euo pipefail
 
 if [[ -z "${SRCROOT:-}" || -z "${BUILT_PRODUCTS_DIR:-}" || -z "${PLATFORM_NAME:-}" || -z "${CONFIGURATION:-}" ]]; then
-  echo "build_rust_ios_lib.sh requires Xcode build environment variables" >&2
+  echo "build_rust_lib.sh requires Xcode build environment variables" >&2
   exit 1
 fi
 
-resolve_cargo() {
-  if command -v cargo >/dev/null 2>&1; then
-    command -v cargo
-    return
-  fi
-
-  if [[ -x "${HOME:-}/.cargo/bin/cargo" ]]; then
-    echo "${HOME}/.cargo/bin/cargo"
-    return
-  fi
-
-  if [[ -f "${HOME:-}/.cargo/env" ]]; then
-    # shellcheck disable=SC1090
-    source "${HOME}/.cargo/env"
-    if command -v cargo >/dev/null 2>&1; then
-      command -v cargo
-      return
-    fi
-  fi
-
-  return 1
-}
-
-resolve_rustup() {
-  if command -v rustup >/dev/null 2>&1; then
-    command -v rustup
-    return
-  fi
-
-  if [[ -x "${HOME:-}/.cargo/bin/rustup" ]]; then
-    echo "${HOME}/.cargo/bin/rustup"
-    return
-  fi
-
-  return 1
-}
-
-if ! CARGO_BIN="$(resolve_cargo)"; then
-  echo "cargo not found. Install Rust and ensure ~/.cargo/bin is available to Xcode build scripts." >&2
+CARGO_BIN="$(command -v cargo || true)"
+if [[ -z "$CARGO_BIN" ]]; then
+  echo "cargo not found in PATH." >&2
   exit 1
 fi
 
-export CARGO_NET_GIT_FETCH_WITH_CLI="${CARGO_NET_GIT_FETCH_WITH_CLI:-true}"
+RUSTUP_BIN="$(command -v rustup || true)"
+if [[ -z "$RUSTUP_BIN" ]]; then
+  echo "rustup not found in PATH." >&2
+  exit 1
+fi
 
 ARCH="${CURRENT_ARCH:-}"
 if [[ -z "$ARCH" || "$ARCH" == "undefined_arch" ]]; then
@@ -87,6 +55,22 @@ case "$PLATFORM_NAME" in
       esac
     done
     ;;
+  macosx)
+    for mac_arch in ${ARCHS:-$ARCH}; do
+      case "$mac_arch" in
+        arm64)
+          append_target "aarch64-apple-darwin"
+          ;;
+        x86_64)
+          append_target "x86_64-apple-darwin"
+          ;;
+        *)
+          echo "Unsupported macOS arch: $mac_arch" >&2
+          exit 1
+          ;;
+      esac
+    done
+    ;;
   *)
     echo "Unsupported Apple platform: $PLATFORM_NAME" >&2
     exit 1
@@ -103,17 +87,11 @@ fi
 MANIFEST_PATH="$SRCROOT/Rust/tunnel-core/Cargo.toml"
 DEST_PATH="$BUILT_PRODUCTS_DIR/libtunnel_core.a"
 LIB_INPUTS=()
-RUSTUP_BIN="$(resolve_rustup || true)"
-
-if [[ -n "$RUSTUP_BIN" ]]; then
-  INSTALLED_RUST_TARGETS="$("$RUSTUP_BIN" target list --installed)"
-else
-  INSTALLED_RUST_TARGETS=""
-fi
+INSTALLED_RUST_TARGETS="$("$RUSTUP_BIN" target list --installed)"
 
 for rust_target in "${RUST_TARGETS[@]}"; do
   echo "Building tunnel-core for $rust_target ($PROFILE)"
-  if [[ -n "$RUSTUP_BIN" ]] && ! grep -qx "$rust_target" <<<"$INSTALLED_RUST_TARGETS"; then
+  if ! grep -qx "$rust_target" <<<"$INSTALLED_RUST_TARGETS"; then
     echo "Missing Rust target: $rust_target" >&2
     echo "Install it with: rustup target add $rust_target" >&2
     exit 1

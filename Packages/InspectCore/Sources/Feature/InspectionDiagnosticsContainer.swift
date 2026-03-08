@@ -20,6 +20,6 @@ struct InspectionDiagnosticsContainer<Content: View>: View {
             .scrollBounceBehavior(.basedOnSize)
         }
         .navigationTitle(title)
-        .navigationBarTitleDisplayMode(.inline)
+        .inlineRootNavigationTitle()
     }
 }

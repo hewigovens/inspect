@@ -40,7 +40,7 @@ public struct InspectionTunnelLogView: View {
             InspectionTunnelLogCard(store: logStore)
         }
         .toolbar {
-            ToolbarItemGroup(placement: .topBarTrailing) {
+            ToolbarItemGroup(placement: InspectPlatform.topBarTrailingPlacement) {
                 Button {
                     logStore.refresh()
                 } label: {

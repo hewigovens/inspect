@@ -56,7 +56,7 @@ struct ExtensionInspectionContent: View {
         .inlineRootNavigationTitle()
         .toolbar {
             if let closeAction {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: InspectPlatform.topBarLeadingPlacement) {
                     Button("Done", action: closeAction)
                 }
             }

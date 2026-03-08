@@ -33,7 +33,7 @@ struct InspectionMonitorHostDetailView: View {
             .scrollBounceBehavior(.basedOnSize)
         }
         .navigationTitle(host.host)
-        .navigationBarTitleDisplayMode(.inline)
+        .inlineRootNavigationTitle()
         .navigationDestination(isPresented: $isShowingCertificateDetail) {
             if let selectedReport {
                 CertificateDetailView(report: selectedReport, initialSelectionIndex: 0)

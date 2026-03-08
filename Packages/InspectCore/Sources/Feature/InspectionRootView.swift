@@ -67,7 +67,7 @@ public struct InspectionRootView: View {
             CertificateDetailView(report: report, initialSelectionIndex: 0)
                 .toolbar {
                     if let closeAction {
-                        ToolbarItem(placement: .topBarLeading) {
+                        ToolbarItem(placement: InspectPlatform.topBarLeadingPlacement) {
                             Button("Done", action: closeAction)
                         }
                     }
@@ -141,7 +141,7 @@ public struct InspectionRootView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .scrollBounceBehavior(.basedOnSize)
-            .scrollDismissesKeyboard(.immediately)
+            .inspectScrollDismissesKeyboard()
             .applyExtensionScrollMargins(presentation)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
