@@ -61,8 +61,8 @@ Common commands:
 
 ```bash
 just generate
-just rust-core-test
-just rust-core-tun2proxy-harness
+just rust test
+just rust tun2proxy-harness
 just test-ios-sim
 just run-ios-device
 ```

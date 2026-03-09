@@ -28,7 +28,7 @@ public struct InspectionMonitorView: View {
         NavigationStack {
             monitorContent
                 .navigationTitle("Monitor")
-                .navigationBarTitleDisplayMode(.inline)
+                .inlineRootNavigationTitle()
         }
         .onAppear {
             Task {

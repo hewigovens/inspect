@@ -74,7 +74,7 @@ public struct CertificateDetailView: View {
         }
         .toolbar {
             if let exportURL {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: InspectPlatform.topBarTrailingPlacement) {
                     ShareLink(item: exportURL) {
                         Image(systemName: "square.and.arrow.up")
                     }

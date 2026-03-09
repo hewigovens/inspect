@@ -1,11 +1,9 @@
 import Foundation
 import SwiftUI
-import UIKit
-private typealias PlatformImage = UIImage
 
 struct RecentLookupIcon: View {
     let host: String?
-    @State private var faviconImage: PlatformImage?
+    @State private var faviconImage: InspectPlatformImage?
 
     var body: some View {
         Group {
@@ -52,7 +50,7 @@ struct RecentLookupIcon: View {
         }
 
         guard let imageData = await FaviconCache.data(for: faviconURL),
-              let image = PlatformImage(data: imageData)
+              let image = InspectPlatform.image(from: imageData)
         else {
             faviconImage = nil
             return
@@ -118,11 +116,5 @@ private enum FaviconCache {
         } catch {
             return nil
         }
-    }
-}
-
-private extension Image {
-    init(platformImage: PlatformImage) {
-        self.init(uiImage: platformImage)
     }
 }

@@ -1,0 +1,30 @@
+set shell := ["zsh", "-eu", "-o", "pipefail", "-c"]
+
+manifest := "tunnel-core/Cargo.toml"
+
+default:
+    @just --list
+
+check:
+    cargo check --manifest-path {{manifest}}
+
+test:
+    cargo test --manifest-path {{manifest}}
+
+build:
+    cargo build --manifest-path {{manifest}}
+
+build-macos:
+    cargo build --manifest-path {{manifest}} --target aarch64-apple-darwin
+
+build-macos-release:
+    cargo build --manifest-path {{manifest}} --target aarch64-apple-darwin --release
+
+replay fixture="tunnel-core/fixtures/replay/sample_sni.json":
+    cargo run --manifest-path {{manifest}} --bin tunnel-core-replay -- {{fixture}} --pretty
+
+integration:
+    cargo test --manifest-path {{manifest}} -- --nocapture
+
+tun2proxy-harness:
+    cargo test --manifest-path {{manifest}} tun2proxy_run_forwards_tcp_and_emits_tls_observations -- --nocapture

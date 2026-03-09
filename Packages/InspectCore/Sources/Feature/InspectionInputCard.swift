@@ -1,6 +1,5 @@
 import Observation
 import SwiftUI
-import UIKit
 
 struct InspectionInputCard: View {
     @Bindable var store: InspectionStore
@@ -72,7 +71,7 @@ struct InspectionInputCard: View {
                 HStack(spacing: 12) {
                     Button {
                         isInputFocused.wrappedValue = false
-                        if let pasted = UIPasteboard.general.string {
+                        if let pasted = InspectPlatform.pasteboardString() {
                             store.input = pasted
                         }
                     } label: {

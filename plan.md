@@ -83,28 +83,54 @@ Focus:
 2. Keep the device and simulator workflows documented.
 3. Keep TestFlight and screenshot flows easy to run from `just`.
 
-### 6. macOS Reuse
+### 6. macOS Expansion
 
 Goal:
 
 Extend Inspect to macOS without forking the core monitor and certificate logic.
 
-Plan:
+Done:
 
-1. Keep `InspectCore` UI models and report building platform-neutral where possible.
-2. Reuse `Rust/tunnel-core` for host observation and passive certificate capture.
-3. Add a macOS app shell and a macOS packet-tunnel target only after the iOS path stays stable.
-4. Design screenshot, diagnostics, and monitor flows so they can map cleanly onto macOS later.
+1. `Rust/tunnel-core` builds for `aarch64-apple-darwin` and `x86_64-apple-darwin`.
+2. `InspectCore` and `InspectFeature` compile on macOS.
+3. Swift package tests pass on macOS.
+4. The shared SwiftUI layer now keeps macOS branching concentrated in one support layer instead of scattering it through feature views.
+5. macOS deployment targets are declared in the Swift package and Xcode project source of truth.
+
+Missing:
+
+1. A real macOS app target in `project.yml`.
+2. A macOS packet-tunnel extension target, plist, entitlements, signing, and bundle identifiers.
+3. `LiveMonitorManager` wiring for a macOS packet-tunnel bundle identifier and preferences flow.
+4. macOS-specific validation commands in `just` and CI.
+5. A macOS share entry point for manual inspection handoff.
+
+Decisions:
+
+1. Do the macOS packet-tunnel extension target before macOS app-shell UI changes.
+2. Treat packet-tunnel bring-up as the highest-risk and highest-value macOS task because Live Monitor depends on it.
+3. Prefer a macOS Service / Share item for manual inspection input instead of recreating the current iOS action extension first.
+4. The share entry point only needs to accept a URL or host and pass it into Inspect.
+
+Execution Order:
+
+1. Add the macOS packet-tunnel extension target with Rust linkage and signing scaffolding.
+2. Validate tunnel start, stop, preferences save/load, and shared App Group feed/log behavior on macOS.
+3. Add a macOS app target that reuses the existing SwiftUI Inspect / Monitor / Settings flows with minimal platform-specific polish.
+4. Add the macOS Service / Share entry point for URL-or-host handoff into manual inspection.
+5. Do macOS-specific UI polish, window behavior, screenshots, and menu integration only after the tunnel path is proven stable.
 
 ## Validation Loop
 
 Use this validation loop for non-trivial changes:
 
 1. `cargo test --manifest-path Rust/tunnel-core/Cargo.toml`
-2. `xcodebuild -project Inspect.xcodeproj -scheme Inspect -destination 'generic/platform=iOS Simulator' build | xcbeautify`
-3. `xcodebuild -project Inspect.xcodeproj -scheme Inspect -destination 'platform=iOS Simulator,id=<simulator-id>' test | xcbeautify`
-4. targeted device smoke test when tunnel behavior, app-group logging, or monitor behavior changes
-5. macOS smoke test once the macOS shell and tunnel target exist
+2. `swift test` in `Packages/InspectCore`
+3. `xcodebuild -project Inspect.xcodeproj -scheme Inspect -destination 'generic/platform=iOS Simulator' build | xcbeautify`
+4. `xcodebuild -project Inspect.xcodeproj -scheme Inspect -destination 'platform=iOS Simulator,id=<simulator-id>' test | xcbeautify`
+5. targeted device smoke test when tunnel behavior, app-group logging, or monitor behavior changes
+6. macOS packet-tunnel smoke test once the macOS extension target exists
+7. macOS app smoke test once the macOS app target exists
 
 ## Near-Term Priorities
 
@@ -114,4 +140,4 @@ Next practical steps:
 2. Keep the live-monitor tunnel path stable while improving diagnostics.
 3. Add UDP observation through the `tun2proxy` observer branch.
 4. Revisit QUIC only after UDP observation and product presentation are clear.
-5. Start macOS shell planning only after the iOS release path stays repeatable.
+5. Build the macOS packet-tunnel target before spending time on a dedicated macOS app shell.

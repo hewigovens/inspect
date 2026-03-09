@@ -1,31 +1,27 @@
 import InspectCore
 import SwiftUI
-import UIKit
 
 extension Color {
     static var certificateGroupedBackground: Color {
-        Color(uiColor: .systemGroupedBackground)
+        InspectPlatform.groupedBackground
     }
 
     static var certificateRowBackground: Color {
-        Color(uiColor: .secondarySystemGroupedBackground)
+        InspectPlatform.secondaryGroupedBackground
     }
 }
 
 extension View {
     func inlineTitleDisplayMode() -> some View {
-        self.navigationBarTitleDisplayMode(.inline)
+        inspectInlineNavigationTitle()
     }
 
     func ensureNavigationBarVisible() -> some View {
-        self.toolbar(.visible, for: .navigationBar)
+        inspectNavigationBarVisible()
     }
 
     func certificateGroupedListStyle() -> some View {
-        self
-            .listStyle(.insetGrouped)
-            .scrollContentBackground(.hidden)
-            .background(Color.certificateGroupedBackground)
+        inspectGroupedListStyle(background: .certificateGroupedBackground)
     }
 }
 
@@ -62,8 +58,7 @@ enum CertificateExportWriter {
 enum InspectClipboard {
     @MainActor
     static func copy(_ value: String) {
-        UIPasteboard.general.string = value
-        UINotificationFeedbackGenerator().notificationOccurred(.success)
+        InspectPlatform.copyToPasteboard(value)
     }
 }
 

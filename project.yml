@@ -5,6 +5,7 @@ options:
   createIntermediateGroups: true
   deploymentTarget:
     iOS: "18.0"
+    macOS: "15.0"
 
 configFiles:
   Debug: Configs/Project.xcconfig
@@ -46,7 +47,9 @@ targets:
         SKIP_INSTALL: YES
     preBuildScripts:
       - name: Build Rust Tunnel Core
-        script: ./scripts/build_rust_ios_lib.sh
+        script: |
+          export PATH="$HOME/.cargo/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+          ./scripts/build_rust_lib.sh
         basedOnDependencyAnalysis: false
         outputFiles:
           - $(BUILT_PRODUCTS_DIR)/libtunnel_core.a
