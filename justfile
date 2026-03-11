@@ -11,6 +11,31 @@ test-ios-sim device_id="863DCA4D-25BC-4E56-B6DA-D94FEC42A174":
     xcodegen generate
     xcodebuild -project Inspect.xcodeproj -scheme Inspect -destination "platform=iOS Simulator,id={{device_id}}" test | xcbeautify
 
+build-macos:
+    xcodegen generate
+    xcodebuild -project Inspect.xcodeproj -scheme InspectMac -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO build | xcbeautify
+
+test-macos:
+    xcodegen generate
+    xcodebuild -project Inspect.xcodeproj -scheme InspectMac -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO test | xcbeautify
+
+smoke-macos-tunnel url="https://example.com" derived_data="target/DerivedData/InspectMacSmoke":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    DERIVED_DATA="{{derived_data}}"
+    URL="{{url}}"
+    APP_INSTALL_PATH="/Applications/Inspect Smoke.app"
+    xcodegen generate
+    xcodebuild -project Inspect.xcodeproj -scheme InspectMac -destination 'platform=macOS' -derivedDataPath "$DERIVED_DATA" build | xcbeautify
+    APP_BUNDLE="$DERIVED_DATA/Build/Products/Debug/Inspect.app"
+    if [[ ! -d "$APP_BUNDLE" ]]; then
+        echo "Built app bundle not found at $APP_BUNDLE" >&2
+        exit 1
+    fi
+    rm -rf "$APP_INSTALL_PATH"
+    ditto "$APP_BUNDLE" "$APP_INSTALL_PATH"
+    open -W -n "$APP_INSTALL_PATH" --args --smoke-test --smoke-test-url "$URL"
+
 testflight:
     ./scripts/testflight.sh upload
 

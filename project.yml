@@ -34,6 +34,8 @@ targets:
         excludes:
           - Info.plist
           - InspectPacketTunnelExtension.entitlements
+          - InspectMacPacketTunnelExtension-Info.plist
+          - InspectMacPacketTunnelExtension.entitlements
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect.PacketTunnelExtension
@@ -56,6 +58,43 @@ targets:
     dependencies:
       - package: InspectCore
         product: InspectCore
+
+  InspectMacPacketTunnelExtension:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: PacketTunnelExtension/Sources
+      - path: PacketTunnelExtension/Resources
+        buildPhase: resources
+        excludes:
+          - Info.plist
+          - InspectPacketTunnelExtension.entitlements
+          - InspectMacPacketTunnelExtension-Info.plist
+          - InspectMacPacketTunnelExtension.entitlements
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect.PacketTunnelExtension
+        APPLICATION_EXTENSION_API_ONLY: YES
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: PacketTunnelExtension/Resources/InspectMacPacketTunnelExtension-Info.plist
+        CODE_SIGN_ENTITLEMENTS: PacketTunnelExtension/Resources/InspectMacPacketTunnelExtension.entitlements
+        SWIFT_OBJC_BRIDGING_HEADER: PacketTunnelExtension/Sources/InspectPacketTunnelExtension-Bridging-Header.h
+        HEADER_SEARCH_PATHS: $(inherited) "$(PROJECT_DIR)/Rust/tunnel-core/include"
+        LIBRARY_SEARCH_PATHS: $(inherited) "$(BUILT_PRODUCTS_DIR)"
+        OTHER_LDFLAGS: $(inherited) -ltunnel_core
+        SKIP_INSTALL: YES
+    preBuildScripts:
+      - name: Build Rust Tunnel Core
+        script: |
+          export PATH="$HOME/.cargo/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+          ./scripts/build_rust_lib.sh
+        basedOnDependencyAnalysis: false
+        outputFiles:
+          - $(BUILT_PRODUCTS_DIR)/libtunnel_core.a
+    dependencies:
+      - package: InspectCore
+        product: InspectCore
+      - sdk: SystemConfiguration.framework
 
   InspectActionExtension:
     type: app-extension
@@ -106,6 +145,35 @@ targets:
       testTargets:
         - InspectAppTests
 
+  InspectMac:
+    type: application
+    platform: macOS
+    sources:
+      - path: MacApp/Sources
+      - path: MacApp/Resources
+        buildPhase: resources
+        excludes:
+          - Info.plist
+          - InspectMac.entitlements
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect
+        PRODUCT_NAME: Inspect
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: MacApp/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: MacApp/Resources/InspectMac.entitlements
+    dependencies:
+      - package: InspectCore
+        product: InspectCore
+      - package: InspectCore
+        product: InspectFeature
+      - target: InspectMacPacketTunnelExtension
+        embed: true
+    scheme:
+      gatherCoverageData: false
+      testTargets:
+        - InspectMacTests
+
   InspectAppTests:
     type: bundle.unit-test
     platform: iOS
@@ -124,3 +192,22 @@ targets:
       base:
         GENERATE_INFOPLIST_FILE: YES
         PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect.tests
+
+  InspectMacTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Packages/InspectCore/Tests/CoreTests/InspectPacketTunnelConfigurationTests.swift
+      - path: Packages/InspectCore/Tests/CoreTests/InspectLogConfigurationTests.swift
+      - path: Packages/InspectCore/Tests/CoreTests/LiveMonitorTunnelStateTests.swift
+      - path: Packages/InspectCore/Tests/CoreTests/TLSMonitorProbeEngineTests.swift
+      - path: Packages/InspectCore/Tests/FeatureTests/InspectionMonitorStoreTests.swift
+    dependencies:
+      - package: InspectCore
+        product: InspectCore
+      - package: InspectCore
+        product: InspectFeature
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect.mac.tests
