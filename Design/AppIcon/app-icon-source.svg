@@ -48,28 +48,30 @@
     </filter>
   </defs>
 
-  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <rect x="72" y="72" width="880" height="880" rx="258" fill="url(#bg)"/>
 
-  <g filter="url(#cardShadow)">
-    <rect x="160" y="176" width="704" height="574" rx="96" fill="url(#cardFill)"/>
-    <rect x="188" y="204" width="648" height="518" rx="72" stroke="url(#cardBorder)" stroke-width="18"/>
+  <g transform="translate(512 512) scale(0.8) translate(-512 -512)">
+    <g filter="url(#cardShadow)">
+      <rect x="160" y="176" width="704" height="574" rx="96" fill="url(#cardFill)"/>
+      <rect x="188" y="204" width="648" height="518" rx="72" stroke="url(#cardBorder)" stroke-width="18"/>
 
-    <rect x="240" y="300" width="408" height="38" rx="19" fill="#5E7187"/>
-    <rect x="240" y="410" width="260" height="32" rx="16" fill="#5E7187"/>
-    <rect x="240" y="514" width="168" height="32" rx="16" fill="#5E7187"/>
+      <rect x="240" y="300" width="408" height="38" rx="19" fill="#5E7187"/>
+      <rect x="240" y="410" width="260" height="32" rx="16" fill="#5E7187"/>
+      <rect x="240" y="514" width="168" height="32" rx="16" fill="#5E7187"/>
 
-    <rect x="240" y="250" width="118" height="16" rx="8" fill="#C9D7E7"/>
-    <rect x="372" y="250" width="74" height="16" rx="8" fill="#D8E3F0"/>
-  </g>
+      <rect x="240" y="250" width="118" height="16" rx="8" fill="#C9D7E7"/>
+      <rect x="372" y="250" width="74" height="16" rx="8" fill="#D8E3F0"/>
+    </g>
 
-  <g filter="url(#medalShadow)" transform="rotate(-7 683 672)">
-    <path d="M629 690L601 834L660 789L699 851L718 693H629Z" fill="url(#ribbonLeft)"/>
-    <path d="M710 693L726 851L774 789L822 832L788 690L710 693Z" fill="url(#ribbonRight)"/>
+    <g filter="url(#medalShadow)" transform="rotate(-7 683 672)">
+      <path d="M629 690L601 834L660 789L699 851L718 693H629Z" fill="url(#ribbonLeft)"/>
+      <path d="M710 693L726 851L774 789L822 832L788 690L710 693Z" fill="url(#ribbonRight)"/>
 
-    <polygon points="687,517 722,530 757,521 771,556 805,571 798,608 822,634 796,660 802,696 768,710 754,745 719,736 688,759 659,735 622,743 610,708 575,695 583,659 557,633 582,606 578,570 612,557 625,523 661,531"
-      fill="url(#medalFill)"/>
-    <circle cx="689" cy="634" r="92" fill="#C9961C"/>
-    <circle cx="689" cy="634" r="72" fill="url(#medalInner)"/>
-    <circle cx="689" cy="634" r="40" fill="#C29424"/>
+      <polygon points="687,517 722,530 757,521 771,556 805,571 798,608 822,634 796,660 802,696 768,710 754,745 719,736 688,759 659,735 622,743 610,708 575,695 583,659 557,633 582,606 578,570 612,557 625,523 661,531"
+        fill="url(#medalFill)"/>
+      <circle cx="689" cy="634" r="92" fill="#C9961C"/>
+      <circle cx="689" cy="634" r="72" fill="url(#medalInner)"/>
+      <circle cx="689" cy="634" r="40" fill="#C29424"/>
+    </g>
   </g>
 </svg>

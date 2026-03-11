@@ -81,3 +81,55 @@ struct InspectionMessageCard: View {
         }
     }
 }
+
+struct InspectionWorkspaceCard: View {
+    var body: some View {
+        InspectCard {
+            VStack(alignment: .leading, spacing: 18) {
+                Text("Certificate Workspace")
+                    .font(.inspectRootHeadline)
+
+                Text("Inspect gives you a larger-screen flow for checking trust, reading the chain, and jumping into certificate details without bouncing between views.")
+                    .font(.inspectRootFootnote)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                workspaceFeature(
+                    title: "Trust Summary",
+                    message: "See the trust verdict, negotiated protocol, issuer, and validity at a glance.",
+                    symbol: "checkmark.shield",
+                    tint: .green
+                )
+
+                workspaceFeature(
+                    title: "Chain Navigation",
+                    message: "Open any certificate in the chain and expand into the detailed inspector view.",
+                    symbol: "point.3.connected.trianglepath.dotted",
+                    tint: .indigo
+                )
+
+                workspaceFeature(
+                    title: "Copyable Details",
+                    message: "Review fingerprints, extensions, and raw certificate data with copy actions built in.",
+                    symbol: "doc.on.doc",
+                    tint: .orange
+                )
+            }
+        }
+    }
+
+    private func workspaceFeature(title: String, message: String, symbol: String, tint: Color) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            SmallFeatureGlyph(symbol: symbol, tint: tint)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(.inspectRootSubheadlineSemibold)
+                Text(message)
+                    .font(.inspectRootCaption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+}

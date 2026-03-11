@@ -54,6 +54,7 @@ struct InspectionMonitorCard: View {
                 set: { store.setEnabled($0) }
             ))
             .labelsHidden()
+            .toggleStyle(.switch)
             .disabled(store.isApplyingLiveMonitorToggle)
             .accessibilityIdentifier("monitor.toggle")
         }

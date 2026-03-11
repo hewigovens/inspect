@@ -15,6 +15,19 @@ build-macos:
     xcodegen generate
     xcodebuild -project Inspect.xcodeproj -scheme InspectMac -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO build | xcbeautify
 
+run-mac derived_data="target/DerivedData/InspectMac":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    DERIVED_DATA="{{derived_data}}"
+    xcodegen generate
+    xcodebuild -project Inspect.xcodeproj -scheme InspectMac -destination 'platform=macOS' -derivedDataPath "$DERIVED_DATA" build | xcbeautify
+    APP_PATH="$DERIVED_DATA/Build/Products/Debug/Inspect.app"
+    if [[ ! -d "$APP_PATH" ]]; then
+        echo "Built app not found at $APP_PATH" >&2
+        exit 1
+    fi
+    open -n "$APP_PATH"
+
 test-macos:
     xcodegen generate
     xcodebuild -project Inspect.xcodeproj -scheme InspectMac -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO test | xcbeautify

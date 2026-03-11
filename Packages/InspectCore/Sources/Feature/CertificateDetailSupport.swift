@@ -31,6 +31,11 @@ extension Font {
     static let inspectDetailCaption = Font.system(size: 13)
     static let inspectDetailCaptionSemibold = Font.system(size: 13, weight: .semibold)
     static let inspectDetailFootnoteMonospaced = Font.system(size: 14, design: .monospaced)
+    static let inspectDetailCompactBody = Font.system(size: 14)
+    static let inspectDetailCompactBodySemibold = Font.system(size: 14, weight: .semibold)
+    static let inspectDetailCompactCaption = Font.system(size: 12)
+    static let inspectDetailCompactCaptionSemibold = Font.system(size: 12, weight: .semibold)
+    static let inspectDetailCompactMonospaced = Font.system(size: 12, design: .monospaced)
 }
 
 enum CertificateExportWriter {

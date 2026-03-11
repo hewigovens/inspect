@@ -9,6 +9,7 @@ struct InspectionResultsContent: View {
     let currentReportURL: URL?
     let onInspectRecent: (String) async -> Void
     let onClearRecents: () -> Void
+    let onOpenCertificateDetail: (TLSInspectionReport, Int) -> Void
     let isInputFocused: FocusState<Bool>.Binding
 
     var body: some View {
@@ -28,7 +29,10 @@ struct InspectionResultsContent: View {
             }
 
             if let report {
-                InspectionChainCard(report: report)
+                InspectionChainCard(
+                    report: report,
+                    onOpenCertificateDetail: onOpenCertificateDetail
+                )
                     .id("chain")
                 InspectionSummaryCard(report: report)
                     .id("summary")
