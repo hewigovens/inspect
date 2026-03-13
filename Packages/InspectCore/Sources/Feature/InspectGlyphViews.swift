@@ -14,18 +14,50 @@ struct Badge: View {
     }
 }
 
+public struct InspectIconTile: View {
+    let symbol: String
+    let tint: Color
+    let size: CGFloat
+    let cornerRadius: CGFloat
+    let font: Font
+
+    public init(
+        symbol: String,
+        tint: Color,
+        size: CGFloat = 38,
+        cornerRadius: CGFloat? = nil,
+        font: Font = .system(size: 16, weight: .semibold)
+    ) {
+        self.symbol = symbol
+        self.tint = tint
+        self.size = size
+        self.cornerRadius = cornerRadius ?? (size * 0.32)
+        self.font = font
+    }
+
+    public var body: some View {
+        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+            .fill(tint.opacity(0.14))
+            .frame(width: size, height: size)
+            .overlay {
+                Image(systemName: symbol)
+                    .font(font)
+                    .foregroundStyle(tint)
+            }
+    }
+}
+
 struct SmallFeatureGlyph: View {
     let symbol: String
     let tint: Color
 
     var body: some View {
-        RoundedRectangle(cornerRadius: 12, style: .continuous)
-            .fill(tint.opacity(0.14))
-            .frame(width: 38, height: 38)
-            .overlay {
-                Image(systemName: symbol)
-                    .font(.inspectRootSubheadlineSemibold)
-                    .foregroundStyle(tint)
-            }
+        InspectIconTile(
+            symbol: symbol,
+            tint: tint,
+            size: 38,
+            cornerRadius: 12,
+            font: .inspectRootSubheadlineSemibold
+        )
     }
 }

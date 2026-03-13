@@ -1,3 +1,4 @@
+import Foundation
 import InspectCore
 
 struct CertificateChainNode: Identifiable {
@@ -137,7 +138,12 @@ struct CertificateDetailContent {
         appendSection(
             titled: "Extensions",
             rows: certificate.extensions.map {
-                DetailLine(label: $0.label, value: $0.value, style: .stacked)
+                DetailLine(
+                    label: $0.label,
+                    value: $0.value,
+                    style: .stacked,
+                    monospaced: shouldUseMonospacedDetailValue($0.value)
+                )
             },
             into: &sections
         )
@@ -166,4 +172,17 @@ private func certificateRoleText(_ certificate: CertificateDetails) -> String {
         return "Root certificate"
     }
     return "Intermediate certificate"
+}
+
+private func shouldUseMonospacedDetailValue(_ value: String) -> Bool {
+    let collapsed = value.unicodeScalars.filter { CharacterSet.whitespacesAndNewlines.contains($0) == false }
+    guard collapsed.count >= 24 else {
+        return false
+    }
+
+    let hexLike = collapsed.filter { scalar in
+        CharacterSet(charactersIn: "0123456789abcdefABCDEF").contains(scalar)
+    }.count
+
+    return Double(hexLike) / Double(collapsed.count) >= 0.7
 }

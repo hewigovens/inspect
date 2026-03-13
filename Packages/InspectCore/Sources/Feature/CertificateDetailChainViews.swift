@@ -22,22 +22,34 @@ struct CompactCertificateChainPanel: View {
                 .buttonStyle(.plain)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
-                    selectedIndex == node.originalIndex
-                    ? Color.accentColor
-                    : Color.certificateRowBackground
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .fill(backgroundColor(isSelected: selectedIndex == node.originalIndex))
                 )
 
                 if offset != nodes.count - 1 {
                     Divider()
                         .padding(.leading, 58)
+                        .padding(.trailing, 12)
                 }
             }
         }
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .padding(6)
+        .background(
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .fill(Color.certificateRowBackground)
+        )
         .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
                 .stroke(Color.primary.opacity(0.06), lineWidth: 1)
         )
+    }
+
+    private func backgroundColor(isSelected: Bool) -> Color {
+        guard isSelected else {
+            return .clear
+        }
+
+        return .certificateChainSelectionBackground
     }
 }
 
@@ -56,12 +68,12 @@ private struct CompactCertificateChainRow: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(node.certificate.subjectSummary)
                     .font(.inspectDetailSubheadlineSemibold)
-                    .foregroundStyle(isSelected ? .white : .primary)
+                    .foregroundStyle(primaryTextColor)
                     .lineLimit(2)
 
                 Text(node.certificate.issuerSummary)
                     .font(.inspectDetailCaption)
-                    .foregroundStyle(isSelected ? .white.opacity(0.82) : .secondary)
+                    .foregroundStyle(secondaryTextColor)
                     .lineLimit(1)
             }
 
@@ -100,6 +112,14 @@ private struct CompactCertificateChainRow: View {
 
     private var leafHasFailureSignal: Bool {
         node.certificate.isLeaf && trust.isTrusted == false
+    }
+
+    private var primaryTextColor: Color {
+        .certificateChainPrimaryText(isSelected: isSelected)
+    }
+
+    private var secondaryTextColor: Color {
+        .certificateChainSecondaryText(isSelected: isSelected)
     }
 }
 

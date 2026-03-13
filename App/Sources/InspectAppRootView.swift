@@ -1,15 +1,9 @@
 import InspectFeature
 import SwiftUI
 
-private enum InspectTab: Hashable {
-    case inspect
-    case monitor
-    case settings
-}
-
 struct InspectAppRootView: View {
     @Environment(\.scenePhase) private var scenePhase
-    @State private var selectedTab: InspectTab = .inspect
+    @State private var selectedTab: InspectSection = .inspect
     @State private var liveMonitorManager = LiveMonitorManager()
 
     var body: some View {
@@ -23,25 +17,25 @@ struct InspectAppRootView: View {
                     showsAboutCard: false
                 )
                     .tabItem {
-                        Label("Inspect", systemImage: "magnifyingglass.circle")
+                        Label(InspectSection.inspect.title, systemImage: InspectSection.inspect.systemImage)
                     }
-                    .tag(InspectTab.inspect)
+                    .tag(InspectSection.inspect)
                     .accessibilityIdentifier("tab.inspect")
 
                 InspectionMonitorView {
                     await liveMonitorManager.refresh()
                 }
                     .tabItem {
-                        Label("Monitor", systemImage: "wave.3.right.circle")
+                        Label(InspectSection.monitor.title, systemImage: InspectSection.monitor.systemImage)
                     }
-                    .tag(InspectTab.monitor)
+                    .tag(InspectSection.monitor)
                     .accessibilityIdentifier("tab.monitor")
 
                 InspectSettingsView(manager: liveMonitorManager)
                     .tabItem {
-                        Label("Settings", systemImage: "gearshape")
+                        Label(InspectSection.settings.title, systemImage: InspectSection.settings.systemImage)
                     }
-                    .tag(InspectTab.settings)
+                    .tag(InspectSection.settings)
                     .accessibilityIdentifier("tab.settings")
             }
             .tint(.inspectAccent)

@@ -5,14 +5,12 @@ name = "Inspect"
 [setup]
 script = ""
 
-
 [[actions]]
-name = "Run"
-icon = "run"
-command = "just run-ios"
-
-
-[[actions]]
-name = "Run on Device"
+name = "Run iOS"
 icon = "run"
 command = "just run-ios-device"
+
+[[actions]]
+name = "Run macOS"
+icon = "run"
+command = "just run-mac"

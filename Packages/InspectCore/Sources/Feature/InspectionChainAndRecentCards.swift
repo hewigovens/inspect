@@ -3,6 +3,8 @@ import SwiftUI
 
 struct InspectionChainCard: View {
     let report: TLSInspectionReport
+    let onOpenCertificateDetail: (TLSInspectionReport, Int) -> Void
+    @State private var pendingSelectionIndex: Int?
 
     var body: some View {
         InspectCard {
@@ -11,23 +13,41 @@ struct InspectionChainCard: View {
                     .font(.inspectRootHeadline)
 
                 ForEach(Array(report.certificates.enumerated()), id: \.element.id) { index, certificate in
-                    NavigationLink {
-                        CertificateDetailView(
-                            report: report,
-                            initialSelectionIndex: index
-                        )
-                    } label: {
-                        CertificateRow(
-                            certificate: certificate,
-                            reportTrust: report.trust
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .contentShape(Rectangle())
-                    .accessibilityIdentifier("chain.certificate.\(index)")
+                    certificateRow(certificate: certificate, at: index)
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private func certificateRow(certificate: CertificateDetails, at index: Int) -> some View {
+        Button {
+            if let delay = InspectLayout.Chain.detailNavigationDelay {
+                guard pendingSelectionIndex == nil else {
+                    return
+                }
+
+                pendingSelectionIndex = index
+                InspectionWindowLayoutCenter.post(.certificateDetail)
+
+                Task { @MainActor in
+                    try? await Task.sleep(for: delay)
+                    onOpenCertificateDetail(report, index)
+                    pendingSelectionIndex = nil
+                }
+            } else {
+                onOpenCertificateDetail(report, index)
+            }
+        } label: {
+            CertificateRow(
+                certificate: certificate,
+                reportTrust: report.trust
+            )
+        }
+        .buttonStyle(.plain)
+        .contentShape(Rectangle())
+        .disabled(InspectLayout.Chain.usesAnimatedDetailNavigation && pendingSelectionIndex != nil)
+        .accessibilityIdentifier("chain.certificate.\(index)")
     }
 }
 
@@ -98,6 +118,34 @@ struct InspectionRecentCard: View {
                     .buttonStyle(.plain)
                     .contentShape(Rectangle())
                     .accessibilityIdentifier("recent.\(index)")
+                }
+            }
+        }
+    }
+}
+
+struct InspectionRecentPlaceholderCard: View {
+    var body: some View {
+        InspectCard {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Recents")
+                    .font(.inspectRootHeadline)
+
+                Text("Recent inspections will appear here after you inspect a host.")
+                    .font(.inspectRootFootnote)
+                    .foregroundStyle(.secondary)
+
+                HStack(alignment: .top, spacing: 12) {
+                    SmallFeatureGlyph(symbol: "clock.arrow.circlepath", tint: .blue)
+
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Quick reruns")
+                            .font(.inspectRootSubheadlineSemibold)
+                        Text("Use recent hosts to repeat an inspection without retyping the URL.")
+                            .font(.inspectRootCaption)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
             }
         }
