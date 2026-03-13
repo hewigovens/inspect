@@ -39,6 +39,9 @@ struct InspectAppRootView: View {
                     .accessibilityIdentifier("tab.settings")
             }
             .tint(.inspectAccent)
+            .onReceive(NotificationCenter.default.publisher(for: InspectionExternalInputCenter.notification)) { _ in
+                selectedTab = .inspect
+            }
             .task {
                 let manager = liveMonitorManager
                 InspectionLiveMonitorCoordinator.configure { isEnabled in

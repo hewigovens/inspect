@@ -2,11 +2,13 @@ import InspectCore
 import SwiftUI
 
 public struct CertificateDetailView: View {
+    @Environment(\.openURL) private var openURL
     let report: TLSInspectionReport
     @State var selectedIndex: Int
     @State var selectedContent: CertificateDetailContent?
     @State var copyFeedback: String?
     @State var copyFeedbackToken = UUID()
+    @State var presentsSSLLabs = false
 
     public init(report: TLSInspectionReport, initialSelectionIndex: Int = 0) {
         self.report = report
@@ -58,15 +60,30 @@ public struct CertificateDetailView: View {
                 }
             }
             .toolbar {
-                if let exportURL {
+                if exportURL != nil || report.sslLabsURL != nil {
                     ToolbarItem(placement: InspectPlatform.topBarTrailingPlacement) {
-                        ShareLink(item: exportURL) {
+                        Menu {
+                            if let exportURL {
+                                ShareLink(item: exportURL) {
+                                    Label("Share Certificate", systemImage: "square.and.arrow.up")
+                                }
+                            }
+
+                            if let sslLabsURL = report.sslLabsURL {
+                                Button {
+                                    openSSLLabs(sslLabsURL)
+                                } label: {
+                                    Label("Open in SSL Labs", systemImage: "safari")
+                                }
+                            }
+                        } label: {
                             Image(systemName: "square.and.arrow.up")
                         }
                     }
                 }
             }
             .certificateDetailWindowLifecycle()
+            .inspectSafariSheet(url: report.sslLabsURL, isPresented: $presentsSSLLabs)
     }
 
     static func selectedContent(in report: TLSInspectionReport, index: Int) -> CertificateDetailContent? {
@@ -105,5 +122,13 @@ public struct CertificateDetailView: View {
                 }
             }
         }
+    }
+
+    func openSSLLabs(_ url: URL) {
+        #if os(macOS)
+        openURL(url)
+        #else
+        presentsSSLLabs = true
+        #endif
     }
 }

@@ -1,7 +1,10 @@
+import InspectCore
+import InspectFeature
 import SwiftUI
 
 @main
 struct InspectMacApp: App {
+    @NSApplicationDelegateAdaptor(InspectMacAppDelegate.self) private var appDelegate
     @State private var appModel = InspectMacAppModel()
     @State private var liveMonitorManager = InspectMacLiveMonitorManager()
     @State private var windowController = InspectMacWindowController()
@@ -13,6 +16,21 @@ struct InspectMacApp: App {
                 manager: liveMonitorManager,
                 windowController: windowController
             )
+            .onOpenURL { url in
+                guard let deepLink = InspectDeepLink(url: url) else {
+                    return
+                }
+
+                switch deepLink {
+                case let .certificateDetail(token):
+                    guard let report = InspectionSharedReportStore.consume(token: token) else {
+                        return
+                    }
+
+                    appModel.startNewInspection()
+                    InspectionExternalInputCenter.submitReport(report, opensCertificateDetail: true)
+                }
+            }
         }
         .defaultSize(width: defaultWindowWidth, height: defaultWindowHeight)
         .windowResizability(.contentMinSize)

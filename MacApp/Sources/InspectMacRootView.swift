@@ -53,6 +53,10 @@ struct InspectMacRootView: View {
 
             windowController.transition(to: preference)
         }
+        .onReceive(NotificationCenter.default.publisher(for: InspectionExternalInputCenter.notification)) { _ in
+            appModel.startNewInspection()
+            windowController.transition(to: .standard)
+        }
     }
 
     @ViewBuilder

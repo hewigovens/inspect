@@ -116,6 +116,32 @@ targets:
       - package: InspectCore
         product: InspectFeature
 
+  InspectSafariWebExtension:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: SafariExtension/Sources
+      - path: SafariExtension/Resources
+        buildPhase: resources
+        excludes:
+          - Info-iOS.plist
+          - Info-macOS.plist
+          - InspectSafariWebExtension.entitlements
+          - InspectMacSafariWebExtension.entitlements
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect.SafariWebExtension
+        PRODUCT_NAME: InspectSafariWebExtension
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: SafariExtension/Resources/Info-iOS.plist
+        CODE_SIGN_ENTITLEMENTS: SafariExtension/Resources/InspectSafariWebExtension.entitlements
+        SWIFT_STRICT_CONCURRENCY: minimal
+        SKIP_INSTALL: YES
+    dependencies:
+      - package: InspectCore
+        product: InspectCore
+      - sdk: SafariServices.framework
+
   Inspect:
     type: application
     platform: iOS
@@ -140,10 +166,39 @@ targets:
         embed: true
       - target: InspectActionExtension
         embed: true
+      - target: InspectSafariWebExtension
+        embed: true
     scheme:
       gatherCoverageData: false
       testTargets:
         - InspectAppTests
+
+  InspectMacSafariWebExtension:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: SafariExtension/Sources
+      - path: SafariExtension/Resources
+        buildPhase: resources
+        excludes:
+          - Info-iOS.plist
+          - Info-macOS.plist
+          - InspectSafariWebExtension.entitlements
+          - InspectMacSafariWebExtension.entitlements
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect.SafariWebExtension.mac
+        PRODUCT_NAME: InspectMacSafariWebExtension
+        APPLICATION_EXTENSION_API_ONLY: YES
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: SafariExtension/Resources/Info-macOS.plist
+        CODE_SIGN_ENTITLEMENTS: SafariExtension/Resources/InspectMacSafariWebExtension.entitlements
+        SWIFT_STRICT_CONCURRENCY: minimal
+        SKIP_INSTALL: YES
+    dependencies:
+      - package: InspectCore
+        product: InspectCore
+      - sdk: SafariServices.framework
 
   InspectMac:
     type: application
@@ -172,6 +227,8 @@ targets:
       - package: InspectCore
         product: InspectFeature
       - target: InspectMacPacketTunnelExtension
+        embed: true
+      - target: InspectMacSafariWebExtension
         embed: true
     scheme:
       gatherCoverageData: false
