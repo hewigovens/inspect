@@ -16,7 +16,7 @@ struct InspectionAppLinksCard: View {
                     subtitle: appVersionText,
                     systemImage: "info.circle",
                     tint: .blue,
-                    destination: AppLinks.about
+                    destination: InspectAppLinks.about
                 )
 
                 appLinkRow(
@@ -24,18 +24,14 @@ struct InspectionAppLinksCard: View {
                     subtitle: "Open the App Store listing",
                     systemImage: "star.bubble",
                     tint: .orange,
-                    destination: AppLinks.appStore
+                    destination: InspectAppLinks.appStore
                 )
             }
         }
     }
 
-    private func appLinkRow(title: String, subtitle: String, systemImage: String, tint: Color, destination: URL?) -> some View {
+    private func appLinkRow(title: String, subtitle: String, systemImage: String, tint: Color, destination: URL) -> some View {
         Button {
-            guard let destination else {
-                return
-            }
-
             openURL(destination)
         } label: {
             HStack(spacing: 12) {

@@ -1,15 +1,9 @@
 import SwiftUI
 
-private enum InspectionScreenshotTab: Hashable {
-    case inspect
-    case monitor
-    case settings
-}
-
 @MainActor
 public struct InspectionAppStoreScreenshotView: View {
     private let scenario: InspectionScreenshotScenario
-    @State private var selectedTab: InspectionScreenshotTab
+    @State private var selectedTab: InspectSection
     @State private var monitorStore: InspectionMonitorStore
 
     public init(scenario: InspectionScreenshotScenario) {
@@ -49,21 +43,21 @@ public struct InspectionAppStoreScreenshotView: View {
                 showsAboutCard: false
             )
                 .tabItem {
-                    Label("Inspect", systemImage: "magnifyingglass.circle")
+                    Label(InspectSection.inspect.title, systemImage: InspectSection.inspect.systemImage)
                 }
-                .tag(InspectionScreenshotTab.inspect)
+                .tag(InspectSection.inspect)
 
             InspectionMonitorView(monitorStore: monitorStore)
                 .tabItem {
-                    Label("Monitor", systemImage: "wave.3.right.circle")
+                    Label(InspectSection.monitor.title, systemImage: InspectSection.monitor.systemImage)
                 }
-                .tag(InspectionScreenshotTab.monitor)
+                .tag(InspectSection.monitor)
 
             screenshotPlaceholder(title: "Settings")
                 .tabItem {
-                    Label("Settings", systemImage: "gearshape")
+                    Label(InspectSection.settings.title, systemImage: InspectSection.settings.systemImage)
                 }
-                .tag(InspectionScreenshotTab.settings)
+                .tag(InspectSection.settings)
         }
         .tint(.inspectAccent)
     }
@@ -72,12 +66,12 @@ public struct InspectionAppStoreScreenshotView: View {
     private var macShell: some View {
         NavigationSplitView {
             List(selection: .constant(selectedSidebarTab)) {
-                Label("Inspect", systemImage: "magnifyingglass.circle")
-                    .tag(InspectionScreenshotTab.inspect)
-                Label("Monitor", systemImage: "wave.3.right.circle")
-                    .tag(InspectionScreenshotTab.monitor)
-                Label("Settings", systemImage: "gearshape")
-                    .tag(InspectionScreenshotTab.settings)
+                Label(InspectSection.inspect.title, systemImage: InspectSection.inspect.systemImage)
+                    .tag(InspectSection.inspect)
+                Label(InspectSection.monitor.title, systemImage: InspectSection.monitor.systemImage)
+                    .tag(InspectSection.monitor)
+                Label(InspectSection.settings.title, systemImage: InspectSection.settings.systemImage)
+                    .tag(InspectSection.settings)
             }
             .navigationSplitViewColumnWidth(min: 164, ideal: 188, max: 220)
         } detail: {
@@ -114,7 +108,7 @@ public struct InspectionAppStoreScreenshotView: View {
         }
     }
 
-    private var selectedSidebarTab: InspectionScreenshotTab {
+    private var selectedSidebarTab: InspectSection {
         switch scenario {
         case .inspectTab, .certificateChain:
             return .inspect

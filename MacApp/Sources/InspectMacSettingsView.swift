@@ -1,4 +1,5 @@
 import InspectCore
+import InspectFeature
 import Observation
 import SwiftUI
 
@@ -15,10 +16,8 @@ struct InspectMacSettingsView: View {
                     verboseTunnelLogsBinding: verboseTunnelLogsBinding
                 )
                 InspectMacAboutSettingsSection(
-                    appVersionText: appVersionText,
-                    openURL: openURL,
-                    aboutURL: aboutURL,
-                    appStoreURL: appStoreURL
+                    appVersionText: InspectionAppMetadata.versionBuildText,
+                    openURL: openURL
                 )
             }
             .formStyle(.grouped)
@@ -39,17 +38,4 @@ struct InspectMacSettingsView: View {
         )
     }
 
-    private var appVersionText: String {
-        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Dev"
-        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
-        return "\(version) (\(build))"
-    }
-
-    private var aboutURL: URL {
-        URL(string: "https://fourplexlabs.github.io/Inspect/about.html")!
-    }
-
-    private var appStoreURL: URL {
-        URL(string: "https://apps.apple.com/us/app/inspect-view-tls-certificate/id1074957486")!
-    }
 }

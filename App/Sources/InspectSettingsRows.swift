@@ -1,28 +1,27 @@
+import InspectFeature
 import SwiftUI
 
-struct InspectMacSettingsIconLabel: View {
+struct InspectSettingsIconLabel: View {
     let title: String
     let systemImage: String
     let tint: Color
 
     var body: some View {
-        HStack(spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(tint.opacity(0.15))
-
-                Image(systemName: systemImage)
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(tint)
-            }
-            .frame(width: 28, height: 28)
+        HStack(alignment: .center, spacing: 12) {
+            InspectIconTile(
+                symbol: systemImage,
+                tint: tint,
+                size: 28,
+                cornerRadius: 9,
+                font: .system(size: 14, weight: .semibold)
+            )
 
             Text(title)
         }
     }
 }
 
-struct InspectMacSettingsValueRow<Content: View>: View {
+struct InspectSettingsValueRow<Content: View>: View {
     let title: String
     let systemImage: String
     let tint: Color
@@ -32,7 +31,7 @@ struct InspectMacSettingsValueRow<Content: View>: View {
         LabeledContent {
             content
         } label: {
-            InspectMacSettingsIconLabel(
+            InspectSettingsIconLabel(
                 title: title,
                 systemImage: systemImage,
                 tint: tint
@@ -41,7 +40,7 @@ struct InspectMacSettingsValueRow<Content: View>: View {
     }
 }
 
-struct InspectMacSettingsNavigationRow<Destination: View>: View {
+struct InspectSettingsNavigationRow<Destination: View>: View {
     let title: String
     let systemImage: String
     let tint: Color
@@ -51,7 +50,7 @@ struct InspectMacSettingsNavigationRow<Destination: View>: View {
         NavigationLink {
             destination
         } label: {
-            InspectMacSettingsIconLabel(
+            InspectSettingsIconLabel(
                 title: title,
                 systemImage: systemImage,
                 tint: tint
@@ -60,7 +59,7 @@ struct InspectMacSettingsNavigationRow<Destination: View>: View {
     }
 }
 
-struct InspectMacSettingsActionRow: View {
+struct InspectSettingsActionRow: View {
     let title: String
     let systemImage: String
     let tint: Color
@@ -69,7 +68,7 @@ struct InspectMacSettingsActionRow: View {
     var body: some View {
         Button(action: action) {
             HStack {
-                InspectMacSettingsIconLabel(
+                InspectSettingsIconLabel(
                     title: title,
                     systemImage: systemImage,
                     tint: tint
@@ -84,28 +83,5 @@ struct InspectMacSettingsActionRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-    }
-}
-
-struct InspectMacSettingsMessageRow: View {
-    let message: String
-    let systemImage: String
-    let foregroundStyle: AnyShapeStyle
-
-    init(message: String, systemImage: String, color: Color) {
-        self.message = message
-        self.systemImage = systemImage
-        self.foregroundStyle = AnyShapeStyle(color)
-    }
-
-    init(message: String, systemImage: String, hierarchicalStyle: HierarchicalShapeStyle) {
-        self.message = message
-        self.systemImage = systemImage
-        self.foregroundStyle = AnyShapeStyle(hierarchicalStyle)
-    }
-
-    var body: some View {
-        Label(message, systemImage: systemImage)
-            .foregroundStyle(foregroundStyle)
     }
 }

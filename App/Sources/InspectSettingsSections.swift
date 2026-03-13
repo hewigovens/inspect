@@ -1,69 +1,60 @@
-import InspectCore
 import InspectFeature
+import NetworkExtension
+import Observation
 import SwiftUI
 
-struct InspectMacLiveMonitorSettingsSection: View {
-    @Bindable var manager: InspectMacLiveMonitorManager
+struct InspectTunnelSettingsSection: View {
+    @Bindable var manager: LiveMonitorManager
 
     var body: some View {
-        Section {
-            InspectMacSettingsValueRow(
+        Section("Live Monitor Tunnel") {
+            InspectSettingsValueRow(
                 title: "Connection",
                 systemImage: "dot.radiowaves.left.and.right",
                 tint: .inspectAccent
             ) {
                 Text(manager.status.description)
-                    .font(.body.weight(.medium))
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.primary)
                     .monospacedDigit()
             }
 
-            InspectMacSettingsValueRow(
+            InspectSettingsValueRow(
                 title: "Configured",
                 systemImage: "checkmark.shield",
                 tint: .green
             ) {
                 Text(manager.isConfigured ? "Yes" : "No")
-                    .font(.body.weight(.medium))
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.primary)
+                    .monospacedDigit()
             }
 
-            InspectMacSettingsValueRow(
-                title: "Provider",
-                systemImage: "shippingbox",
-                tint: .indigo
-            ) {
-                Text(InspectMacTunnelDefaults.providerBundleIdentifier)
-                    .textSelection(.enabled)
-            }
-
-            if let actionMessage = manager.actionMessage {
-                InspectMacSettingsMessageRow(
-                    message: actionMessage,
+            if manager.status == .invalid {
+                InspectSettingsMessageRow(
+                    message: "Use the Live Monitor switch in the Monitor tab to install and control the profile.",
                     systemImage: "info.circle",
-                    hierarchicalStyle: .secondary
+                    color: .secondary
                 )
             }
 
             if let lastErrorMessage = manager.lastErrorMessage {
-                InspectMacSettingsMessageRow(
+                InspectSettingsMessageRow(
                     message: lastErrorMessage,
                     systemImage: "exclamationmark.triangle.fill",
                     color: .red
                 )
             }
-        } header: {
-            Text("Live Monitor")
-        } footer: {
-            Text("Use System Settings to manage the Packet Tunnel profile on this Mac.")
         }
     }
 }
 
-struct InspectMacDiagnosticsSettingsSection: View {
+struct InspectDiagnosticsSettingsSection: View {
     let verboseTunnelLogsBinding: Binding<Bool>
 
     var body: some View {
         Section {
-            InspectMacSettingsNavigationRow(
+            InspectSettingsNavigationRow(
                 title: "Events",
                 systemImage: "waveform.path.ecg",
                 tint: .orange
@@ -71,7 +62,7 @@ struct InspectMacDiagnosticsSettingsSection: View {
                 InspectionEventsView()
             }
 
-            InspectMacSettingsNavigationRow(
+            InspectSettingsNavigationRow(
                 title: "Tunnel Log",
                 systemImage: "doc.text.magnifyingglass",
                 tint: .orange
@@ -80,8 +71,8 @@ struct InspectMacDiagnosticsSettingsSection: View {
             }
 
             Toggle(isOn: verboseTunnelLogsBinding) {
-                InspectMacSettingsIconLabel(
-                    title: "Verbose Tunnel Logging",
+                InspectSettingsIconLabel(
+                    title: "Toggle Debug",
                     systemImage: "ladybug",
                     tint: .pink
                 )
@@ -89,27 +80,27 @@ struct InspectMacDiagnosticsSettingsSection: View {
         } header: {
             Text("Diagnostics")
         } footer: {
-            Text("Verbose logging applies on the next Packet Tunnel start.")
+            Text("Use Events and Tunnel Log for troubleshooting. Debug applies on the next Live Monitor start.")
         }
     }
 }
 
-struct InspectMacAboutSettingsSection: View {
-    let appVersionText: String
+struct InspectAboutSettingsSection: View {
     let openURL: OpenURLAction
 
     var body: some View {
         Section("About") {
-            InspectMacSettingsValueRow(
+            InspectSettingsValueRow(
                 title: "Version",
                 systemImage: "app.badge",
                 tint: .blue
             ) {
-                Text(appVersionText)
-                    .font(.body.weight(.medium))
+                Text(InspectionAppMetadata.versionBuildText)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.primary)
             }
 
-            InspectMacSettingsActionRow(
+            InspectSettingsActionRow(
                 title: "About Inspect",
                 systemImage: "info.circle",
                 tint: .indigo
@@ -117,7 +108,7 @@ struct InspectMacAboutSettingsSection: View {
                 openURL(InspectAppLinks.about)
             }
 
-            InspectMacSettingsActionRow(
+            InspectSettingsActionRow(
                 title: "Rate on App Store",
                 systemImage: "star.circle",
                 tint: .yellow

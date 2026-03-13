@@ -9,8 +9,8 @@ struct InspectMacRootView: View {
 
     var body: some View {
         NavigationSplitView {
-            List(InspectMacSection.allCases, selection: $appModel.selectedSection) { section in
-                Label(section.rawValue, systemImage: section.systemImage)
+            List(InspectSection.allCases, selection: $appModel.selectedSection) { section in
+                Label(section.title, systemImage: section.systemImage)
                     .tag(section)
             }
             .navigationSplitViewColumnWidth(min: 164, ideal: 188, max: 220)
@@ -57,13 +57,15 @@ struct InspectMacRootView: View {
 
     @ViewBuilder
     private var detailView: some View {
+        let inspectSessionID = appModel.inspectSessionID
+
         switch appModel.selectedSection {
         case .inspect:
             InspectionRootView(
                 showsMonitorCard: false,
                 showsAboutCard: false
             )
-            .id(appModel.inspectSessionID)
+            .id(inspectSessionID)
         case .monitor:
             InspectionMonitorView {
                 await manager.refresh()
