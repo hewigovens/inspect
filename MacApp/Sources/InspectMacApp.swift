@@ -1,3 +1,4 @@
+import InspectFeature
 import SwiftUI
 
 @main
@@ -15,11 +16,13 @@ struct InspectMacApp: App {
                     manager: liveMonitorManager,
                     windowController: windowController
                 )
+            case let .screenshot(scenario):
+                InspectMacScreenshotSceneView(scenario: scenario)
             case let .tunnelSmokeTest(configuration):
                 InspectMacTunnelSmokeTestView(configuration: configuration)
             }
         }
-        .defaultSize(width: 1100, height: 760)
+        .defaultSize(width: defaultWindowWidth, height: defaultWindowHeight)
         .windowResizability(.contentMinSize)
         .commands {
             CommandGroup(replacing: .newItem) {
@@ -34,5 +37,41 @@ struct InspectMacApp: App {
             InspectMacSettingsView(manager: liveMonitorManager)
                 .frame(minWidth: 520, minHeight: 460)
         }
+    }
+
+    private var defaultWindowWidth: CGFloat {
+        switch InspectMacLaunchMode.current {
+        case .screenshot:
+            1440
+        case .standard, .tunnelSmokeTest:
+            1100
+        }
+    }
+
+    private var defaultWindowHeight: CGFloat {
+        switch InspectMacLaunchMode.current {
+        case .screenshot:
+            900
+        case .standard, .tunnelSmokeTest:
+            760
+        }
+    }
+}
+
+private struct InspectMacScreenshotSceneView: View {
+    let scenario: InspectionScreenshotScenario
+
+    var body: some View {
+        InspectionAppStoreScreenshotView(scenario: scenario)
+            .task {
+                do {
+                    if try InspectMacScreenshotExporter.exportIfNeeded(scenario: scenario) {
+                        NSApp.terminate(nil)
+                    }
+                } catch {
+                    fputs("Failed to export screenshot for \(scenario.rawValue): \(error)\n", stderr)
+                    NSApp.terminate(nil)
+                }
+            }
     }
 }

@@ -19,6 +19,9 @@ public struct InspectionAppStoreScreenshotView: View {
     }
 
     public var body: some View {
+        #if os(macOS)
+        macShell
+        #else
         switch scenario {
         case .inspectTab, .monitorTab:
             tabShell
@@ -35,6 +38,7 @@ public struct InspectionAppStoreScreenshotView: View {
             }
             .tint(.inspectAccent)
         }
+        #endif
     }
 
     private var tabShell: some View {
@@ -63,6 +67,62 @@ public struct InspectionAppStoreScreenshotView: View {
         }
         .tint(.inspectAccent)
     }
+
+    #if os(macOS)
+    private var macShell: some View {
+        NavigationSplitView {
+            List(selection: .constant(selectedSidebarTab)) {
+                Label("Inspect", systemImage: "magnifyingglass.circle")
+                    .tag(InspectionScreenshotTab.inspect)
+                Label("Monitor", systemImage: "wave.3.right.circle")
+                    .tag(InspectionScreenshotTab.monitor)
+                Label("Settings", systemImage: "gearshape")
+                    .tag(InspectionScreenshotTab.settings)
+            }
+            .navigationSplitViewColumnWidth(min: 164, ideal: 188, max: 220)
+        } detail: {
+            macDetail
+        }
+        .navigationSplitViewStyle(.balanced)
+        .frame(minWidth: 1280, minHeight: 800)
+        .tint(.inspectAccent)
+    }
+
+    @ViewBuilder
+    private var macDetail: some View {
+        switch scenario {
+        case .inspectTab:
+            InspectionRootView(
+                screenshotScenario: .inspectTab,
+                showsMonitorCard: false,
+                showsAboutCard: false
+            )
+        case .monitorTab:
+            InspectionMonitorView(monitorStore: monitorStore)
+        case .hostDetail:
+            if let host = featuredHost {
+                NavigationStack {
+                    InspectionMonitorHostDetailView(store: monitorStore, host: host)
+                }
+            } else {
+                screenshotPlaceholder(title: "Monitor")
+            }
+        case .certificateChain:
+            NavigationStack {
+                CertificateDetailView(report: InspectionScreenshotFixtures.featuredReport, initialSelectionIndex: 0)
+            }
+        }
+    }
+
+    private var selectedSidebarTab: InspectionScreenshotTab {
+        switch scenario {
+        case .inspectTab, .certificateChain:
+            return .inspect
+        case .monitorTab, .hostDetail:
+            return .monitor
+        }
+    }
+    #endif
 
     private var featuredHost: InspectionMonitoredHost? {
         monitorStore.monitoredHosts.first

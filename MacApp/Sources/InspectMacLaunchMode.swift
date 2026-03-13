@@ -1,10 +1,16 @@
 import Foundation
+import InspectFeature
 
 enum InspectMacLaunchMode {
     case standard
+    case screenshot(InspectionScreenshotScenario)
     case tunnelSmokeTest(InspectMacTunnelSmokeTestConfiguration)
 
     static var current: InspectMacLaunchMode {
+        if let screenshotScenario = InspectionScreenshotScenario.current {
+            return .screenshot(screenshotScenario)
+        }
+
         guard InspectMacTunnelSmokeTestConfiguration.isEnabled else {
             return .standard
         }
