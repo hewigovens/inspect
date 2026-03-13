@@ -76,47 +76,43 @@ struct InspectionInputCard: View {
     }
 
     private var compactDemoTargets: some View {
-        #if os(macOS)
-        HStack(alignment: .top, spacing: 12) {
-            HStack(alignment: .top, spacing: 10) {
-                knownGoodButton
-                brokenCertificateButton
+        HStack(alignment: .top, spacing: compactDemoTargetsSpacing) {
+            Group {
+                if InspectLayout.Input.usesHorizontalCompactDemoTargets {
+                    HStack(alignment: .top, spacing: 10) {
+                        knownGoodButton
+                        brokenCertificateButton
+                    }
+                } else {
+                    VStack(alignment: .leading, spacing: 10) {
+                        knownGoodButton
+                        brokenCertificateButton
+                    }
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
             dismissTargetsButton
         }
         .transition(.opacity.combined(with: .scale(scale: 0.98)))
-        #else
-        HStack(alignment: .top, spacing: 10) {
-            VStack(alignment: .leading, spacing: 10) {
-                knownGoodButton
-                brokenCertificateButton
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-            dismissTargetsButton
-        }
-        .transition(.opacity.combined(with: .scale(scale: 0.98)))
-        #endif
     }
 
     @ViewBuilder
     private var compactInputControls: some View {
-        #if os(macOS)
-        HStack(alignment: .center, spacing: 10) {
-            inputField(verticalPadding: 10, cornerRadius: 14)
-            pasteButton(expands: false)
-            inspectButton(expands: false)
-        }
-        #else
-        inputField(verticalPadding: 14, cornerRadius: 16)
+        if InspectLayout.Input.usesInlineCompactInputControls {
+            HStack(alignment: .center, spacing: 10) {
+                inputField(verticalPadding: 10, cornerRadius: 14)
+                pasteButton(expands: false)
+                inspectButton(expands: false)
+            }
+        } else {
+            inputField(verticalPadding: 14, cornerRadius: 16)
 
-        HStack(spacing: 12) {
-            pasteButton(expands: true)
-            inspectButton(expands: true)
+            HStack(spacing: 12) {
+                pasteButton(expands: true)
+                inspectButton(expands: true)
+            }
         }
-        #endif
     }
 
     private var knownGoodButton: some View {
@@ -209,43 +205,27 @@ struct InspectionInputCard: View {
     }
 
     private var inputPrompt: String {
-        #if os(macOS)
-        "Inspect a host name or HTTPS URL."
-        #else
-        "Enter a host name or HTTPS URL."
-        #endif
+        InspectLayout.Input.inputPrompt
     }
 
     private var promptFont: Font {
-        #if os(macOS)
-        .inspectRootCaptionSemibold
-        #else
-        .inspectRootSubheadline
-        #endif
+        InspectLayout.Input.promptFont
     }
 
     private var cardSpacing: CGFloat {
-        #if os(macOS)
-        12
-        #else
-        14
-        #endif
+        InspectLayout.Input.cardSpacing
     }
 
     private var usesRegularWidthLayout: Bool {
-        #if os(macOS)
-        true
-        #else
-        horizontalSizeClass == .regular
-        #endif
+        InspectLayout.Input.usesRegularWidthLayout(horizontalSizeClass: horizontalSizeClass)
     }
 
     private var sampleColumnWidth: CGFloat {
-        #if os(macOS)
-        320
-        #else
-        300
-        #endif
+        InspectLayout.Input.sampleColumnWidth
+    }
+
+    private var compactDemoTargetsSpacing: CGFloat {
+        InspectLayout.Input.usesHorizontalCompactDemoTargets ? 12 : 10
     }
 
     private func inspectCurrentInput() {
@@ -290,18 +270,10 @@ private struct DemoTargetButton: View {
     }
 
     private var verticalPadding: CGFloat {
-        #if os(macOS)
-        6
-        #else
-        8
-        #endif
+        InspectLayout.Input.demoTargetVerticalPadding
     }
 
     private var controlSize: ControlSize {
-        #if os(macOS)
-        .small
-        #else
-        .regular
-        #endif
+        InspectLayout.Input.demoTargetControlSize
     }
 }

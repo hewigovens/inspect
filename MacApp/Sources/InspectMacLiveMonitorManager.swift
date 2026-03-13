@@ -230,7 +230,13 @@ final class InspectMacLiveMonitorManager {
         observationBridge.observe(
             manager: manager,
             onStatusChange: { [weak self] in
-                self?.updateState(from: manager)
+                guard let self else {
+                    return
+                }
+
+                Task { @MainActor [weak self] in
+                    await self?.handleStatusChange(for: manager)
+                }
             },
             onConfigurationChange: { [weak self] in
                 guard let self else {
@@ -242,6 +248,18 @@ final class InspectMacLiveMonitorManager {
                 }
             }
         )
+    }
+
+    private func handleStatusChange(for manager: NETunnelProviderManager) async {
+        updateState(from: manager)
+
+        do {
+            try await reconcileDesiredStateIfNeeded(using: manager)
+        } catch {
+            let normalized = normalize(error)
+            lastErrorMessage = normalized.localizedDescription
+            logger.critical("Status reconciliation failed: \(normalized.localizedDescription)")
+        }
     }
 
     private func normalize(_ error: Error) -> Error {

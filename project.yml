@@ -50,7 +50,7 @@ targets:
     preBuildScripts:
       - name: Build Rust Tunnel Core
         script: |
-          export PATH="$HOME/.cargo/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+          export PATH="$HOME/.cargo/bin:$PATH"
           ./scripts/build_rust_lib.sh
         basedOnDependencyAnalysis: false
         outputFiles:
@@ -86,7 +86,7 @@ targets:
     preBuildScripts:
       - name: Build Rust Tunnel Core
         script: |
-          export PATH="$HOME/.cargo/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+          export PATH="$HOME/.cargo/bin:$PATH"
           ./scripts/build_rust_lib.sh
         basedOnDependencyAnalysis: false
         outputFiles:
@@ -182,11 +182,12 @@ targets:
     type: bundle.unit-test
     platform: iOS
     sources:
-      - path: Packages/InspectCore/Tests/CoreTests/InspectPacketTunnelConfigurationTests.swift
-      - path: Packages/InspectCore/Tests/CoreTests/InspectLogConfigurationTests.swift
-      - path: Packages/InspectCore/Tests/CoreTests/LiveMonitorTunnelStateTests.swift
-      - path: Packages/InspectCore/Tests/CoreTests/TLSMonitorProbeEngineTests.swift
-      - path: Packages/InspectCore/Tests/FeatureTests/InspectionMonitorStoreTests.swift
+      - path: Packages/InspectCore/Tests/CoreTests
+        excludes:
+          - CertificateParserTests.swift
+          - TLSFlowObservationFeedTests.swift
+          - TestFixtureSupport.swift
+      - path: Packages/InspectCore/Tests/FeatureTests
     dependencies:
       - package: InspectCore
         product: InspectCore
@@ -201,11 +202,12 @@ targets:
     type: bundle.unit-test
     platform: macOS
     sources:
-      - path: Packages/InspectCore/Tests/CoreTests/InspectPacketTunnelConfigurationTests.swift
-      - path: Packages/InspectCore/Tests/CoreTests/InspectLogConfigurationTests.swift
-      - path: Packages/InspectCore/Tests/CoreTests/LiveMonitorTunnelStateTests.swift
-      - path: Packages/InspectCore/Tests/CoreTests/TLSMonitorProbeEngineTests.swift
-      - path: Packages/InspectCore/Tests/FeatureTests/InspectionMonitorStoreTests.swift
+      - path: Packages/InspectCore/Tests/CoreTests
+        excludes:
+          - CertificateParserTests.swift
+          - TLSFlowObservationFeedTests.swift
+          - TestFixtureSupport.swift
+      - path: Packages/InspectCore/Tests/FeatureTests
     dependencies:
       - package: InspectCore
         product: InspectCore

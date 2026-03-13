@@ -21,19 +21,22 @@ struct InspectionChainCard: View {
 
     @ViewBuilder
     private func certificateRow(certificate: CertificateDetails, at index: Int) -> some View {
-        #if os(macOS)
         Button {
-            guard pendingSelectionIndex == nil else {
-                return
-            }
+            if let delay = InspectLayout.Chain.detailNavigationDelay {
+                guard pendingSelectionIndex == nil else {
+                    return
+                }
 
-            pendingSelectionIndex = index
-            InspectionWindowLayoutCenter.post(.certificateDetail)
+                pendingSelectionIndex = index
+                InspectionWindowLayoutCenter.post(.certificateDetail)
 
-            Task { @MainActor in
-                try? await Task.sleep(for: .milliseconds(130))
+                Task { @MainActor in
+                    try? await Task.sleep(for: delay)
+                    onOpenCertificateDetail(report, index)
+                    pendingSelectionIndex = nil
+                }
+            } else {
                 onOpenCertificateDetail(report, index)
-                pendingSelectionIndex = nil
             }
         } label: {
             CertificateRow(
@@ -43,21 +46,8 @@ struct InspectionChainCard: View {
         }
         .buttonStyle(.plain)
         .contentShape(Rectangle())
-        .disabled(pendingSelectionIndex != nil)
+        .disabled(InspectLayout.Chain.usesAnimatedDetailNavigation && pendingSelectionIndex != nil)
         .accessibilityIdentifier("chain.certificate.\(index)")
-        #else
-        Button {
-            onOpenCertificateDetail(report, index)
-        } label: {
-            CertificateRow(
-                certificate: certificate,
-                reportTrust: report.trust
-            )
-        }
-        .buttonStyle(.plain)
-        .contentShape(Rectangle())
-        .accessibilityIdentifier("chain.certificate.\(index)")
-        #endif
     }
 }
 

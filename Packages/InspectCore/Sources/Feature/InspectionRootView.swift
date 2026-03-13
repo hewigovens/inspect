@@ -271,54 +271,26 @@ public struct InspectionRootView: View {
     }
 
     private var rootContentMaxWidth: CGFloat? {
-        usesRegularDashboardLayout ? 1480 : compactRootContentMaxWidth
+        InspectLayout.Root.contentMaxWidth(usesRegularDashboardLayout: usesRegularDashboardLayout)
     }
 
     private var rootHorizontalPadding: CGFloat {
-        if usesRegularDashboardLayout {
-            return 32
-        }
-        #if os(macOS)
-        return 28
-        #else
-        return 20
-        #endif
+        InspectLayout.Root.horizontalPadding(usesRegularDashboardLayout: usesRegularDashboardLayout)
     }
 
     private var rootStackSpacing: CGFloat {
-        #if os(macOS)
-        16
-        #else
-        18
-        #endif
-    }
-
-    private var compactRootContentMaxWidth: CGFloat? {
-        #if os(macOS)
-        1140
-        #else
-        nil
-        #endif
+        InspectLayout.Root.stackSpacing
     }
 
     private var regularSideRailWidth: CGFloat {
-        #if os(macOS)
-        380
-        #else
-        360
-        #endif
+        InspectLayout.Root.sideRailWidth
     }
 
     private var usesRegularDashboardLayout: Bool {
-        guard presentation == .app else {
-            return false
-        }
-
-        #if os(macOS)
-        return true
-        #else
-        return horizontalSizeClass == .regular
-        #endif
+        InspectLayout.Root.usesRegularDashboardLayout(
+            presentation: presentation,
+            horizontalSizeClass: horizontalSizeClass
+        )
     }
 
     private func openCertificateDetail(_ report: TLSInspectionReport, _ index: Int) {
