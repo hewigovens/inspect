@@ -49,11 +49,7 @@ struct CompactCertificateChainPanel: View {
             return .clear
         }
 
-        #if os(macOS)
-        return .inspectAccent.opacity(0.16)
-        #else
-        return .accentColor
-        #endif
+        return .certificateChainSelectionBackground
     }
 }
 
@@ -119,19 +115,11 @@ private struct CompactCertificateChainRow: View {
     }
 
     private var primaryTextColor: Color {
-        #if os(macOS)
-        return .primary
-        #else
-        return isSelected ? .white : .primary
-        #endif
+        .certificateChainPrimaryText(isSelected: isSelected)
     }
 
     private var secondaryTextColor: Color {
-        #if os(macOS)
-        return .secondary
-        #else
-        return isSelected ? .white.opacity(0.82) : .secondary
-        #endif
+        .certificateChainSecondaryText(isSelected: isSelected)
     }
 }
 

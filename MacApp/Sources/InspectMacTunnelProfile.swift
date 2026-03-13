@@ -14,10 +14,4 @@ enum InspectMacTunnelDefaults {
         serverAddress: "Inspect Live Monitor",
         providerBundleIdentifier: providerBundleIdentifier
     )
-
-    static let smokeTestProfile = InspectMacTunnelProfile(
-        localizedDescription: "Inspect Live Monitor (Mac Smoke Test)",
-        serverAddress: "Inspect macOS Smoke Test",
-        providerBundleIdentifier: providerBundleIdentifier
-    )
 }
