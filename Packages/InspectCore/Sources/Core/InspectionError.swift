@@ -4,6 +4,7 @@ public enum InspectionError: LocalizedError, Sendable {
     case invalidURL(String)
     case unsupportedScheme(String?)
     case missingServerTrust
+    case missingSharedContainer
 
     public var errorDescription: String? {
         switch self {
@@ -13,6 +14,8 @@ public enum InspectionError: LocalizedError, Sendable {
             return "Only HTTPS URLs are supported. Received: \(scheme ?? "unknown")."
         case .missingServerTrust:
             return "The TLS handshake finished without exposing a server trust chain."
+        case .missingSharedContainer:
+            return "Inspect could not access its shared app group container."
         }
     }
 }

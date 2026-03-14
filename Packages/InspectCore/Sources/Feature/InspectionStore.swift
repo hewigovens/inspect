@@ -33,6 +33,27 @@ public final class InspectionStore {
         }
     }
 
+    public func applyExternalRequest(_ request: InspectionExternalRequest) {
+        errorMessage = nil
+
+        switch request {
+        case let .input(value):
+            report = nil
+            isLoading = false
+            input = value
+
+            Task {
+                await inspectCurrentInput()
+            }
+        case let .report(report, _):
+            isLoading = false
+            input = report.requestedURL.absoluteString
+            self.report = report
+            RecentInputStore.record(report.requestedURL.absoluteString)
+            recentInputs = RecentInputStore.load()
+        }
+    }
+
     public func inspectCurrentInput() async {
         let candidate = input
         guard candidate.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false else {

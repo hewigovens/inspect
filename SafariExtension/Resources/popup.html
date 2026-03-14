@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inspect Certificate</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main class="popup">
+    <header class="hero">
+      <p class="eyebrow">Inspect Certificate</p>
+      <h1>Current Page</h1>
+      <p class="subtitle">Run a quick TLS inspection for the active Safari tab.</p>
+    </header>
+
+    <section id="loading" class="panel panel-loading" aria-live="polite">
+      <div class="spinner"></div>
+      <div>
+        <h2>Inspecting</h2>
+        <p>Reading the current page URL and checking its presented certificate chain.</p>
+      </div>
+    </section>
+
+    <section id="result" class="panel hidden" aria-live="polite">
+      <div class="result-header">
+        <div>
+          <p id="result-host" class="result-host"></p>
+          <p id="result-url" class="result-url"></p>
+        </div>
+        <span id="result-badge" class="badge"></span>
+      </div>
+
+      <div class="metrics">
+        <article class="metric">
+          <p class="metric-label">Protocol</p>
+          <p id="result-protocol" class="metric-value"></p>
+        </article>
+        <article class="metric">
+          <p class="metric-label">Common Name</p>
+          <p id="result-common-name" class="metric-value"></p>
+        </article>
+      </div>
+
+      <article class="summary-block">
+        <p class="summary-label">Certificate Chain</p>
+        <ol id="result-chain" class="chain-list"></ol>
+      </article>
+
+      <article class="summary-block">
+        <p class="summary-label">Trust</p>
+        <p id="result-trust" class="summary-value"></p>
+      </article>
+
+      <article class="summary-block">
+        <p class="summary-label">Security</p>
+        <p id="result-headline" class="summary-value"></p>
+      </article>
+
+      <article id="finding" class="finding hidden">
+        <p id="result-finding-title" class="finding-title"></p>
+        <p id="result-finding-message" class="finding-message"></p>
+      </article>
+
+      <div class="meta">
+        <span id="result-issuer"></span>
+        <span id="result-validity"></span>
+      </div>
+    </section>
+
+    <section id="error" class="panel panel-error hidden" aria-live="polite">
+      <h2>Unable to Inspect</h2>
+      <p id="error-message"></p>
+    </section>
+
+    <div class="actions">
+      <button id="open-details-button" class="secondary-button hidden" type="button">Open Full Details</button>
+      <button id="retry-button" class="retry-button" type="button">Inspect Again</button>
+    </div>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>

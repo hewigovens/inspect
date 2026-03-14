@@ -1,3 +1,4 @@
+import InspectCore
 import InspectFeature
 import SwiftUI
 
@@ -6,6 +7,10 @@ struct InspectMacRootView: View {
     @Bindable var appModel: InspectMacAppModel
     @Bindable var manager: InspectMacLiveMonitorManager
     let windowController: InspectMacWindowController
+    private let logger = InspectRuntimeLogger(
+        category: "InspectMacRootView",
+        scope: "MacShareHandoff"
+    )
 
     var body: some View {
         NavigationSplitView {
@@ -30,6 +35,7 @@ struct InspectMacRootView: View {
                 try await manager.setLiveMonitorEnabled(isEnabled)
             }
             await manager.refresh()
+            consumePendingSharedInputIfNeeded()
         }
         .onChange(of: scenePhase) { _, newPhase in
             guard newPhase == .active else {
@@ -39,6 +45,7 @@ struct InspectMacRootView: View {
             Task {
                 await manager.refresh()
             }
+            consumePendingSharedInputIfNeeded()
         }
         .onChange(of: appModel.selectedSection) { _, _ in
             windowController.transition(to: .standard)
@@ -52,6 +59,10 @@ struct InspectMacRootView: View {
             }
 
             windowController.transition(to: preference)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: InspectionExternalInputCenter.notification)) { _ in
+            appModel.startNewInspection()
+            windowController.transition(to: .standard)
         }
     }
 
@@ -79,6 +90,17 @@ struct InspectMacRootView: View {
                 description: Text("Choose Inspect, Monitor, or Settings from the sidebar.")
             )
         }
+    }
+
+    private func consumePendingSharedInputIfNeeded() {
+        guard let input = InspectionSharedInputStore.consumeNextPending() else {
+            return
+        }
+
+        logger.critical("mac app consumed queued share input: \(input)")
+        appModel.startNewInspection()
+        windowController.transition(to: .standard)
+        InspectionExternalInputCenter.submitInput(input)
     }
 
 }
