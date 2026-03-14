@@ -200,6 +200,29 @@ targets:
         product: InspectCore
       - sdk: SafariServices.framework
 
+  InspectMacShareExtension:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: MacShareExtension/Sources
+      - path: MacShareExtension/Resources
+        buildPhase: resources
+        excludes:
+          - Info.plist
+          - InspectMacShareExtension.entitlements
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect.ShareExtension
+        PRODUCT_NAME: InspectMacShareExtension
+        APPLICATION_EXTENSION_API_ONLY: YES
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: MacShareExtension/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: MacShareExtension/Resources/InspectMacShareExtension.entitlements
+        SKIP_INSTALL: YES
+    dependencies:
+      - package: InspectCore
+        product: InspectFeature
+
   InspectMac:
     type: application
     platform: macOS
@@ -229,6 +252,8 @@ targets:
       - target: InspectMacPacketTunnelExtension
         embed: true
       - target: InspectMacSafariWebExtension
+        embed: true
+      - target: InspectMacShareExtension
         embed: true
     scheme:
       gatherCoverageData: false

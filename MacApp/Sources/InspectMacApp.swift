@@ -4,7 +4,6 @@ import SwiftUI
 
 @main
 struct InspectMacApp: App {
-    @NSApplicationDelegateAdaptor(InspectMacAppDelegate.self) private var appDelegate
     @State private var appModel = InspectMacAppModel()
     @State private var liveMonitorManager = InspectMacLiveMonitorManager()
     @State private var windowController = InspectMacWindowController()
@@ -22,6 +21,13 @@ struct InspectMacApp: App {
                 }
 
                 switch deepLink {
+                case let .inspectionInput(token):
+                    guard let input = InspectionSharedInputStore.consume(token: token) else {
+                        return
+                    }
+
+                    appModel.startNewInspection()
+                    InspectionExternalInputCenter.submitInput(input)
                 case let .certificateDetail(token):
                     guard let report = InspectionSharedReportStore.consume(token: token) else {
                         return
