@@ -40,7 +40,7 @@ struct InspectMacApp: App {
     }
 
     private var defaultWindowWidth: CGFloat {
-        880
+        780
     }
 
     private var defaultWindowHeight: CGFloat {

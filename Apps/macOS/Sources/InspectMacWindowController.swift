@@ -8,10 +8,10 @@ final class InspectMacWindowController {
     private weak var window: NSWindow?
     private var currentPreference: InspectionWindowLayoutPreference = .standard
 
-    private let standardMinimumSize = NSSize(width: 1060, height: 740)
-    private let standardTargetSize = NSSize(width: 1100, height: 760)
-    private let detailMinimumSize = NSSize(width: 1240, height: 770)
-    private let detailTargetSize = NSSize(width: 1300, height: 790)
+    private let standardMinimumSize = NSSize(width: 960, height: 740)
+    private let standardTargetSize = NSSize(width: 1000, height: 760)
+    private let detailMinimumSize = NSSize(width: 1140, height: 770)
+    private let detailTargetSize = NSSize(width: 1200, height: 790)
 
     func attach(_ window: NSWindow) {
         self.window = window

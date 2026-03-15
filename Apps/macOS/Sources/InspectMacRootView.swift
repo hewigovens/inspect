@@ -19,7 +19,7 @@ struct InspectMacRootView: View {
             detailView
         }
         .navigationSplitViewStyle(.balanced)
-        .frame(minWidth: 1060, minHeight: 740)
+        .frame(minWidth: 960, minHeight: 740)
         .background {
             InspectMacWindowReader { window in
                 windowController.attach(window)

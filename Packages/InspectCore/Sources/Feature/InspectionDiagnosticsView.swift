@@ -28,8 +28,10 @@ public struct InspectionEventsView: View {
         }
         .toolbar {
             ToolbarItem(placement: InspectPlatform.topBarTrailingPlacement) {
-                Button("Clear", role: .destructive) {
+                Button(role: .destructive) {
                     monitorStore.clear()
+                } label: {
+                    Image(systemName: "trash")
                 }
                 .accessibilityIdentifier("diagnostics.events.clear")
             }
