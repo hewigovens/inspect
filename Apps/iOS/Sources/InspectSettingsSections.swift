@@ -1,4 +1,4 @@
-import InspectFeature
+import InspectKit
 import NetworkExtension
 import Observation
 import SwiftUI

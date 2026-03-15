@@ -1,5 +1,5 @@
 import InspectCore
-import InspectFeature
+import InspectKit
 import Observation
 import SwiftUI
 

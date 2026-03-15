@@ -1,4 +1,4 @@
-import InspectFeature
+import InspectKit
 import SwiftUI
 import UIKit
 import InspectCore

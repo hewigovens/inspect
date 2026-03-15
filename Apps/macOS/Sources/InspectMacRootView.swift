@@ -1,5 +1,5 @@
 import AppKit
-import InspectFeature
+import InspectKit
 import SwiftUI
 
 struct InspectMacRootView: View {

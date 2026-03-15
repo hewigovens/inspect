@@ -1,4 +1,4 @@
-@testable import InspectFeature
+@testable import InspectKit
 import Foundation
 import InspectCore
 import Testing

@@ -1,5 +1,5 @@
 import Foundation
-import InspectFeature
+import InspectKit
 import Observation
 
 @MainActor

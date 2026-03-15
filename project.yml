@@ -119,7 +119,7 @@ targets:
         SKIP_INSTALL: YES
     dependencies:
       - package: InspectCore
-        product: InspectFeature
+        product: InspectKit
 
   InspectSafariWebExtension:
     type: app-extension
@@ -166,7 +166,7 @@ targets:
         CODE_SIGN_ENTITLEMENTS: Apps/iOS/Resources/Inspect.entitlements
     dependencies:
       - package: InspectCore
-        product: InspectFeature
+        product: InspectKit
       - target: InspectPacketTunnelExtension
         embed: true
       - target: InspectActionExtension
@@ -226,7 +226,7 @@ targets:
         SKIP_INSTALL: YES
     dependencies:
       - package: InspectCore
-        product: InspectFeature
+        product: InspectKit
 
   InspectMac:
     type: application
@@ -253,7 +253,7 @@ targets:
       - package: InspectCore
         product: InspectCore
       - package: InspectCore
-        product: InspectFeature
+        product: InspectKit
       - target: InspectMacPacketTunnelExtension
         embed: true
       - target: InspectMacSafariWebExtension
@@ -279,7 +279,7 @@ targets:
       - package: InspectCore
         product: InspectCore
       - package: InspectCore
-        product: InspectFeature
+        product: InspectKit
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
@@ -299,7 +299,7 @@ targets:
       - package: InspectCore
         product: InspectCore
       - package: InspectCore
-        product: InspectFeature
+        product: InspectKit
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES

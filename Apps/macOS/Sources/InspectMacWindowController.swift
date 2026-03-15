@@ -1,5 +1,5 @@
 import AppKit
-import InspectFeature
+import InspectKit
 import QuartzCore
 import SwiftUI
 
@@ -68,7 +68,7 @@ final class InspectMacWindowController {
         }
 
         NSAnimationContext.runAnimationGroup { context in
-            context.duration = 0.32
+            context.duration = 0.35
             context.allowsImplicitAnimation = true
             context.timingFunction = CAMediaTimingFunction(controlPoints: 0.2, 0.9, 0.25, 1.0)
             window.animator().setFrame(frame, display: true)
