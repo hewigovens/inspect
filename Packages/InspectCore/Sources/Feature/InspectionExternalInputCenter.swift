@@ -12,12 +12,29 @@ public enum InspectionExternalInputCenter {
         NotificationCenter.default.post(name: notification, object: nil)
     }
 
-    public static func submitInput(_ input: String) {
-        submit(.input(input))
-    }
-
     public static func submitReport(_ report: TLSInspectionReport, opensCertificateDetail: Bool) {
         submit(.report(report, opensCertificateDetail: opensCertificateDetail))
+    }
+
+    @discardableResult
+    public static func handleDeepLink(
+        _ url: URL,
+        prepareForNavigation: (() -> Void)? = nil
+    ) -> Bool {
+        guard let deepLink = InspectDeepLink(url: url) else {
+            return false
+        }
+
+        switch deepLink {
+        case let .certificateDetail(token):
+            guard let report = InspectionSharedReportStore.consume(token: token) else {
+                return false
+            }
+
+            prepareForNavigation?()
+            submitReport(report, opensCertificateDetail: true)
+            return true
+        }
     }
 
     public static func consumePendingRequest() -> InspectionExternalRequest? {
@@ -27,9 +44,17 @@ public enum InspectionExternalInputCenter {
 
         return pendingRequest
     }
+
+    public static func consumePendingSharedReportRequest() -> InspectionExternalRequest? {
+        guard let token = InspectionSharedPendingReportStore.consumeToken(),
+              let report = InspectionSharedReportStore.consume(token: token) else {
+            return nil
+        }
+
+        return .report(report, opensCertificateDetail: true)
+    }
 }
 
 public enum InspectionExternalRequest: Sendable, Equatable {
-    case input(String)
     case report(TLSInspectionReport, opensCertificateDetail: Bool)
 }

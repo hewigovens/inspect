@@ -21,12 +21,13 @@ It supports:
 
 ## Repository Layout
 
-- `App/`: iOS app shell and iOS settings
-- `MacApp/`: macOS app shell and macOS settings
-- `Extension/`: iOS action/share extension
-- `SafariExtension/`: Safari web extension for iOS and macOS
-- `MacShareExtension/`: macOS share extension
-- `PacketTunnelExtension/`: iOS packet tunnel wrapper and Rust bridge
+- `Apps/iOS/`: iOS app shell and iOS settings
+- `Apps/macOS/`: macOS app shell and macOS settings
+- `Extensions/Action/`: iOS action/share extension
+- `Extensions/ActionShared/`: shared action-extension support
+- `Extensions/SafariWeb/`: Safari web extension for iOS and macOS
+- `Extensions/MacShare/`: macOS share extension
+- `Extensions/PacketTunnel/`: iOS/macOS packet tunnel wrapper and Rust bridge
 - `Packages/InspectCore/`: shared Swift models, features, UI, logging, and tests
 - `Rust/tunnel-core/`: Rust forwarding core
 

@@ -4,14 +4,15 @@
 
 Inspect is split into these layers:
 
-1. `App/`: iOS app shell
-2. `MacApp/`: macOS app shell
-3. `Extension/`: iOS action/share extension
-4. `SafariExtension/`: Safari web extension for iOS and macOS
-5. `MacShareExtension/`: macOS share extension
-6. `Packages/InspectCore/`: shared Swift models, feature UI, logging, and stores
-7. `PacketTunnelExtension/`: iOS packet tunnel wrapper and Rust bridge
-8. `Rust/tunnel-core/`: Rust forwarding core
+1. `Apps/iOS/`: iOS app shell
+2. `Apps/macOS/`: macOS app shell
+3. `Extensions/Action/`: iOS action/share extension
+4. `Extensions/ActionShared/`: shared action-extension support
+5. `Extensions/SafariWeb/`: Safari web extension for iOS and macOS
+6. `Extensions/MacShare/`: macOS share extension
+7. `Packages/InspectCore/`: shared Swift models, feature UI, logging, and stores
+8. `Extensions/PacketTunnel/`: iOS/macOS packet tunnel wrapper and Rust bridge
+9. `Rust/tunnel-core/`: Rust forwarding core
 
 ```mermaid
 flowchart LR
@@ -50,8 +51,8 @@ flowchart LR
 
 1. Safari or another host app shares a page or URL to `Inspect Certificate`.
 2. The share extension extracts the URL.
-3. The extension runs `TLSInspector`, stores the report in the app group, and opens `inspect://certificate-detail?...`.
-4. The mac app opens directly into the certificate detail flow.
+3. The extension runs `TLSInspector`, stores the report in the app group, and queues a pending handoff token.
+4. The mac app activates, consumes that pending report, and opens certificate detail in the existing window.
 
 ### Live Monitor
 

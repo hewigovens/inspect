@@ -26,6 +26,14 @@ public struct InspectionEventsView: View {
         InspectionDiagnosticsContainer(title: "Events") {
             InspectionEventsCard(store: monitorStore)
         }
+        .toolbar {
+            ToolbarItem(placement: InspectPlatform.topBarTrailingPlacement) {
+                Button("Clear", role: .destructive) {
+                    monitorStore.clear()
+                }
+                .accessibilityIdentifier("diagnostics.events.clear")
+            }
+        }
     }
 }
 
@@ -37,7 +45,10 @@ public struct InspectionTunnelLogView: View {
 
     public var body: some View {
         InspectionDiagnosticsContainer(title: "Tunnel Log") {
-            InspectionTunnelLogCard(store: logStore)
+            InspectionTunnelLogContent(store: logStore, showsHeader: false)
+        }
+        .task {
+            logStore.refresh()
         }
         .toolbar {
             ToolbarItemGroup(placement: InspectPlatform.topBarTrailingPlacement) {
@@ -65,6 +76,15 @@ public struct InspectionTunnelLogView: View {
                 }
                 .accessibilityIdentifier("diagnostics.log.reset")
             }
+        }
+        .onReceive(
+            Timer.publish(every: 2, on: .main, in: .common).autoconnect()
+        ) { _ in
+            guard logStore.autoRefresh else {
+                return
+            }
+
+            logStore.refresh()
         }
     }
 }

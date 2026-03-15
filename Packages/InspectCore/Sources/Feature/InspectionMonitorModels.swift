@@ -82,3 +82,38 @@ struct InspectionMonitoredHost: Identifiable, Equatable {
         }
     }
 }
+
+enum InspectionMonitorHostFilter: String, CaseIterable, Identifiable {
+    case all
+    case trusted
+    case review
+    case pending
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .all:
+            return "All"
+        case .trusted:
+            return "Trusted"
+        case .review:
+            return "Review"
+        case .pending:
+            return "Pending"
+        }
+    }
+
+    func includes(_ host: InspectionMonitoredHost) -> Bool {
+        switch self {
+        case .all:
+            return true
+        case .trusted:
+            return host.state == .trusted
+        case .review:
+            return host.state == .needsReview
+        case .pending:
+            return host.certificateAvailability == .pending
+        }
+    }
+}

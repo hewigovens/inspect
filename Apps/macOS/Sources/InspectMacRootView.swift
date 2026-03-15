@@ -1,16 +1,12 @@
-import InspectCore
+import AppKit
 import InspectFeature
 import SwiftUI
 
 struct InspectMacRootView: View {
-    @Environment(\.scenePhase) private var scenePhase
     @Bindable var appModel: InspectMacAppModel
     @Bindable var manager: InspectMacLiveMonitorManager
+    @State private var isHandlingActivation = false
     let windowController: InspectMacWindowController
-    private let logger = InspectRuntimeLogger(
-        category: "InspectMacRootView",
-        scope: "MacShareHandoff"
-    )
 
     var body: some View {
         NavigationSplitView {
@@ -34,18 +30,12 @@ struct InspectMacRootView: View {
             InspectionLiveMonitorCoordinator.configure { isEnabled in
                 try await manager.setLiveMonitorEnabled(isEnabled)
             }
-            await manager.refresh()
-            consumePendingSharedInputIfNeeded()
+            await handleAppActivation()
         }
-        .onChange(of: scenePhase) { _, newPhase in
-            guard newPhase == .active else {
-                return
-            }
-
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
             Task {
-                await manager.refresh()
+                await handleAppActivation()
             }
-            consumePendingSharedInputIfNeeded()
         }
         .onChange(of: appModel.selectedSection) { _, _ in
             windowController.transition(to: .standard)
@@ -58,12 +48,44 @@ struct InspectMacRootView: View {
                 return
             }
 
+            if preference == .certificateDetail, appModel.selectedSection == .inspect {
+                windowController.reveal()
+            }
+
             windowController.transition(to: preference)
         }
         .onReceive(NotificationCenter.default.publisher(for: InspectionExternalInputCenter.notification)) { _ in
-            appModel.startNewInspection()
+            appModel.selectedSection = .inspect
+            windowController.reveal()
             windowController.transition(to: .standard)
         }
+    }
+
+    private func consumePendingSharedReportIfNeeded() {
+        guard let request = InspectionExternalInputCenter.consumePendingSharedReportRequest() else {
+            return
+        }
+
+        appModel.startNewInspection()
+        appModel.selectedSection = .inspect
+        windowController.reveal()
+        windowController.transition(to: .standard, animated: false)
+
+        DispatchQueue.main.async {
+            InspectionExternalInputCenter.submit(request)
+        }
+    }
+
+    private func handleAppActivation() async {
+        guard isHandlingActivation == false else {
+            return
+        }
+
+        isHandlingActivation = true
+        defer { isHandlingActivation = false }
+
+        await manager.refresh()
+        consumePendingSharedReportIfNeeded()
     }
 
     @ViewBuilder
@@ -91,16 +113,4 @@ struct InspectMacRootView: View {
             )
         }
     }
-
-    private func consumePendingSharedInputIfNeeded() {
-        guard let input = InspectionSharedInputStore.consumeNextPending() else {
-            return
-        }
-
-        logger.critical("mac app consumed queued share input: \(input)")
-        appModel.startNewInspection()
-        windowController.transition(to: .standard)
-        InspectionExternalInputCenter.submitInput(input)
-    }
-
 }

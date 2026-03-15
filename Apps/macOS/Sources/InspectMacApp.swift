@@ -16,25 +16,9 @@ struct InspectMacApp: App {
                 windowController: windowController
             )
             .onOpenURL { url in
-                guard let deepLink = InspectDeepLink(url: url) else {
-                    return
-                }
-
-                switch deepLink {
-                case let .inspectionInput(token):
-                    guard let input = InspectionSharedInputStore.consume(token: token) else {
-                        return
-                    }
-
+                _ = InspectionExternalInputCenter.handleDeepLink(url) {
                     appModel.startNewInspection()
-                    InspectionExternalInputCenter.submitInput(input)
-                case let .certificateDetail(token):
-                    guard let report = InspectionSharedReportStore.consume(token: token) else {
-                        return
-                    }
-
-                    appModel.startNewInspection()
-                    InspectionExternalInputCenter.submitReport(report, opensCertificateDetail: true)
+                    windowController.reveal()
                 }
             }
         }
@@ -56,10 +40,10 @@ struct InspectMacApp: App {
     }
 
     private var defaultWindowWidth: CGFloat {
-        1100
+        880
     }
 
     private var defaultWindowHeight: CGFloat {
-        760
+        660
     }
 }

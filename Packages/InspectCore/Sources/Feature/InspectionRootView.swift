@@ -324,8 +324,6 @@ public struct InspectionRootView: View {
         store.applyExternalRequest(request)
 
         switch request {
-        case .input:
-            certificateRoute = nil
         case let .report(report, opensCertificateDetail):
             guard opensCertificateDetail else {
                 certificateRoute = nil

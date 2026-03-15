@@ -2,58 +2,8 @@ import AppKit
 import InspectCore
 import UniformTypeIdentifiers
 
-final class ShareViewController: NSViewController {
-    private let logger = InspectRuntimeLogger(
-        category: "ShareExtension",
-        scope: "MacShareExtension"
-    )
-
-    override func loadView() {
-        view = NSView(frame: .zero)
-        logger.critical("macOS share extension invoked")
-
-        Task { @MainActor in
-            await handleShareRequest()
-        }
-    }
-
-    private func handleShareRequest() async {
-        guard let extensionContext else {
-            logger.critical("share request aborted because extensionContext was nil")
-            return
-        }
-
-        do {
-            guard let input = await ShareExtensionInputLoader.loadInput(from: extensionContext, logger: logger) else {
-                logger.critical("share request had no usable URL or text input")
-                extensionContext.cancelRequest(withError: NSError(domain: NSCocoaErrorDomain, code: NSUserCancelledError))
-                return
-            }
-
-            logger.critical("share request extracted input: \(input)")
-            let report = try await TLSInspector().inspect(input: input)
-            logger.critical("share request completed TLS inspection for \(report.requestedURL.absoluteString)")
-            let token = try InspectionSharedReportStore.save(report)
-            logger.critical("share request saved inspection report into app group with token \(token)")
-            let didOpen = openParentApp(for: token)
-            logger.critical("share request asked macOS to open certificate detail: \(didOpen)")
-            extensionContext.completeRequest(returningItems: nil)
-        } catch {
-            logger.critical("share request failed: \(error.localizedDescription)")
-            extensionContext.cancelRequest(withError: error)
-        }
-    }
-
-    @discardableResult
-    private func openParentApp(for token: String) -> Bool {
-        let deepLink = InspectDeepLink.certificateDetail(token: token).url
-        logger.critical("share request opening deep link \(deepLink.absoluteString)")
-        return NSWorkspace.shared.open(deepLink)
-    }
-}
-
 @MainActor
-private enum ShareExtensionInputLoader {
+enum MacShareExtensionInputLoader {
     static func loadInput(from context: NSExtensionContext, logger: InspectRuntimeLogger) async -> String? {
         guard let items = context.inputItems as? [NSExtensionItem] else {
             logger.critical("share request inputItems were not NSExtensionItem values")
@@ -131,7 +81,8 @@ private enum ShareExtensionInputLoader {
             return trimmed(text)
         }
 
-        for typeIdentifier in [UTType.plainText.identifier, UTType.text.identifier] where provider.hasItemConformingToTypeIdentifier(typeIdentifier) {
+        for typeIdentifier in [UTType.plainText.identifier, UTType.text.identifier]
+        where provider.hasItemConformingToTypeIdentifier(typeIdentifier) {
             if let value = await loadItemString(from: provider, typeIdentifier: typeIdentifier) {
                 return trimmed(value)
             }

@@ -37,14 +37,6 @@ public final class InspectionStore {
         errorMessage = nil
 
         switch request {
-        case let .input(value):
-            report = nil
-            isLoading = false
-            input = value
-
-            Task {
-                await inspectCurrentInput()
-            }
         case let .report(report, _):
             isLoading = false
             input = report.requestedURL.absoluteString

@@ -72,7 +72,7 @@ struct InspectDiagnosticsSettingsSection: View {
 
             Toggle(isOn: verboseTunnelLogsBinding) {
                 InspectSettingsIconLabel(
-                    title: "Toggle Debug",
+                    title: "Verbose",
                     systemImage: "ladybug",
                     tint: .pink
                 )
@@ -80,7 +80,7 @@ struct InspectDiagnosticsSettingsSection: View {
         } header: {
             Text("Diagnostics")
         } footer: {
-            Text("Use Events and Tunnel Log for troubleshooting. Debug applies on the next Live Monitor start.")
+            Text("Use Events and Tunnel Log for troubleshooting. Verbose logging applies on the next Live Monitor start.")
         }
     }
 }

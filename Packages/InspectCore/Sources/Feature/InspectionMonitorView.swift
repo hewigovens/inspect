@@ -9,6 +9,8 @@ enum InspectionMonitorSharedStore {
 public struct InspectionMonitorView: View {
     @State private var monitorStore: InspectionMonitorStore
     @State private var isRefreshing = false
+    @State private var hostSearchText = ""
+    @State private var hostFilter: InspectionMonitorHostFilter = .all
     private let refreshAction: (@MainActor () async -> Void)?
 
     public init(refreshAction: (@MainActor () async -> Void)? = nil) {
@@ -30,6 +32,7 @@ public struct InspectionMonitorView: View {
                 .navigationTitle("Monitor")
                 .inlineRootNavigationTitle()
         }
+        .searchable(text: $hostSearchText, prompt: "Search Hosts")
         .onAppear {
             Task {
                 await runRefresh(showLoading: false)
@@ -55,7 +58,11 @@ public struct InspectionMonitorView: View {
                     )
                         .id("monitor")
 
-                    InspectionMonitorHostListCard(store: monitorStore)
+                    InspectionMonitorHostListCard(
+                        store: monitorStore,
+                        searchText: $hostSearchText,
+                        filter: $hostFilter
+                    )
                         .id("monitor.hosts")
                 }
                 .padding(.horizontal, 20)

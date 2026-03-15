@@ -10,8 +10,8 @@ final class InspectMacWindowController {
 
     private let standardMinimumSize = NSSize(width: 1060, height: 740)
     private let standardTargetSize = NSSize(width: 1100, height: 760)
-    private let detailMinimumSize = NSSize(width: 1360, height: 800)
-    private let detailTargetSize = NSSize(width: 1420, height: 820)
+    private let detailMinimumSize = NSSize(width: 1240, height: 770)
+    private let detailTargetSize = NSSize(width: 1300, height: 790)
 
     func attach(_ window: NSWindow) {
         self.window = window
@@ -68,10 +68,25 @@ final class InspectMacWindowController {
         }
 
         NSAnimationContext.runAnimationGroup { context in
-            context.duration = 0.24
-            context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+            context.duration = 0.32
+            context.allowsImplicitAnimation = true
+            context.timingFunction = CAMediaTimingFunction(controlPoints: 0.2, 0.9, 0.25, 1.0)
             window.animator().setFrame(frame, display: true)
         }
+    }
+
+    func reveal() {
+        guard let window else {
+            return
+        }
+
+        if window.isMiniaturized {
+            window.deminiaturize(nil)
+        }
+
+        NSApp.activate(ignoringOtherApps: true)
+        window.orderFrontRegardless()
+        window.makeKeyAndOrderFront(nil)
     }
 
     private func installDockIcon() {
