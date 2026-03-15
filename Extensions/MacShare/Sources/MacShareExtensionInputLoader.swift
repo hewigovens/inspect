@@ -1,30 +1,11 @@
 import AppKit
-import InspectCore
 import UniformTypeIdentifiers
 
 @MainActor
 enum MacShareExtensionInputLoader {
-    static func loadInput(from context: NSExtensionContext, logger: InspectRuntimeLogger) async -> String? {
+    static func loadInput(from context: NSExtensionContext) async -> String? {
         guard let items = context.inputItems as? [NSExtensionItem] else {
-            logger.critical("share request inputItems were not NSExtensionItem values")
             return nil
-        }
-
-        logger.critical("share request received \(items.count) extension item(s)")
-
-        for (itemIndex, item) in items.enumerated() {
-            let providers = item.attachments ?? []
-            let title = item.attributedTitle?.string.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            let body = item.attributedContentText?.string.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            logger.critical(
-                "share item \(itemIndex) has \(providers.count) attachment(s), title='\(title)', body='\(body)'"
-            )
-
-            for (providerIndex, provider) in providers.enumerated() {
-                logger.critical(
-                    "share item \(itemIndex) provider \(providerIndex) types: \(provider.registeredTypeIdentifiers.joined(separator: ", "))"
-                )
-            }
         }
 
         for item in items {

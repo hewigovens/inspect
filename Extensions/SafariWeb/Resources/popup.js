@@ -5,6 +5,20 @@ const resultView = document.getElementById("result");
 const errorView = document.getElementById("error");
 const retryButton = document.getElementById("retry-button");
 const openDetailsButton = document.getElementById("open-details-button");
+const resultBadge = document.getElementById("result-badge");
+const resultHost = document.getElementById("result-host");
+const resultURL = document.getElementById("result-url");
+const resultProtocol = document.getElementById("result-protocol");
+const resultCommonName = document.getElementById("result-common-name");
+const resultTrust = document.getElementById("result-trust");
+const resultHeadline = document.getElementById("result-headline");
+const resultIssuer = document.getElementById("result-issuer");
+const resultValidity = document.getElementById("result-validity");
+const resultChain = document.getElementById("result-chain");
+const findingView = document.getElementById("finding");
+const resultFindingTitle = document.getElementById("result-finding-title");
+const resultFindingMessage = document.getElementById("result-finding-message");
+const errorMessage = document.getElementById("error-message");
 
 let currentReportToken = "";
 
@@ -47,38 +61,34 @@ function setLoading(isLoading) {
 }
 
 function renderSuccess(response) {
-  const badge = document.getElementById("result-badge");
-  badge.textContent = response.trustBadge;
-  badge.className = `badge badge-${response.tone}`;
-
-  document.getElementById("result-host").textContent = response.host;
-  document.getElementById("result-url").textContent = response.url;
-  document.getElementById("result-protocol").textContent = response.protocolName;
-  document.getElementById("result-common-name").textContent = response.commonName;
-  document.getElementById("result-trust").textContent = response.trustSummary;
-  document.getElementById("result-headline").textContent = response.securityHeadline;
-  document.getElementById("result-issuer").textContent = `Issuer: ${response.issuerSummary}`;
-  document.getElementById("result-validity").textContent = `${response.validityStatus} through ${response.validUntil}`;
+  resultBadge.textContent = response.trustBadge;
+  resultBadge.className = `badge badge-${response.tone}`;
+  resultHost.textContent = response.host;
+  resultURL.textContent = response.url;
+  resultProtocol.textContent = response.protocolName;
+  resultCommonName.textContent = response.commonName;
+  resultTrust.textContent = response.trustSummary;
+  resultHeadline.textContent = response.securityHeadline;
+  resultIssuer.textContent = `Issuer: ${response.issuerSummary}`;
+  resultValidity.textContent = `${response.validityStatus} through ${response.validUntil}`;
   currentReportToken = response.reportToken ?? "";
 
-  const chain = document.getElementById("result-chain");
-  chain.replaceChildren();
+  resultChain.replaceChildren();
   for (const name of response.chainNames ?? []) {
     const item = document.createElement("li");
     item.textContent = name;
-    chain.appendChild(item);
+    resultChain.appendChild(item);
   }
 
-  const finding = document.getElementById("finding");
   const title = response.topFindingTitle?.trim();
   const message = response.topFindingMessage?.trim();
 
   if (title && message) {
-    document.getElementById("result-finding-title").textContent = title;
-    document.getElementById("result-finding-message").textContent = message;
-    finding.classList.remove("hidden");
+    resultFindingTitle.textContent = title;
+    resultFindingMessage.textContent = message;
+    findingView.classList.remove("hidden");
   } else {
-    finding.classList.add("hidden");
+    findingView.classList.add("hidden");
   }
 
   resultView.classList.remove("hidden");
@@ -87,7 +97,7 @@ function renderSuccess(response) {
 }
 
 function renderError(message) {
-  document.getElementById("error-message").textContent = message;
+  errorMessage.textContent = message;
   errorView.classList.remove("hidden");
   resultView.classList.add("hidden");
   openDetailsButton.classList.add("hidden");
