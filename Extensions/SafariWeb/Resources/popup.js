@@ -1,4 +1,7 @@
 const browserAPI = globalThis.browser ?? globalThis.chrome;
+const { deepLink } = globalThis.inspectConfig;
+const REQUEST_TYPE_INSPECT_TAB = "inspect-tab";
+const REQUEST_TYPE_OPEN_FULL_DETAILS = "open-full-details";
 
 const loadingView = document.getElementById("loading");
 const resultView = document.getElementById("result");
@@ -34,7 +37,7 @@ async function runInspection() {
     }
 
     const response = await browserAPI.runtime.sendNativeMessage({
-      type: "inspect-tab",
+      type: REQUEST_TYPE_INSPECT_TAB,
       url: currentURL
     });
 
@@ -111,17 +114,18 @@ openDetailsButton.addEventListener("click", async () => {
   }
 
   try {
-    const deepLink = `inspect://certificate-detail?token=${encodeURIComponent(currentReportToken)}`;
+    const deepLinkURL = new URL(`${deepLink.scheme}://${deepLink.certificateDetailHost}`);
+    deepLinkURL.searchParams.set(deepLink.tokenQueryItemName, currentReportToken);
     const [tab] = await browserAPI.tabs.query({ active: true, currentWindow: true });
 
     if (tab?.id !== undefined) {
-      await browserAPI.tabs.update(tab.id, { url: deepLink });
+      await browserAPI.tabs.update(tab.id, { url: deepLinkURL.toString() });
       window.close();
       return;
     }
 
     const response = await browserAPI.runtime.sendNativeMessage({
-      type: "open-full-details",
+      type: REQUEST_TYPE_OPEN_FULL_DETAILS,
       reportToken: currentReportToken
     });
 

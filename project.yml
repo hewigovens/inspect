@@ -138,6 +138,15 @@ targets:
         CODE_SIGN_ENTITLEMENTS: Configs/Entitlements/InspectAppGroup.entitlements
         SWIFT_STRICT_CONCURRENCY: minimal
         SKIP_INSTALL: YES
+    preBuildScripts:
+      - name: Generate Safari Web Config
+        script: |
+          ./scripts/generate_safari_web_config.sh
+        inputFiles:
+          - $(PROJECT_DIR)/Packages/InspectCore/Sources/Core/InspectScheme.swift
+          - $(PROJECT_DIR)/scripts/generate_safari_web_config.sh
+        outputFiles:
+          - $(PROJECT_DIR)/Extensions/SafariWeb/Resources/generated/inspect-config.js
     dependencies:
       - package: InspectCore
         product: InspectCore
@@ -194,6 +203,15 @@ targets:
         CODE_SIGN_ENTITLEMENTS: Extensions/SafariWeb/Resources/InspectMacSafariWebExtension.entitlements
         SWIFT_STRICT_CONCURRENCY: minimal
         SKIP_INSTALL: YES
+    preBuildScripts:
+      - name: Generate Safari Web Config
+        script: |
+          ./scripts/generate_safari_web_config.sh
+        inputFiles:
+          - $(PROJECT_DIR)/Packages/InspectCore/Sources/Core/InspectScheme.swift
+          - $(PROJECT_DIR)/scripts/generate_safari_web_config.sh
+        outputFiles:
+          - $(PROJECT_DIR)/Extensions/SafariWeb/Resources/generated/inspect-config.js
     dependencies:
       - package: InspectCore
         product: InspectCore

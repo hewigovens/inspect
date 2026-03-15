@@ -7,13 +7,13 @@ final class ActionViewController: UIViewController {
     private var hostingController: UIHostingController<InspectionRootView>?
     private let logger = InspectRuntimeLogger(
         category: "ActionExtension",
-        scope: "IOSActionExtension"
+        scope: "iOSActionExtension"
     )
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        logger.critical("iOS action extension viewDidLoad")
+        logger.verbose("iOS action extension viewDidLoad")
 
         Task {
             let initialURL = await ActionExtensionInputLoader.loadURL(
@@ -21,7 +21,7 @@ final class ActionViewController: UIViewController {
                 logger: logger
             )
             await MainActor.run {
-                self.logger.critical("iOS action extension embedding root view. initialURL=\(initialURL?.absoluteString ?? "nil")")
+                self.logger.verbose("iOS action extension embedding root view. initialURL=\(initialURL?.absoluteString ?? "nil")")
                 embedRootView(initialURL: initialURL)
             }
         }
@@ -50,6 +50,6 @@ final class ActionViewController: UIViewController {
 
         hostingController.didMove(toParent: self)
         self.hostingController = hostingController
-        logger.critical("iOS action extension root view embedded")
+        logger.verbose("iOS action extension root view embedded")
     }
 }
