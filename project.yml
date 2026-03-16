@@ -206,7 +206,7 @@ targets:
           - InspectMacSafariWebExtension.entitlements
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect.SafariWebExtension.mac
+        PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect.SafariWebExtensionMac
         PRODUCT_NAME: InspectMacSafariWebExtension
         APPLICATION_EXTENSION_API_ONLY: YES
         GENERATE_INFOPLIST_FILE: NO

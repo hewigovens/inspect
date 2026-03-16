@@ -32,6 +32,6 @@
 		<string>$(PRODUCT_MODULE_NAME).SafariWebExtensionHandler</string>
 	</dict>
 	<key>SFSafariCorrespondingMacOSExtensionBundleIdentifier</key>
-	<string>in.fourplex.Inspect.SafariWebExtension.mac</string>
+	<string>in.fourplex.Inspect.SafariWebExtensionMac</string>
 </dict>
 </plist>
