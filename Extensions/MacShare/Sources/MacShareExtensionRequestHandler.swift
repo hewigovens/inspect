@@ -9,7 +9,7 @@ final class MacShareExtensionRequestHandler {
         }
 
         do {
-            guard let input = await MacShareExtensionInputLoader.loadInput(from: extensionContext) else {
+            guard let input = await ExtensionInputExtractor.loadInputString(from: extensionContext) else {
                 extensionContext.cancelRequest(
                     withError: NSError(domain: NSCocoaErrorDomain, code: NSUserCancelledError)
                 )

@@ -4,16 +4,16 @@
   "description": "Inspect the current page TLS certificate.",
   "version": "2.4.0",
   "icons": {
-    "48": "images/icon-48.png",
-    "96": "images/icon-96.png",
-    "128": "images/icon-128.png",
-    "256": "images/icon-256.png",
-    "512": "images/icon-512.png"
+    "48": "icon-48.png",
+    "96": "icon-96.png",
+    "128": "icon-128.png",
+    "256": "icon-256.png",
+    "512": "icon-512.png"
   },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "48": "images/icon-48.png"
+      "48": "icon-48.png"
     }
   },
   "permissions": [

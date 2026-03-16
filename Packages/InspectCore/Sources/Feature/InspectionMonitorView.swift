@@ -11,6 +11,8 @@ public struct InspectionMonitorView: View {
     @State private var isRefreshing = false
     @State private var hostSearchText = ""
     @State private var hostFilter: InspectionMonitorHostFilter = .all
+    @State private var isHostSearchExpanded = false
+    @FocusState private var isHostSearchFocused: Bool
     private let refreshAction: (@MainActor () async -> Void)?
 
     public init(refreshAction: (@MainActor () async -> Void)? = nil) {
@@ -32,7 +34,17 @@ public struct InspectionMonitorView: View {
                 .navigationTitle("Monitor")
                 .inlineRootNavigationTitle()
         }
-        .searchable(text: $hostSearchText, prompt: "Search Hosts")
+        .applyMonitorSearchable(
+            enabled: InspectLayout.Monitor.usesInlineCardSearch == false,
+            searchText: $hostSearchText
+        )
+        .onChange(of: isHostSearchFocused) { _, isFocused in
+            if isFocused == false && hostSearchText.isEmpty {
+                withAnimation(.spring(response: 0.28, dampingFraction: 0.9)) {
+                    isHostSearchExpanded = false
+                }
+            }
+        }
         .onAppear {
             Task {
                 await runRefresh(showLoading: false)
@@ -61,13 +73,15 @@ public struct InspectionMonitorView: View {
                     InspectionMonitorHostListCard(
                         store: monitorStore,
                         searchText: $hostSearchText,
-                        filter: $hostFilter
+                        filter: $hostFilter,
+                        isSearchExpanded: $isHostSearchExpanded,
+                        isSearchFocused: $isHostSearchFocused
                     )
                         .id("monitor.hosts")
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 20)
-                .padding(.bottom, 24)
+                .padding(.bottom, InspectLayout.Monitor.scrollBottomContentPadding)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .scrollBounceBehavior(.basedOnSize)
@@ -103,4 +117,16 @@ public struct InspectionMonitorView: View {
             isRefreshing = false
         }
     }
+}
+
+private extension View {
+    @ViewBuilder
+    func applyMonitorSearchable(enabled: Bool, searchText: Binding<String>) -> some View {
+        if enabled {
+            searchable(text: searchText, prompt: "Search Hosts")
+        } else {
+            self
+        }
+    }
+
 }

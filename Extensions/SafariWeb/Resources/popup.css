@@ -124,6 +124,7 @@ body {
 .metric,
 .summary-block,
 .finding {
+  min-width: 0;
   border-radius: 14px;
   background: rgba(244, 246, 250, 0.96);
   padding: 12px;
@@ -145,6 +146,8 @@ body {
   font-size: 14px;
   line-height: 1.4;
   font-weight: 600;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .summary-block,

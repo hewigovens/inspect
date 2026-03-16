@@ -16,10 +16,7 @@ final class ActionViewController: UIViewController {
         logger.verbose("iOS action extension viewDidLoad")
 
         Task {
-            let initialURL = await ActionExtensionInputLoader.loadURL(
-                from: extensionContext,
-                logger: logger
-            )
+            let initialURL = await ExtensionInputExtractor.loadURL(from: extensionContext)
             await MainActor.run {
                 self.logger.verbose("iOS action extension embedding root view. initialURL=\(initialURL?.absoluteString ?? "nil")")
                 embedRootView(initialURL: initialURL)

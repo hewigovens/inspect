@@ -149,4 +149,22 @@ enum InspectLayout {
             usesAnimatedDetailNavigation ? .milliseconds(130) : nil
         }
     }
+
+    enum Monitor {
+        static var usesInlineCardSearch: Bool {
+            #if os(iOS)
+            true
+            #else
+            false
+            #endif
+        }
+
+        static var inlineSearchButtonSize: CGFloat {
+            32
+        }
+
+        static var scrollBottomContentPadding: CGFloat {
+            24
+        }
+    }
 }

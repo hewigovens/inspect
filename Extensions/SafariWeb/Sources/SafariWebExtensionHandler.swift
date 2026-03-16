@@ -24,6 +24,7 @@ final class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
                 return
             }
 
+            let box = ExtensionContextBox(context)
             do {
                 try inspector.inspect(input: urlString) { result in
                     let payload: [String: Any]
@@ -34,7 +35,7 @@ final class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
                         payload = SafariWebExtensionPayload.error(error.localizedDescription)
                     }
 
-                    SafariWebExtensionResponse.complete(context: context, payload: payload)
+                    SafariWebExtensionResponse.complete(context: box.context, payload: payload)
                 }
             } catch {
                 SafariWebExtensionResponse.complete(
