@@ -99,7 +99,6 @@ targets:
     platform: iOS
     sources:
       - path: Extensions/Action/Sources
-      - path: Extensions/ActionShared/Sources
       - path: Extensions/ActionShared/Resources
         buildPhase: resources
       - path: Extensions/Action/Resources
