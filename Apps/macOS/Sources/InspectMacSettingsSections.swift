@@ -8,26 +8,26 @@ struct InspectMacLiveMonitorSettingsSection: View {
     var body: some View {
         Section {
             InspectMacSettingsValueRow(
-                title: "Connection",
+                title: InspectionSettingsStrings.Shared.connection,
                 systemImage: "dot.radiowaves.left.and.right",
                 tint: .inspectAccent
             ) {
-                Text(manager.status.description)
+                Text(manager.status.inspectionDescription)
                     .font(.body.weight(.medium))
                     .monospacedDigit()
             }
 
             InspectMacSettingsValueRow(
-                title: "Configured",
+                title: InspectionSettingsStrings.Shared.configured,
                 systemImage: "checkmark.shield",
                 tint: .green
             ) {
-                Text(manager.isConfigured ? "Yes" : "No")
+                Text(manager.isConfigured ? InspectionCommonStrings.yes : InspectionCommonStrings.no)
                     .font(.body.weight(.medium))
             }
 
             InspectMacSettingsValueRow(
-                title: "Provider",
+                title: InspectionSettingsStrings.Mac.provider,
                 systemImage: "shippingbox",
                 tint: .indigo
             ) {
@@ -51,9 +51,9 @@ struct InspectMacLiveMonitorSettingsSection: View {
                 )
             }
         } header: {
-            Text("Live Monitor")
+            Text(InspectionSettingsStrings.Mac.liveMonitorSection)
         } footer: {
-            Text("Use System Settings to manage the Packet Tunnel profile on this Mac.")
+            Text(InspectionSettingsStrings.Mac.liveMonitorFooter)
         }
     }
 }
@@ -64,7 +64,7 @@ struct InspectMacDiagnosticsSettingsSection: View {
     var body: some View {
         Section {
             InspectMacSettingsNavigationRow(
-                title: "Events",
+                title: InspectionSettingsStrings.Shared.events,
                 systemImage: "waveform.path.ecg",
                 tint: .orange
             ) {
@@ -72,7 +72,7 @@ struct InspectMacDiagnosticsSettingsSection: View {
             }
 
             InspectMacSettingsNavigationRow(
-                title: "Tunnel Log",
+                title: InspectionSettingsStrings.Shared.tunnelLog,
                 systemImage: "doc.text.magnifyingglass",
                 tint: .orange
             ) {
@@ -81,15 +81,15 @@ struct InspectMacDiagnosticsSettingsSection: View {
 
             Toggle(isOn: verboseTunnelLogsBinding) {
                 InspectMacSettingsIconLabel(
-                    title: "Verbose Tunnel Logging",
+                    title: InspectionSettingsStrings.Shared.verbose,
                     systemImage: "ladybug",
                     tint: .pink
                 )
             }
         } header: {
-            Text("Diagnostics")
+            Text(InspectionSettingsStrings.Shared.diagnostics)
         } footer: {
-            Text("Verbose logging applies on the next Packet Tunnel start.")
+            Text(InspectionSettingsStrings.Shared.verboseFooter)
         }
     }
 }
@@ -99,9 +99,9 @@ struct InspectMacAboutSettingsSection: View {
     let openURL: OpenURLAction
 
     var body: some View {
-        Section("About") {
+        Section(InspectionSettingsStrings.Shared.about) {
             InspectMacSettingsValueRow(
-                title: "Version",
+                title: InspectionSettingsStrings.Shared.version,
                 systemImage: "app.badge",
                 tint: .blue
             ) {
@@ -110,7 +110,7 @@ struct InspectMacAboutSettingsSection: View {
             }
 
             InspectMacSettingsActionRow(
-                title: "About Inspect",
+                title: InspectionSettingsStrings.Shared.aboutInspect,
                 systemImage: "info.circle",
                 tint: .indigo
             ) {
@@ -118,7 +118,7 @@ struct InspectMacAboutSettingsSection: View {
             }
 
             InspectMacSettingsActionRow(
-                title: "Rate on App Store",
+                title: InspectionSettingsStrings.Shared.rateOnAppStore,
                 systemImage: "star.circle",
                 tint: .yellow
             ) {

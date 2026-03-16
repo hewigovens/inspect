@@ -1,4 +1,5 @@
 import Foundation
+import InspectKit
 @preconcurrency import NetworkExtension
 
 extension InspectMacVerificationManager {
@@ -13,7 +14,7 @@ extension InspectMacVerificationManager {
             updateState(from: manager)
             actionMessage = "Tunnel start requested."
             lastErrorMessage = nil
-            appendDiagnostic("startVPNTunnel() returned successfully. status=\(manager.connection.status.description)")
+            appendDiagnostic("startVPNTunnel() returned successfully. status=\(manager.connection.status.inspectionDescription)")
         } catch {
             lastErrorMessage = error.localizedDescription
             appendErrorDiagnostics(prefix: "Start tunnel failed", error: error)
@@ -27,12 +28,12 @@ extension InspectMacVerificationManager {
             return
         }
 
-        appendDiagnostic("Stop tunnel requested. currentStatus=\(manager.connection.status.description)")
+        appendDiagnostic("Stop tunnel requested. currentStatus=\(manager.connection.status.inspectionDescription)")
         manager.connection.stopVPNTunnel()
         updateState(from: manager)
         actionMessage = "Tunnel stop requested."
         lastErrorMessage = nil
-        appendDiagnostic("stopVPNTunnel() sent. status=\(manager.connection.status.description)")
+        appendDiagnostic("stopVPNTunnel() sent. status=\(manager.connection.status.inspectionDescription)")
     }
 
     func openSystemSettings() {

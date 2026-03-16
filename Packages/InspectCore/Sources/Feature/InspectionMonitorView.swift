@@ -34,10 +34,6 @@ public struct InspectionMonitorView: View {
                 .navigationTitle("Monitor")
                 .inlineRootNavigationTitle()
         }
-        .applyMonitorSearchable(
-            enabled: InspectLayout.Monitor.usesInlineCardSearch == false,
-            searchText: $hostSearchText
-        )
         .onChange(of: isHostSearchFocused) { _, isFocused in
             if isFocused == false && hostSearchText.isEmpty {
                 withAnimation(.spring(response: 0.28, dampingFraction: 0.9)) {
@@ -117,16 +113,4 @@ public struct InspectionMonitorView: View {
             isRefreshing = false
         }
     }
-}
-
-private extension View {
-    @ViewBuilder
-    func applyMonitorSearchable(enabled: Bool, searchText: Binding<String>) -> some View {
-        if enabled {
-            searchable(text: searchText, prompt: "Search Hosts")
-        } else {
-            self
-        }
-    }
-
 }

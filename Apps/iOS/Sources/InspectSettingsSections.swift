@@ -7,24 +7,24 @@ struct InspectTunnelSettingsSection: View {
     @Bindable var manager: LiveMonitorManager
 
     var body: some View {
-        Section("Live Monitor Tunnel") {
+        Section(InspectionSettingsStrings.IOS.liveMonitorSection) {
             InspectSettingsValueRow(
-                title: "Connection",
+                title: InspectionSettingsStrings.Shared.connection,
                 systemImage: "dot.radiowaves.left.and.right",
                 tint: .inspectAccent
             ) {
-                Text(manager.status.description)
+                Text(manager.status.inspectionDescription)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.primary)
                     .monospacedDigit()
             }
 
             InspectSettingsValueRow(
-                title: "Configured",
+                title: InspectionSettingsStrings.Shared.configured,
                 systemImage: "checkmark.shield",
                 tint: .green
             ) {
-                Text(manager.isConfigured ? "Yes" : "No")
+                Text(manager.isConfigured ? InspectionCommonStrings.yes : InspectionCommonStrings.no)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.primary)
                     .monospacedDigit()
@@ -32,7 +32,7 @@ struct InspectTunnelSettingsSection: View {
 
             if manager.status == .invalid {
                 InspectSettingsMessageRow(
-                    message: "Use the Live Monitor switch in the Monitor tab to install and control the profile.",
+                    message: InspectionSettingsStrings.IOS.invalidMonitorMessage,
                     systemImage: "info.circle",
                     color: .secondary
                 )
@@ -55,7 +55,7 @@ struct InspectDiagnosticsSettingsSection: View {
     var body: some View {
         Section {
             InspectSettingsNavigationRow(
-                title: "Events",
+                title: InspectionSettingsStrings.Shared.events,
                 systemImage: "waveform.path.ecg",
                 tint: .orange
             ) {
@@ -63,7 +63,7 @@ struct InspectDiagnosticsSettingsSection: View {
             }
 
             InspectSettingsNavigationRow(
-                title: "Tunnel Log",
+                title: InspectionSettingsStrings.Shared.tunnelLog,
                 systemImage: "doc.text.magnifyingglass",
                 tint: .orange
             ) {
@@ -72,15 +72,15 @@ struct InspectDiagnosticsSettingsSection: View {
 
             Toggle(isOn: verboseTunnelLogsBinding) {
                 InspectSettingsIconLabel(
-                    title: "Verbose",
+                    title: InspectionSettingsStrings.Shared.verbose,
                     systemImage: "ladybug",
                     tint: .pink
                 )
             }
         } header: {
-            Text("Diagnostics")
+            Text(InspectionSettingsStrings.Shared.diagnostics)
         } footer: {
-            Text("Use Events and Tunnel Log for troubleshooting. Verbose logging applies on the next Live Monitor start.")
+            Text(InspectionSettingsStrings.IOS.diagnosticsFooter)
         }
     }
 }
@@ -89,9 +89,9 @@ struct InspectAboutSettingsSection: View {
     let openURL: OpenURLAction
 
     var body: some View {
-        Section("About") {
+        Section(InspectionSettingsStrings.Shared.about) {
             InspectSettingsValueRow(
-                title: "Version",
+                title: InspectionSettingsStrings.Shared.version,
                 systemImage: "app.badge",
                 tint: .blue
             ) {
@@ -101,7 +101,7 @@ struct InspectAboutSettingsSection: View {
             }
 
             InspectSettingsActionRow(
-                title: "About Inspect",
+                title: InspectionSettingsStrings.Shared.aboutInspect,
                 systemImage: "info.circle",
                 tint: .indigo
             ) {
@@ -109,7 +109,7 @@ struct InspectAboutSettingsSection: View {
             }
 
             InspectSettingsActionRow(
-                title: "Rate on App Store",
+                title: InspectionSettingsStrings.Shared.rateOnAppStore,
                 systemImage: "star.circle",
                 tint: .yellow
             ) {

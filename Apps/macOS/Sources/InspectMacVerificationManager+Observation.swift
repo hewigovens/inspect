@@ -1,4 +1,5 @@
 import Foundation
+import InspectKit
 @preconcurrency import NetworkExtension
 
 extension InspectMacVerificationManager {
@@ -6,7 +7,7 @@ extension InspectMacVerificationManager {
         let currentStatus = manager.connection.status
         status = currentStatus
         isConfigured = manager.isEnabled && manager.protocolConfiguration != nil
-        appendDiagnostic("Updated state. status=\(currentStatus.description) configured=\(isConfigured)")
+        appendDiagnostic("Updated state. status=\(currentStatus.inspectionDescription) configured=\(isConfigured)")
     }
 
     func configureObservers(for manager: NETunnelProviderManager) {
@@ -17,7 +18,7 @@ extension InspectMacVerificationManager {
                     return
                 }
 
-                self.appendDiagnostic("Observed VPN status change -> \(manager.connection.status.description)")
+                self.appendDiagnostic("Observed VPN status change -> \(manager.connection.status.inspectionDescription)")
                 self.updateState(from: manager)
             },
             onConfigurationChange: { [weak self] in

@@ -1,4 +1,5 @@
 import Foundation
+import InspectKit
 @preconcurrency import NetworkExtension
 
 @MainActor
@@ -46,6 +47,6 @@ final class InspectMacTunnelManagerService {
         }
 
         let connectedDate = manager.connection.connectedDate?.description ?? "nil"
-        return "localizedDescription=\(manager.localizedDescription ?? "nil") enabled=\(manager.isEnabled) status=\(manager.connection.status.description) providerBundleIdentifier=\(providerBundleIdentifier) serverAddress=\(serverAddress) connectedDate=\(connectedDate)"
+        return "localizedDescription=\(manager.localizedDescription ?? "nil") enabled=\(manager.isEnabled) status=\(manager.connection.status.inspectionDescription) providerBundleIdentifier=\(providerBundleIdentifier) serverAddress=\(serverAddress) connectedDate=\(connectedDate)"
     }
 }

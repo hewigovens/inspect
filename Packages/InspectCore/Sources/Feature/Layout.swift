@@ -152,7 +152,7 @@ enum InspectLayout {
 
     enum Monitor {
         static var usesInlineCardSearch: Bool {
-            #if os(iOS)
+            #if os(iOS) || os(macOS)
             true
             #else
             false

@@ -21,7 +21,7 @@ struct InspectMacSettingsView: View {
                 )
             }
             .formStyle(.grouped)
-            .navigationTitle("Settings")
+            .navigationTitle(InspectionSettingsStrings.navigationTitle)
             .onAppear {
                 verboseTunnelLogsEnabled = InspectLogConfiguration.current().includesVerboseMessages
             }

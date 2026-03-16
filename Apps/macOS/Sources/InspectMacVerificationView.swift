@@ -28,7 +28,7 @@ private struct InspectMacVerificationView: View {
             InspectMacVerificationHeader()
 
             InspectMacVerificationProfileCard(
-                status: manager.status.description,
+                status: manager.status.inspectionDescription,
                 isConfigured: manager.isConfigured
             )
 

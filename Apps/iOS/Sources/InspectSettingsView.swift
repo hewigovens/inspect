@@ -1,4 +1,5 @@
 import InspectCore
+import InspectKit
 import Observation
 import SwiftUI
 
@@ -16,7 +17,7 @@ struct InspectSettingsView: View {
                 )
                 InspectAboutSettingsSection(openURL: openURL)
             }
-            .navigationTitle("Settings")
+            .navigationTitle(InspectionSettingsStrings.navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 verboseTunnelLogsEnabled = InspectLogConfiguration.current().includesVerboseMessages
