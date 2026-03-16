@@ -10,7 +10,7 @@ let package = Package(
     ],
     products: [
         .library(name: "InspectCore", targets: ["InspectCore"]),
-        .library(name: "InspectFeature", targets: ["InspectFeature"])
+        .library(name: "InspectKit", targets: ["InspectKit"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-certificates.git", from: "1.18.0"),
@@ -27,7 +27,7 @@ let package = Package(
             path: "Sources/Core"
         ),
         .target(
-            name: "InspectFeature",
+            name: "InspectKit",
             dependencies: ["InspectCore"],
             path: "Sources/Feature"
         ),
@@ -45,9 +45,9 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "InspectFeatureTests",
+            name: "InspectKitTests",
             dependencies: [
-                "InspectFeature",
+                "InspectKit",
                 "InspectCore"
             ],
             path: "Tests/FeatureTests"

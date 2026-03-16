@@ -49,8 +49,24 @@ public struct InspectionRootView: View {
             content
         }
         .tint(.inspectAccent)
-        .task(id: bootstrapURL?.absoluteString) {
+        .task(id: bootstrapTaskKey) {
+            let pendingRequest = presentation == .app
+                ? InspectionExternalInputCenter.consumePendingRequest()
+                : nil
+
             store.bootstrap(initialURL: bootstrapURL)
+
+            if let pendingRequest {
+                handleExternalRequest(pendingRequest)
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: InspectionExternalInputCenter.notification)) { _ in
+            guard presentation == .app,
+                  let request = InspectionExternalInputCenter.consumePendingRequest() else {
+                return
+            }
+
+            handleExternalRequest(request)
         }
         .onChange(of: store.report?.id) { _, _ in
             guard screenshotScenario == nil, let report = store.report else {
@@ -58,6 +74,7 @@ public struct InspectionRootView: View {
             }
 
             monitorStore.recordInspection(report)
+            maybeRequestReview(for: report)
         }
     }
 
@@ -194,6 +211,18 @@ public struct InspectionRootView: View {
         }
     }
 
+    private func maybeRequestReview(for report: TLSInspectionReport) {
+        guard presentation == .app else {
+            return
+        }
+
+        guard InspectionReviewPromptStore.recordSuccessfulInspection(report) else {
+            return
+        }
+
+        InspectReviewRequester.requestReview()
+    }
+
     @ViewBuilder
     private func regularMainColumn(report: TLSInspectionReport?) -> some View {
         VStack(alignment: .leading, spacing: 18) {
@@ -270,6 +299,10 @@ public struct InspectionRootView: View {
         screenshotScenario?.initialURL ?? initialURL
     }
 
+    private var bootstrapTaskKey: String {
+        bootstrapURL?.absoluteString ?? "inspect-root-bootstrap"
+    }
+
     private var rootContentMaxWidth: CGFloat? {
         InspectLayout.Root.contentMaxWidth(usesRegularDashboardLayout: usesRegularDashboardLayout)
     }
@@ -298,5 +331,22 @@ public struct InspectionRootView: View {
             report: report,
             initialSelectionIndex: index
         )
+    }
+
+    private func handleExternalRequest(_ request: InspectionExternalRequest) {
+        store.applyExternalRequest(request)
+
+        switch request {
+        case let .report(report, opensCertificateDetail):
+            guard opensCertificateDetail else {
+                certificateRoute = nil
+                return
+            }
+
+            certificateRoute = InspectionCertificateRoute(
+                report: report,
+                initialSelectionIndex: 0
+            )
+        }
     }
 }

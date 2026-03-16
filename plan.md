@@ -20,6 +20,11 @@ The current working baseline is:
 5. Host detail and certificate detail are wired.
 6. Diagnostics and shared tunnel logs are available in-app.
 7. Simulator build and simulator test flows are in place.
+8. A native macOS app target exists and reuses the shared Inspect, Monitor, and Settings flows.
+9. A macOS packet-tunnel extension target exists and Live Monitor wiring is in place on macOS.
+10. iOS and macOS App Store packaging, upload, and review-submission flows are working.
+11. Safari extensions exist on iOS and macOS for current-page inspection.
+12. A macOS share extension exists and opens shared pages directly into certificate detail.
 
 ## Architecture Direction
 
@@ -39,9 +44,10 @@ Keep these constraints stable:
 Focus:
 
 1. Refine Inspect, Monitor, and Settings copy.
-2. Polish host detail and certificate-detail transitions.
+2. Polish host detail and certificate-detail transitions, especially on regular-width layouts.
 3. Keep diagnostics useful without leaking low-level implementation details into the main UI.
-4. Improve launch and app-store presentation assets.
+4. Keep iOS, iPad, and macOS presentation aligned without stretching phone-first layouts onto larger screens.
+5. Keep extension naming and handoff behavior consistent across iOS Safari, macOS Safari, and macOS Share.
 
 ### 2. Tunnel Stability
 
@@ -80,8 +86,9 @@ Scope:
 Focus:
 
 1. Keep architecture docs current.
-2. Keep the device and simulator workflows documented.
-3. Keep TestFlight and screenshot flows easy to run from `just`.
+2. Keep device, simulator, and macOS workflows documented.
+3. Keep iOS and macOS TestFlight / App Review flows easy to run from `just` and repo scripts.
+4. Keep store descriptions and screenshots current without intrusive in-app screenshot automation.
 
 ### 6. macOS Expansion
 
@@ -92,33 +99,35 @@ Extend Inspect to macOS without forking the core monitor and certificate logic.
 Done:
 
 1. `Rust/tunnel-core` builds for `aarch64-apple-darwin` and `x86_64-apple-darwin`.
-2. `InspectCore` and `InspectFeature` compile on macOS.
+2. `InspectCore` and the shared SwiftUI feature layer compile on macOS.
 3. Swift package tests pass on macOS.
-4. The shared SwiftUI layer now keeps macOS branching concentrated in one support layer instead of scattering it through feature views.
-5. macOS deployment targets are declared in the Swift package and Xcode project source of truth.
+4. A real `InspectMac` app target exists in `project.yml`.
+5. A macOS packet-tunnel extension target, plist, entitlements, signing, and bundle identifiers are in place.
+6. Live Monitor wiring exists on macOS and shares the same core monitor and certificate logic.
+7. The shared SwiftUI layer now keeps macOS branching concentrated in platform files and shared layout/theme helpers instead of scattering it through feature views.
+8. macOS deployment targets are declared in the Swift package and Xcode project source of truth.
+9. macOS build, packaging, upload, screenshots, and App Review submission flows are proven.
+10. A macOS share extension exists and hands shared pages into the app's certificate-detail flow.
+11. Safari extension current-page inspection and full-detail handoff work on both iOS and macOS.
 
-Missing:
+Remaining:
 
-1. A real macOS app target in `project.yml`.
-2. A macOS packet-tunnel extension target, plist, entitlements, signing, and bundle identifiers.
-3. `LiveMonitorManager` wiring for a macOS packet-tunnel bundle identifier and preferences flow.
-4. macOS-specific validation commands in `just` and CI.
-5. A macOS share entry point for manual inspection handoff.
+1. Continued regular-width polish for Inspect, Monitor, and certificate detail.
+2. Mac-specific validation coverage in CI where it adds signal.
+3. Decide whether the old iOS action extension should remain alongside Safari extension, be simplified, or be removed.
 
 Decisions:
 
-1. Do the macOS packet-tunnel extension target before macOS app-shell UI changes.
-2. Treat packet-tunnel bring-up as the highest-risk and highest-value macOS task because Live Monitor depends on it.
-3. Prefer a macOS Service / Share item for manual inspection input instead of recreating the current iOS action extension first.
-4. The share entry point only needs to accept a URL or host and pass it into Inspect.
+1. Keep macOS on the same shared feature stack as iOS unless a platform difference is clearly product-driven.
+2. Prefer platform-specific files or shared layout/theme helpers over scattered `#if os(...)` branches.
+3. Prefer direct handoff entry points that land in the existing shared Inspect flows instead of building extension-specific certificate UI.
+4. Keep the Safari extension as the primary current-page entry point and the macOS share extension as the primary system share entry point.
 
 Execution Order:
 
-1. Add the macOS packet-tunnel extension target with Rust linkage and signing scaffolding.
-2. Validate tunnel start, stop, preferences save/load, and shared App Group feed/log behavior on macOS.
-3. Add a macOS app target that reuses the existing SwiftUI Inspect / Monitor / Settings flows with minimal platform-specific polish.
-4. Add the macOS Service / Share entry point for URL-or-host handoff into manual inspection.
-5. Do macOS-specific UI polish, window behavior, screenshots, and menu integration only after the tunnel path is proven stable.
+1. Continue regular-width and macOS-specific UI polish now that the tunnel path is proven.
+2. Add CI coverage only for macOS checks that catch real regressions.
+3. Reassess extension surface area after Safari extension and macOS share extension usage settles.
 
 ## Validation Loop
 
@@ -128,16 +137,17 @@ Use this validation loop for non-trivial changes:
 2. `swift test` in `Packages/InspectCore`
 3. `xcodebuild -project Inspect.xcodeproj -scheme Inspect -destination 'generic/platform=iOS Simulator' build | xcbeautify`
 4. `xcodebuild -project Inspect.xcodeproj -scheme Inspect -destination 'platform=iOS Simulator,id=<simulator-id>' test | xcbeautify`
-5. targeted device smoke test when tunnel behavior, app-group logging, or monitor behavior changes
-6. macOS packet-tunnel smoke test once the macOS extension target exists
-7. macOS app smoke test once the macOS app target exists
+5. `xcodebuild -project Inspect.xcodeproj -scheme InspectMac -destination 'platform=macOS' build | xcbeautify`
+6. targeted device smoke test when tunnel behavior, app-group logging, or monitor behavior changes
+7. macOS smoke test when tunnel behavior, window behavior, or App Group logging changes
 
 ## Near-Term Priorities
 
 Next practical steps:
 
-1. Continue UI polish on Monitor and Host Detail.
-2. Keep the live-monitor tunnel path stable while improving diagnostics.
+1. Continue regular-width polish on Inspect, Monitor, and certificate detail.
+2. Keep the live-monitor tunnel path stable on both iOS and macOS while improving diagnostics only where they help users.
 3. Add UDP observation through the `tun2proxy` observer branch.
-4. Revisit QUIC only after UDP observation and product presentation are clear.
-5. Build the macOS packet-tunnel target before spending time on a dedicated macOS app shell.
+4. Add targeted CI coverage for macOS app and extension regressions where it adds real signal.
+5. Decide the long-term role of the old iOS action extension now that Safari extension handoff exists.
+6. Revisit QUIC only after UDP observation and product presentation are clear.

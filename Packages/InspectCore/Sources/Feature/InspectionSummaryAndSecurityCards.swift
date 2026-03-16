@@ -2,7 +2,9 @@ import InspectCore
 import SwiftUI
 
 struct InspectionSummaryCard: View {
+    @Environment(\.openURL) private var openURL
     let report: TLSInspectionReport
+    @State private var presentsSSLLabs = false
 
     var body: some View {
         InspectCard {
@@ -38,7 +40,9 @@ struct InspectionSummaryCard: View {
                 }
 
                 if let sslLabsURL = report.sslLabsURL {
-                    Link(destination: sslLabsURL) {
+                    Button {
+                        openSSLLabs(sslLabsURL)
+                    } label: {
                         Label("Open in SSL Labs", systemImage: "arrow.up.right.square")
                     }
                     .font(.inspectRootSubheadlineSemibold)
@@ -46,6 +50,15 @@ struct InspectionSummaryCard: View {
                 }
             }
         }
+        .inspectSafariSheet(url: report.sslLabsURL, isPresented: $presentsSSLLabs)
+    }
+
+    private func openSSLLabs(_ url: URL) {
+        #if os(macOS)
+        openURL(url)
+        #else
+        presentsSSLLabs = true
+        #endif
     }
 
     private var protocolTitle: String {

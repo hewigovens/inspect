@@ -20,13 +20,14 @@ final class InspectionMonitorStore {
 
     private static let enabledKey = "inspect.monitor.enabled.v1"
     private static let entriesKey = "inspect.monitor.entries.v1"
-    private static let historyLimit = 24
+    private static let eventHistoryLimit = 128
+    private static let hostHistoryLimit = 36
 
     init(
         monitorEngine: TLSMonitorProbeEngine = TLSMonitorProbeEngine(),
         flowObservationFeed: TLSFlowObservationFeed? = TLSFlowObservationFeed(),
         enableNetworkFeedPolling: Bool = true,
-        userDefaults: UserDefaults = .standard
+        userDefaults: UserDefaults = InspectionLiveMonitorPreferenceStore.userDefaults()
     ) {
         self.monitorEngine = monitorEngine
         self.flowObservationFeed = flowObservationFeed
@@ -166,7 +167,7 @@ final class InspectionMonitorStore {
             latestCapturedReportByHost[host] = report
         }
 
-        return hostOrder.compactMap { host in
+        return hostOrder.prefix(Self.hostHistoryLimit).compactMap { host in
             makeMonitoredHost(
                 host: host,
                 entries: entriesByHost[host] ?? [],
@@ -258,7 +259,7 @@ final class InspectionMonitorStore {
     private func append(_ event: TLSProbeEvent) {
         let note = makeNoteIfNeeded(for: event)
         entries.insert(InspectionMonitorEntry(event: event, note: note), at: 0)
-        entries = Array(entries.prefix(Self.historyLimit))
+        entries = Array(entries.prefix(Self.eventHistoryLimit))
         persistEntries()
     }
 

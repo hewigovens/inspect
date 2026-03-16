@@ -44,7 +44,12 @@ enum InspectPlatform {
         #if os(iOS)
         UIColor.secondarySystemGroupedBackground.withAlphaComponent(0.92)
         #elseif os(macOS)
-        NSColor.windowBackgroundColor.withAlphaComponent(0.92)
+        NSColor(
+            red: 0.11,
+            green: 0.13,
+            blue: 0.18,
+            alpha: 0.94
+        )
         #endif
     }
 
@@ -52,7 +57,12 @@ enum InspectPlatform {
         #if os(iOS)
         UIColor.tertiarySystemGroupedBackground.withAlphaComponent(0.98)
         #elseif os(macOS)
-        NSColor.controlBackgroundColor.withAlphaComponent(0.98)
+        NSColor(
+            red: 0.16,
+            green: 0.18,
+            blue: 0.24,
+            alpha: 0.98
+        )
         #endif
     }
 
@@ -60,7 +70,12 @@ enum InspectPlatform {
         #if os(iOS)
         UIColor.secondarySystemGroupedBackground.withAlphaComponent(0.98)
         #elseif os(macOS)
-        NSColor.underPageBackgroundColor.withAlphaComponent(0.98)
+        NSColor(
+            red: 0.20,
+            green: 0.22,
+            blue: 0.29,
+            alpha: 0.96
+        )
         #endif
     }
 

@@ -35,17 +35,6 @@ struct InspectionEventsCard: View {
                         }
                     }
                 }
-
-                Button("Clear Monitor History") {
-                    store.clear()
-                }
-                .font(.inspectRootCaptionSemibold)
-                .buttonStyle(.plain)
-                .foregroundStyle(.secondary)
-
-                Text("Clears persisted hosts and recent monitor events.")
-                    .font(.inspectRootCaption)
-                    .foregroundStyle(.secondary)
             }
         }
     }
@@ -58,7 +47,29 @@ struct InspectionTunnelLogCard: View {
 
     var body: some View {
         InspectCard {
-            VStack(alignment: .leading, spacing: 14) {
+            InspectionTunnelLogContent(store: store, showsHeader: true)
+        }
+        .task {
+            store.refresh()
+        }
+        .onReceive(timer) { _ in
+            guard store.autoRefresh else {
+                return
+            }
+
+            store.refresh()
+        }
+    }
+}
+
+@MainActor
+struct InspectionTunnelLogContent: View {
+    @Bindable var store: InspectionTunnelLogStore
+    let showsHeader: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            if showsHeader {
                 HStack(alignment: .firstTextBaseline, spacing: 12) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Tunnel Log")
@@ -71,13 +82,22 @@ struct InspectionTunnelLogCard: View {
 
                     Spacer()
                 }
+            }
 
+            ScrollView(.horizontal) {
                 Text(store.text)
                     .font(.system(.caption2, design: .monospaced))
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(12)
-                    .background(Color.inspectChromeFill, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
                     .textSelection(.enabled)
+                    .padding(14)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(Color.inspectChromeFill)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .stroke(Color.inspectCardStroke, lineWidth: 1)
+                    )
                     .contextMenu {
                         Button {
                             store.refresh()
@@ -107,16 +127,6 @@ struct InspectionTunnelLogCard: View {
                         }
                     }
             }
-        }
-        .task {
-            store.refresh()
-        }
-        .onReceive(timer) { _ in
-            guard store.autoRefresh else {
-                return
-            }
-
-            store.refresh()
         }
     }
 }

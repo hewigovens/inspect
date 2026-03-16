@@ -85,11 +85,6 @@ struct InspectionWorkspaceCard: View {
                 Text("Certificate Workspace")
                     .font(.inspectRootHeadline)
 
-                Text("Inspect gives you a larger-screen flow for checking trust, reading the chain, and jumping into certificate details without bouncing between views.")
-                    .font(.inspectRootFootnote)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-
                 workspaceFeature(
                     title: "Trust Summary",
                     message: "See the trust verdict, negotiated protocol, issuer, and validity at a glance.",
