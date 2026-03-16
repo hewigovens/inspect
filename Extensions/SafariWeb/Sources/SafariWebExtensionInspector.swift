@@ -7,32 +7,24 @@ final class SafariExtensionInspector {
         completion: @escaping (Result<TLSInspectionReport, Error>) -> Void
     ) throws {
         let url = try URLInputNormalizer.normalize(input: input)
-        inspectUsingSharedAsync(url: url, completionBox: SafariExtensionCompletionBox(completion))
+        inspectAsync(url: url, completion: SafariExtensionCompletion(completion))
     }
 
-    private func inspectUsingSharedAsync(
+    private func inspectAsync(
         url: URL,
-        completionBox: SafariExtensionCompletionBox
+        completion: SafariExtensionCompletion
     ) {
         Task {
             do {
                 let report = try await TLSInspector().inspect(url: url)
                 DispatchQueue.main.async {
-                    completionBox.completion(.success(report))
+                    completion.completion(.success(report))
                 }
             } catch {
                 DispatchQueue.main.async {
-                    completionBox.completion(.failure(error))
+                    completion.completion(.failure(error))
                 }
             }
         }
-    }
-}
-
-private final class SafariExtensionCompletionBox: @unchecked Sendable {
-    let completion: (Result<TLSInspectionReport, Error>) -> Void
-
-    init(_ completion: @escaping (Result<TLSInspectionReport, Error>) -> Void) {
-        self.completion = completion
     }
 }

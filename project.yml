@@ -138,6 +138,18 @@ targets:
         SWIFT_STRICT_CONCURRENCY: minimal
         SKIP_INSTALL: YES
     preBuildScripts:
+      - name: Generate App Icons
+        script: |
+          ./scripts/generate_safari_web_icons.sh
+        inputFiles:
+          - $(PROJECT_DIR)/Apps/macOS/Resources/AppIcon.disabled/icon_512x512@2x.png
+          - $(PROJECT_DIR)/scripts/generate_safari_web_icons.sh
+        outputFiles:
+          - $(PROJECT_DIR)/Extensions/SafariWeb/Resources/images/icon-48.png
+          - $(PROJECT_DIR)/Extensions/SafariWeb/Resources/images/icon-96.png
+          - $(PROJECT_DIR)/Extensions/SafariWeb/Resources/images/icon-128.png
+          - $(PROJECT_DIR)/Extensions/SafariWeb/Resources/images/icon-256.png
+          - $(PROJECT_DIR)/Extensions/SafariWeb/Resources/images/icon-512.png
       - name: Generate Safari Web Config
         script: |
           ./scripts/generate_safari_web_config.sh
@@ -203,6 +215,18 @@ targets:
         SWIFT_STRICT_CONCURRENCY: minimal
         SKIP_INSTALL: YES
     preBuildScripts:
+      - name: Generate App Icons
+        script: |
+          ./scripts/generate_safari_web_icons.sh
+        inputFiles:
+          - $(PROJECT_DIR)/Apps/macOS/Resources/AppIcon.disabled/icon_512x512@2x.png
+          - $(PROJECT_DIR)/scripts/generate_safari_web_icons.sh
+        outputFiles:
+          - $(PROJECT_DIR)/Extensions/SafariWeb/Resources/images/icon-48.png
+          - $(PROJECT_DIR)/Extensions/SafariWeb/Resources/images/icon-96.png
+          - $(PROJECT_DIR)/Extensions/SafariWeb/Resources/images/icon-128.png
+          - $(PROJECT_DIR)/Extensions/SafariWeb/Resources/images/icon-256.png
+          - $(PROJECT_DIR)/Extensions/SafariWeb/Resources/images/icon-512.png
       - name: Generate Safari Web Config
         script: |
           ./scripts/generate_safari_web_config.sh

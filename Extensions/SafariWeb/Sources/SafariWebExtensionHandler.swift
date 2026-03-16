@@ -24,7 +24,7 @@ final class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
                 return
             }
 
-            let box = ExtensionContextBox(context)
+            let extensionContext = InspectExtensionContext(context)
             do {
                 try inspector.inspect(input: urlString) { result in
                     let payload: [String: Any]
@@ -35,7 +35,7 @@ final class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
                         payload = SafariWebExtensionPayload.error(error.localizedDescription)
                     }
 
-                    SafariWebExtensionResponse.complete(context: box.context, payload: payload)
+                    SafariWebExtensionResponse.complete(context: extensionContext.context, payload: payload)
                 }
             } catch {
                 SafariWebExtensionResponse.complete(
@@ -52,10 +52,10 @@ final class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
                 return
             }
 
-            let box = ExtensionContextBox(context)
-            box.context.open(InspectDeepLink.certificateDetail(token: token).url) { success in
+            let extensionContext = InspectExtensionContext(context)
+            extensionContext.context.open(InspectDeepLink.certificateDetail(token: token).url) { success in
                 SafariWebExtensionResponse.complete(
-                    context: box.context,
+                    context: extensionContext.context,
                     payload: success
                         ? ["status": "opened"]
                         : SafariWebExtensionPayload.error("Inspect could not be opened from the Safari extension.")
@@ -67,13 +67,5 @@ final class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
                 payload: SafariWebExtensionPayload.error("Unsupported Safari extension request: \(request.type)")
             )
         }
-    }
-}
-
-private final class ExtensionContextBox: @unchecked Sendable {
-    let context: NSExtensionContext
-
-    init(_ context: NSExtensionContext) {
-        self.context = context
     }
 }

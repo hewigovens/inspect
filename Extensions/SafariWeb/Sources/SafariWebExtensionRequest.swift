@@ -17,35 +17,3 @@ struct SafariWebExtensionRequest {
         reportToken = message["reportToken"] as? String
     }
 }
-
-enum SafariWebExtensionMessage {
-    static var userInfoKey: String {
-        if #available(iOS 15.0, macOS 11.0, *) {
-            SFExtensionMessageKey
-        } else {
-            "message"
-        }
-    }
-}
-
-enum SafariWebExtensionResponse {
-    static func complete(context: NSExtensionContext, payload: [String: Any]) {
-        let response = NSExtensionItem()
-        response.userInfo = [SafariWebExtensionMessage.userInfoKey: payload]
-        let box = ExtensionCompletionBox(context: context, response: response)
-
-        DispatchQueue.main.async {
-            box.context.completeRequest(returningItems: [box.response], completionHandler: nil)
-        }
-    }
-}
-
-private final class ExtensionCompletionBox: @unchecked Sendable {
-    let context: NSExtensionContext
-    let response: NSExtensionItem
-
-    init(context: NSExtensionContext, response: NSExtensionItem) {
-        self.context = context
-        self.response = response
-    }
-}
