@@ -106,14 +106,19 @@ struct InspectMacAboutSettingsSection: View {
                     InspectReviewRequester.requestReview()
                 }
             } label: {
-                InspectMacSettingsValueRow(
-                    title: InspectionSettingsStrings.Shared.version,
-                    systemImage: "app.badge",
-                    tint: .blue
-                ) {
+                HStack(spacing: 0) {
+                    InspectMacSettingsIconLabel(
+                        title: InspectionSettingsStrings.Shared.version,
+                        systemImage: "app.badge",
+                        tint: .blue
+                    )
+
+                    Spacer(minLength: 12)
+
                     Text(appVersionText)
                         .font(.body.weight(.medium))
                 }
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
 

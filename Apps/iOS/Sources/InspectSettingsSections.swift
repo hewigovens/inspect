@@ -96,15 +96,20 @@ struct InspectAboutSettingsSection: View {
                     InspectReviewRequester.requestReview()
                 }
             } label: {
-                InspectSettingsValueRow(
-                    title: InspectionSettingsStrings.Shared.version,
-                    systemImage: "app.badge",
-                    tint: .blue
-                ) {
+                HStack(spacing: 0) {
+                    InspectSettingsIconLabel(
+                        title: InspectionSettingsStrings.Shared.version,
+                        systemImage: "app.badge",
+                        tint: .blue
+                    )
+
+                    Spacer(minLength: 12)
+
                     Text(InspectionAppMetadata.versionBuildText)
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.primary)
                 }
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
 

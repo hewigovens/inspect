@@ -7,7 +7,7 @@ public final class InspectionReviewDebugTrigger {
     private let requiredTapCount: Int
     private let resetInterval: TimeInterval
 
-    public init(requiredTapCount: Int = 4, resetInterval: TimeInterval = 5) {
+    public init(requiredTapCount: Int = 4, resetInterval: TimeInterval = 2) {
         self.requiredTapCount = requiredTapCount
         self.resetInterval = resetInterval
     }

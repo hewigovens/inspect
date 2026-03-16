@@ -3,6 +3,8 @@ import StoreKit
 
 #if canImport(UIKit)
 import UIKit
+#elseif canImport(AppKit)
+import AppKit
 #endif
 
 public enum InspectReviewRequester {
@@ -16,9 +18,14 @@ public enum InspectReviewRequester {
             return
         }
 
-        SKStoreReviewController.requestReview(in: scene)
+        AppStore.requestReview(in: scene)
         #elseif os(macOS)
-        SKStoreReviewController.requestReview()
+        guard let controller = NSApp.keyWindow?.contentViewController
+            ?? NSApp.mainWindow?.contentViewController else {
+            return
+        }
+
+        AppStore.requestReview(in: controller)
         #endif
     }
 }
