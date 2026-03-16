@@ -1,6 +1,6 @@
 import Foundation
 
-public enum InspectSection: String, CaseIterable, Hashable, Identifiable {
+public enum InspectSection: String, CaseIterable, Hashable, Identifiable, Sendable {
     case inspect = "Inspect"
     case monitor = "Monitor"
     case settings = "Settings"

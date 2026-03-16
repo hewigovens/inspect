@@ -163,6 +163,28 @@ targets:
         product: InspectCore
       - sdk: SafariServices.framework
 
+  InspectLiveMonitorWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: Extensions/LiveMonitorWidget/Sources
+      - path: Extensions/LiveMonitorWidget/Resources
+        buildPhase: resources
+        excludes:
+          - Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect.Widget
+        PRODUCT_NAME: InspectLiveMonitorWidget
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Extensions/LiveMonitorWidget/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Configs/Entitlements/InspectAppGroup.entitlements
+        SKIP_INSTALL: YES
+    dependencies:
+      - package: InspectCore
+        product: InspectKit
+      - sdk: WidgetKit.framework
+
   Inspect:
     type: application
     platform: iOS
@@ -187,6 +209,8 @@ targets:
       - target: InspectActionExtension
         embed: true
       - target: InspectSafariWebExtension
+        embed: true
+      - target: InspectLiveMonitorWidget
         embed: true
     scheme:
       gatherCoverageData: false

@@ -35,6 +35,25 @@
 	<false/>
 	<key>InspectAppGroupIdentifier</key>
 	<string>$(INSPECT_APP_GROUP_IDENTIFIER)</string>
+	<key>UIApplicationShortcutItems</key>
+	<array>
+		<dict>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>magnifyingglass.circle</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Inspect</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>in.fourplex.Inspect.shortcut.inspect</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>wave.3.right.circle</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Monitor</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>in.fourplex.Inspect.shortcut.monitor</string>
+		</dict>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

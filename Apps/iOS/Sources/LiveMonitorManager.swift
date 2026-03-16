@@ -1,7 +1,11 @@
 import InspectCore
+import InspectKit
 import Foundation
 @preconcurrency import NetworkExtension
 import Observation
+#if canImport(WidgetKit)
+import WidgetKit
+#endif
 
 enum LiveMonitorManagerError: LocalizedError {
     case capabilityMissing
@@ -22,8 +26,6 @@ enum LiveMonitorManagerError: LocalizedError {
 final class LiveMonitorManager {
     static let tunnelProviderBundleIdentifier = "in.fourplex.Inspect.PacketTunnelExtension"
     static let localizedDescription = "Inspect Live Monitor"
-    private static let liveMonitorEnabledKey = "inspect.monitor.enabled.v1"
-
     var status: NEVPNStatus = .invalid
     var lastErrorMessage: String?
     private(set) var isConfigured = false
@@ -178,10 +180,12 @@ final class LiveMonitorManager {
         let currentStatus = manager.connection.status
         status = currentStatus
         isConfigured = manager.isEnabled && manager.protocolConfiguration != nil
-        UserDefaults.standard.set(
-            LiveMonitorTunnelState.isActive(for: currentStatus),
-            forKey: Self.liveMonitorEnabledKey
+        InspectionLiveMonitorPreferenceStore.setEnabled(
+            LiveMonitorTunnelState.isActive(for: currentStatus)
         )
+#if canImport(WidgetKit)
+        WidgetCenter.shared.reloadTimelines(ofKind: InspectWidgetKind.liveMonitor)
+#endif
         logger.verbose("Updated state. status=\(statusDescription(currentStatus)) configured=\(isConfigured)")
     }
 

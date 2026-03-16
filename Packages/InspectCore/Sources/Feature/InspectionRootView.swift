@@ -74,6 +74,7 @@ public struct InspectionRootView: View {
             }
 
             monitorStore.recordInspection(report)
+            maybeRequestReview(for: report)
         }
     }
 
@@ -208,6 +209,18 @@ public struct InspectionRootView: View {
                     .frame(width: regularSideRailWidth, alignment: .top)
             }
         }
+    }
+
+    private func maybeRequestReview(for report: TLSInspectionReport) {
+        guard presentation == .app else {
+            return
+        }
+
+        guard InspectionReviewPromptStore.recordSuccessfulInspection(report) else {
+            return
+        }
+
+        InspectReviewRequester.requestReview()
     }
 
     @ViewBuilder

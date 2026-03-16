@@ -97,17 +97,25 @@ struct InspectMacDiagnosticsSettingsSection: View {
 struct InspectMacAboutSettingsSection: View {
     let appVersionText: String
     let openURL: OpenURLAction
+    @State private var reviewDebugTrigger = InspectionReviewDebugTrigger()
 
     var body: some View {
         Section(InspectionSettingsStrings.Shared.about) {
-            InspectMacSettingsValueRow(
-                title: InspectionSettingsStrings.Shared.version,
-                systemImage: "app.badge",
-                tint: .blue
-            ) {
-                Text(appVersionText)
-                    .font(.body.weight(.medium))
+            Button {
+                if reviewDebugTrigger.registerTap() {
+                    InspectReviewRequester.requestReview()
+                }
+            } label: {
+                InspectMacSettingsValueRow(
+                    title: InspectionSettingsStrings.Shared.version,
+                    systemImage: "app.badge",
+                    tint: .blue
+                ) {
+                    Text(appVersionText)
+                        .font(.body.weight(.medium))
+                }
             }
+            .buttonStyle(.plain)
 
             InspectMacSettingsActionRow(
                 title: InspectionSettingsStrings.Shared.aboutInspect,

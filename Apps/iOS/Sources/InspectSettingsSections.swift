@@ -87,18 +87,26 @@ struct InspectDiagnosticsSettingsSection: View {
 
 struct InspectAboutSettingsSection: View {
     let openURL: OpenURLAction
+    @State private var reviewDebugTrigger = InspectionReviewDebugTrigger()
 
     var body: some View {
         Section(InspectionSettingsStrings.Shared.about) {
-            InspectSettingsValueRow(
-                title: InspectionSettingsStrings.Shared.version,
-                systemImage: "app.badge",
-                tint: .blue
-            ) {
-                Text(InspectionAppMetadata.versionBuildText)
-                    .font(.subheadline.weight(.medium))
-                    .foregroundStyle(.primary)
+            Button {
+                if reviewDebugTrigger.registerTap() {
+                    InspectReviewRequester.requestReview()
+                }
+            } label: {
+                InspectSettingsValueRow(
+                    title: InspectionSettingsStrings.Shared.version,
+                    systemImage: "app.badge",
+                    tint: .blue
+                ) {
+                    Text(InspectionAppMetadata.versionBuildText)
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.primary)
+                }
             }
+            .buttonStyle(.plain)
 
             InspectSettingsActionRow(
                 title: InspectionSettingsStrings.Shared.aboutInspect,

@@ -27,7 +27,7 @@ final class InspectionMonitorStore {
         monitorEngine: TLSMonitorProbeEngine = TLSMonitorProbeEngine(),
         flowObservationFeed: TLSFlowObservationFeed? = TLSFlowObservationFeed(),
         enableNetworkFeedPolling: Bool = true,
-        userDefaults: UserDefaults = .standard
+        userDefaults: UserDefaults = InspectionLiveMonitorPreferenceStore.userDefaults()
     ) {
         self.monitorEngine = monitorEngine
         self.flowObservationFeed = flowObservationFeed
