@@ -276,6 +276,7 @@ targets:
           - InspectMacShareExtension.entitlements
     settings:
       base:
+        ASSETCATALOG_COMPILER_APPICON_NAME: ExtensionIcon
         PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect.ShareExtension
         PRODUCT_NAME: InspectMacShareExtension
         APPLICATION_EXTENSION_API_ONLY: YES
