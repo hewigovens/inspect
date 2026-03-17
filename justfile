@@ -41,6 +41,42 @@ testflight-build:
 testflight-dry-run:
     ./scripts/testflight.sh dry-run
 
+reset-mac-extensions:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    BUNDLE_ID="in.fourplex.Inspect"
+    EXTENSION_IDS=(
+        "$BUNDLE_ID.ShareExtension"
+        "$BUNDLE_ID.SafariWebExtensionMac"
+        "$BUNDLE_ID.PacketTunnelExtension"
+    )
+    for ext in "${EXTENSION_IDS[@]}"; do
+        if pluginkit -m -i "$ext" >/dev/null 2>&1; then
+            echo "Removing stale registration: $ext"
+            pluginkit -e ignore -i "$ext" 2>/dev/null || true
+        fi
+    done
+    APP_PATH="$(xcodebuild -scheme InspectMac -destination 'platform=macOS' -showBuildSettings 2>/dev/null | awk '/^ *BUILT_PRODUCTS_DIR/ { dir=$3 } END { print dir }')/Inspect.app"
+    if [[ -d "$APP_PATH" ]]; then
+        PLUGINS_DIR="$APP_PATH/Contents/PlugIns"
+        if [[ -d "$PLUGINS_DIR" ]]; then
+            for appex in "$PLUGINS_DIR"/*.appex; do
+                echo "Registering: $(basename "$appex")"
+                pluginkit -a "$appex" 2>/dev/null || true
+                EXT_BUNDLE_ID="$(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$appex/Contents/Info.plist" 2>/dev/null || true)"
+                if [[ -n "$EXT_BUNDLE_ID" ]]; then
+                    pluginkit -e use -i "$EXT_BUNDLE_ID" 2>/dev/null || true
+                fi
+            done
+        fi
+        echo "Launching $APP_PATH"
+        open "$APP_PATH"
+    else
+        echo "No built Inspect.app found at $APP_PATH — run 'just build-macos' or 'just run-mac' first." >&2
+        exit 1
+    fi
+    echo "Done. Verify with: pluginkit -m -v -p com.apple.share-services | grep -i inspect"
+
 app-store-screenshots:
     ./scripts/app_store_screenshots.sh capture
 
