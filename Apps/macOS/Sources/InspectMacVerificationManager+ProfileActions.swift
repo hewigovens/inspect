@@ -1,4 +1,5 @@
 import Foundation
+import InspectKit
 @preconcurrency import NetworkExtension
 
 extension InspectMacVerificationManager {
@@ -14,8 +15,9 @@ extension InspectMacVerificationManager {
             lastErrorMessage = nil
             appendDiagnostic("Refresh complete. \(tunnelService.describe(manager))")
         } catch {
-            lastErrorMessage = error.localizedDescription
-            appendErrorDiagnostics(prefix: "Refresh failed", error: error)
+            let normalized = LiveMonitorErrorNormalizer.normalize(error, platform: "signing setup")
+            lastErrorMessage = normalized.localizedDescription
+            appendErrorDiagnostics(prefix: "Refresh failed", error: normalized)
         }
     }
 
@@ -44,8 +46,9 @@ extension InspectMacVerificationManager {
             lastErrorMessage = nil
             appendDiagnostic("VPN profile is ready. \(tunnelService.describe(manager))")
         } catch {
-            lastErrorMessage = error.localizedDescription
-            appendErrorDiagnostics(prefix: "Install profile failed", error: error)
+            let normalized = LiveMonitorErrorNormalizer.normalize(error, platform: "signing setup")
+            lastErrorMessage = normalized.localizedDescription
+            appendErrorDiagnostics(prefix: "Install profile failed", error: normalized)
         }
     }
 }

@@ -9,6 +9,10 @@ public enum InspectionLiveMonitorPreferenceStore {
         defaults.bool(forKey: enabledKey)
     }
 
+    public static var hasStoredValue: Bool {
+        defaults.object(forKey: enabledKey) != nil
+    }
+
     public static func setEnabled(_ enabled: Bool) {
         defaults.set(enabled, forKey: enabledKey)
     }

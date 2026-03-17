@@ -84,49 +84,48 @@ struct InspectionTunnelLogContent: View {
                 }
             }
 
-            ScrollView(.horizontal) {
-                Text(store.text)
-                    .font(.system(.caption2, design: .monospaced))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .textSelection(.enabled)
-                    .padding(14)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .fill(Color.inspectChromeFill)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .stroke(Color.inspectCardStroke, lineWidth: 1)
-                    )
-                    .contextMenu {
-                        Button {
-                            store.refresh()
-                        } label: {
-                            Label("Refresh", systemImage: "arrow.clockwise")
-                        }
-
-                        Button {
-                            store.copyToClipboard()
-                        } label: {
-                            Label("Copy", systemImage: "doc.on.doc")
-                        }
-
-                        ShareLink(
-                            item: store.text,
-                            subject: Text("Inspect Tunnel Log"),
-                            message: Text("Shared from Inspect")
-                        ) {
-                            Label("Share", systemImage: "square.and.arrow.up")
-                        }
-                        .disabled(store.canShare == false)
-
-                        Button(role: .destructive) {
-                            store.clear()
-                        } label: {
-                            Label("Reset", systemImage: "trash")
-                        }
+            Text(store.text)
+                .font(.system(.caption2, design: .monospaced))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .textSelection(.enabled)
+                .padding(14)
+                .background(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(Color.inspectChromeFill)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(Color.inspectCardStroke, lineWidth: 1)
+                )
+                .contextMenu {
+                    Button {
+                        store.refresh()
+                    } label: {
+                        Label("Refresh", systemImage: "arrow.clockwise")
                     }
-            }
+
+                    Button {
+                        store.copyToClipboard()
+                    } label: {
+                        Label("Copy", systemImage: "doc.on.doc")
+                    }
+
+                    ShareLink(
+                        item: store.text,
+                        subject: Text("Inspect Tunnel Log"),
+                        message: Text("Shared from Inspect")
+                    ) {
+                        Label("Share", systemImage: "square.and.arrow.up")
+                    }
+                    .disabled(store.canShare == false)
+
+                    Button(role: .destructive) {
+                        store.clear()
+                    } label: {
+                        Label("Reset", systemImage: "trash")
+                    }
+                }
         }
     }
 }
