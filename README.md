@@ -1,5 +1,10 @@
 # Inspect
 
+[![CI](https://github.com/hewigovens/inspect/actions/workflows/ci.yml/badge.svg)](https://github.com/hewigovens/inspect/actions/workflows/ci.yml)
+[![Swift 6.0](https://img.shields.io/badge/Swift-6.0-F05138.svg)](https://swift.org)
+[![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](#license)
+[![DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/hewigovens/inspect)
+
 Inspect is a TLS certificate inspector for iPhone, iPad, and macOS.
 
 It supports:
