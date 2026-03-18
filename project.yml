@@ -194,7 +194,6 @@ targets:
         buildPhase: resources
         excludes:
           - Info.plist
-      - path: Apps/iOS/Resources/AppIcon.icon
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect
@@ -298,7 +297,6 @@ targets:
           - AppIcon.disabled
           - Info.plist
           - InspectMac.entitlements
-      - path: Apps/macOS/Resources/AppIcon.icon
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.Inspect
