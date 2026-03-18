@@ -1,0 +1,69 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cardFill" x1="246" y1="186" x2="751" y2="737" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FAFCFF"/>
+      <stop offset="1" stop-color="#EEF3FA"/>
+    </linearGradient>
+    <linearGradient id="cardBorder" x1="196" y1="202" x2="818" y2="714" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F2D36A"/>
+      <stop offset="1" stop-color="#D7A429"/>
+    </linearGradient>
+    <linearGradient id="medalFill" x1="564" y1="518" x2="785" y2="744" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8D86A"/>
+      <stop offset="1" stop-color="#D39B1E"/>
+    </linearGradient>
+    <linearGradient id="medalInner" x1="624" y1="554" x2="740" y2="674" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F9DF82"/>
+      <stop offset="1" stop-color="#E0B63A"/>
+    </linearGradient>
+    <linearGradient id="ribbonLeft" x1="614" y1="694" x2="664" y2="827" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7FA5E9"/>
+      <stop offset="1" stop-color="#5279C8"/>
+    </linearGradient>
+    <linearGradient id="ribbonRight" x1="695" y1="694" x2="757" y2="823" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2B5798"/>
+      <stop offset="1" stop-color="#173D77"/>
+    </linearGradient>
+    <filter id="cardShadow" x="112" y="126" width="800" height="674" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="18"/>
+      <feGaussianBlur stdDeviation="20"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.0235 0 0 0 0 0.1921 0 0 0 0 0.3764 0 0 0 0.18 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0_1"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0_1" result="shape"/>
+    </filter>
+    <filter id="medalShadow" x="500" y="456" width="342" height="406" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="14"/>
+      <feGaussianBlur stdDeviation="16"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.1333 0 0 0 0 0.1451 0 0 0 0 0.2392 0 0 0 0.22 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0_1"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0_1" result="shape"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#cardShadow)">
+    <rect x="160" y="176" width="704" height="574" rx="96" fill="url(#cardFill)"/>
+    <rect x="188" y="204" width="648" height="518" rx="72" stroke="url(#cardBorder)" stroke-width="18"/>
+
+    <rect x="240" y="300" width="408" height="38" rx="19" fill="#5E7187"/>
+    <rect x="240" y="410" width="260" height="32" rx="16" fill="#5E7187"/>
+    <rect x="240" y="514" width="168" height="32" rx="16" fill="#5E7187"/>
+
+    <rect x="240" y="250" width="118" height="16" rx="8" fill="#C9D7E7"/>
+    <rect x="372" y="250" width="74" height="16" rx="8" fill="#D8E3F0"/>
+  </g>
+
+  <g filter="url(#medalShadow)" transform="rotate(-7 683 672)">
+    <path d="M629 690L601 834L660 789L699 851L718 693H629Z" fill="url(#ribbonLeft)"/>
+    <path d="M710 693L726 851L774 789L822 832L788 690L710 693Z" fill="url(#ribbonRight)"/>
+
+    <polygon points="687,517 722,530 757,521 771,556 805,571 798,608 822,634 796,660 802,696 768,710 754,745 719,736 688,759 659,735 622,743 610,708 575,695 583,659 557,633 582,606 578,570 612,557 625,523 661,531"
+      fill="url(#medalFill)"/>
+    <circle cx="689" cy="634" r="92" fill="#C9961C"/>
+    <circle cx="689" cy="634" r="72" fill="url(#medalInner)"/>
+    <circle cx="689" cy="634" r="40" fill="#C29424"/>
+  </g>
+</svg>
