@@ -41,6 +41,12 @@ jobs:
           set -o pipefail
           xcodebuild -scheme InspectCore -project Inspect.xcodeproj -destination 'generic/platform=iOS Simulator' build | xcbeautify
 
+      - name: Test InspectCore package
+        shell: bash
+        run: |
+          set -o pipefail
+          swift test --package-path Packages/InspectCore
+
       - name: Build iOS app for Simulator
         shell: bash
         run: |
