@@ -8,6 +8,11 @@
 - Required TestFlight env vars: `ASC_APP_ID`, `APP_STORE_CONNECT_KEY_ID`, `APP_STORE_CONNECT_ISSUER_ID`, `APP_STORE_CONNECT_KEY_PATH`.
 - If the current App Store Connect app already has the repo's `CURRENT_PROJECT_VERSION`, set `TESTFLIGHT_BUILD_NUMBER` in `.env` before uploading.
 
+## Code Style
+
+- Only add comments where the logic isn't self-evident. Most code should speak for itself. Avoid restating what a function or variable name already conveys.
+- Do not add comments to code you didn't change.
+
 ## Architecture
 
 - Avoid vague file names like `*Support.swift`. Prefer focused names that describe the actual responsibility, such as `Theme`, `Layout`, `Navigation`, `Rows`, `Sections`, `Metadata`, or `WindowLayout`.

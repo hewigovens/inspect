@@ -2,8 +2,6 @@ import Foundation
 import InspectCore
 import Testing
 
-// MARK: - probeHost
-
 @Test
 func probeHostPrefersServerNameOverRemoteHost() {
     let obs = TLSFlowObservation(
@@ -30,7 +28,6 @@ func probeHostRejectsIPAddressServerName() {
         remoteHost: "example.com",
         serverName: "93.184.216.34"
     )
-    // serverName is IP, falls back to remoteHost
     #expect(obs.probeHost == "example.com")
 }
 
@@ -83,8 +80,6 @@ func probeHostRejectsWhitespaceOnly() {
     #expect(obs.probeHost == nil)
 }
 
-// MARK: - passiveInspectionHost
-
 @Test
 func passiveInspectionHostAcceptsIPAddresses() {
     let obs = TLSFlowObservation(
@@ -92,11 +87,8 @@ func passiveInspectionHostAcceptsIPAddresses() {
         remoteHost: "93.184.216.34",
         serverName: "93.184.216.34"
     )
-    // passiveInspectionHost does NOT filter out IPs
     #expect(obs.passiveInspectionHost == "93.184.216.34")
 }
-
-// MARK: - probeURL
 
 @Test
 func probeURLOmitsDefaultPort() {
@@ -130,8 +122,6 @@ func probeURLIsNilWithNoHost() {
     )
     #expect(obs.probeURL() == nil)
 }
-
-// MARK: - IPv4 Validation
 
 @Test(arguments: [
     ("192.168.1.1", true),

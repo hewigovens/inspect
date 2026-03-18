@@ -2,7 +2,7 @@ import Foundation
 @testable import InspectCore
 import Testing
 
-// MARK: - IPv4
+// MARK: - IPv4 Packets
 
 @Test
 func parsesIPv4TCPPacket() {
@@ -69,7 +69,7 @@ func unknownTransportForNonTCPUDP() {
     #expect(summary?.remotePort == nil)
 }
 
-// MARK: - IPv6
+// MARK: - IPv6 Packets
 
 @Test
 func parsesIPv6TCPPacket() {
@@ -105,7 +105,6 @@ func returnsNilForTruncatedIPv6() {
 
 @Test
 func returnsNilForUnsupportedIPVersion() {
-    // IP version 3 (invalid)
     let packet = Data([0x30] + [UInt8](repeating: 0, count: 40))
     #expect(PacketSummary(packet: packet) == nil)
 }
@@ -119,11 +118,9 @@ private func buildIPv4Packet(
 ) -> Data {
     // Minimal IPv4 header (20 bytes, IHL=5)
     var header = [UInt8](repeating: 0, count: 20)
-    header[0] = 0x45 // version=4, IHL=5
+    header[0] = 0x45
     header[9] = protocolNumber
-    // source IP
     header[12] = 10; header[13] = 0; header[14] = 0; header[15] = 1
-    // destination IP
     header[16] = destinationIP[0]
     header[17] = destinationIP[1]
     header[18] = destinationIP[2]
@@ -134,12 +131,12 @@ private func buildIPv4Packet(
     if let port = destinationPort, (protocolNumber == 6 || protocolNumber == 17) {
         // Transport header: src_port(2) + dst_port(2)
         var transport = [UInt8](repeating: 0, count: protocolNumber == 6 ? 20 : 8)
-        transport[0] = UInt8((12345 >> 8) & 0xFF) // source port
+        transport[0] = UInt8((12345 >> 8) & 0xFF)
         transport[1] = UInt8(12345 & 0xFF)
-        transport[2] = UInt8((port >> 8) & 0xFF) // dest port
+        transport[2] = UInt8((port >> 8) & 0xFF)
         transport[3] = UInt8(port & 0xFF)
         if protocolNumber == 6 {
-            transport[12] = 0x50 // data offset = 5 (20 bytes)
+            transport[12] = 0x50
         }
         packet.append(contentsOf: transport)
     }
@@ -154,10 +151,8 @@ private func buildIPv6Packet(
 ) -> Data {
     // IPv6 header (40 bytes)
     var header = [UInt8](repeating: 0, count: 40)
-    header[0] = 0x60 // version=6
+    header[0] = 0x60
     header[6] = nextHeader
-    // source IP (bytes 8-23): all zeros
-    // destination IP (bytes 24-39)
     for i in 0..<16 {
         header[24 + i] = destinationIP[i]
     }
@@ -170,7 +165,7 @@ private func buildIPv6Packet(
     transport[1] = UInt8(12345 & 0xFF)
     transport[2] = UInt8((destinationPort >> 8) & 0xFF)
     transport[3] = UInt8(destinationPort & 0xFF)
-    transport[12] = 0x50 // data offset = 5
+    transport[12] = 0x50
     packet.append(contentsOf: transport)
 
     return packet

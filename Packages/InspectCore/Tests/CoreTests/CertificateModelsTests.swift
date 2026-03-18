@@ -2,8 +2,6 @@ import Foundation
 import InspectCore
 import Testing
 
-// MARK: - ValidityPeriod
-
 @Test
 func validCertificateStatusWhenWithinWindow() {
     let validity = ValidityPeriod(
@@ -36,8 +34,6 @@ func validWhenDatesAreNil() {
     let validity = ValidityPeriod(notBefore: nil, notAfter: nil)
     #expect(validity.status == .valid)
 }
-
-// MARK: - CertificateDetails Computed Properties
 
 @Test
 func subjectSummaryFallsBackToTitle() {
@@ -128,8 +124,6 @@ func notSelfIssuedWhenFieldCountDiffers() {
     #expect(cert.isSelfIssued == false)
 }
 
-// MARK: - TrustSummary
-
 @Test
 func trustBadgeTextForTrusted() {
     let trust = TrustSummary(evaluated: true, isTrusted: true, failureReason: nil)
@@ -147,8 +141,6 @@ func trustBadgeTextForUnchecked() {
     let trust = TrustSummary(evaluated: false, isTrusted: false, failureReason: nil)
     #expect(trust.badgeText == "Unchecked")
 }
-
-// MARK: - TLSInspectionReport
 
 @Test
 func leafCertificateReturnsFirstInChain() {
@@ -190,7 +182,7 @@ func sslLabsURLContainsHost() {
     #expect(report.sslLabsURL?.absoluteString.contains("example.com") == true)
 }
 
-// MARK: - Helpers
+// MARK: - Test Helpers
 
 private func makeCert(
     title: String = "Test",

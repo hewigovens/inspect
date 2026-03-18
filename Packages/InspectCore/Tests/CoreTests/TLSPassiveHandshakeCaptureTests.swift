@@ -2,8 +2,6 @@ import Foundation
 @testable import InspectCore
 import Testing
 
-// MARK: - ClientHello Capture
-
 @Test
 func clientHelloCaptureExtractsSNI() {
     var capture = TLSClientHelloCapture()
@@ -28,8 +26,6 @@ func clientHelloCaptureAccumulatesChunks() {
     #expect(result == "chunked.example.com")
 }
 
-// MARK: - ServerCertificate Capture (TLS 1.2)
-
 @Test
 func serverCertificateCaptureExtractsTLS12Certificates() {
     var capture = TLSServerCertificateCapture()
@@ -44,8 +40,6 @@ func serverCertificateCaptureExtractsTLS12Certificates() {
     #expect(capture.didCompleteCapture == true)
 }
 
-// MARK: - ServerCertificate Capture (TLS 1.3)
-
 @Test
 func serverCertificateCaptureExtractsTLS13Certificates() {
     var capture = TLSServerCertificateCapture()
@@ -58,8 +52,6 @@ func serverCertificateCaptureExtractsTLS13Certificates() {
     #expect(result?[0] == Data([0x01, 0x02, 0x03]))
     #expect(result?[1] == Data([0x04, 0x05, 0x06]))
 }
-
-// MARK: - Edge Cases
 
 @Test
 func serverCertificateCaptureReturnsNilForEmptyData() {
@@ -80,8 +72,7 @@ func serverCertificateCaptureStopsOnAlertRecord() {
 @Test
 func serverCertificateCaptureIgnoresCCSRecord() {
     var capture = TLSServerCertificateCapture()
-    // ChangeCipherSpec (0x14) alone does not complete capture
-    let ccs: [UInt8] = [0x14, 0x03, 0x03, 0x00, 0x01, 0x01]
+    let ccs: [UInt8] = [TLSRecordContentType.changeCipherSpec, TLSVersion.major, 0x03, 0x00, 0x01, 0x01]
     #expect(capture.ingest(Data(ccs)) == nil)
     #expect(capture.didCompleteCapture == false)
 }
@@ -89,7 +80,6 @@ func serverCertificateCaptureIgnoresCCSRecord() {
 @Test
 func serverCertificateCaptureStopsOnBufferOverflow() {
     var capture = TLSServerCertificateCapture()
-    // Feed data in chunks to exceed the 128KB buffer limit
     let chunkSize = 32 * 1024
     for _ in 0..<5 {
         _ = capture.ingest(Data(repeating: 0x16, count: chunkSize))
@@ -97,7 +87,7 @@ func serverCertificateCaptureStopsOnBufferOverflow() {
     #expect(capture.didCompleteCapture == true)
 }
 
-// MARK: - Helpers
+// MARK: - Test Helpers
 
 private func buildMinimalClientHelloRecord(serverName: String) -> [UInt8] {
     let nameBytes = Array(serverName.utf8)
@@ -106,10 +96,10 @@ private func buildMinimalClientHelloRecord(serverName: String) -> [UInt8] {
     let extensionLength = 2 + listLength
 
     var sniExtension: [UInt8] = []
-    sniExtension += [0x00, 0x00]
+    sniExtension += uint16(Int(TLSExtensionType.serverName))
     sniExtension += uint16(extensionLength)
     sniExtension += uint16(listLength)
-    sniExtension += [0x00]
+    sniExtension += [TLSServerNameType.hostName]
     sniExtension += uint16(nameLength)
     sniExtension += nameBytes
 
@@ -122,18 +112,17 @@ private func buildMinimalClientHelloRecord(serverName: String) -> [UInt8] {
     body += uint16(sniExtension.count)
     body += sniExtension
 
-    var handshake: [UInt8] = [0x01]
+    var handshake: [UInt8] = [TLSHandshakeType.clientHello]
     handshake += uint24(body.count)
     handshake += body
 
-    var record: [UInt8] = [0x16, 0x03, 0x01]
+    var record: [UInt8] = [TLSRecordContentType.handshake, TLSVersion.major, 0x01]
     record += uint16(handshake.count)
     record += handshake
     return record
 }
 
 private func buildTLS12CertificateRecord(certificateBodies: [[UInt8]]) -> [UInt8] {
-    // Certificate message body (TLS 1.2)
     var certsPayload: [UInt8] = []
     for cert in certificateBodies {
         certsPayload += uint24(cert.count)
@@ -141,40 +130,37 @@ private func buildTLS12CertificateRecord(certificateBodies: [[UInt8]]) -> [UInt8
     }
 
     var certMessage: [UInt8] = []
-    certMessage += uint24(certsPayload.count) // total certificates length
+    certMessage += uint24(certsPayload.count)
     certMessage += certsPayload
 
-    // Handshake wrapper (type 0x0B = Certificate)
-    var handshake: [UInt8] = [0x0B]
+    var handshake: [UInt8] = [TLSHandshakeType.certificate]
     handshake += uint24(certMessage.count)
     handshake += certMessage
 
-    // TLS record
-    var record: [UInt8] = [0x16, 0x03, 0x03]
+    var record: [UInt8] = [TLSRecordContentType.handshake, TLSVersion.major, 0x03]
     record += uint16(handshake.count)
     record += handshake
     return record
 }
 
 private func buildTLS13CertificateRecord(certificateBodies: [[UInt8]]) -> [UInt8] {
-    // Certificate message body (TLS 1.3): request_context(1) + list
     var certsPayload: [UInt8] = []
     for cert in certificateBodies {
-        certsPayload += uint24(cert.count) // cert length
+        certsPayload += uint24(cert.count)
         certsPayload += cert
-        certsPayload += uint16(0) // extensions length: 0
+        certsPayload += uint16(0)
     }
 
     var certMessage: [UInt8] = []
-    certMessage += [0x00] // request_context_length: 0
+    certMessage += [0x00]
     certMessage += uint24(certsPayload.count)
     certMessage += certsPayload
 
-    var handshake: [UInt8] = [0x0B]
+    var handshake: [UInt8] = [TLSHandshakeType.certificate]
     handshake += uint24(certMessage.count)
     handshake += certMessage
 
-    var record: [UInt8] = [0x16, 0x03, 0x03]
+    var record: [UInt8] = [TLSRecordContentType.handshake, TLSVersion.major, 0x03]
     record += uint16(handshake.count)
     record += handshake
     return record

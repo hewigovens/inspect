@@ -6,9 +6,8 @@ enum TLSClientHelloSNIExtractor {
             return nil
         }
 
-        // TLS record: Handshake(0x16), version(2), length(2)
-        guard payload[0] == 0x16,
-              payload[1] == 0x03 else {
+        guard payload[0] == TLSRecordContentType.handshake,
+              payload[1] == TLSVersion.major else {
             return nil
         }
 
@@ -20,8 +19,7 @@ enum TLSClientHelloSNIExtractor {
 
         var cursor = 5
 
-        // Expect ClientHello as first handshake in record.
-        guard payload[cursor] == 0x01 else {
+        guard payload[cursor] == TLSHandshakeType.clientHello else {
             return nil
         }
 
@@ -46,7 +44,7 @@ enum TLSClientHelloSNIExtractor {
         }
         cursor += 34
 
-        // session_id
+        // session_id (1-byte length prefix)
         guard cursor + 1 <= handshakeEnd else {
             return nil
         }
@@ -56,7 +54,7 @@ enum TLSClientHelloSNIExtractor {
             return nil
         }
 
-        // cipher_suites
+        // cipher_suites (2-byte length prefix)
         guard cursor + 2 <= handshakeEnd else {
             return nil
         }
@@ -66,7 +64,7 @@ enum TLSClientHelloSNIExtractor {
             return nil
         }
 
-        // compression_methods
+        // compression_methods (1-byte length prefix)
         guard cursor + 1 <= handshakeEnd else {
             return nil
         }
@@ -76,7 +74,7 @@ enum TLSClientHelloSNIExtractor {
             return nil
         }
 
-        // extensions
+        // extensions (2-byte length prefix)
         guard cursor + 2 <= handshakeEnd else {
             return nil
         }
@@ -96,7 +94,7 @@ enum TLSClientHelloSNIExtractor {
                 return nil
             }
 
-            if extensionType == 0x0000 {
+            if extensionType == TLSExtensionType.serverName {
                 return parseServerNameExtension(bytes: payload, offset: cursor, length: extensionLength)
             }
 
@@ -131,7 +129,7 @@ enum TLSClientHelloSNIExtractor {
                 return nil
             }
 
-            if nameType == 0 {
+            if nameType == TLSServerNameType.hostName {
                 let nameBytes = Array(bytes[cursor..<(cursor + nameLength)])
                 guard let name = String(bytes: nameBytes, encoding: .utf8)?
                     .trimmingCharacters(in: .whitespacesAndNewlines),

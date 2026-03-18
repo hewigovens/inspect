@@ -46,7 +46,7 @@ struct TLSServerCertificateCapture {
             let majorVersion = recordBuffer[1]
             let recordLength = (Int(recordBuffer[3]) << 8) | Int(recordBuffer[4])
 
-            guard majorVersion == 0x03 else {
+            guard majorVersion == TLSVersion.major else {
                 didCompleteCapture = true
                 return nil
             }
@@ -60,15 +60,15 @@ struct TLSServerCertificateCapture {
             recordBuffer.removeFirst(totalRecordLength)
 
             switch contentType {
-            case 0x16:
+            case TLSRecordContentType.handshake:
                 handshakeBuffer.append(payload)
                 if let certificates = parseHandshakeMessages() {
                     didCompleteCapture = true
                     return certificates
                 }
-            case 0x14:
+            case TLSRecordContentType.changeCipherSpec:
                 continue
-            case 0x15, 0x17:
+            case TLSRecordContentType.alert, TLSRecordContentType.applicationData:
                 didCompleteCapture = true
                 return nil
             default:
@@ -96,7 +96,7 @@ struct TLSServerCertificateCapture {
             let body = Data(handshakeBuffer[4..<totalHandshakeLength])
             handshakeBuffer.removeFirst(totalHandshakeLength)
 
-            guard handshakeType == 0x0B else {
+            guard handshakeType == TLSHandshakeType.certificate else {
                 continue
             }
 

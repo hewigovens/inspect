@@ -159,7 +159,7 @@ func securityAnalyzerDetectsInterceptionProduct(keyword: String, label: String) 
     #expect(assessment.findings.contains(where: { $0.title == "Possible TLS Interception Product" && $0.message.contains(label) }))
 }
 
-// MARK: - Helpers
+// MARK: - Test Helpers
 
 private func makeChain(
     leafNotBefore: Date? = nil,
