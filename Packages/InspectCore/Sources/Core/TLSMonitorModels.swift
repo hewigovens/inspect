@@ -49,11 +49,11 @@ public struct TLSFlowObservation: Identifiable, Sendable, Equatable, Codable {
     }
 
     public var probeHost: String? {
-        normalizedHost(serverName) ?? normalizedHost(remoteHost)
+        normalizedHostExcludingIPs(serverName) ?? normalizedHostExcludingIPs(remoteHost)
     }
 
     public var passiveInspectionHost: String? {
-        normalizedTargetHost(serverName) ?? normalizedTargetHost(remoteHost)
+        HostNormalizer.normalized(serverName) ?? HostNormalizer.normalized(remoteHost)
     }
 
     public func probeURL(defaultHTTPSPort: Int = 443) -> URL? {
@@ -72,62 +72,16 @@ public struct TLSFlowObservation: Identifiable, Sendable, Equatable, Codable {
         return components.url
     }
 
-    private func normalizedHost(_ candidate: String?) -> String? {
-        guard let normalized = normalizedTargetHost(candidate) else {
+    private func normalizedHostExcludingIPs(_ candidate: String?) -> String? {
+        guard let normalized = HostNormalizer.normalized(candidate) else {
             return nil
         }
 
-        guard isIPAddressLiteral(normalized) == false else {
+        guard HostNormalizer.isIPAddressLiteral(normalized) == false else {
             return nil
         }
 
         return normalized
-    }
-
-    private func normalizedTargetHost(_ candidate: String?) -> String? {
-        guard let candidate else {
-            return nil
-        }
-
-        let trimmed = candidate.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard trimmed.isEmpty == false else {
-            return nil
-        }
-
-        let normalized = trimmed.lowercased()
-        return normalized
-    }
-
-    private func isIPAddressLiteral(_ value: String) -> Bool {
-        if isIPv4Address(value) {
-            return true
-        }
-
-        if value.contains(":") {
-            let unwrapped = value.trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
-            return unwrapped.isEmpty == false
-                && unwrapped.allSatisfy { $0.isHexDigit || $0 == ":" || $0 == "." }
-        }
-
-        return false
-    }
-
-    private func isIPv4Address(_ value: String) -> Bool {
-        let components = value.split(separator: ".", omittingEmptySubsequences: false)
-        guard components.count == 4 else {
-            return false
-        }
-
-        for component in components {
-            guard component.isEmpty == false,
-                  component.count <= 3,
-                  let number = Int(component),
-                  (0...255).contains(number) else {
-                return false
-            }
-        }
-
-        return true
     }
 }
 

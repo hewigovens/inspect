@@ -1,27 +1,12 @@
 import InspectCore
+import InspectKit
 import Foundation
 @preconcurrency import NetworkExtension
 import Observation
 
-enum InspectMacLiveMonitorManagerError: LocalizedError {
-    case capabilityMissing
-    case configurationUnavailable
-
-    var errorDescription: String? {
-        switch self {
-        case .capabilityMissing:
-            return "Packet Tunnel capability is unavailable for this signing setup. Enable Network Extensions (Packet Tunnel) for the macOS app and extension, then refresh signing."
-        case .configurationUnavailable:
-            return "Unable to create or load the Inspect Packet Tunnel configuration."
-        }
-    }
-}
-
 @MainActor
 @Observable
 final class InspectMacLiveMonitorManager {
-    private static let liveMonitorEnabledKey = "inspect.monitor.enabled.v1"
-
     var status: NEVPNStatus = .invalid
     var lastErrorMessage: String?
     var actionMessage: String?
@@ -62,16 +47,17 @@ final class InspectMacLiveMonitorManager {
             let manager = try await tunnelService.loadOrCreateManager()
             self.manager = manager
             configureObservers(for: manager)
-            updateState(from: manager)
+            updateState(from: manager, preservesActiveStatus: true)
             if desiredLiveMonitorEnabled == nil {
-                desiredLiveMonitorEnabled = LiveMonitorTunnelState.isActive(for: manager.connection.status)
+                desiredLiveMonitorEnabled = InspectionLiveMonitorPreferenceStore.hasStoredValue
+                    ? InspectionLiveMonitorPreferenceStore.isEnabled
+                    : LiveMonitorTunnelState.isActive(for: status)
             }
             lastErrorMessage = nil
-            logger.verbose("Refresh complete. status=\(statusDescription(manager.connection.status)) configured=\(manager.isEnabled)")
+            logger.verbose("Refresh complete. status=\(manager.connection.status.inspectionDescription) configured=\(manager.isEnabled)")
         } catch {
-            let normalized = normalize(error)
-            lastErrorMessage = normalized.localizedDescription
-            logger.critical("Refresh failed: \(normalized.localizedDescription)")
+            lastErrorMessage = error.localizedDescription
+            logger.critical("Refresh failed: \(error.localizedDescription)")
         }
     }
 
@@ -85,11 +71,10 @@ final class InspectMacLiveMonitorManager {
             updateState(from: manager)
             actionMessage = "VPN profile saved. Open System Settings > VPN if macOS prompts for approval."
             lastErrorMessage = nil
-            logger.verbose("Install profile complete. status=\(statusDescription(manager.connection.status)) configured=\(manager.isEnabled)")
+            logger.verbose("Install profile complete. status=\(manager.connection.status.inspectionDescription) configured=\(manager.isEnabled)")
         } catch {
-            let normalized = normalize(error)
-            lastErrorMessage = normalized.localizedDescription
-            logger.critical("Install profile failed: \(normalized.localizedDescription)")
+            lastErrorMessage = error.localizedDescription
+            logger.critical("Install profile failed: \(error.localizedDescription)")
         }
     }
 
@@ -114,12 +99,11 @@ final class InspectMacLiveMonitorManager {
                 try await reconcileDesiredStateIfNeeded(using: manager)
                 actionMessage = "Live Monitor start requested."
                 lastErrorMessage = nil
-                logger.verbose("Enable flow finished. status=\(statusDescription(manager.connection.status)) configured=\(manager.isEnabled)")
+                logger.verbose("Enable flow finished. status=\(manager.connection.status.inspectionDescription) configured=\(manager.isEnabled)")
             } catch {
-                let normalized = normalize(error)
-                lastErrorMessage = normalized.localizedDescription
-                logger.critical("Enable flow failed: \(normalized.localizedDescription)")
-                throw normalized
+                lastErrorMessage = error.localizedDescription
+                logger.critical("Enable flow failed: \(error.localizedDescription)")
+                throw error
             }
         } else {
             if manager == nil {
@@ -138,7 +122,7 @@ final class InspectMacLiveMonitorManager {
 
             actionMessage = "Live Monitor stop requested."
             lastErrorMessage = nil
-            logger.verbose("Disable flow finished. status=\(statusDescription(status))")
+            logger.verbose("Disable flow finished. status=\(status.inspectionDescription)")
         }
     }
 
@@ -191,13 +175,25 @@ final class InspectMacLiveMonitorManager {
         )
     }
 
-    private func updateState(from manager: NETunnelProviderManager) {
-        let currentStatus = manager.connection.status
-        status = currentStatus
+    private func updateState(
+        from manager: NETunnelProviderManager,
+        preservesActiveStatus: Bool = false
+    ) {
+        let refreshedStatus = manager.connection.status
+        let effectiveStatus: NEVPNStatus
+
+        if preservesActiveStatus,
+           LiveMonitorTunnelState.isActive(for: status),
+           LiveMonitorTunnelState.isActive(for: refreshedStatus) == false {
+            effectiveStatus = status
+        } else {
+            effectiveStatus = refreshedStatus
+        }
+
+        status = effectiveStatus
         isConfigured = manager.isEnabled && manager.protocolConfiguration != nil
-        UserDefaults.standard.set(
-            LiveMonitorTunnelState.isActive(for: currentStatus),
-            forKey: Self.liveMonitorEnabledKey
+        InspectionLiveMonitorPreferenceStore.setEnabled(
+            LiveMonitorTunnelState.isActive(for: effectiveStatus)
         )
     }
 
@@ -256,44 +252,8 @@ final class InspectMacLiveMonitorManager {
         do {
             try await reconcileDesiredStateIfNeeded(using: manager)
         } catch {
-            let normalized = normalize(error)
-            lastErrorMessage = normalized.localizedDescription
-            logger.critical("Status reconciliation failed: \(normalized.localizedDescription)")
-        }
-    }
-
-    private func normalize(_ error: Error) -> Error {
-        let message = error.localizedDescription.lowercased()
-
-        if message.contains("not entitled") || message.contains("permission denied") {
-            return InspectMacLiveMonitorManagerError.capabilityMissing
-        }
-
-        if message.contains("failed to load preferences")
-            || message.contains("unable to load")
-            || message.contains("unable to save") {
-            return InspectMacLiveMonitorManagerError.configurationUnavailable
-        }
-
-        return error
-    }
-
-    private func statusDescription(_ status: NEVPNStatus) -> String {
-        switch status {
-        case .invalid:
-            return "Invalid"
-        case .disconnected:
-            return "Disconnected"
-        case .connecting:
-            return "Connecting"
-        case .connected:
-            return "Connected"
-        case .reasserting:
-            return "Reasserting"
-        case .disconnecting:
-            return "Disconnecting"
-        @unknown default:
-            return "Unknown"
+            lastErrorMessage = error.localizedDescription
+            logger.critical("Status reconciliation failed: \(error.localizedDescription)")
         }
     }
 }

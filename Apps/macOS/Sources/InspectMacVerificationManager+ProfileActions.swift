@@ -1,4 +1,5 @@
 import Foundation
+import InspectKit
 @preconcurrency import NetworkExtension
 
 extension InspectMacVerificationManager {

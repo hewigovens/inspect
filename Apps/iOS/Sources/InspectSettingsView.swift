@@ -13,7 +13,8 @@ struct InspectSettingsView: View {
             Form {
                 InspectTunnelSettingsSection(manager: manager)
                 InspectDiagnosticsSettingsSection(
-                    verboseTunnelLogsBinding: verboseTunnelLogsBinding
+                    verboseTunnelLogsBinding: verboseTunnelLogsBinding,
+                    footerText: InspectionSettingsStrings.IOS.diagnosticsFooter
                 )
                 InspectAboutSettingsSection(openURL: openURL)
             }

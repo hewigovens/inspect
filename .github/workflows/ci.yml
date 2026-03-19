@@ -35,11 +35,11 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
 
-      - name: Build InspectCore package for iOS Simulator
+      - name: Test InspectCore package
         shell: bash
         run: |
           set -o pipefail
-          xcodebuild -scheme InspectCore -project Inspect.xcodeproj -destination 'generic/platform=iOS Simulator' build | xcbeautify
+          swift test --package-path Packages/InspectCore
 
       - name: Build iOS app for Simulator
         shell: bash

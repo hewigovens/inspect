@@ -7,20 +7,6 @@ import Observation
 import WidgetKit
 #endif
 
-enum LiveMonitorManagerError: LocalizedError {
-    case capabilityMissing
-    case configurationUnavailable
-
-    var errorDescription: String? {
-        switch self {
-        case .capabilityMissing:
-            return "Packet Tunnel capability is unavailable for this provisioning profile. Enable Network Extensions (Packet Tunnel) for the app and extension IDs, then refresh profiles."
-        case .configurationUnavailable:
-            return "Unable to create or load the Packet Tunnel configuration."
-        }
-    }
-}
-
 @MainActor
 @Observable
 final class LiveMonitorManager {
@@ -51,11 +37,10 @@ final class LiveMonitorManager {
                 desiredLiveMonitorEnabled = LiveMonitorTunnelState.isActive(for: manager.connection.status)
             }
             self.lastErrorMessage = nil
-            logger.verbose("Refresh complete. status=\(statusDescription(manager.connection.status)) configured=\(manager.isEnabled)")
+            logger.verbose("Refresh complete. status=\(manager.connection.status.inspectionDescription) configured=\(manager.isEnabled)")
         } catch {
-            let normalized = normalize(error)
-            self.lastErrorMessage = normalized.localizedDescription
-            logger.critical("Refresh failed: \(normalized.localizedDescription)")
+            self.lastErrorMessage = error.localizedDescription
+            logger.critical("Refresh failed: \(error.localizedDescription)")
         }
     }
 
@@ -65,7 +50,7 @@ final class LiveMonitorManager {
         if enabled {
             do {
                 let manager = try await cachedOrLoadedManager()
-                logger.verbose("Loaded tunnel manager. currentStatus=\(statusDescription(manager.connection.status))")
+                logger.verbose("Loaded tunnel manager. currentStatus=\(manager.connection.status.inspectionDescription)")
 
                 if needsConfiguration(manager) {
                     configure(manager)
@@ -82,12 +67,11 @@ final class LiveMonitorManager {
                 updateState(from: manager)
                 try await reconcileDesiredStateIfNeeded(using: manager)
                 lastErrorMessage = nil
-                logger.verbose("Live Monitor enabled. status=\(statusDescription(manager.connection.status)) configured=\(manager.isEnabled)")
+                logger.verbose("Live Monitor enabled. status=\(manager.connection.status.inspectionDescription) configured=\(manager.isEnabled)")
             } catch {
-                let normalized = normalize(error)
-                lastErrorMessage = normalized.localizedDescription
-                logger.critical("Enabling Live Monitor failed: \(normalized.localizedDescription)")
-                throw normalized
+                lastErrorMessage = error.localizedDescription
+                logger.critical("Enabling Live Monitor failed: \(error.localizedDescription)")
+                throw error
             }
         } else {
             if manager == nil {
@@ -106,7 +90,7 @@ final class LiveMonitorManager {
             }
 
             lastErrorMessage = nil
-            logger.verbose("Live Monitor disabled. status=\(statusDescription(status))")
+            logger.verbose("Live Monitor disabled. status=\(status.inspectionDescription)")
         }
     }
 
@@ -186,7 +170,7 @@ final class LiveMonitorManager {
 #if canImport(WidgetKit)
         WidgetCenter.shared.reloadTimelines(ofKind: InspectWidgetKind.liveMonitor)
 #endif
-        logger.verbose("Updated state. status=\(statusDescription(currentStatus)) configured=\(isConfigured)")
+        logger.verbose("Updated state. status=\(currentStatus.inspectionDescription) configured=\(isConfigured)")
     }
 
     private func reconcileDesiredStateIfNeeded(using manager: NETunnelProviderManager) async throws {
@@ -201,9 +185,9 @@ final class LiveMonitorManager {
         switch LiveMonitorTunnelState.action(for: currentStatus, desiredEnabled: desiredLiveMonitorEnabled) {
         case .none:
             if desiredLiveMonitorEnabled {
-                logger.verbose("VPN tunnel already active with status=\(statusDescription(currentStatus))")
+                logger.verbose("VPN tunnel already active with status=\(currentStatus.inspectionDescription)")
             } else {
-                logger.verbose("VPN tunnel already inactive with status=\(statusDescription(currentStatus))")
+                logger.verbose("VPN tunnel already inactive with status=\(currentStatus.inspectionDescription)")
             }
         case .waitForDisconnect:
             logger.verbose("VPN tunnel is disconnecting; waiting for the next stable state")
@@ -218,41 +202,6 @@ final class LiveMonitorManager {
             logger.verbose("Stopping VPN tunnel")
             manager.connection.stopVPNTunnel()
         }
-    }
-
-    private func statusDescription(_ status: NEVPNStatus) -> String {
-        switch status {
-        case .invalid:
-            return "Invalid"
-        case .disconnected:
-            return "Disconnected"
-        case .connecting:
-            return "Connecting"
-        case .connected:
-            return "Connected"
-        case .reasserting:
-            return "Reasserting"
-        case .disconnecting:
-            return "Disconnecting"
-        @unknown default:
-            return "Unknown"
-        }
-    }
-
-    private func normalize(_ error: Error) -> Error {
-        let message = error.localizedDescription.lowercased()
-
-        if message.contains("not entitled") || message.contains("permission denied") {
-            return LiveMonitorManagerError.capabilityMissing
-        }
-
-        if message.contains("failed to load preferences")
-            || message.contains("unable to load")
-            || message.contains("unable to save") {
-            return LiveMonitorManagerError.configurationUnavailable
-        }
-
-        return error
     }
 
     private func configureObservers(for manager: NETunnelProviderManager) {

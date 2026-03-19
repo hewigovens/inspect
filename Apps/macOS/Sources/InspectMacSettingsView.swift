@@ -12,13 +12,10 @@ struct InspectMacSettingsView: View {
         NavigationStack {
             Form {
                 InspectMacLiveMonitorSettingsSection(manager: manager)
-                InspectMacDiagnosticsSettingsSection(
+                InspectDiagnosticsSettingsSection(
                     verboseTunnelLogsBinding: verboseTunnelLogsBinding
                 )
-                InspectMacAboutSettingsSection(
-                    appVersionText: InspectionAppMetadata.versionBuildText,
-                    openURL: openURL
-                )
+                InspectAboutSettingsSection(openURL: openURL)
             }
             .formStyle(.grouped)
             .navigationTitle(InspectionSettingsStrings.navigationTitle)
@@ -37,5 +34,4 @@ struct InspectMacSettingsView: View {
             }
         )
     }
-
 }

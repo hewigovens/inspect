@@ -86,9 +86,9 @@ struct PacketSummary {
 
     private static func transport(for protocolNumber: UInt8) -> TLSFlowTransport {
         switch protocolNumber {
-        case 6:
+        case IPProtocol.tcp:
             return .tcp
-        case 17:
+        case IPProtocol.udp:
             return .udp
         default:
             return .unknown
@@ -96,7 +96,7 @@ struct PacketSummary {
     }
 
     private static func destinationPort(from bytes: [UInt8], protocolNumber: UInt8, transportOffset: Int) -> Int? {
-        guard (protocolNumber == 6 || protocolNumber == 17),
+        guard (protocolNumber == IPProtocol.tcp || protocolNumber == IPProtocol.udp),
               bytes.count >= transportOffset + 4 else {
             return nil
         }
@@ -107,7 +107,7 @@ struct PacketSummary {
     }
 
     private static func serverName(from bytes: [UInt8], protocolNumber: UInt8, transportOffset: Int) -> String? {
-        guard protocolNumber == 6,
+        guard protocolNumber == IPProtocol.tcp,
               bytes.count >= transportOffset + 20 else {
             return nil
         }
