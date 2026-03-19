@@ -165,11 +165,3 @@ private func buildTLS13CertificateRecord(certificateBodies: [[UInt8]]) -> [UInt8
     record += handshake
     return record
 }
-
-private func uint16(_ value: Int) -> [UInt8] {
-    [UInt8((value >> 8) & 0xFF), UInt8(value & 0xFF)]
-}
-
-private func uint24(_ value: Int) -> [UInt8] {
-    [UInt8((value >> 16) & 0xFF), UInt8((value >> 8) & 0xFF), UInt8(value & 0xFF)]
-}

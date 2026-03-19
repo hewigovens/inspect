@@ -56,9 +56,8 @@ final class InspectMacLiveMonitorManager {
             lastErrorMessage = nil
             logger.verbose("Refresh complete. status=\(manager.connection.status.inspectionDescription) configured=\(manager.isEnabled)")
         } catch {
-            let normalized = LiveMonitorErrorNormalizer.normalize(error, platform: "signing setup")
-            lastErrorMessage = normalized.localizedDescription
-            logger.critical("Refresh failed: \(normalized.localizedDescription)")
+            lastErrorMessage = error.localizedDescription
+            logger.critical("Refresh failed: \(error.localizedDescription)")
         }
     }
 
@@ -74,9 +73,8 @@ final class InspectMacLiveMonitorManager {
             lastErrorMessage = nil
             logger.verbose("Install profile complete. status=\(manager.connection.status.inspectionDescription) configured=\(manager.isEnabled)")
         } catch {
-            let normalized = LiveMonitorErrorNormalizer.normalize(error, platform: "signing setup")
-            lastErrorMessage = normalized.localizedDescription
-            logger.critical("Install profile failed: \(normalized.localizedDescription)")
+            lastErrorMessage = error.localizedDescription
+            logger.critical("Install profile failed: \(error.localizedDescription)")
         }
     }
 
@@ -103,10 +101,9 @@ final class InspectMacLiveMonitorManager {
                 lastErrorMessage = nil
                 logger.verbose("Enable flow finished. status=\(manager.connection.status.inspectionDescription) configured=\(manager.isEnabled)")
             } catch {
-                let normalized = LiveMonitorErrorNormalizer.normalize(error, platform: "signing setup")
-                lastErrorMessage = normalized.localizedDescription
-                logger.critical("Enable flow failed: \(normalized.localizedDescription)")
-                throw normalized
+                lastErrorMessage = error.localizedDescription
+                logger.critical("Enable flow failed: \(error.localizedDescription)")
+                throw error
             }
         } else {
             if manager == nil {
@@ -255,9 +252,8 @@ final class InspectMacLiveMonitorManager {
         do {
             try await reconcileDesiredStateIfNeeded(using: manager)
         } catch {
-            let normalized = LiveMonitorErrorNormalizer.normalize(error, platform: "signing setup")
-            lastErrorMessage = normalized.localizedDescription
-            logger.critical("Status reconciliation failed: \(normalized.localizedDescription)")
+            lastErrorMessage = error.localizedDescription
+            logger.critical("Status reconciliation failed: \(error.localizedDescription)")
         }
     }
 }

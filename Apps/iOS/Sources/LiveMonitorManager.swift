@@ -39,9 +39,8 @@ final class LiveMonitorManager {
             self.lastErrorMessage = nil
             logger.verbose("Refresh complete. status=\(manager.connection.status.inspectionDescription) configured=\(manager.isEnabled)")
         } catch {
-            let normalized = LiveMonitorErrorNormalizer.normalize(error, platform: "provisioning profile")
-            self.lastErrorMessage = normalized.localizedDescription
-            logger.critical("Refresh failed: \(normalized.localizedDescription)")
+            self.lastErrorMessage = error.localizedDescription
+            logger.critical("Refresh failed: \(error.localizedDescription)")
         }
     }
 
@@ -70,10 +69,9 @@ final class LiveMonitorManager {
                 lastErrorMessage = nil
                 logger.verbose("Live Monitor enabled. status=\(manager.connection.status.inspectionDescription) configured=\(manager.isEnabled)")
             } catch {
-                let normalized = LiveMonitorErrorNormalizer.normalize(error, platform: "provisioning profile")
-                lastErrorMessage = normalized.localizedDescription
-                logger.critical("Enabling Live Monitor failed: \(normalized.localizedDescription)")
-                throw normalized
+                lastErrorMessage = error.localizedDescription
+                logger.critical("Enabling Live Monitor failed: \(error.localizedDescription)")
+                throw error
             }
         } else {
             if manager == nil {

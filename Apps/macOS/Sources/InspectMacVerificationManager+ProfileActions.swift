@@ -15,9 +15,8 @@ extension InspectMacVerificationManager {
             lastErrorMessage = nil
             appendDiagnostic("Refresh complete. \(tunnelService.describe(manager))")
         } catch {
-            let normalized = LiveMonitorErrorNormalizer.normalize(error, platform: "signing setup")
-            lastErrorMessage = normalized.localizedDescription
-            appendErrorDiagnostics(prefix: "Refresh failed", error: normalized)
+            lastErrorMessage = error.localizedDescription
+            appendErrorDiagnostics(prefix: "Refresh failed", error: error)
         }
     }
 
@@ -46,9 +45,8 @@ extension InspectMacVerificationManager {
             lastErrorMessage = nil
             appendDiagnostic("VPN profile is ready. \(tunnelService.describe(manager))")
         } catch {
-            let normalized = LiveMonitorErrorNormalizer.normalize(error, platform: "signing setup")
-            lastErrorMessage = normalized.localizedDescription
-            appendErrorDiagnostics(prefix: "Install profile failed", error: normalized)
+            lastErrorMessage = error.localizedDescription
+            appendErrorDiagnostics(prefix: "Install profile failed", error: error)
         }
     }
 }

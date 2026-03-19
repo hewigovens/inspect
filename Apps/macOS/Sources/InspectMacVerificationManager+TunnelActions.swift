@@ -16,9 +16,8 @@ extension InspectMacVerificationManager {
             lastErrorMessage = nil
             appendDiagnostic("startVPNTunnel() returned successfully. status=\(manager.connection.status.inspectionDescription)")
         } catch {
-            let normalized = LiveMonitorErrorNormalizer.normalize(error, platform: "signing setup")
-            lastErrorMessage = normalized.localizedDescription
-            appendErrorDiagnostics(prefix: "Start tunnel failed", error: normalized)
+            lastErrorMessage = error.localizedDescription
+            appendErrorDiagnostics(prefix: "Start tunnel failed", error: error)
         }
     }
 
