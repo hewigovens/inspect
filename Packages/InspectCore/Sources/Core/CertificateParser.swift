@@ -1,6 +1,7 @@
 import CryptoKit
 import Foundation
 import Security
+import SwiftASN1
 import X509
 
 public struct CertificateParser: Sendable {
@@ -219,12 +220,19 @@ public struct CertificateParser: Sendable {
         return entries
     }
 
+    private static let extensionsWithDedicatedSections: Set<ASN1ObjectIdentifier> = [
+        [1, 3, 6, 1, 4, 1, 11129, 2, 4, 2],
+        [2, 5, 29, 31],
+    ]
+
     private func parseExtensions(_ certificate: X509.Certificate) -> [LabeledValue] {
-        certificate.extensions.map { ext in
-            let label = extensionLabel(for: ext)
-            let value = extensionValue(for: ext)
-            return LabeledValue(label: label, value: value)
-        }
+        certificate.extensions
+            .filter { !Self.extensionsWithDedicatedSections.contains($0.oid) }
+            .map { ext in
+                let label = extensionLabel(for: ext)
+                let value = extensionValue(for: ext)
+                return LabeledValue(label: label, value: value)
+            }
     }
 
     private func extensionLabel(for ext: X509.Certificate.Extension) -> String {
@@ -279,16 +287,6 @@ public struct CertificateParser: Sendable {
         if ext.oid == [2, 5, 29, 32] {
             let decoded = CertificatePoliciesDecoder.decode(from: ext)
             return decoded.map { "\($0.label): \($0.value)" }.joined(separator: ", ")
-        }
-
-        if ext.oid == [1, 3, 6, 1, 4, 1, 11129, 2, 4, 2] {
-            let decoded = SCTDecoder.decode(from: ext)
-            return decoded.map { "\($0.label): \($0.value)" }.joined(separator: ", ")
-        }
-
-        if ext.oid == [2, 5, 29, 31] {
-            let decoded = CRLDistributionPointsDecoder.decode(from: ext)
-            return decoded.map { $0.value }.joined(separator: ", ")
         }
 
         return Array(ext.value).inspectHexString(grouped: true)
