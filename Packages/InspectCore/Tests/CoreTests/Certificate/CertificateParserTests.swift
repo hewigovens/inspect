@@ -7,19 +7,6 @@ import Testing
 import X509
 
 @Test
-func normalizesBareHostInputToHTTPS() throws {
-    let normalized = try URLInputNormalizer.normalize(input: "example.com")
-    #expect(normalized.absoluteString == "https://example.com/")
-}
-
-@Test
-func rejectsNonHTTPSURLs() throws {
-    #expect(throws: InspectionError.self) {
-        try URLInputNormalizer.normalize(input: "http://example.com")
-    }
-}
-
-@Test
 func parsesEmbeddedFixtureCertificate() throws {
     let fixtureURL = try #require(inspectTestFixtureURL(named: "mac_dev", extension: "cer"))
     let data = try Data(contentsOf: fixtureURL) as CFData
@@ -185,9 +172,9 @@ private func makeGeneratedChain() throws -> [SecCertificate] {
         leafSubjectKeyIdentifier
         AuthorityKeyIdentifier(keyIdentifier: rootSubjectKeyIdentifier.keyIdentifier)
         authorityInformationAccess
-        try makePolicyExtension()
-        try makeSCTExtension()
-        try makeCRLDistributionPointsExtension()
+        try Certificate.Extension.mockCertificatePolicies()
+        try Certificate.Extension.mockSCTList()
+        try Certificate.Extension.mockCRLDistributionPoints()
     }
 
     let leafCertificate = try Certificate(
@@ -207,161 +194,4 @@ private func makeGeneratedChain() throws -> [SecCertificate] {
         try SecCertificate.makeWithCertificate(leafCertificate),
         try SecCertificate.makeWithCertificate(rootCertificate)
     ]
-}
-
-private func makePolicyExtension() throws -> Certificate.Extension {
-    let cpsQualifier = try PolicyQualifierInfo(
-        id: [1, 3, 6, 1, 5, 5, 7, 2, 1],
-        qualifier: ASN1Any(erasing: ASN1IA5String("https://policy.example.test/cps"))
-    )
-    let userNoticeQualifier = try PolicyQualifierInfo(
-        id: [1, 3, 6, 1, 5, 5, 7, 2, 2],
-        qualifier: ASN1Any(erasing: UserNotice(explicitText: "Inspection policy notice"))
-    )
-
-    let policies = CertificatePoliciesValue([
-        .init(
-            identifier: [1, 2, 3, 4, 5, 6, 7, 8, 1],
-            qualifiers: [cpsQualifier, userNoticeQualifier]
-        )
-    ])
-
-    var serializer = DER.Serializer()
-    try serializer.serialize(policies)
-
-    return Certificate.Extension(
-        oid: [2, 5, 29, 32],
-        critical: false,
-        value: serializer.serializedBytes[...]
-    )
-}
-
-private struct CertificatePoliciesValue: DERSerializable {
-    let policies: [PolicyInformation]
-
-    init(_ policies: [PolicyInformation]) {
-        self.policies = policies
-    }
-
-    func serialize(into coder: inout DER.Serializer) throws {
-        try coder.appendConstructedNode(identifier: .sequence) { coder in
-            for policy in policies {
-                try coder.serialize(policy)
-            }
-        }
-    }
-}
-
-private struct PolicyInformation: DERSerializable {
-    let identifier: ASN1ObjectIdentifier
-    let qualifiers: [PolicyQualifierInfo]
-
-    func serialize(into coder: inout DER.Serializer) throws {
-        try coder.appendConstructedNode(identifier: .sequence) { coder in
-            try coder.serialize(identifier)
-            if qualifiers.isEmpty == false {
-                try coder.appendConstructedNode(identifier: .sequence) { coder in
-                    for qualifier in qualifiers {
-                        try coder.serialize(qualifier)
-                    }
-                }
-            }
-        }
-    }
-}
-
-private struct PolicyQualifierInfo: DERSerializable {
-    let id: ASN1ObjectIdentifier
-    let qualifier: ASN1Any
-
-    func serialize(into coder: inout DER.Serializer) throws {
-        try coder.appendConstructedNode(identifier: .sequence) { coder in
-            try coder.serialize(id)
-            try coder.serialize(qualifier)
-        }
-    }
-}
-
-private struct UserNotice: DERSerializable {
-    let explicitText: ASN1UTF8String
-
-    init(explicitText: String) {
-        self.explicitText = ASN1UTF8String(explicitText)
-    }
-
-    func serialize(into coder: inout DER.Serializer) throws {
-        try coder.appendConstructedNode(identifier: .sequence) { coder in
-            try coder.serialize(explicitText)
-        }
-    }
-}
-
-private func makeSCTExtension() throws -> Certificate.Extension {
-    let logID = [UInt8](repeating: 0xAA, count: 32)
-    let timestamp: UInt64 = 1_710_500_000_000
-    let fakeSignature: [UInt8] = [0x30, 0x06, 0x02, 0x01, 0x01, 0x02, 0x01, 0x01]
-
-    var sctData: [UInt8] = []
-    sctData.append(0x00)
-    sctData.append(contentsOf: logID)
-    sctData.append(contentsOf: withUnsafeBytes(of: timestamp.bigEndian) { Array($0) })
-    sctData.append(contentsOf: [0x00, 0x00])
-    sctData.append(0x04)
-    sctData.append(0x03)
-    let sigLen = UInt16(fakeSignature.count)
-    sctData.append(contentsOf: withUnsafeBytes(of: sigLen.bigEndian) { Array($0) })
-    sctData.append(contentsOf: fakeSignature)
-
-    let sctLen = UInt16(sctData.count)
-    var sctListPayload: [UInt8] = []
-    sctListPayload.append(contentsOf: withUnsafeBytes(of: sctLen.bigEndian) { Array($0) })
-    sctListPayload.append(contentsOf: sctData)
-
-    let totalLen = UInt16(sctListPayload.count)
-    var tlsEncoded: [UInt8] = []
-    tlsEncoded.append(contentsOf: withUnsafeBytes(of: totalLen.bigEndian) { Array($0) })
-    tlsEncoded.append(contentsOf: sctListPayload)
-
-    var serializer = DER.Serializer()
-    try serializer.serialize(ASN1OctetString(contentBytes: tlsEncoded[...]))
-
-    return Certificate.Extension(
-        oid: [1, 3, 6, 1, 4, 1, 11129, 2, 4, 2],
-        critical: false,
-        value: serializer.serializedBytes[...]
-    )
-}
-
-private func makeCRLDistributionPointsExtension() throws -> Certificate.Extension {
-    let tag0 = ASN1Identifier(tagWithNumber: 0, tagClass: .contextSpecific)
-    let uriTag = ASN1Identifier(tagWithNumber: 6, tagClass: .contextSpecific)
-
-    var serializer = DER.Serializer()
-    try serializer.appendConstructedNode(identifier: .sequence) { coder in
-        for uri in ["http://crl.example.test/ca.crl", "http://crl2.example.test/ca.crl"] {
-            try coder.appendConstructedNode(identifier: .sequence) { dpCoder in
-                try dpCoder.appendConstructedNode(identifier: tag0) { dpNameCoder in
-                    try dpNameCoder.appendConstructedNode(identifier: tag0) { gnCoder in
-                        let uriBytes = Array(uri.utf8)
-                        try gnCoder.serialize(ASN1OctetString(contentBytes: uriBytes[...]), withIdentifier: uriTag)
-                    }
-                }
-            }
-        }
-    }
-
-    return Certificate.Extension(
-        oid: [2, 5, 29, 31],
-        critical: false,
-        value: serializer.serializedBytes[...]
-    )
-}
-
-private extension DER.Serializer {
-    mutating func serialize(_ value: ASN1OctetString, withIdentifier identifier: ASN1Identifier) throws {
-        let bytes = Array(value.bytes)
-        appendPrimitiveNode(identifier: identifier) { content in
-            content.append(contentsOf: bytes)
-        }
-    }
 }
