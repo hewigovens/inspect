@@ -10,7 +10,7 @@ enum CertificatePoliciesDecoder {
     }
 
     static func decode(from ext: X509.Certificate.Extension) -> [LabeledValue] {
-        guard let policies = try? CertificatePolicies(ext) else { return [] }
+        guard ext.oid == oid, let policies = try? CertificatePolicies(ext) else { return [] }
 
         var entries: [LabeledValue] = []
 

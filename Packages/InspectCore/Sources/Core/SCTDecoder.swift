@@ -27,12 +27,15 @@ enum SCTDecoder {
         var entries: [LabeledValue] = []
         var sctIndex = 1
 
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+
         while reader.offset + 2 < listEnd {
             guard let sctLength = try? reader.readUInt16() else { break }
             let sctEnd = min(reader.offset + Int(sctLength), bytes.count)
             guard sctEnd - reader.offset >= 43 else { break }
 
-            if let sct = parseSingle(&reader, end: sctEnd) {
+            if let sct = parseSingle(&reader, end: sctEnd, formatter: formatter) {
                 let prefix = "SCT #\(sctIndex)"
                 entries.append(LabeledValue(label: "\(prefix) Log", value: sct.logName))
                 entries.append(LabeledValue(label: "\(prefix) Timestamp", value: sct.timestamp))
@@ -47,7 +50,7 @@ enum SCTDecoder {
         return entries
     }
 
-    private static func parseSingle(_ reader: inout ByteReader, end: Int) -> ParsedSCT? {
+    private static func parseSingle(_ reader: inout ByteReader, end: Int, formatter: ISO8601DateFormatter) -> ParsedSCT? {
         guard let _ = try? reader.readUInt8() else { return nil }
 
         guard let logIDBytes = try? reader.readBytes(32) else { return nil }
@@ -55,8 +58,6 @@ enum SCTDecoder {
 
         guard let timestampMs = try? reader.readUInt64() else { return nil }
         let date = Date(timeIntervalSince1970: Double(timestampMs) / 1000.0)
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime]
         let timestamp = formatter.string(from: date)
 
         guard let extensionsLength = try? reader.readUInt16() else { return nil }
