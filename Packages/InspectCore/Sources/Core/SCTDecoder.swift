@@ -32,6 +32,7 @@ enum SCTDecoder {
             let sctEnd = min(reader.offset + Int(sctLength), bytes.count)
             guard sctEnd - reader.offset >= 43 else { break }
 
+            let offsetBefore = reader.offset
             if let sct = parseSingle(&reader, end: sctEnd) {
                 let prefix = "SCT #\(sctIndex)"
                 entries.append(LabeledValue(label: "\(prefix) Log", value: sct.logName))
@@ -40,7 +41,10 @@ enum SCTDecoder {
                 entries.append(LabeledValue(label: "\(prefix) Signature", value: sct.signature))
             }
 
-            reader.offset = sctEnd
+            let consumed = reader.offset - offsetBefore
+            if consumed < Int(sctLength) {
+                try? reader.skip(Int(sctLength) - consumed)
+            }
             sctIndex += 1
         }
 
@@ -56,8 +60,8 @@ enum SCTDecoder {
         guard let timestampMs = try? reader.readUInt64() else { return nil }
         let timestamp = Date(timeIntervalSince1970: Double(timestampMs) / 1000.0).inspectDisplayString
 
-        guard let extensionsLength = try? reader.readUInt16() else { return nil }
-        reader.offset += Int(extensionsLength)
+        guard let extensionsLength = try? reader.readUInt16(),
+              let _ = try? reader.skip(Int(extensionsLength)) else { return nil }
 
         guard let hashAlgo = try? reader.readUInt8(),
               let sigAlgo = try? reader.readUInt8() else { return nil }
@@ -96,48 +100,4 @@ private struct ParsedSCT {
     let timestamp: String
     let algorithm: String
     let signature: String
-}
-
-private struct ByteReader {
-    private let data: [UInt8]
-    var offset: Int = 0
-
-    init(_ data: [UInt8]) {
-        self.data = data
-    }
-
-    mutating func readUInt8() throws -> UInt8 {
-        guard offset < data.count else { throw ByteReaderError.truncated }
-        let value = data[offset]
-        offset += 1
-        return value
-    }
-
-    mutating func readUInt16() throws -> UInt16 {
-        guard offset + 2 <= data.count else { throw ByteReaderError.truncated }
-        let value = UInt16(data[offset]) << 8 | UInt16(data[offset + 1])
-        offset += 2
-        return value
-    }
-
-    mutating func readUInt64() throws -> UInt64 {
-        guard offset + 8 <= data.count else { throw ByteReaderError.truncated }
-        var value: UInt64 = 0
-        for i in 0..<8 {
-            value = value << 8 | UInt64(data[offset + i])
-        }
-        offset += 8
-        return value
-    }
-
-    mutating func readBytes(_ count: Int) throws -> [UInt8] {
-        guard offset + count <= data.count else { throw ByteReaderError.truncated }
-        let bytes = Array(data[offset..<offset + count])
-        offset += count
-        return bytes
-    }
-}
-
-private enum ByteReaderError: Error {
-    case truncated
 }
