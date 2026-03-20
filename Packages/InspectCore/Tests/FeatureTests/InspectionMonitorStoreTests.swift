@@ -166,6 +166,8 @@ private func makeReport(host: String, issuer: String, fingerprint: String) -> TL
                 authorityKeyIdentifier: [],
                 authorityInfoAccess: [],
                 basicConstraints: [],
+                sctList: [],
+                crlDistributionPoints: [],
                 extensions: [],
                 derData: Data([0x01, 0x02, 0x03])
             )

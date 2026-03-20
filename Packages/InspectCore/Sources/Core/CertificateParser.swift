@@ -1,6 +1,7 @@
 import CryptoKit
 import Foundation
 import Security
+import SwiftASN1
 import X509
 
 public struct CertificateParser: Sendable {
@@ -29,9 +30,12 @@ public struct CertificateParser: Sendable {
         let publicKey = parsePublicKey(parsedCertificate.publicKey, secCertificate: certificate)
         let keyUsage = parseKeyUsage(parsedCertificate)
         let extendedKeyUsage = parseExtendedKeyUsage(parsedCertificate)
-        let policies = CustomExtensionDecoders.certificatePolicies(from: parsedCertificate)
+        let policies = CertificatePoliciesDecoder.decode(from: parsedCertificate)
         let subjectKeyIdentifier = parseSubjectKeyIdentifier(parsedCertificate)
         let authorityKeyIdentifier = parseAuthorityKeyIdentifier(parsedCertificate)
+
+        let sctList = SCTDecoder.decode(from: parsedCertificate)
+        let crlDistributionPoints = CRLDistributionPointsDecoder.decode(from: parsedCertificate)
 
         return CertificateDetails(
             id: SHA256.hash(data: derData).inspectHexString,
@@ -58,6 +62,8 @@ public struct CertificateParser: Sendable {
             authorityKeyIdentifier: authorityKeyIdentifier,
             authorityInfoAccess: parseAuthorityInfoAccess(parsedCertificate),
             basicConstraints: parseBasicConstraints(parsedCertificate),
+            sctList: sctList,
+            crlDistributionPoints: crlDistributionPoints,
             extensions: parseExtensions(parsedCertificate),
             derData: derData
         )
@@ -93,6 +99,8 @@ public struct CertificateParser: Sendable {
             authorityKeyIdentifier: [],
             authorityInfoAccess: [],
             basicConstraints: [],
+            sctList: [],
+            crlDistributionPoints: [],
             extensions: [],
             derData: derData
         )
@@ -212,12 +220,19 @@ public struct CertificateParser: Sendable {
         return entries
     }
 
+    private static let extensionsWithDedicatedSections: Set<ASN1ObjectIdentifier> = [
+        [1, 3, 6, 1, 4, 1, 11129, 2, 4, 2],
+        [2, 5, 29, 31],
+    ]
+
     private func parseExtensions(_ certificate: X509.Certificate) -> [LabeledValue] {
-        certificate.extensions.map { ext in
-            let label = extensionLabel(for: ext)
-            let value = extensionValue(for: ext)
-            return LabeledValue(label: label, value: value)
-        }
+        certificate.extensions
+            .filter { !Self.extensionsWithDedicatedSections.contains($0.oid) }
+            .map { ext in
+                let label = extensionLabel(for: ext)
+                let value = extensionValue(for: ext)
+                return LabeledValue(label: label, value: value)
+            }
     }
 
     private func extensionLabel(for ext: X509.Certificate.Extension) -> String {
@@ -270,7 +285,7 @@ public struct CertificateParser: Sendable {
         }
 
         if ext.oid == [2, 5, 29, 32] {
-            let decoded = CustomExtensionDecoders.certificatePolicies(from: ext)
+            let decoded = CertificatePoliciesDecoder.decode(from: ext)
             return decoded.map { "\($0.label): \($0.value)" }.joined(separator: ", ")
         }
 
@@ -425,6 +440,10 @@ public struct CertificateParser: Sendable {
             return "Extended Key Usage"
         case "1.3.6.1.5.5.7.1.1":
             return "Authority Information Access"
+        case "1.3.6.1.4.1.11129.2.4.2":
+            return "CT Precertificate SCTs"
+        case "2.5.29.31":
+            return "CRL Distribution Points"
         default:
             return oid
         }
@@ -477,7 +496,7 @@ public struct CertificateParser: Sendable {
     }
 }
 
-private extension Data {
+extension Data {
     var inspectHexString: String {
         inspectHexString(grouped: false)
     }
@@ -488,7 +507,7 @@ private extension Data {
     }
 }
 
-private extension Array where Element == UInt8 {
+extension Array where Element == UInt8 {
     func inspectHexString(grouped: Bool) -> String {
         Data(self).inspectHexString(grouped: grouped)
     }

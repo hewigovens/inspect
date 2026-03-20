@@ -135,6 +135,19 @@ struct CertificateDetailContent {
             rows: constraintRows + identifierRows + policyRows,
             into: &sections
         )
+
+        let sctRows = certificate.sctList.map {
+            DetailLine(
+                label: $0.label,
+                value: $0.value,
+                style: .stacked,
+                monospaced: $0.label.contains("Signature") || $0.label.contains("Log ID")
+            )
+        }
+        appendSection(titled: "Certificate Transparency", rows: sctRows, into: &sections)
+
+        let crlRows = certificate.crlDistributionPoints.map(DetailLine.init)
+        appendSection(titled: "CRL Distribution Points", rows: crlRows, into: &sections)
         appendSection(
             titled: "Extensions",
             rows: certificate.extensions.map {

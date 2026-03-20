@@ -22,6 +22,8 @@ public struct CertificateDetails: Identifiable, Sendable, Equatable, Codable {
     public let authorityKeyIdentifier: [LabeledValue]
     public let authorityInfoAccess: [LabeledValue]
     public let basicConstraints: [LabeledValue]
+    public let sctList: [LabeledValue]
+    public let crlDistributionPoints: [LabeledValue]
     public let extensions: [LabeledValue]
     public let derData: Data
 
@@ -47,6 +49,8 @@ public struct CertificateDetails: Identifiable, Sendable, Equatable, Codable {
         authorityKeyIdentifier: [LabeledValue],
         authorityInfoAccess: [LabeledValue],
         basicConstraints: [LabeledValue],
+        sctList: [LabeledValue],
+        crlDistributionPoints: [LabeledValue],
         extensions: [LabeledValue],
         derData: Data
     ) {
@@ -71,8 +75,39 @@ public struct CertificateDetails: Identifiable, Sendable, Equatable, Codable {
         self.authorityKeyIdentifier = authorityKeyIdentifier
         self.authorityInfoAccess = authorityInfoAccess
         self.basicConstraints = basicConstraints
+        self.sctList = sctList
+        self.crlDistributionPoints = crlDistributionPoints
         self.extensions = extensions
         self.derData = derData
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        title = try container.decode(String.self, forKey: .title)
+        isLeaf = try container.decode(Bool.self, forKey: .isLeaf)
+        isRoot = try container.decode(Bool.self, forKey: .isRoot)
+        subject = try container.decode([LabeledValue].self, forKey: .subject)
+        issuer = try container.decode([LabeledValue].self, forKey: .issuer)
+        validity = try container.decode(ValidityPeriod.self, forKey: .validity)
+        serialNumber = try container.decode(String.self, forKey: .serialNumber)
+        version = try container.decode(String.self, forKey: .version)
+        signatureAlgorithm = try container.decode(String.self, forKey: .signatureAlgorithm)
+        signature = try container.decode(String.self, forKey: .signature)
+        publicKey = try container.decode(PublicKeyDetails.self, forKey: .publicKey)
+        keyUsage = try container.decode([String].self, forKey: .keyUsage)
+        extendedKeyUsage = try container.decode([String].self, forKey: .extendedKeyUsage)
+        fingerprints = try container.decode([LabeledValue].self, forKey: .fingerprints)
+        subjectAlternativeNames = try container.decode([LabeledValue].self, forKey: .subjectAlternativeNames)
+        policies = try container.decode([LabeledValue].self, forKey: .policies)
+        subjectKeyIdentifier = try container.decodeIfPresent(String.self, forKey: .subjectKeyIdentifier)
+        authorityKeyIdentifier = try container.decode([LabeledValue].self, forKey: .authorityKeyIdentifier)
+        authorityInfoAccess = try container.decode([LabeledValue].self, forKey: .authorityInfoAccess)
+        basicConstraints = try container.decode([LabeledValue].self, forKey: .basicConstraints)
+        sctList = try container.decodeIfPresent([LabeledValue].self, forKey: .sctList) ?? []
+        crlDistributionPoints = try container.decodeIfPresent([LabeledValue].self, forKey: .crlDistributionPoints) ?? []
+        extensions = try container.decode([LabeledValue].self, forKey: .extensions)
+        derData = try container.decode(Data.self, forKey: .derData)
     }
 
     public var subjectSummary: String {

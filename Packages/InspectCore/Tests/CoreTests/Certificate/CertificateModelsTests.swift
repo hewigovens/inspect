@@ -220,6 +220,8 @@ private func makeCert(
         authorityKeyIdentifier: [],
         authorityInfoAccess: [],
         basicConstraints: [],
+        sctList: [],
+        crlDistributionPoints: [],
         extensions: [],
         derData: Data()
     )

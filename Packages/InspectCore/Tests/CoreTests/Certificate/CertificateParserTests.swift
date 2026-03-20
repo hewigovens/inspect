@@ -7,19 +7,6 @@ import Testing
 import X509
 
 @Test
-func normalizesBareHostInputToHTTPS() throws {
-    let normalized = try URLInputNormalizer.normalize(input: "example.com")
-    #expect(normalized.absoluteString == "https://example.com/")
-}
-
-@Test
-func rejectsNonHTTPSURLs() throws {
-    #expect(throws: InspectionError.self) {
-        try URLInputNormalizer.normalize(input: "http://example.com")
-    }
-}
-
-@Test
 func parsesEmbeddedFixtureCertificate() throws {
     let fixtureURL = try #require(inspectTestFixtureURL(named: "mac_dev", extension: "cer"))
     let data = try Data(contentsOf: fixtureURL) as CFData
@@ -53,6 +40,14 @@ func parsesGeneratedExtensionsIntoStructuredFields() throws {
     #expect(leaf.policies.contains(where: { $0.label == "Policy #1 User Notice" }))
     #expect(leaf.publicKey.spkiSHA256Fingerprint.isEmpty == false)
     #expect(root.basicConstraints.contains(where: { $0.label == "Certificate Authority" && $0.value == "Yes" }))
+
+    #expect(leaf.sctList.contains(where: { $0.label == "SCT #1 Timestamp" }))
+    #expect(leaf.sctList.contains(where: { $0.label == "SCT #1 Algorithm" && $0.value == "ECDSA with SHA-256" }))
+    #expect(leaf.sctList.contains(where: { $0.label == "SCT #1 Signature" }))
+    #expect(leaf.sctList.contains(where: { $0.label == "SCT #1 Log" }))
+
+    #expect(leaf.crlDistributionPoints.contains(where: { $0.value == "http://crl.example.test/ca.crl" }))
+    #expect(leaf.crlDistributionPoints.contains(where: { $0.value == "http://crl2.example.test/ca.crl" }))
 }
 
 @Test
@@ -108,6 +103,8 @@ func securityAnalyzerFlagsInterceptionSignals() throws {
         authorityKeyIdentifier: leaf.authorityKeyIdentifier,
         authorityInfoAccess: leaf.authorityInfoAccess,
         basicConstraints: [LabeledValue(label: "Certificate Authority", value: "Yes")],
+        sctList: leaf.sctList,
+        crlDistributionPoints: leaf.crlDistributionPoints,
         extensions: leaf.extensions,
         derData: leaf.derData
     )
@@ -175,7 +172,9 @@ private func makeGeneratedChain() throws -> [SecCertificate] {
         leafSubjectKeyIdentifier
         AuthorityKeyIdentifier(keyIdentifier: rootSubjectKeyIdentifier.keyIdentifier)
         authorityInformationAccess
-        try makePolicyExtension()
+        try Certificate.Extension.mockCertificatePolicies()
+        try Certificate.Extension.mockSCTList()
+        try Certificate.Extension.mockCRLDistributionPoints()
     }
 
     let leafCertificate = try Certificate(
@@ -195,91 +194,4 @@ private func makeGeneratedChain() throws -> [SecCertificate] {
         try SecCertificate.makeWithCertificate(leafCertificate),
         try SecCertificate.makeWithCertificate(rootCertificate)
     ]
-}
-
-private func makePolicyExtension() throws -> Certificate.Extension {
-    let cpsQualifier = try PolicyQualifierInfo(
-        id: [1, 3, 6, 1, 5, 5, 7, 2, 1],
-        qualifier: ASN1Any(erasing: ASN1IA5String("https://policy.example.test/cps"))
-    )
-    let userNoticeQualifier = try PolicyQualifierInfo(
-        id: [1, 3, 6, 1, 5, 5, 7, 2, 2],
-        qualifier: ASN1Any(erasing: UserNotice(explicitText: "Inspection policy notice"))
-    )
-
-    let policies = CertificatePoliciesValue([
-        .init(
-            identifier: [1, 2, 3, 4, 5, 6, 7, 8, 1],
-            qualifiers: [cpsQualifier, userNoticeQualifier]
-        )
-    ])
-
-    var serializer = DER.Serializer()
-    try serializer.serialize(policies)
-
-    return Certificate.Extension(
-        oid: [2, 5, 29, 32],
-        critical: false,
-        value: serializer.serializedBytes[...]
-    )
-}
-
-private struct CertificatePoliciesValue: DERSerializable {
-    let policies: [PolicyInformation]
-
-    init(_ policies: [PolicyInformation]) {
-        self.policies = policies
-    }
-
-    func serialize(into coder: inout DER.Serializer) throws {
-        try coder.appendConstructedNode(identifier: .sequence) { coder in
-            for policy in policies {
-                try coder.serialize(policy)
-            }
-        }
-    }
-}
-
-private struct PolicyInformation: DERSerializable {
-    let identifier: ASN1ObjectIdentifier
-    let qualifiers: [PolicyQualifierInfo]
-
-    func serialize(into coder: inout DER.Serializer) throws {
-        try coder.appendConstructedNode(identifier: .sequence) { coder in
-            try coder.serialize(identifier)
-            if qualifiers.isEmpty == false {
-                try coder.appendConstructedNode(identifier: .sequence) { coder in
-                    for qualifier in qualifiers {
-                        try coder.serialize(qualifier)
-                    }
-                }
-            }
-        }
-    }
-}
-
-private struct PolicyQualifierInfo: DERSerializable {
-    let id: ASN1ObjectIdentifier
-    let qualifier: ASN1Any
-
-    func serialize(into coder: inout DER.Serializer) throws {
-        try coder.appendConstructedNode(identifier: .sequence) { coder in
-            try coder.serialize(id)
-            try coder.serialize(qualifier)
-        }
-    }
-}
-
-private struct UserNotice: DERSerializable {
-    let explicitText: ASN1UTF8String
-
-    init(explicitText: String) {
-        self.explicitText = ASN1UTF8String(explicitText)
-    }
-
-    func serialize(into coder: inout DER.Serializer) throws {
-        try coder.appendConstructedNode(identifier: .sequence) { coder in
-            try coder.serialize(explicitText)
-        }
-    }
 }

@@ -131,6 +131,8 @@ enum InspectionScreenshotFixtures {
             authorityKeyIdentifier: [LabeledValue(label: "Key Identifier", value: "12:34:56")],
             authorityInfoAccess: [LabeledValue(label: "OCSP", value: "http://ocsp.example.test")],
             basicConstraints: [LabeledValue(label: "CA", value: isLeaf ? "No" : "Yes")],
+            sctList: [],
+            crlDistributionPoints: [],
             extensions: [],
             derData: Data([0x01, 0x02, 0x03, 0x04])
         )
