@@ -1,19 +1,16 @@
 import SwiftASN1
 import X509
 
-enum CustomExtensionDecoders {
-    static func certificatePolicies(from certificate: X509.Certificate) -> [LabeledValue] {
-        guard let ext = certificate.extensions[oid: CertificatePolicies.policyOID] else {
-            return []
-        }
+enum CertificatePoliciesDecoder {
+    private static let oid: ASN1ObjectIdentifier = [2, 5, 29, 32]
 
-        return certificatePolicies(from: ext)
+    static func decode(from certificate: X509.Certificate) -> [LabeledValue] {
+        guard let ext = certificate.extensions[oid: oid] else { return [] }
+        return decode(from: ext)
     }
 
-    static func certificatePolicies(from ext: X509.Certificate.Extension) -> [LabeledValue] {
-        guard let policies = try? CertificatePolicies(ext) else {
-            return []
-        }
+    static func decode(from ext: X509.Certificate.Extension) -> [LabeledValue] {
+        guard let policies = try? CertificatePolicies(ext) else { return [] }
 
         var entries: [LabeledValue] = []
 
@@ -31,18 +28,14 @@ enum CustomExtensionDecoders {
 }
 
 private struct CertificatePolicies {
-    static let policyOID: ASN1ObjectIdentifier = [2, 5, 29, 32]
-
     let policies: [PolicyInformation]
 
     init(_ ext: X509.Certificate.Extension) throws {
-        guard ext.oid == Self.policyOID else {
-            throw CertificateError.incorrectOIDForExtension(
-                reason: "Expected \(Self.policyOID), got \(ext.oid)"
-            )
-        }
-
-        self.policies = try DER.sequence(of: PolicyInformation.self, identifier: .sequence, rootNode: try DER.parse(ext.value))
+        self.policies = try DER.sequence(
+            of: PolicyInformation.self,
+            identifier: .sequence,
+            rootNode: try DER.parse(ext.value)
+        )
     }
 }
 
@@ -72,7 +65,6 @@ private struct PolicyInformation: DERParseable, Sendable {
 }
 
 private struct PolicyQualifier: DERParseable, Sendable {
-
     let label: String
     let value: String
 

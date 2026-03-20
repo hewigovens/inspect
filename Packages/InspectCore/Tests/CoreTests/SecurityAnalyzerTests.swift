@@ -146,6 +146,8 @@ func securityAnalyzerDetectsInterceptionProduct(keyword: String, label: String) 
         authorityKeyIdentifier: leaf.authorityKeyIdentifier,
         authorityInfoAccess: leaf.authorityInfoAccess,
         basicConstraints: leaf.basicConstraints,
+        sctList: leaf.sctList,
+        crlDistributionPoints: leaf.crlDistributionPoints,
         extensions: leaf.extensions,
         derData: leaf.derData
     )

@@ -22,6 +22,8 @@ public struct CertificateDetails: Identifiable, Sendable, Equatable, Codable {
     public let authorityKeyIdentifier: [LabeledValue]
     public let authorityInfoAccess: [LabeledValue]
     public let basicConstraints: [LabeledValue]
+    public let sctList: [LabeledValue]
+    public let crlDistributionPoints: [LabeledValue]
     public let extensions: [LabeledValue]
     public let derData: Data
 
@@ -47,6 +49,8 @@ public struct CertificateDetails: Identifiable, Sendable, Equatable, Codable {
         authorityKeyIdentifier: [LabeledValue],
         authorityInfoAccess: [LabeledValue],
         basicConstraints: [LabeledValue],
+        sctList: [LabeledValue],
+        crlDistributionPoints: [LabeledValue],
         extensions: [LabeledValue],
         derData: Data
     ) {
@@ -71,6 +75,8 @@ public struct CertificateDetails: Identifiable, Sendable, Equatable, Codable {
         self.authorityKeyIdentifier = authorityKeyIdentifier
         self.authorityInfoAccess = authorityInfoAccess
         self.basicConstraints = basicConstraints
+        self.sctList = sctList
+        self.crlDistributionPoints = crlDistributionPoints
         self.extensions = extensions
         self.derData = derData
     }

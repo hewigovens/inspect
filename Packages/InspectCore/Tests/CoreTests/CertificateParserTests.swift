@@ -53,6 +53,14 @@ func parsesGeneratedExtensionsIntoStructuredFields() throws {
     #expect(leaf.policies.contains(where: { $0.label == "Policy #1 User Notice" }))
     #expect(leaf.publicKey.spkiSHA256Fingerprint.isEmpty == false)
     #expect(root.basicConstraints.contains(where: { $0.label == "Certificate Authority" && $0.value == "Yes" }))
+
+    #expect(leaf.sctList.contains(where: { $0.label == "SCT #1 Timestamp" }))
+    #expect(leaf.sctList.contains(where: { $0.label == "SCT #1 Algorithm" && $0.value == "ECDSA with SHA-256" }))
+    #expect(leaf.sctList.contains(where: { $0.label == "SCT #1 Signature" }))
+    #expect(leaf.sctList.contains(where: { $0.label == "SCT #1 Log" }))
+
+    #expect(leaf.crlDistributionPoints.contains(where: { $0.value == "http://crl.example.test/ca.crl" }))
+    #expect(leaf.crlDistributionPoints.contains(where: { $0.value == "http://crl2.example.test/ca.crl" }))
 }
 
 @Test
@@ -108,6 +116,8 @@ func securityAnalyzerFlagsInterceptionSignals() throws {
         authorityKeyIdentifier: leaf.authorityKeyIdentifier,
         authorityInfoAccess: leaf.authorityInfoAccess,
         basicConstraints: [LabeledValue(label: "Certificate Authority", value: "Yes")],
+        sctList: leaf.sctList,
+        crlDistributionPoints: leaf.crlDistributionPoints,
         extensions: leaf.extensions,
         derData: leaf.derData
     )
@@ -176,6 +186,8 @@ private func makeGeneratedChain() throws -> [SecCertificate] {
         AuthorityKeyIdentifier(keyIdentifier: rootSubjectKeyIdentifier.keyIdentifier)
         authorityInformationAccess
         try makePolicyExtension()
+        try makeSCTExtension()
+        try makeCRLDistributionPointsExtension()
     }
 
     let leafCertificate = try Certificate(
@@ -280,6 +292,95 @@ private struct UserNotice: DERSerializable {
     func serialize(into coder: inout DER.Serializer) throws {
         try coder.appendConstructedNode(identifier: .sequence) { coder in
             try coder.serialize(explicitText)
+        }
+    }
+}
+
+// MARK: - SCT Extension Builder
+
+private func makeSCTExtension() throws -> Certificate.Extension {
+    // Build a TLS-encoded SignedCertificateTimestampList with one SCT
+    // SCT format (RFC 6962):
+    //   version: 1 byte (0 = v1)
+    //   log_id: 32 bytes
+    //   timestamp: 8 bytes (ms since epoch)
+    //   extensions: 2-byte length + data
+    //   signature: hash_algo(1) + sig_algo(1) + sig_length(2) + sig_data
+
+    let logID = [UInt8](repeating: 0xAA, count: 32)
+    let timestamp: UInt64 = 1_710_500_000_000 // ~2024-03-15
+    let fakeSignature: [UInt8] = [0x30, 0x06, 0x02, 0x01, 0x01, 0x02, 0x01, 0x01]
+
+    var sctData: [UInt8] = []
+    sctData.append(0x00) // version v1
+    sctData.append(contentsOf: logID) // log_id
+    sctData.append(contentsOf: withUnsafeBytes(of: timestamp.bigEndian) { Array($0) }) // timestamp
+    sctData.append(contentsOf: [0x00, 0x00]) // extensions length = 0
+    sctData.append(0x04) // hash algorithm: SHA-256
+    sctData.append(0x03) // signature algorithm: ECDSA
+    let sigLen = UInt16(fakeSignature.count)
+    sctData.append(contentsOf: withUnsafeBytes(of: sigLen.bigEndian) { Array($0) })
+    sctData.append(contentsOf: fakeSignature)
+
+    // SerializedSCT: 2-byte length prefix + SCT data
+    let sctLen = UInt16(sctData.count)
+    var sctListPayload: [UInt8] = []
+    sctListPayload.append(contentsOf: withUnsafeBytes(of: sctLen.bigEndian) { Array($0) })
+    sctListPayload.append(contentsOf: sctData)
+
+    // SignedCertificateTimestampList: 2-byte total length + serialized SCTs
+    let totalLen = UInt16(sctListPayload.count)
+    var tlsEncoded: [UInt8] = []
+    tlsEncoded.append(contentsOf: withUnsafeBytes(of: totalLen.bigEndian) { Array($0) })
+    tlsEncoded.append(contentsOf: sctListPayload)
+
+    // Wrap in DER OCTET STRING
+    var serializer = DER.Serializer()
+    try serializer.serialize(ASN1OctetString(contentBytes: tlsEncoded[...]))
+
+    return Certificate.Extension(
+        oid: [1, 3, 6, 1, 4, 1, 11129, 2, 4, 2],
+        critical: false,
+        value: serializer.serializedBytes[...]
+    )
+}
+
+// MARK: - CRL Distribution Points Extension Builder
+
+private func makeCRLDistributionPointsExtension() throws -> Certificate.Extension {
+    // CRLDistributionPoints ::= SEQUENCE OF DistributionPoint
+    // DistributionPoint ::= SEQUENCE { distributionPoint [0] { fullName [0] { URI [6] } } }
+    var serializer = DER.Serializer()
+    try serializer.appendConstructedNode(identifier: .sequence) { coder in
+        for uri in ["http://crl.example.test/ca.crl", "http://crl2.example.test/ca.crl"] {
+            try coder.appendConstructedNode(identifier: .sequence) { dpCoder in
+                // [0] CONSTRUCTED - distributionPoint
+                let tag0 = ASN1Identifier(tagWithNumber: 0, tagClass: .contextSpecific)
+                try dpCoder.appendConstructedNode(identifier: tag0) { dpNameCoder in
+                    // [0] CONSTRUCTED - fullName (GeneralNames)
+                    try dpNameCoder.appendConstructedNode(identifier: tag0) { gnCoder in
+                        // [6] PRIMITIVE - uniformResourceIdentifier
+                        let uriTag = ASN1Identifier(tagWithNumber: 6, tagClass: .contextSpecific)
+                        let uriBytes = Array(uri.utf8)
+                        try gnCoder.serialize(ASN1OctetString(contentBytes: uriBytes[...]), withIdentifier: uriTag)
+                    }
+                }
+            }
+        }
+    }
+
+    return Certificate.Extension(
+        oid: [2, 5, 29, 31],
+        critical: false,
+        value: serializer.serializedBytes[...]
+    )
+}
+
+private extension DER.Serializer {
+    mutating func serialize(_ value: ASN1OctetString, withIdentifier identifier: ASN1Identifier) throws {
+        let bytes = Array(value.bytes)
+        appendPrimitiveNode(identifier: identifier) { content in
+            content.append(contentsOf: bytes)
         }
     }
 }
