@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/hewigovens/inspect/actions/workflows/ci.yml/badge.svg)](https://github.com/hewigovens/inspect/actions/workflows/ci.yml)
 [![Swift 6.0](https://img.shields.io/badge/Swift-6.0-F05138.svg)](https://swift.org)
-[![License](https://img.shields.io/badge/License-Apache--2.0-green.svg)](#license)
+[![License](https://img.shields.io/badge/License-BSL--1.1-green.svg)](#license)
 [![DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/hewigovens/inspect)
 
 Inspect is a TLS certificate inspector for iPhone, iPad, and macOS.
@@ -73,4 +73,4 @@ just testflight-dry-run
 
 ## License
 
-Apache-2.0 with additional App Store restriction. See [LICENSE](LICENSE).
+BSL 1.1 — free to use, modify, and redistribute; paid app store distribution requires permission. Converts to Apache-2.0 on 2030-03-23. See [LICENSE](LICENSE).
