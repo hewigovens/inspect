@@ -14,6 +14,15 @@ enum CertificateExportWriter {
         }
     }
 
+    static func pemString(for certificate: CertificateDetails) -> String {
+        let base64 = certificate.derData.base64EncodedString(options: .lineLength64Characters)
+        return "-----BEGIN CERTIFICATE-----\n\(base64)\n-----END CERTIFICATE-----"
+    }
+
+    static func fullChainPEM(from certificates: [CertificateDetails]) -> String {
+        certificates.map { pemString(for: $0) }.joined(separator: "\n")
+    }
+
     static func sanitize(host: String) -> String {
         let allowed = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-"))
         let lowered = host.lowercased().replacingOccurrences(of: ".", with: "-")

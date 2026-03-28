@@ -25,6 +25,12 @@ struct MonitoredHostRow: View {
 
             Spacer()
 
+            if let warning = host.expiryWarning {
+                Text(warning)
+                    .font(.inspectRootCaptionSemibold)
+                    .foregroundStyle(host.daysUntilExpiry.map { $0 < 0 } == true ? .red : .orange)
+            }
+
             Text(host.statusTitle)
                 .font(.inspectRootCaptionSemibold)
                 .foregroundStyle(statusTint)

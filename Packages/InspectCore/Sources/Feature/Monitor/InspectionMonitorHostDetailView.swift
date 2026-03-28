@@ -4,8 +4,7 @@ import SwiftUI
 struct InspectionMonitorHostDetailView: View {
     @Bindable var store: InspectionMonitorStore
     let host: InspectionMonitoredHost
-    @State private var selectedReport: TLSInspectionReport?
-    @State private var isShowingCertificateDetail = false
+    @State private var certificateRoute: InspectionCertificateRoute?
 
     private var latestReport: TLSInspectionReport? {
         host.latestReport ?? store.latestCapturedReport(forHost: host.host)
@@ -34,11 +33,7 @@ struct InspectionMonitorHostDetailView: View {
         }
         .navigationTitle(host.host)
         .inlineRootNavigationTitle()
-        .navigationDestination(isPresented: $isShowingCertificateDetail) {
-            if let selectedReport {
-                CertificateDetailView(report: selectedReport, initialSelectionIndex: 0)
-            }
-        }
+        .certificateDetailDestination($certificateRoute)
     }
 
     private var summaryCard: some View {
@@ -89,8 +84,10 @@ struct InspectionMonitorHostDetailView: View {
                     monitorMetricRow(label: "Trust", value: host.statusTitle)
 
                     Button {
-                        selectedReport = report
-                        isShowingCertificateDetail = true
+                        certificateRoute = InspectionCertificateRoute(
+                            report: report,
+                            initialSelectionIndex: 0
+                        )
                     } label: {
                         HStack(spacing: 10) {
                             Text("View Certificate Chain")

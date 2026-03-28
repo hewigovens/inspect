@@ -7,6 +7,15 @@ extension CertificateDetailView {
         List {
             chainSection
 
+            Section {
+                RevocationStatusBadge(
+                    status: revocationStatus,
+                    onCheck: checkRevocation
+                )
+            } header: {
+                sectionHeader("Revocation")
+            }
+
             if let selectedContent {
                 ForEach(selectedContent.sections) { section in
                     detailSection(section)
@@ -67,9 +76,4 @@ extension CertificateDetailView {
     }
 }
 
-extension View {
-    func certificateDetailWindowLifecycle() -> some View {
-        self
-    }
-}
 #endif

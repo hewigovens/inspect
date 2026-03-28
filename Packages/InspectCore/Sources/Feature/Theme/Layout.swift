@@ -13,7 +13,6 @@ private struct PlatformValues {
     let inputPromptFont: Font
     let inputUsesHorizontalCompactDemoTargets: Bool
     let inputUsesInlineCompactInputControls: Bool
-    let chainUsesAnimatedDetailNavigation: Bool
     let diagnosticsContentMaxWidth: CGFloat
 
     static let current: PlatformValues = {
@@ -31,7 +30,6 @@ private struct PlatformValues {
             inputPromptFont: .inspectRootCaptionSemibold,
             inputUsesHorizontalCompactDemoTargets: true,
             inputUsesInlineCompactInputControls: true,
-            chainUsesAnimatedDetailNavigation: true,
             diagnosticsContentMaxWidth: 920
         )
         #else
@@ -48,7 +46,6 @@ private struct PlatformValues {
             inputPromptFont: .inspectRootSubheadline,
             inputUsesHorizontalCompactDemoTargets: false,
             inputUsesInlineCompactInputControls: false,
-            chainUsesAnimatedDetailNavigation: false,
             diagnosticsContentMaxWidth: 760
         )
         #endif
@@ -101,14 +98,6 @@ enum InspectLayout {
         static var sampleColumnWidth: CGFloat { PlatformValues.current.inputSampleColumnWidth }
         static var demoTargetVerticalPadding: CGFloat { PlatformValues.current.inputDemoTargetVerticalPadding }
         static var demoTargetControlSize: ControlSize { PlatformValues.current.inputDemoTargetControlSize }
-    }
-
-    enum Chain {
-        static var usesAnimatedDetailNavigation: Bool { PlatformValues.current.chainUsesAnimatedDetailNavigation }
-
-        static var detailNavigationDelay: Duration? {
-            usesAnimatedDetailNavigation ? .milliseconds(130) : nil
-        }
     }
 
     enum Monitor {

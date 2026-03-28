@@ -5,60 +5,66 @@ import SwiftUI
 extension CertificateDetailView {
     @ViewBuilder
     var platformContent: some View {
-        ZStack {
-            Color.certificateGroupedBackground
-                .ignoresSafeArea()
+        HSplitView {
+            ScrollView {
+                VStack(spacing: 16) {
+                    macOverviewCard
 
-            InspectBackground()
-                .opacity(0.22)
-                .ignoresSafeArea()
+                    InspectCard {
+                        VStack(alignment: .leading, spacing: 14) {
+                            Text("Certificate Chain")
+                                .font(.inspectRootHeadline)
 
-            HSplitView {
-                ScrollView {
-                    VStack(spacing: 16) {
-                        macOverviewCard
-
-                        InspectCard {
-                            VStack(alignment: .leading, spacing: 14) {
-                                Text("Certificate Chain")
-                                    .font(.inspectRootHeadline)
-
-                                CompactCertificateChainPanel(
-                                    nodes: chainNodes,
-                                    trust: report.trust,
-                                    selectedIndex: selectedIndex,
-                                    onSelect: updateSelection(to:)
-                                )
-                            }
+                            CompactCertificateChainPanel(
+                                nodes: chainNodes,
+                                trust: report.trust,
+                                selectedIndex: selectedIndex,
+                                onSelect: updateSelection(to:)
+                            )
                         }
                     }
-                    .padding(16)
                 }
-                .frame(minWidth: 260, idealWidth: 290, maxWidth: 320)
-
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
-                        if let selectedCertificate {
-                            macSelectedCertificateCard(selectedCertificate)
-                        }
-
-                        if let selectedContent {
-                            ForEach(selectedContent.sections) { section in
-                                MacCertificateSectionCard(section: section) { row in
-                                    copy(row: row)
-                                }
-                            }
-                        } else {
-                            InspectCard {
-                                Text("No certificate details were available for this inspection.")
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                    }
-                    .padding(16)
-                }
-                .frame(minWidth: 420, idealWidth: 520, maxWidth: .infinity)
+                .padding(EdgeInsets(top: 52, leading: 16, bottom: 16, trailing: 16))
             }
+            .frame(minWidth: 260, idealWidth: 290, maxWidth: 320)
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    if let selectedCertificate {
+                        macSelectedCertificateCard(selectedCertificate)
+                    }
+
+                    InspectCard {
+                        RevocationStatusBadge(
+                            status: revocationStatus,
+                            onCheck: checkRevocation
+                        )
+                    }
+
+                    if let selectedContent {
+                        ForEach(selectedContent.sections) { section in
+                            MacCertificateSectionCard(section: section) { row in
+                                copy(row: row)
+                            }
+                        }
+                    } else {
+                        InspectCard {
+                            Text("No certificate details were available for this inspection.")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                .padding(EdgeInsets(top: 52, leading: 16, bottom: 16, trailing: 16))
+            }
+            .frame(minWidth: 420, idealWidth: 520, maxWidth: .infinity)
+        }
+        .background {
+            ZStack {
+                Color.certificateGroupedBackground
+                InspectBackground()
+                    .opacity(0.22)
+            }
+            .ignoresSafeArea()
         }
     }
 
@@ -220,15 +226,4 @@ extension CertificateDetailView {
     }
 }
 
-extension View {
-    func certificateDetailWindowLifecycle() -> some View {
-        self
-            .onAppear {
-                InspectionWindowLayoutCenter.post(.certificateDetail)
-            }
-            .onDisappear {
-                InspectionWindowLayoutCenter.post(.standard)
-            }
-    }
-}
 #endif

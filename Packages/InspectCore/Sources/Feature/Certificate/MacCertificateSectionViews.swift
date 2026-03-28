@@ -87,7 +87,7 @@ private struct MacStackedDetailRow: View {
                 Spacer(minLength: 12)
 
                 Button(action: onCopy) {
-                    Label("Copy", systemImage: "doc.on.doc")
+                    Image(systemName: "doc.on.doc")
                         .font(.inspectDetailCompactCaptionSemibold)
                         .foregroundStyle(.secondary)
                 }

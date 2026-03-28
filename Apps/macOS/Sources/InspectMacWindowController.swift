@@ -1,59 +1,36 @@
 import AppKit
 import InspectKit
-import QuartzCore
 import SwiftUI
 
 @MainActor
 final class InspectMacWindowController {
     private weak var window: NSWindow?
-    private var currentPreference: InspectionWindowLayoutPreference = .standard
 
     private let standardMinimumSize = NSSize(width: 960, height: 740)
     private let standardTargetSize = NSSize(width: 1000, height: 760)
-    private let detailMinimumSize = NSSize(width: 1140, height: 770)
-    private let detailTargetSize = NSSize(width: 1200, height: 790)
 
     func attach(_ window: NSWindow) {
         self.window = window
         window.contentMinSize = standardMinimumSize
-        currentPreference = .standard
         installDockIcon()
     }
 
-    func transition(to preference: InspectionWindowLayoutPreference, animated: Bool = true) {
+    func ensureStandardSize(animated: Bool = true) {
         guard let window else {
             return
         }
 
-        let targetMinimumSize: NSSize
-        let targetSize: NSSize
-        switch preference {
-        case .standard:
-            targetMinimumSize = standardMinimumSize
-            targetSize = standardTargetSize
-        case .certificateDetail:
-            targetMinimumSize = detailMinimumSize
-            targetSize = detailTargetSize
-        }
-
-        let previousPreference = currentPreference
-        currentPreference = preference
-        window.contentMinSize = targetMinimumSize
+        window.contentMinSize = standardMinimumSize
 
         var frame = window.frame
-        let targetWidth: CGFloat
-        let targetHeight: CGFloat
+        let targetWidth = frame.width > standardTargetSize.width
+            ? standardTargetSize.width
+            : max(frame.width, standardMinimumSize.width)
+        let targetHeight = frame.height > standardTargetSize.height
+            ? standardTargetSize.height
+            : max(frame.height, standardMinimumSize.height)
 
-        switch preference {
-        case .standard:
-            targetWidth = frame.width > targetSize.width ? targetSize.width : max(frame.width, targetMinimumSize.width)
-            targetHeight = frame.height > targetSize.height ? targetSize.height : max(frame.height, targetMinimumSize.height)
-        case .certificateDetail:
-            targetWidth = max(frame.width, targetSize.width)
-            targetHeight = max(frame.height, targetSize.height)
-        }
-
-        guard previousPreference != preference || frame.width != targetWidth || frame.height != targetHeight else {
+        guard frame.width != targetWidth || frame.height != targetHeight else {
             return
         }
 

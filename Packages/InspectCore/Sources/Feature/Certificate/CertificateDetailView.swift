@@ -9,6 +9,7 @@ public struct CertificateDetailView: View {
     @State var copyFeedback: String?
     @State var copyFeedbackToken = UUID()
     @State var presentsSSLLabs = false
+    @State var revocationStatus: RevocationStatus = .unchecked
 
     public init(report: TLSInspectionReport, initialSelectionIndex: Int = 0) {
         self.report = report
@@ -60,29 +61,49 @@ public struct CertificateDetailView: View {
                 }
             }
             .toolbar {
-                if exportURL != nil || report.sslLabsURL != nil {
-                    ToolbarItem(placement: InspectPlatform.topBarTrailingPlacement) {
-                        Menu {
-                            if let exportURL {
-                                ShareLink(item: exportURL) {
-                                    Label("Share Certificate", systemImage: "square.and.arrow.up")
-                                }
+                ToolbarItem(placement: InspectPlatform.topBarTrailingPlacement) {
+                    Menu {
+                        if let exportURL {
+                            ShareLink(item: exportURL) {
+                                Label("Share Certificate (DER)", systemImage: "square.and.arrow.up")
                             }
-
-                            if let sslLabsURL = report.sslLabsURL {
-                                Button {
-                                    openSSLLabs(sslLabsURL)
-                                } label: {
-                                    Label("Open in SSL Labs", systemImage: "safari")
-                                }
-                            }
-                        } label: {
-                            Image(systemName: "square.and.arrow.up")
                         }
+
+                        Button {
+                            copySelectedPEM()
+                        } label: {
+                            Label("Copy as PEM", systemImage: "doc.on.doc")
+                        }
+
+                        if report.certificates.count > 1 {
+                            Button {
+                                copyFullChainPEM()
+                            } label: {
+                                Label("Copy Full Chain", systemImage: "doc.on.doc.fill")
+                            }
+                        }
+
+                        Divider()
+
+                        Button {
+                            checkRevocation()
+                        } label: {
+                            Label("Check Revocation", systemImage: "checkmark.shield")
+                        }
+                        .disabled(revocationStatus == .checking)
+
+                        if let sslLabsURL = report.sslLabsURL {
+                            Button {
+                                openSSLLabs(sslLabsURL)
+                            } label: {
+                                Label("Open in SSL Labs", systemImage: "safari")
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
                     }
                 }
             }
-            .certificateDetailWindowLifecycle()
             .inspectSafariSheet(url: report.sslLabsURL, isPresented: $presentsSSLLabs)
     }
 
@@ -101,12 +122,15 @@ public struct CertificateDetailView: View {
 
     func copy(row: DetailLine) {
         InspectClipboard.copy(row.value)
+        showCopyFeedback("Copied \(row.label)")
+    }
 
+    func showCopyFeedback(_ message: String) {
         let token = UUID()
         copyFeedbackToken = token
 
         withAnimation(.easeInOut(duration: 0.18)) {
-            copyFeedback = "Copied \(row.label)"
+            copyFeedback = message
         }
 
         Task {
@@ -119,6 +143,34 @@ public struct CertificateDetailView: View {
             await MainActor.run {
                 withAnimation(.easeInOut(duration: 0.18)) {
                     copyFeedback = nil
+                }
+            }
+        }
+    }
+
+    func copySelectedPEM() {
+        guard let selectedCertificate else { return }
+        let pem = CertificateExportWriter.pemString(for: selectedCertificate)
+        InspectClipboard.copy(pem)
+        showCopyFeedback("Copied PEM")
+    }
+
+    func copyFullChainPEM() {
+        let pem = CertificateExportWriter.fullChainPEM(from: report.certificates)
+        InspectClipboard.copy(pem)
+        showCopyFeedback("Copied \(report.certificates.count) certificates")
+    }
+
+    func checkRevocation() {
+        revocationStatus = .checking
+        Task {
+            let result = await RevocationChecker.check(
+                certificates: report.certificates,
+                host: report.host
+            )
+            await MainActor.run {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    revocationStatus = result
                 }
             }
         }

@@ -4,7 +4,6 @@ import SwiftUI
 struct InspectionChainCard: View {
     let report: TLSInspectionReport
     let onOpenCertificateDetail: (TLSInspectionReport, Int) -> Void
-    @State private var pendingSelectionIndex: Int?
 
     var body: some View {
         InspectCard {
@@ -22,22 +21,7 @@ struct InspectionChainCard: View {
     @ViewBuilder
     private func certificateRow(certificate: CertificateDetails, at index: Int) -> some View {
         Button {
-            if let delay = InspectLayout.Chain.detailNavigationDelay {
-                guard pendingSelectionIndex == nil else {
-                    return
-                }
-
-                pendingSelectionIndex = index
-                InspectionWindowLayoutCenter.post(.certificateDetail)
-
-                Task { @MainActor in
-                    try? await Task.sleep(for: delay)
-                    onOpenCertificateDetail(report, index)
-                    pendingSelectionIndex = nil
-                }
-            } else {
-                onOpenCertificateDetail(report, index)
-            }
+            onOpenCertificateDetail(report, index)
         } label: {
             CertificateRow(
                 certificate: certificate,
@@ -46,7 +30,6 @@ struct InspectionChainCard: View {
         }
         .buttonStyle(.plain)
         .contentShape(Rectangle())
-        .disabled(InspectLayout.Chain.usesAnimatedDetailNavigation && pendingSelectionIndex != nil)
         .accessibilityIdentifier("chain.certificate.\(index)")
     }
 }

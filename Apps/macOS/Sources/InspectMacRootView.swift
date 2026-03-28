@@ -6,6 +6,7 @@ struct InspectMacRootView: View {
     @Bindable var appModel: InspectMacAppModel
     @Bindable var manager: InspectMacLiveMonitorManager
     @State private var isHandlingActivation = false
+    @State private var externalCertificateRoute: InspectionCertificateRoute?
     let windowController: InspectMacWindowController
 
     var body: some View {
@@ -25,6 +26,7 @@ struct InspectMacRootView: View {
                 windowController.attach(window)
             }
         }
+        .certificateDetailDestination($externalCertificateRoute)
         .tint(.inspectAccent)
         .task {
             InspectionLiveMonitorCoordinator.configure { isEnabled in
@@ -38,26 +40,29 @@ struct InspectMacRootView: View {
             }
         }
         .onChange(of: appModel.selectedSection) { _, _ in
-            windowController.transition(to: .standard)
+            windowController.ensureStandardSize()
         }
         .onDisappear {
             InspectionLiveMonitorCoordinator.configure(toggleHandler: nil)
         }
-        .onReceive(NotificationCenter.default.publisher(for: InspectionWindowLayoutCenter.notification)) { notification in
-            guard let preference = InspectionWindowLayoutCenter.preference(from: notification) else {
+        .onReceive(NotificationCenter.default.publisher(for: InspectionExternalInputCenter.notification)) { _ in
+            guard let request = InspectionExternalInputCenter.consumePendingRequest() else {
                 return
             }
 
-            if preference == .certificateDetail, appModel.selectedSection == .inspect {
-                windowController.reveal()
-            }
-
-            windowController.transition(to: preference)
-        }
-        .onReceive(NotificationCenter.default.publisher(for: InspectionExternalInputCenter.notification)) { _ in
-            appModel.selectedSection = .inspect
             windowController.reveal()
-            windowController.transition(to: .standard)
+
+            switch request {
+            case let .report(report, opensCertificateDetail):
+                if opensCertificateDetail {
+                    externalCertificateRoute = InspectionCertificateRoute(
+                        report: report,
+                        initialSelectionIndex: 0
+                    )
+                } else {
+                    appModel.selectedSection = .inspect
+                }
+            }
         }
     }
 
@@ -66,13 +71,16 @@ struct InspectMacRootView: View {
             return
         }
 
-        appModel.startNewInspection()
-        appModel.selectedSection = .inspect
         windowController.reveal()
-        windowController.transition(to: .standard, animated: false)
 
-        DispatchQueue.main.async {
-            InspectionExternalInputCenter.submit(request)
+        switch request {
+        case let .report(report, opensCertificateDetail):
+            if opensCertificateDetail {
+                externalCertificateRoute = InspectionCertificateRoute(
+                    report: report,
+                    initialSelectionIndex: 0
+                )
+            }
         }
     }
 

@@ -6,7 +6,6 @@ struct InspectionMonitorHostListCard: View {
     @Binding var filter: InspectionMonitorHostFilter
     @Binding var isSearchExpanded: Bool
     @FocusState.Binding var isSearchFocused: Bool
-
     private var monitoredHosts: [InspectionMonitoredHost] {
         store.monitoredHosts.filter(matchesCurrentFilter)
     }

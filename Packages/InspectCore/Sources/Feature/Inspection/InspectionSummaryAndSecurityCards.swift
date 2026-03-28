@@ -16,6 +16,9 @@ struct InspectionSummaryCard: View {
                 HStack(spacing: 10) {
                     Badge(text: report.trust.badgeText, tint: report.trust.isTrusted ? .green : .orange)
                     Badge(text: protocolTitle, tint: .blue)
+                    if let tlsVersion = report.tlsVersion {
+                        Badge(text: tlsVersion, tint: tlsVersion.contains("1.3") ? .green : .secondary)
+                    }
                     Badge(text: "\(report.certificates.count) cert\(report.certificates.count == 1 ? "" : "s")", tint: .indigo)
                     if report.security.criticalCount > 0 {
                         Badge(text: "\(report.security.criticalCount) critical", tint: .red)
@@ -29,6 +32,9 @@ struct InspectionSummaryCard: View {
                         InspectionSummaryField(title: "Issued To", value: leaf.subjectSummary)
                         InspectionSummaryField(title: "Issued By", value: leaf.issuerSummary)
                         InspectionSummaryField(title: "Validity", value: leaf.validity.status.rawValue)
+                        if let cipherSuite = report.cipherSuite {
+                            InspectionSummaryField(title: "Cipher Suite", value: cipherSuite)
+                        }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }

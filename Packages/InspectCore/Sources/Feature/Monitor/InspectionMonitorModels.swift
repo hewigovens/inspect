@@ -62,6 +62,19 @@ struct InspectionMonitoredHost: Identifiable, Equatable {
         state.title
     }
 
+    var daysUntilExpiry: Int? {
+        guard let notAfter = latestReport?.leafCertificate?.validity.notAfter else { return nil }
+        return Calendar.current.dateComponents([.day], from: Date(), to: notAfter).day
+    }
+
+    var expiryWarning: String? {
+        guard let days = daysUntilExpiry else { return nil }
+        if days < 0 { return "Expired" }
+        if days == 0 { return "Expires today" }
+        if days <= 30 { return "Expires in \(days)d" }
+        return nil
+    }
+
     var subtitle: String {
         let timestamp = lastSeenAt.formatted(date: .omitted, time: .shortened)
 

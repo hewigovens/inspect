@@ -4,6 +4,7 @@ import SwiftUI
 
 @main
 struct InspectMacApp: App {
+    @FocusedValue(\.focusInspectionInput) private var focusInspectionInput
     @State private var appModel = InspectMacAppModel()
     @State private var liveMonitorManager = InspectMacLiveMonitorManager()
     @State private var windowController = InspectMacWindowController()
@@ -17,7 +18,6 @@ struct InspectMacApp: App {
             )
             .onOpenURL { url in
                 _ = InspectionExternalInputCenter.handleDeepLink(url) {
-                    appModel.startNewInspection()
                     windowController.reveal()
                 }
             }
@@ -30,6 +30,12 @@ struct InspectMacApp: App {
                     appModel.startNewInspection()
                 }
                 .keyboardShortcut("n", modifiers: .command)
+
+                Button("Focus Input") {
+                    appModel.selectedSection = .inspect
+                    focusInspectionInput?()
+                }
+                .keyboardShortcut("l", modifiers: .command)
             }
         }
 

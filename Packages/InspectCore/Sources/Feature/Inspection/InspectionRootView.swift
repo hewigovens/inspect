@@ -48,6 +48,9 @@ public struct InspectionRootView: View {
         NavigationStack {
             content
         }
+        .focusedSceneValue(\.focusInspectionInput) {
+            isInputFocused = true
+        }
         .tint(.inspectAccent)
         .task(id: bootstrapTaskKey) {
             let pendingRequest = presentation == .app
@@ -145,12 +148,7 @@ public struct InspectionRootView: View {
                 dismissDemoTarget = screenshotScenario.showsDemoTargets == false
             }
         }
-        .navigationDestination(item: $certificateRoute) { route in
-            CertificateDetailView(
-                report: route.report,
-                initialSelectionIndex: route.initialSelectionIndex
-            )
-        }
+        .certificateDetailDestination($certificateRoute)
     }
 
     private func compactWidthContent(report: TLSInspectionReport?, recentItems: [RecentLookupItem]) -> some View {
