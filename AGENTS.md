@@ -1,12 +1,36 @@
 # Inspect Agent Notes
 
 - `project.yml` is the source of truth for the Xcode project. Regenerate `Inspect.xcodeproj` with `xcodegen generate`; do not commit the generated project.
-- Use [`justfile`](/Users/hewig/workspace/h/Inspect/justfile) for common local tasks. The main release entry point is `just testflight`.
+- Use [`justfile`](/Users/hewig/workspace/h/Inspect/justfile) for common local tasks.
 - Prefer `xcbeautify` for `xcodebuild` output. The repo scripts and CI are expected to use `xcodebuild ... | xcbeautify`.
 - TestFlight uploads go through [`scripts/testflight.sh`](/Users/hewig/workspace/h/Inspect/scripts/testflight.sh) and read settings from `.env`.
 - App Store screenshots go through [`scripts/app_store_screenshots.sh`](/Users/hewig/workspace/h/Inspect/scripts/app_store_screenshots.sh). Use the built-in `INSPECT_SCREENSHOT_SCENARIO` launch mode rather than hand-editing UI state for storefront captures.
 - Required TestFlight env vars: `ASC_APP_ID`, `APP_STORE_CONNECT_KEY_ID`, `APP_STORE_CONNECT_ISSUER_ID`, `APP_STORE_CONNECT_KEY_PATH`.
 - If the current App Store Connect app already has the repo's `CURRENT_PROJECT_VERSION`, set `TESTFLIGHT_BUILD_NUMBER` in `.env` before uploading.
+
+## Release Pipeline
+
+iOS and macOS share the same `MARKETING_VERSION` in `project.yml` but need separate `CURRENT_PROJECT_VERSION` (build numbers) because App Store Connect requires unique build numbers per platform upload.
+
+**iOS TestFlight:**
+```
+just testflight
+```
+
+**macOS TestFlight:**
+```
+TESTFLIGHT_SCHEME=InspectMac TESTFLIGHT_DESTINATION="generic/platform=macOS" just testflight
+```
+
+**Both platforms (sequential):**
+```
+just testflight
+TESTFLIGHT_SCHEME=InspectMac TESTFLIGHT_DESTINATION="generic/platform=macOS" TESTFLIGHT_BUILD_NUMBER=<next> just testflight
+```
+
+The script auto-detects `.ipa` (iOS) vs `.pkg` (macOS) and uses the correct `asc` upload flag (`--ipa` vs `--pkg`). macOS builds require a separate build number if the same number was already uploaded for iOS.
+
+After upgrading Xcode, run "Download Manual Profiles" in Xcode > Settings > Accounts before building, otherwise the iOS export will fail with a missing `embedded.mobileprovision` error.
 
 ## Code Style
 

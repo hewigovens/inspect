@@ -182,9 +182,14 @@ if state:
 
 upload_build() {
   local locale="${TESTFLIGHT_LOCALE:-en-US}"
+  local artifact_flag="--ipa"
   local -a command_args
 
   read_archive_build_metadata
+
+  if [[ "$exported_platform" == "MAC_OS" ]]; then
+    artifact_flag="--pkg"
+  fi
 
   log "Exported artifact: $exported_artifact_path ($exported_platform)"
   log "Archive metadata: version $build_version build $build_number"
@@ -193,7 +198,7 @@ upload_build() {
     command_args=(
       publish testflight
       --app "$app_id"
-      --ipa "$exported_artifact_path"
+      "$artifact_flag" "$exported_artifact_path"
       --group "$group"
       --platform "$exported_platform"
     )
@@ -222,7 +227,7 @@ upload_build() {
   command_args=(
     builds upload
     --app "$app_id"
-    --ipa "$exported_artifact_path"
+    "$artifact_flag" "$exported_artifact_path"
     --version "$build_version"
     --build-number "$build_number"
   )
