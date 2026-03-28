@@ -17,7 +17,8 @@ app_id=""
 group=""
 build_version=""
 build_number=""
-exported_ipa_path=""
+exported_artifact_path=""
+exported_platform=""
 
 configure() {
   require_command xcbeautify
@@ -92,13 +93,18 @@ archive_build() {
     export_command+=("${XCODE_AUTH_ARGS[@]}")
   fi
 
-  log "Exporting IPA"
+  log "Exporting archive"
   run_xcodebuild "${export_command[@]}"
 
-  exported_ipa_path="$(find "$export_path" -maxdepth 1 -type f -name '*.ipa' -print -quit)"
-  if [[ -z "$exported_ipa_path" ]]; then
-    fail "No IPA was exported to $export_path"
+  exported_artifact_path="$(find "$export_path" -maxdepth 1 -type f \( -name '*.ipa' -o -name '*.pkg' \) -print -quit)"
+  if [[ -z "$exported_artifact_path" ]]; then
+    fail "No IPA or PKG was exported to $export_path"
   fi
+
+  case "$exported_artifact_path" in
+    *.pkg) exported_platform="MAC_OS" ;;
+    *)     exported_platform="IOS" ;;
+  esac
 }
 
 read_archive_build_metadata() {
@@ -180,16 +186,16 @@ upload_build() {
 
   read_archive_build_metadata
 
-  log "Exported IPA: $exported_ipa_path"
+  log "Exported artifact: $exported_artifact_path ($exported_platform)"
   log "Archive metadata: version $build_version build $build_number"
 
   if [[ -n "$group" ]]; then
     command_args=(
       publish testflight
       --app "$app_id"
-      --ipa "$exported_ipa_path"
+      --ipa "$exported_artifact_path"
       --group "$group"
-      --platform IOS
+      --platform "$exported_platform"
     )
 
     if is_truthy "${TESTFLIGHT_WAIT:-true}"; then
@@ -216,7 +222,7 @@ upload_build() {
   command_args=(
     builds upload
     --app "$app_id"
-    --ipa "$exported_ipa_path"
+    --ipa "$exported_artifact_path"
     --version "$build_version"
     --build-number "$build_number"
   )
@@ -255,7 +261,7 @@ case "${1:-upload}" in
   build)
     archive_build
     read_archive_build_metadata
-    log "Exported IPA: $exported_ipa_path"
+    log "Exported artifact: $exported_artifact_path ($exported_platform)"
     log "Archive metadata: version $build_version build $build_number"
     ;;
   dry-run)
