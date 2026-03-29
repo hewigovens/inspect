@@ -13,17 +13,17 @@ struct InspectionSummaryCard: View {
                     .font(.inspectRootTitle3)
                     .lineLimit(2)
 
-                HStack(spacing: 10) {
-                    Badge(text: report.trust.badgeText, tint: report.trust.isTrusted ? .green : .orange)
-                    Badge(text: protocolTitle, tint: .blue)
-                    if let tlsVersion = report.tlsVersion {
-                        Badge(text: tlsVersion, tint: tlsVersion.contains("1.3") ? .green : .secondary)
-                    }
-                    Badge(text: "\(report.certificates.count) cert\(report.certificates.count == 1 ? "" : "s")", tint: .indigo)
-                    if report.security.criticalCount > 0 {
-                        Badge(text: "\(report.security.criticalCount) critical", tint: .red)
-                    } else if report.security.warningCount > 0 {
-                        Badge(text: "\(report.security.warningCount) warning", tint: .orange)
+                LazyVGrid(
+                    columns: Array(
+                        repeating: GridItem(.flexible(minimum: 0), spacing: badgeSpacing),
+                        count: min(badges.count, InspectLayout.Summary.maxBadgesPerRow)
+                    ),
+                    alignment: .leading,
+                    spacing: badgeSpacing
+                ) {
+                    ForEach(badges) { badge in
+                        Badge(text: badge.text, tint: badge.tint)
+                            .frame(maxWidth: .infinity)
                     }
                 }
 
@@ -81,6 +81,61 @@ struct InspectionSummaryCard: View {
             return "Protocol Unknown"
         }
     }
+
+    private var badgeSpacing: CGFloat {
+        InspectLayout.Summary.badgeSpacing
+    }
+
+    private var badges: [InspectionSummaryBadge] {
+        var values = [
+            InspectionSummaryBadge(
+                text: report.trust.badgeText,
+                tint: report.trust.isTrusted ? .green : .orange
+            ),
+            InspectionSummaryBadge(text: protocolTitle, tint: .blue)
+        ]
+
+        if let tlsVersion = report.tlsVersion {
+            values.append(
+                InspectionSummaryBadge(
+                    text: tlsVersion,
+                    tint: tlsVersion.contains("1.3") ? .green : .secondary
+                )
+            )
+        }
+
+        values.append(
+            InspectionSummaryBadge(
+                text: "\(report.certificates.count) cert\(report.certificates.count == 1 ? "" : "s")",
+                tint: .indigo
+            )
+        )
+
+        if report.security.criticalCount > 0 {
+            values.append(
+                InspectionSummaryBadge(
+                    text: "\(report.security.criticalCount) critical",
+                    tint: .red
+                )
+            )
+        } else if report.security.warningCount > 0 {
+            values.append(
+                InspectionSummaryBadge(
+                    text: "\(report.security.warningCount) warning",
+                    tint: .orange
+                )
+            )
+        }
+
+        return values
+    }
+}
+
+private struct InspectionSummaryBadge: Identifiable {
+    let text: String
+    let tint: Color
+
+    var id: String { text }
 }
 
 private struct InspectionSummaryField: View {

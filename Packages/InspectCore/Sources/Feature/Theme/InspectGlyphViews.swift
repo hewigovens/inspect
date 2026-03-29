@@ -7,6 +7,9 @@ struct Badge: View {
     var body: some View {
         Text(text)
             .font(.inspectRootCaptionSemibold)
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
+            .allowsTightening(true)
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
             .background(tint.opacity(0.13), in: Capsule())

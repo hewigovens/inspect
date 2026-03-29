@@ -89,9 +89,6 @@ struct InspectionRecentCard: View {
                                 Text("Current")
                                     .font(.inspectRootCaptionSemibold)
                                     .foregroundStyle(.secondary)
-                            } else {
-                                Image(systemName: "arrow.clockwise")
-                                    .foregroundStyle(.secondary)
                             }
                         }
                         .padding(.vertical, 8)

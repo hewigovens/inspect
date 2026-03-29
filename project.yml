@@ -14,7 +14,7 @@ configFiles:
 settings:
   base:
     CURRENT_PROJECT_VERSION: 84
-    MARKETING_VERSION: 2.5.0
+    MARKETING_VERSION: 2.5.1
     SWIFT_VERSION: 6.0
     TARGETED_DEVICE_FAMILY: "1,2"
     INSPECT_APP_GROUP_IDENTIFIER: group.in.fourplex.inspect.monitor

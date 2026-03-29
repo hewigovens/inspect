@@ -116,4 +116,9 @@ enum InspectLayout {
     enum Diagnostics {
         static var contentMaxWidth: CGFloat { PlatformValues.current.diagnosticsContentMaxWidth }
     }
+
+    enum Summary {
+        static var badgeSpacing: CGFloat { 10 }
+        static var maxBadgesPerRow: Int { 4 }
+    }
 }
