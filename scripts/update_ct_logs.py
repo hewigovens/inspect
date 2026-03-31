@@ -20,7 +20,8 @@ def build_entries(data):
     entries = []
     for op in data.get("operators", []):
         op_name = op["name"]
-        for log in op.get("logs", []):
+        all_logs = op.get("logs", []) + op.get("tiled_logs", [])
+        for log in all_logs:
             log_id_b64 = log["log_id"]
             log_id_hex = base64.b64decode(log_id_b64).hex().upper()
             description = log.get("description", "")
