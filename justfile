@@ -5,22 +5,22 @@ default:
     @just --list --list-submodules
 
 generate:
-    xcodegen generate
+    ./scripts/xcodegen_generate.sh
 
 test-ios-sim device_id="863DCA4D-25BC-4E56-B6DA-D94FEC42A174":
-    xcodegen generate
+    ./scripts/xcodegen_generate.sh
     xcodebuild -project Inspect.xcodeproj -scheme Inspect -destination "platform=iOS Simulator,id={{device_id}}" test | xcbeautify
 
 build-macos:
-    xcodegen generate
+    ./scripts/xcodegen_generate.sh
     xcodebuild -project Inspect.xcodeproj -scheme InspectMac -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO build | xcbeautify
 
 run-mac derived_data="target/DerivedData/InspectMac":
     #!/usr/bin/env bash
     set -euo pipefail
     DERIVED_DATA="{{derived_data}}"
-    xcodegen generate
-    xcodebuild -project Inspect.xcodeproj -scheme InspectMac -destination 'platform=macOS' -derivedDataPath "$DERIVED_DATA" build | xcbeautify
+    ./scripts/xcodegen_generate.sh
+    xcodebuild -project Inspect.xcodeproj -scheme InspectMac -destination 'platform=macOS' -allowProvisioningUpdates -derivedDataPath "$DERIVED_DATA" build | xcbeautify
     APP_PATH="$DERIVED_DATA/Build/Products/Debug/Inspect.app"
     if [[ ! -d "$APP_PATH" ]]; then
         echo "Built app not found at $APP_PATH" >&2
@@ -29,7 +29,7 @@ run-mac derived_data="target/DerivedData/InspectMac":
     open -n "$APP_PATH"
 
 test-macos:
-    xcodegen generate
+    ./scripts/xcodegen_generate.sh
     xcodebuild -project Inspect.xcodeproj -scheme InspectMac -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO test | xcbeautify
 
 testflight:
@@ -86,7 +86,7 @@ run-ios-device log_file="target/ios-device-console.log" tunnel_log_file="target/
     LOG_FILE="{{log_file}}"
     TUNNEL_LOG_FILE="{{tunnel_log_file}}"
     APP_GROUP="{{app_group}}"
-    xcodegen generate
+    ./scripts/xcodegen_generate.sh
     if [[ -z "${DEVICE_ID:-}" ]]; then
         DEVICE_ID="$(
             xcrun xctrace list devices 2>/dev/null \

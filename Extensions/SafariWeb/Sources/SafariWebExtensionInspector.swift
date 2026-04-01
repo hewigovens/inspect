@@ -16,7 +16,10 @@ final class SafariExtensionInspector {
     ) {
         Task {
             do {
-                let report = try await TLSInspector().inspect(url: url)
+                let inspection = try await TLSInspector().inspect(url: url)
+                guard let report = inspection.primaryReport else {
+                    throw InspectionError.missingServerTrust
+                }
                 DispatchQueue.main.async {
                     completion.completion(.success(report))
                 }

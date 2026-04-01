@@ -16,7 +16,10 @@ final class MacShareExtensionRequestHandler {
                 return
             }
 
-            let report = try await TLSInspector().inspect(input: input)
+            let inspection = try await TLSInspector().inspect(input: input)
+            guard let report = inspection.primaryReport else {
+                throw InspectionError.missingServerTrust
+            }
             let token = try InspectionSharedReportStore.save(report)
             InspectionSharedPendingReportStore.save(token: token)
             _ = await activateParentApp()
@@ -33,7 +36,8 @@ final class MacShareExtensionRequestHandler {
 
         let bundleIdentifier = Bundle(url: appURL)?.bundleIdentifier
         if let bundleIdentifier,
-           let runningApp = NSRunningApplication.runningApplications(withBundleIdentifier: bundleIdentifier).first {
+           let runningApp = NSRunningApplication.runningApplications(withBundleIdentifier: bundleIdentifier).first
+        {
             return runningApp.activate(options: [.activateAllWindows, .activateIgnoringOtherApps])
         }
 

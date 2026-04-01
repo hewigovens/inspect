@@ -1,19 +1,19 @@
 import Foundation
-import Observation
 import InspectCore
+import Observation
 
 @MainActor
 @Observable
 public final class InspectionStore {
     public var input = ""
-    public var report: TLSInspectionReport?
+    public var inspection: TLSInspection?
     public var isLoading = false
     public var errorMessage: String?
     public private(set) var recentInputs: [String]
     private var hasConsumedInitialURL = false
 
     public init() {
-        self.recentInputs = RecentInputStore.load()
+        recentInputs = RecentInputStore.load()
     }
 
     public func bootstrap(initialURL: URL?) {
@@ -40,7 +40,7 @@ public final class InspectionStore {
         case let .report(report, _):
             isLoading = false
             input = report.requestedURL.absoluteString
-            self.report = report
+            inspection = TLSInspection(report: report)
             RecentInputStore.record(report.requestedURL.absoluteString)
             recentInputs = RecentInputStore.load()
         }
@@ -57,7 +57,7 @@ public final class InspectionStore {
     }
 
     public func inspectRecent(_ recentInput: String) async {
-        guard normalizedURL(from: recentInput) != report?.requestedURL else {
+        guard normalizedURL(from: recentInput) != inspection?.requestedURL else {
             return
         }
 
@@ -75,10 +75,10 @@ public final class InspectionStore {
         errorMessage = nil
 
         do {
-            let report = try await TLSInspector().inspect(input: candidate)
-            self.report = report
-            self.input = report.requestedURL.absoluteString
-            RecentInputStore.record(report.requestedURL.absoluteString)
+            let inspection = try await TLSInspector().inspect(input: candidate)
+            self.inspection = inspection
+            input = inspection.requestedURL.absoluteString
+            RecentInputStore.record(inspection.requestedURL.absoluteString)
             recentInputs = RecentInputStore.load()
         } catch {
             errorMessage = error.localizedDescription

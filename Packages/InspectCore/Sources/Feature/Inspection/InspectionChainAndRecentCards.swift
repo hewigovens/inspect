@@ -2,8 +2,9 @@ import InspectCore
 import SwiftUI
 
 struct InspectionChainCard: View {
-    let report: TLSInspectionReport
-    let onOpenCertificateDetail: (TLSInspectionReport, Int) -> Void
+    let inspection: TLSInspection
+    let selectedReportIndex: Int
+    let onOpenCertificateDetail: (TLSInspection, Int, Int) -> Void
 
     var body: some View {
         InspectCard {
@@ -11,17 +12,26 @@ struct InspectionChainCard: View {
                 Text("Certificate Chain")
                     .font(.inspectRootHeadline)
 
-                ForEach(Array(report.certificates.enumerated()), id: \.element.id) { index, certificate in
-                    certificateRow(certificate: certificate, at: index)
+                ForEach(Array(selectedReport.certificates.enumerated()), id: \.element.id) { certificateIndex, certificate in
+                    certificateRow(
+                        certificate: certificate,
+                        report: selectedReport,
+                        reportIndex: selectedReportIndex,
+                        certificateIndex: certificateIndex
+                    )
                 }
             }
         }
     }
 
-    @ViewBuilder
-    private func certificateRow(certificate: CertificateDetails, at index: Int) -> some View {
+    private func certificateRow(
+        certificate: CertificateDetails,
+        report: TLSInspectionReport,
+        reportIndex: Int,
+        certificateIndex: Int
+    ) -> some View {
         Button {
-            onOpenCertificateDetail(report, index)
+            onOpenCertificateDetail(inspection, reportIndex, certificateIndex)
         } label: {
             CertificateRow(
                 certificate: certificate,
@@ -30,7 +40,11 @@ struct InspectionChainCard: View {
         }
         .buttonStyle(.plain)
         .contentShape(Rectangle())
-        .accessibilityIdentifier("chain.certificate.\(index)")
+        .accessibilityIdentifier("chain.hop.\(reportIndex).certificate.\(certificateIndex)")
+    }
+
+    private var selectedReport: TLSInspectionReport {
+        inspection.reports[selectedReportIndex]
     }
 }
 

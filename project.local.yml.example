@@ -1,0 +1,7 @@
+name: Inspect
+
+settings:
+  base:
+    DEVELOPMENT_TEAM: V28VJH6B6S
+    CODE_SIGN_STYLE: Automatic
+

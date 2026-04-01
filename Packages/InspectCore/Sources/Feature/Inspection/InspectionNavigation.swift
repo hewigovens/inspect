@@ -1,13 +1,13 @@
-import InspectCore
 import Foundation
+import InspectCore
 import SwiftUI
 
 private struct FocusInspectionInputKey: FocusedValueKey {
     typealias Value = () -> Void
 }
 
-extension FocusedValues {
-    public var focusInspectionInput: (() -> Void)? {
+public extension FocusedValues {
+    var focusInspectionInput: (() -> Void)? {
         get { self[FocusInspectionInputKey.self] }
         set { self[FocusInspectionInputKey.self] = newValue }
     }
@@ -15,11 +15,13 @@ extension FocusedValues {
 
 public struct InspectionCertificateRoute: Identifiable {
     public let id = UUID()
-    public let report: TLSInspectionReport
+    public let inspection: TLSInspection
+    public let initialReportIndex: Int
     public let initialSelectionIndex: Int
 
-    public init(report: TLSInspectionReport, initialSelectionIndex: Int) {
-        self.report = report
+    public init(inspection: TLSInspection, initialReportIndex: Int, initialSelectionIndex: Int) {
+        self.inspection = inspection
+        self.initialReportIndex = initialReportIndex
         self.initialSelectionIndex = initialSelectionIndex
     }
 }
@@ -35,40 +37,42 @@ extension InspectionCertificateRoute: Hashable {
 }
 
 #if os(macOS)
-private struct CertificateDetailSheet: View {
-    @Environment(\.dismiss) private var dismiss
-    let route: InspectionCertificateRoute
+    private struct CertificateDetailSheet: View {
+        @Environment(\.dismiss) private var dismiss
+        let route: InspectionCertificateRoute
 
-    var body: some View {
-        NavigationStack {
-            CertificateDetailView(
-                report: route.report,
-                initialSelectionIndex: route.initialSelectionIndex
-            )
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+        var body: some View {
+            NavigationStack {
+                CertificateDetailView(
+                    inspection: route.inspection,
+                    initialReportIndex: route.initialReportIndex,
+                    initialSelectionIndex: route.initialSelectionIndex
+                )
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { dismiss() }
+                    }
                 }
             }
+            .frame(width: 960, height: 720)
         }
-        .frame(width: 960, height: 720)
     }
-}
 #endif
 
-extension View {
-    public func certificateDetailDestination(_ route: Binding<InspectionCertificateRoute?>) -> some View {
+public extension View {
+    func certificateDetailDestination(_ route: Binding<InspectionCertificateRoute?>) -> some View {
         #if os(macOS)
-        self.sheet(item: route) { route in
-            CertificateDetailSheet(route: route)
-        }
+            sheet(item: route) { route in
+                CertificateDetailSheet(route: route)
+            }
         #else
-        self.navigationDestination(item: route) { route in
-            CertificateDetailView(
-                report: route.report,
-                initialSelectionIndex: route.initialSelectionIndex
-            )
-        }
+            navigationDestination(item: route) { route in
+                CertificateDetailView(
+                    inspection: route.inspection,
+                    initialReportIndex: route.initialReportIndex,
+                    initialSelectionIndex: route.initialSelectionIndex
+                )
+            }
         #endif
     }
 }

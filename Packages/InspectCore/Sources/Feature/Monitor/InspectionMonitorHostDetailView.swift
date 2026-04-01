@@ -68,7 +68,6 @@ struct InspectionMonitorHostDetailView: View {
         }
     }
 
-    @ViewBuilder
     private var certificateCard: some View {
         InspectCard {
             VStack(alignment: .leading, spacing: 14) {
@@ -85,7 +84,8 @@ struct InspectionMonitorHostDetailView: View {
 
                     Button {
                         certificateRoute = InspectionCertificateRoute(
-                            report: report,
+                            inspection: TLSInspection(report: report),
+                            initialReportIndex: 0,
                             initialSelectionIndex: 0
                         )
                     } label: {

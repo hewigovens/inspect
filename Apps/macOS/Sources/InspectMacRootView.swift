@@ -1,4 +1,5 @@
 import AppKit
+import InspectCore
 import InspectKit
 import SwiftUI
 
@@ -56,7 +57,8 @@ struct InspectMacRootView: View {
             case let .report(report, opensCertificateDetail):
                 if opensCertificateDetail {
                     externalCertificateRoute = InspectionCertificateRoute(
-                        report: report,
+                        inspection: TLSInspection(report: report),
+                        initialReportIndex: 0,
                         initialSelectionIndex: 0
                     )
                 } else {
@@ -77,7 +79,8 @@ struct InspectMacRootView: View {
         case let .report(report, opensCertificateDetail):
             if opensCertificateDetail {
                 externalCertificateRoute = InspectionCertificateRoute(
-                    report: report,
+                    inspection: TLSInspection(report: report),
+                    initialReportIndex: 0,
                     initialSelectionIndex: 0
                 )
             }
@@ -99,26 +102,35 @@ struct InspectMacRootView: View {
     @ViewBuilder
     private var detailView: some View {
         let inspectSessionID = appModel.inspectSessionID
-
-        switch appModel.selectedSection {
-        case .inspect:
+        ZStack {
             InspectionRootView(
                 showsMonitorCard: false,
                 showsAboutCard: false
             )
             .id(inspectSessionID)
-        case .monitor:
+            .opacity(appModel.selectedSection == .inspect ? 1 : 0)
+            .allowsHitTesting(appModel.selectedSection == .inspect)
+            .accessibilityHidden(appModel.selectedSection != .inspect)
+
             InspectionMonitorView {
                 await manager.refresh()
             }
-        case .settings:
+            .opacity(appModel.selectedSection == .monitor ? 1 : 0)
+            .allowsHitTesting(appModel.selectedSection == .monitor)
+            .accessibilityHidden(appModel.selectedSection != .monitor)
+
             InspectMacSettingsView(manager: manager)
-        case nil:
-            ContentUnavailableView(
-                "Select a Section",
-                systemImage: "sidebar.left",
-                description: Text("Choose Inspect, Monitor, or Settings from the sidebar.")
-            )
+                .opacity(appModel.selectedSection == .settings ? 1 : 0)
+                .allowsHitTesting(appModel.selectedSection == .settings)
+                .accessibilityHidden(appModel.selectedSection != .settings)
+
+            if appModel.selectedSection == nil {
+                ContentUnavailableView(
+                    "Select a Section",
+                    systemImage: "sidebar.left",
+                    description: Text("Choose Inspect, Monitor, or Settings from the sidebar.")
+                )
+            }
         }
     }
 }

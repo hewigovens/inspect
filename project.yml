@@ -1,5 +1,9 @@
 name: Inspect
 
+include:
+  - path: project.local.yml
+    enable: ${INCLUDE_LOCAL_PROJECT_YML}
+
 options:
   bundleIdPrefix: in.fourplex
   createIntermediateGroups: true

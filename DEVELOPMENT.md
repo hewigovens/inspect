@@ -112,8 +112,11 @@ One-time setup:
 
 ```bash
 cp Configs/LocalOverrides.xcconfig.example Configs/LocalOverrides.xcconfig
+cp project.local.yml.example project.local.yml
 cp .env.example .env
 ```
+
+For local Xcode signing, set your `DEVELOPMENT_TEAM` in `project.local.yml`. The generate script merges that file into `project.yml` so the generated project gets automatic signing target attributes as well as build settings.
 
 Required `.env` values:
 
