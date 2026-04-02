@@ -126,5 +126,9 @@ generate_xcode_project() {
 
   cd "$repo_root"
   log "Generating Xcode project"
-  xcodegen generate
+  if [[ -f "project.local.yml" ]]; then
+    INCLUDE_LOCAL_PROJECT_YML=YES xcodegen generate -s project.yml
+  else
+    INCLUDE_LOCAL_PROJECT_YML=NO xcodegen generate -s project.yml
+  fi
 }

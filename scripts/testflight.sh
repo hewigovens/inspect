@@ -39,12 +39,38 @@ validate_app_access() {
   }
 }
 
+resolve_build_number() {
+  if [[ -n "${TESTFLIGHT_BUILD_NUMBER:-}" ]]; then
+    return
+  fi
+
+  local max_build
+  max_build="$(
+    run_asc builds list --app "$app_id" --output json 2>/dev/null \
+    | python3 -c '
+import json, sys
+data = json.load(sys.stdin)
+builds = [int(b["attributes"]["version"]) for b in data.get("data", []) if b["attributes"].get("version", "").isdigit()]
+print(max(builds) if builds else 0)
+'
+  )" || max_build=0
+
+  local project_build
+  project_build="$(grep 'CURRENT_PROJECT_VERSION:' "$repo_root/project.yml" | head -1 | awk '{print $2}' 2>/dev/null || echo 0)"
+  project_build="${project_build:-0}"
+
+  local next_build=$(( max_build > project_build ? max_build + 1 : project_build ))
+  export TESTFLIGHT_BUILD_NUMBER="$next_build"
+  log "Resolved build number: $next_build (ASC max: $max_build, project.yml: $project_build)"
+}
+
 archive_build() {
   local -a archive_command
   local -a export_command
 
   build_xcode_auth_args
   generate_xcode_project "$repo_root"
+  resolve_build_number
 
   mkdir -p "$release_root"
   rm -rf "$archive_path" "$export_path"
