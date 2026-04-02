@@ -106,21 +106,22 @@ private final class RequestRunner: NSObject, URLSessionDataDelegate, URLSessionT
         }
     }
 
+    private static let cipherSuiteNames: [tls_ciphersuite_t: String] = [
+        .RSA_WITH_AES_128_GCM_SHA256: "RSA AES-128-GCM SHA256",
+        .RSA_WITH_AES_256_GCM_SHA384: "RSA AES-256-GCM SHA384",
+        .ECDHE_RSA_WITH_AES_128_GCM_SHA256: "ECDHE-RSA AES-128-GCM SHA256",
+        .ECDHE_RSA_WITH_AES_256_GCM_SHA384: "ECDHE-RSA AES-256-GCM SHA384",
+        .ECDHE_ECDSA_WITH_AES_128_GCM_SHA256: "ECDHE-ECDSA AES-128-GCM SHA256",
+        .ECDHE_ECDSA_WITH_AES_256_GCM_SHA384: "ECDHE-ECDSA AES-256-GCM SHA384",
+        .ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256: "ECDHE-RSA ChaCha20-Poly1305",
+        .ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256: "ECDHE-ECDSA ChaCha20-Poly1305",
+        .AES_128_GCM_SHA256: "AES-128-GCM SHA256",
+        .AES_256_GCM_SHA384: "AES-256-GCM SHA384",
+        .CHACHA20_POLY1305_SHA256: "ChaCha20-Poly1305 SHA256",
+    ]
+
     static func cipherSuiteName(_ suite: tls_ciphersuite_t) -> String {
-        switch suite {
-        case .RSA_WITH_AES_128_GCM_SHA256: return "RSA AES-128-GCM SHA256"
-        case .RSA_WITH_AES_256_GCM_SHA384: return "RSA AES-256-GCM SHA384"
-        case .ECDHE_RSA_WITH_AES_128_GCM_SHA256: return "ECDHE-RSA AES-128-GCM SHA256"
-        case .ECDHE_RSA_WITH_AES_256_GCM_SHA384: return "ECDHE-RSA AES-256-GCM SHA384"
-        case .ECDHE_ECDSA_WITH_AES_128_GCM_SHA256: return "ECDHE-ECDSA AES-128-GCM SHA256"
-        case .ECDHE_ECDSA_WITH_AES_256_GCM_SHA384: return "ECDHE-ECDSA AES-256-GCM SHA384"
-        case .ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256: return "ECDHE-RSA ChaCha20-Poly1305"
-        case .ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256: return "ECDHE-ECDSA ChaCha20-Poly1305"
-        case .AES_128_GCM_SHA256: return "AES-128-GCM SHA256"
-        case .AES_256_GCM_SHA384: return "AES-256-GCM SHA384"
-        case .CHACHA20_POLY1305_SHA256: return "ChaCha20-Poly1305 SHA256"
-        default: return "0x\(String(suite.rawValue, radix: 16, uppercase: true))"
-        }
+        cipherSuiteNames[suite] ?? "0x\(String(suite.rawValue, radix: 16, uppercase: true))"
     }
 
     func urlSession(_: URLSession, dataTask _: URLSessionDataTask, didReceive _: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
@@ -140,7 +141,7 @@ private final class RequestRunner: NSObject, URLSessionDataDelegate, URLSessionT
         }
 
         let reports = buildReports()
-        guard reports.isEmpty == false else {
+        guard !reports.isEmpty else {
             continuation?.resume(throwing: error ?? InspectionError.missingServerTrust)
             continuation = nil
             return
@@ -156,8 +157,22 @@ private final class RequestRunner: NSObject, URLSessionDataDelegate, URLSessionT
     }
 
     private func buildReports() -> [TLSInspectionReport] {
-        capturedTrustEvents.enumerated().compactMap { index, event in
-            let transaction = transactionMetrics[safe: index]
+        // Match trust events to transactions by host rather than index.
+        // URLSession may skip TLS challenges on connection reuse, so
+        // index-based pairing can pair the wrong metadata with a host.
+        var metricsByHost: [String: [URLSessionTaskTransactionMetrics]] = [:]
+        for metric in transactionMetrics {
+            if let host = metric.request.url?.host?.lowercased() {
+                metricsByHost[host, default: []].append(metric)
+            }
+        }
+
+        return capturedTrustEvents.compactMap { event in
+            let hostKey = event.host.lowercased()
+            let transaction = metricsByHost[hostKey]?.first
+            if transaction != nil {
+                metricsByHost[hostKey]?.removeFirst()
+            }
             let requestURL = transaction?.request.url ?? event.requestURL ?? makeFallbackURL(host: event.host)
             guard let requestURL else {
                 return nil

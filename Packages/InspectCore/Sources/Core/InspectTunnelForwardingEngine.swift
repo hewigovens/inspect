@@ -62,5 +62,7 @@ public protocol InspectTunnelForwardingEngine: AnyObject, Sendable {
 }
 
 public extension InspectTunnelForwardingEngine {
-    func drainObservations() -> [TLSFlowObservation] { [] }
+    func drainObservations() -> [TLSFlowObservation] {
+        []
+    }
 }

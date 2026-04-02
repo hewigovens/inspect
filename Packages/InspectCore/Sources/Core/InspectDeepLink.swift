@@ -10,7 +10,7 @@ public enum InspectDeepLink: Sendable, Equatable {
             components.scheme = InspectScheme.scheme
             components.host = InspectScheme.certificateDetailHost
             components.queryItems = [
-                URLQueryItem(name: InspectScheme.tokenQueryItemName, value: token)
+                URLQueryItem(name: InspectScheme.tokenQueryItemName, value: token),
             ]
             return components.url!
         }
@@ -27,7 +27,8 @@ public enum InspectDeepLink: Sendable, Equatable {
                 .queryItems?
                 .first(where: { $0.name == InspectScheme.tokenQueryItemName })?
                 .value,
-                  token.isEmpty == false else {
+                token.isEmpty == false
+            else {
                 return nil
             }
 

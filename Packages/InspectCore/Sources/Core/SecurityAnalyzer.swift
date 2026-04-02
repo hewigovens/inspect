@@ -10,10 +10,19 @@ public struct SecurityAnalyzer: Sendable {
                     severity: .critical,
                     title: "No Certificate Chain",
                     message: "The handshake completed without a parseable certificate chain."
-                )
+                ),
             ])
         }
 
+        var findings: [SecurityFinding] = []
+        findings.append(contentsOf: trustAndIdentityFindings(requestedURL: requestedURL, trust: trust, leaf: leaf))
+        findings.append(contentsOf: leafProfileFindings(leaf: leaf, trust: trust))
+        findings.append(contentsOf: keyAndSignatureFindings(leaf: leaf))
+        findings.append(contentsOf: chainFindings(leaf: leaf, certificates: certificates))
+        return SecurityAssessment(findings: findings)
+    }
+
+    private func trustAndIdentityFindings(requestedURL: URL, trust: TrustSummary, leaf: CertificateDetails) -> [SecurityFinding] {
         var findings: [SecurityFinding] = []
 
         if trust.isTrusted {
@@ -63,6 +72,12 @@ public struct SecurityAnalyzer: Sendable {
             ))
         }
 
+        return findings
+    }
+
+    private func leafProfileFindings(leaf: CertificateDetails, trust: TrustSummary) -> [SecurityFinding] {
+        var findings: [SecurityFinding] = []
+
         if leaf.isSelfIssued {
             findings.append(SecurityFinding(
                 severity: trust.isTrusted ? .warning : .critical,
@@ -71,7 +86,7 @@ public struct SecurityAnalyzer: Sendable {
             ))
         }
 
-        if leaf.dnsNames.isEmpty && leaf.ipAddresses.isEmpty {
+        if leaf.dnsNames.isEmpty, leaf.ipAddresses.isEmpty {
             findings.append(SecurityFinding(
                 severity: .warning,
                 title: "No Subject Alternative Name",
@@ -94,6 +109,12 @@ public struct SecurityAnalyzer: Sendable {
                 message: "The leaf key usage includes certificate-signing capabilities, which is not expected for a normal web server certificate."
             ))
         }
+
+        return findings
+    }
+
+    private func keyAndSignatureFindings(leaf: CertificateDetails) -> [SecurityFinding] {
+        var findings: [SecurityFinding] = []
 
         if let bitSize = leaf.publicKey.bitSize, leaf.publicKey.algorithm == "RSA" {
             if bitSize < 1024 {
@@ -120,8 +141,15 @@ public struct SecurityAnalyzer: Sendable {
             ))
         }
 
+        return findings
+    }
+
+    private func chainFindings(leaf: CertificateDetails, certificates: [CertificateDetails]) -> [SecurityFinding] {
+        var findings: [SecurityFinding] = []
+
         if leaf.extendedKeyUsage.isEmpty == false,
-           leaf.extendedKeyUsage.contains(where: isServerAuthUsage) == false {
+           leaf.extendedKeyUsage.contains(where: isServerAuthUsage) == false
+        {
             findings.append(SecurityFinding(
                 severity: .warning,
                 title: "Missing Server Auth EKU",
@@ -138,7 +166,7 @@ public struct SecurityAnalyzer: Sendable {
         }
 
         let interceptionProducts = detectedInterceptionProducts(in: certificates)
-        if interceptionProducts.isEmpty == false {
+        if !interceptionProducts.isEmpty {
             findings.append(SecurityFinding(
                 severity: .warning,
                 title: "Possible TLS Interception Product",
@@ -148,7 +176,7 @@ public struct SecurityAnalyzer: Sendable {
 
         findings.append(contentsOf: chainLinkageFindings(certificates: certificates))
 
-        return SecurityAssessment(findings: findings)
+        return findings
     }
 
     private func chainLinkageFindings(certificates: [CertificateDetails]) -> [SecurityFinding] {
@@ -160,7 +188,8 @@ public struct SecurityAnalyzer: Sendable {
 
         for (child, issuer) in zip(certificates, certificates.dropFirst()) {
             guard let authorityKeyID = child.authorityKeyIdentifier.first(where: { $0.label == "Key Identifier" })?.value,
-                  let subjectKeyID = issuer.subjectKeyIdentifier else {
+                  let subjectKeyID = issuer.subjectKeyIdentifier
+            else {
                 continue
             }
 
@@ -241,7 +270,7 @@ public struct SecurityAnalyzer: Sendable {
             ("burp", "Burp"),
             ("charles", "Charles"),
             ("fiddler", "Fiddler"),
-            ("proxyman", "Proxyman")
+            ("proxyman", "Proxyman"),
         ]
 
         var matches = Set<String>()

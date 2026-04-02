@@ -68,7 +68,8 @@ final class InspectMacWindowController {
 
     private func installDockIcon() {
         guard let iconURL = Bundle.main.url(forResource: "Inspect", withExtension: "icns"),
-              let iconImage = NSImage(contentsOf: iconURL) else {
+              let iconImage = NSImage(contentsOf: iconURL)
+        else {
             return
         }
 
@@ -79,7 +80,7 @@ final class InspectMacWindowController {
 struct InspectMacWindowReader: NSViewRepresentable {
     let onResolve: @MainActor (NSWindow) -> Void
 
-    func makeNSView(context: Context) -> NSView {
+    func makeNSView(context _: Context) -> NSView {
         let view = NSView(frame: .zero)
         DispatchQueue.main.async {
             if let window = view.window {
@@ -89,7 +90,7 @@ struct InspectMacWindowReader: NSViewRepresentable {
         return view
     }
 
-    func updateNSView(_ nsView: NSView, context: Context) {
+    func updateNSView(_ nsView: NSView, context _: Context) {
         DispatchQueue.main.async {
             if let window = nsView.window {
                 onResolve(window)

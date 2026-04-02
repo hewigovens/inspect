@@ -1,6 +1,6 @@
 public enum InspectionCommonStrings {
-    public static let yes = "Yes"
-    public static let no = "No"
+    public static let yesLabel = "Yes"
+    public static let noLabel = "No"
 
     public enum VPNStatus {
         public static let invalid = "Invalid"

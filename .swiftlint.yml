@@ -2,8 +2,10 @@ disabled_rules:
   - line_length
   - file_length
   - type_body_length
-  - identifier_name
-  - cyclomatic_complexity
+  - function_body_length
+  - opening_brace
+  - optional_data_string_conversion
+  - trailing_comma
 
 excluded:
   - Carthage
@@ -12,5 +14,10 @@ excluded:
   - .build
   - ./QRCode
 
+
+identifier_name:
+  excluded:
+    - i
+    - id
 
 force_cast: warning

@@ -95,9 +95,9 @@ public struct InspectAboutSettingsSection: View {
 
     private var versionFont: Font {
         #if os(macOS)
-        .body.weight(.medium)
+            .body.weight(.medium)
         #else
-        .subheadline.weight(.medium)
+            .subheadline.weight(.medium)
         #endif
     }
 }

@@ -4,6 +4,15 @@ mod rust
 default:
     @just --list --list-submodules
 
+lint:
+    swiftlint lint --quiet Apps Packages/InspectCore/Sources
+
+format:
+    swiftformat Apps Packages/InspectCore/Sources
+
+update-ct-logs:
+    python3 scripts/update_ct_logs.py
+
 generate:
     ./scripts/xcodegen_generate.sh
 

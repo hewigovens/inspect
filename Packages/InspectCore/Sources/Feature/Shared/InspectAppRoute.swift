@@ -13,7 +13,7 @@ public enum InspectAppRoute: Sendable, Equatable {
         case let .section(section):
             components.host = InspectScheme.sectionHost
             components.queryItems = [
-                URLQueryItem(name: InspectScheme.sectionQueryItemName, value: section.rawValue.lowercased())
+                URLQueryItem(name: InspectScheme.sectionQueryItemName, value: section.rawValue.lowercased()),
             ]
         case .toggleLiveMonitor:
             components.host = InspectScheme.toggleLiveMonitorHost
@@ -32,7 +32,8 @@ public enum InspectAppRoute: Sendable, Equatable {
             guard let rawSection = URLComponents(url: url, resolvingAgainstBaseURL: false)?
                 .queryItems?
                 .first(where: { $0.name == InspectScheme.sectionQueryItemName })?
-                .value else {
+                .value
+            else {
                 return nil
             }
 

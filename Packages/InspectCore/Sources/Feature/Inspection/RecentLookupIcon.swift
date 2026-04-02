@@ -101,7 +101,7 @@ private enum FaviconCache {
         do {
             let (data, response) = try await session.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse,
-                  (200..<300).contains(httpResponse.statusCode),
+                  (200 ..< 300).contains(httpResponse.statusCode),
                   data.isEmpty == false
             else {
                 return nil

@@ -27,17 +27,17 @@ public struct InspectSettingsIconLabel: View {
 
     private var settingsIconCornerRadius: CGFloat {
         #if os(macOS)
-        8
+            8
         #else
-        9
+            9
         #endif
     }
 
     private var settingsIconFontSize: CGFloat {
         #if os(macOS)
-        13
+            13
         #else
-        14
+            14
         #endif
     }
 }

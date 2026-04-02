@@ -2,12 +2,10 @@ import Foundation
 
 enum TLSClientHelloSNIExtractor {
     static func serverName(from payload: [UInt8]) -> String? {
-        guard payload.count >= 5 else {
-            return nil
-        }
-
-        guard payload[0] == TLSRecordContentType.handshake,
-              payload[1] == TLSVersion.major else {
+        guard payload.count >= 5,
+              payload[0] == TLSRecordContentType.handshake,
+              payload[1] == TLSVersion.major
+        else {
             return nil
         }
 
@@ -18,12 +16,17 @@ enum TLSClientHelloSNIExtractor {
         }
 
         var cursor = 5
-
-        guard payload[cursor] == TLSHandshakeType.clientHello else {
+        guard let extensionsStart = skipToExtensions(payload: payload, cursor: &cursor, recordEnd: recordEnd) else {
             return nil
         }
 
-        guard cursor + 4 <= recordEnd else {
+        return findSNIExtension(payload: payload, cursor: extensionsStart, extensionsEnd: cursor)
+    }
+
+    private static func skipToExtensions(payload: [UInt8], cursor: inout Int, recordEnd: Int) -> Int? {
+        guard payload[cursor] == TLSHandshakeType.clientHello,
+              cursor + 4 <= recordEnd
+        else {
             return nil
         }
 
@@ -34,57 +37,47 @@ enum TLSClientHelloSNIExtractor {
         cursor += 4
 
         let handshakeEnd = min(recordEnd, cursor + handshakeLength)
-        guard handshakeEnd > cursor else {
+        guard handshakeEnd > cursor,
+              cursor + 34 <= handshakeEnd
+        else {
             return nil
         }
 
         // client_version(2) + random(32)
-        guard cursor + 34 <= handshakeEnd else {
-            return nil
-        }
         cursor += 34
 
-        // session_id (1-byte length prefix)
-        guard cursor + 1 <= handshakeEnd else {
-            return nil
-        }
-        let sessionIDLength = Int(payload[cursor])
-        cursor += 1 + sessionIDLength
-        guard cursor <= handshakeEnd else {
-            return nil
-        }
-
-        // cipher_suites (2-byte length prefix)
-        guard cursor + 2 <= handshakeEnd else {
-            return nil
-        }
-        let cipherSuitesLength = (Int(payload[cursor]) << 8) | Int(payload[cursor + 1])
-        cursor += 2 + cipherSuitesLength
-        guard cursor <= handshakeEnd else {
+        guard skipField(payload: payload, cursor: &cursor, end: handshakeEnd, lengthBytes: 1),
+              skipField(payload: payload, cursor: &cursor, end: handshakeEnd, lengthBytes: 2),
+              skipField(payload: payload, cursor: &cursor, end: handshakeEnd, lengthBytes: 1),
+              cursor + 2 <= handshakeEnd
+        else {
             return nil
         }
 
-        // compression_methods (1-byte length prefix)
-        guard cursor + 1 <= handshakeEnd else {
-            return nil
-        }
-        let compressionMethodsLength = Int(payload[cursor])
-        cursor += 1 + compressionMethodsLength
-        guard cursor <= handshakeEnd else {
-            return nil
-        }
-
-        // extensions (2-byte length prefix)
-        guard cursor + 2 <= handshakeEnd else {
-            return nil
-        }
         let extensionsLength = (Int(payload[cursor]) << 8) | Int(payload[cursor + 1])
         cursor += 2
         let extensionsEnd = min(handshakeEnd, cursor + extensionsLength)
-        guard extensionsEnd > cursor else {
-            return nil
-        }
+        guard extensionsEnd > cursor else { return nil }
 
+        let extensionsStart = cursor
+        cursor = extensionsEnd
+        return extensionsStart
+    }
+
+    private static func skipField(payload: [UInt8], cursor: inout Int, end: Int, lengthBytes: Int) -> Bool {
+        guard cursor + lengthBytes <= end else { return false }
+        let length: Int
+        if lengthBytes == 1 {
+            length = Int(payload[cursor])
+        } else {
+            length = (Int(payload[cursor]) << 8) | Int(payload[cursor + 1])
+        }
+        cursor += lengthBytes + length
+        return cursor <= end
+    }
+
+    private static func findSNIExtension(payload: [UInt8], cursor: Int, extensionsEnd: Int) -> String? {
+        var cursor = cursor
         while cursor + 4 <= extensionsEnd {
             let extensionType = (UInt16(payload[cursor]) << 8) | UInt16(payload[cursor + 1])
             let extensionLength = (Int(payload[cursor + 2]) << 8) | Int(payload[cursor + 3])
@@ -130,10 +123,11 @@ enum TLSClientHelloSNIExtractor {
             }
 
             if nameType == TLSServerNameType.hostName {
-                let nameBytes = Array(bytes[cursor..<(cursor + nameLength)])
+                let nameBytes = Array(bytes[cursor ..< (cursor + nameLength)])
                 guard let name = String(bytes: nameBytes, encoding: .utf8)?
                     .trimmingCharacters(in: .whitespacesAndNewlines),
-                    name.isEmpty == false else {
+                    name.isEmpty == false
+                else {
                     return nil
                 }
 

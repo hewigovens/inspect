@@ -18,20 +18,20 @@ struct InspectAppRootView: View {
                     showsMonitorCard: false,
                     showsAboutCard: false
                 )
-                    .tabItem {
-                        Label(InspectSection.inspect.title, systemImage: InspectSection.inspect.systemImage)
-                    }
-                    .tag(InspectSection.inspect)
-                    .accessibilityIdentifier("tab.inspect")
+                .tabItem {
+                    Label(InspectSection.inspect.title, systemImage: InspectSection.inspect.systemImage)
+                }
+                .tag(InspectSection.inspect)
+                .accessibilityIdentifier("tab.inspect")
 
                 InspectionMonitorView {
                     await liveMonitorManager.refresh()
                 }
-                    .tabItem {
-                        Label(InspectSection.monitor.title, systemImage: InspectSection.monitor.systemImage)
-                    }
-                    .tag(InspectSection.monitor)
-                    .accessibilityIdentifier("tab.monitor")
+                .tabItem {
+                    Label(InspectSection.monitor.title, systemImage: InspectSection.monitor.systemImage)
+                }
+                .tag(InspectSection.monitor)
+                .accessibilityIdentifier("tab.monitor")
 
                 InspectSettingsView(manager: liveMonitorManager)
                     .tabItem {

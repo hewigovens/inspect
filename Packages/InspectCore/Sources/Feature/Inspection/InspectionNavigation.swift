@@ -54,7 +54,7 @@ extension InspectionCertificateRoute: Hashable {
                     }
                 }
             }
-            .frame(width: 960, height: 720)
+            .frame(width: 1080, height: 720)
         }
     }
 #endif

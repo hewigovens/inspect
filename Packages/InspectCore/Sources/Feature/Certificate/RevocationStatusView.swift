@@ -74,8 +74,8 @@ struct RevocationStatusBadge: View {
         case .unchecked: return "OCSP and CRL endpoints"
         case .checking: return nil
         case .good: return "OCSP/CRL verification passed"
-        case .revoked(let reason): return reason
-        case .unreachable(let reason): return reason
+        case let .revoked(reason): return reason
+        case let .unreachable(reason): return reason
         }
     }
 }

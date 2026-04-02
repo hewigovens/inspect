@@ -13,7 +13,8 @@ public enum InspectionSharedReportStore {
     public static func consume(token: String) -> TLSInspectionReport? {
         guard let url = fileURL(for: token),
               let data = try? Data(contentsOf: url),
-              let report = try? JSONDecoder().decode(TLSInspectionReport.self, from: data) else {
+              let report = try? JSONDecoder().decode(TLSInspectionReport.self, from: data)
+        else {
             return nil
         }
 

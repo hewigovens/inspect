@@ -1,6 +1,6 @@
+import Foundation
 import InspectCore
 import InspectKit
-import Foundation
 @preconcurrency import NetworkExtension
 import Observation
 
@@ -184,7 +184,8 @@ final class InspectMacLiveMonitorManager {
 
         if preservesActiveStatus,
            LiveMonitorTunnelState.isActive(for: status),
-           LiveMonitorTunnelState.isActive(for: refreshedStatus) == false {
+           LiveMonitorTunnelState.isActive(for: refreshedStatus) == false
+        {
             effectiveStatus = status
         } else {
             effectiveStatus = refreshedStatus

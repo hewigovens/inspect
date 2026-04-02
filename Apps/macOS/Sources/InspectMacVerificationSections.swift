@@ -1,5 +1,5 @@
-import InspectKit
 import InspectCore
+import InspectKit
 @preconcurrency import NetworkExtension
 import SwiftUI
 
@@ -32,7 +32,7 @@ struct InspectMacVerificationProfileCard: View {
                 GridRow {
                     Text("Configured")
                         .foregroundStyle(.secondary)
-                    Text(isConfigured ? InspectionCommonStrings.yes : InspectionCommonStrings.no)
+                    Text(isConfigured ? InspectionCommonStrings.yesLabel : InspectionCommonStrings.noLabel)
                         .fontWeight(.medium)
                 }
 

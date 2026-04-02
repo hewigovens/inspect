@@ -18,13 +18,13 @@ final class MacSystemExtensionActivator: NSObject, OSSystemExtensionRequestDeleg
         }
     }
 
-    func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
+    func requestNeedsUserApproval(_: OSSystemExtensionRequest) {
         onApprovalRequired?()
     }
 
     func request(
         _ request: OSSystemExtensionRequest,
-        didFinishWithResult result: OSSystemExtensionRequest.Result
+        didFinishWithResult _: OSSystemExtensionRequest.Result
     ) {
         finish(request: request, result: .success(()))
     }
@@ -37,9 +37,9 @@ final class MacSystemExtensionActivator: NSObject, OSSystemExtensionRequestDeleg
     }
 
     func request(
-        _ request: OSSystemExtensionRequest,
-        actionForReplacingExtension existing: OSSystemExtensionProperties,
-        withExtension ext: OSSystemExtensionProperties
+        _: OSSystemExtensionRequest,
+        actionForReplacingExtension _: OSSystemExtensionProperties,
+        withExtension _: OSSystemExtensionProperties
     ) -> OSSystemExtensionRequest.ReplacementAction {
         .replace
     }

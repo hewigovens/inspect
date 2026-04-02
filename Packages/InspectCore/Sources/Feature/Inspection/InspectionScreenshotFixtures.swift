@@ -13,7 +13,7 @@ enum InspectionScreenshotFixtures {
                 severity: .good,
                 title: "Trusted Chain",
                 message: "The captured chain validated successfully."
-            )
+            ),
         ],
         certificates: [
             makeCertificate(
@@ -39,7 +39,7 @@ enum InspectionScreenshotFixtures {
                 fingerprint: "55:66:77:88",
                 isLeaf: false,
                 isRoot: true
-            )
+            ),
         ]
     )
 
@@ -56,7 +56,7 @@ enum InspectionScreenshotFixtures {
                 fingerprint: "99:AA:BB:CC",
                 isLeaf: true,
                 isRoot: false
-            )
+            ),
         ]
     )
 
@@ -98,8 +98,8 @@ enum InspectionScreenshotFixtures {
         title: String,
         issuer: String,
         fingerprint: String,
-        isLeaf: Bool,
-        isRoot: Bool
+        isLeaf: Bool = false,
+        isRoot: Bool = false
     ) -> CertificateDetails {
         CertificateDetails(
             id: "\(host)-\(title)",

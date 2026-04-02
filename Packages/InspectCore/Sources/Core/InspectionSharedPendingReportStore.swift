@@ -15,7 +15,8 @@ public enum InspectionSharedPendingReportStore {
         }
 
         guard let token = defaults.string(forKey: defaultsKey),
-              token.isEmpty == false else {
+              token.isEmpty == false
+        else {
             return nil
         }
 

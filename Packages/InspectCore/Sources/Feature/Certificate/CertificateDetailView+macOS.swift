@@ -11,23 +11,6 @@
 
                         InspectCard {
                             VStack(alignment: .leading, spacing: 14) {
-                                if inspection.didRedirect {
-                                    VStack(alignment: .leading, spacing: 10) {
-                                        Text("TLS Hop")
-                                            .font(.inspectRootHeadline)
-
-                                        Picker("TLS Hop", selection: $selectedReportIndex) {
-                                            ForEach(Array(inspection.reports.enumerated()), id: \.element.id) { index, report in
-                                                Text("Hop \(index + 1) • \(report.host)").tag(index)
-                                            }
-                                        }
-                                        .labelsHidden()
-                                        .onChange(of: selectedReportIndex) { _, newValue in
-                                            updateReportSelection(to: newValue)
-                                        }
-                                    }
-                                }
-
                                 Text("Certificate Chain")
                                     .font(.inspectRootHeadline)
 
@@ -42,7 +25,7 @@
                     }
                     .padding(EdgeInsets(top: 52, leading: 16, bottom: 16, trailing: 16))
                 }
-                .frame(minWidth: 260, idealWidth: 290, maxWidth: 320)
+                .frame(minWidth: 280, idealWidth: 340, maxWidth: 380)
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
@@ -134,9 +117,6 @@
                                 title: "Chain Position",
                                 value: "\(selectedIndex + 1) of \((selectedReport?.certificates.count ?? 0))"
                             )
-                            if inspection.didRedirect {
-                                MacCertificateQuickFact(title: "TLS Hop", value: "Hop \(selectedReportIndex + 1) of \(inspection.reports.count)")
-                            }
                         }
                     }
 

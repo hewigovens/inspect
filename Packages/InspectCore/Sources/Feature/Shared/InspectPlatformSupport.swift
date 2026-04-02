@@ -2,29 +2,31 @@ import Foundation
 import SwiftUI
 
 #if os(iOS)
-import UIKit
-typealias InspectPlatformColor = UIColor
-typealias InspectPlatformImage = UIImage
+    import UIKit
+
+    typealias InspectPlatformColor = UIColor
+    typealias InspectPlatformImage = UIImage
 #elseif os(macOS)
-import AppKit
-typealias InspectPlatformColor = NSColor
-typealias InspectPlatformImage = NSImage
+    import AppKit
+
+    typealias InspectPlatformColor = NSColor
+    typealias InspectPlatformImage = NSImage
 #endif
 
 enum InspectPlatform {
     static func dynamicColor(light: InspectPlatformColor, dark: InspectPlatformColor) -> Color {
         #if os(iOS)
-        Color(
-            uiColor: UIColor { traits in
-                traits.userInterfaceStyle == .dark ? dark : light
-            }
-        )
+            Color(
+                uiColor: UIColor { traits in
+                    traits.userInterfaceStyle == .dark ? dark : light
+                }
+            )
         #elseif os(macOS)
-        Color(
-            nsColor: NSColor(name: nil) { appearance in
-                appearance.bestMatch(from: [.darkAqua, .vibrantDark]) != nil ? dark : light
-            }
-        )
+            Color(
+                nsColor: NSColor(name: nil) { appearance in
+                    appearance.bestMatch(from: [.darkAqua, .vibrantDark]) != nil ? dark : light
+                }
+            )
         #endif
     }
 
@@ -42,75 +44,75 @@ enum InspectPlatform {
 
     static var cardFillDark: InspectPlatformColor {
         #if os(iOS)
-        UIColor.secondarySystemGroupedBackground.withAlphaComponent(0.92)
+            UIColor.secondarySystemGroupedBackground.withAlphaComponent(0.92)
         #elseif os(macOS)
-        NSColor(
-            red: 0.11,
-            green: 0.13,
-            blue: 0.18,
-            alpha: 0.94
-        )
+            NSColor(
+                red: 0.11,
+                green: 0.13,
+                blue: 0.18,
+                alpha: 0.94
+            )
         #endif
     }
 
     static var chromeFillDark: InspectPlatformColor {
         #if os(iOS)
-        UIColor.tertiarySystemGroupedBackground.withAlphaComponent(0.98)
+            UIColor.tertiarySystemGroupedBackground.withAlphaComponent(0.98)
         #elseif os(macOS)
-        NSColor(
-            red: 0.16,
-            green: 0.18,
-            blue: 0.24,
-            alpha: 0.98
-        )
+            NSColor(
+                red: 0.16,
+                green: 0.18,
+                blue: 0.24,
+                alpha: 0.98
+            )
         #endif
     }
 
     static var chromeMutedFillDark: InspectPlatformColor {
         #if os(iOS)
-        UIColor.secondarySystemGroupedBackground.withAlphaComponent(0.98)
+            UIColor.secondarySystemGroupedBackground.withAlphaComponent(0.98)
         #elseif os(macOS)
-        NSColor(
-            red: 0.20,
-            green: 0.22,
-            blue: 0.29,
-            alpha: 0.96
-        )
+            NSColor(
+                red: 0.20,
+                green: 0.22,
+                blue: 0.29,
+                alpha: 0.96
+            )
         #endif
     }
 
     static var groupedBackground: Color {
         #if os(iOS)
-        Color(uiColor: .systemGroupedBackground)
+            Color(uiColor: .systemGroupedBackground)
         #elseif os(macOS)
-        Color(nsColor: .windowBackgroundColor)
+            Color(nsColor: .windowBackgroundColor)
         #endif
     }
 
     static var secondaryGroupedBackground: Color {
         #if os(iOS)
-        Color(uiColor: .secondarySystemGroupedBackground)
+            Color(uiColor: .secondarySystemGroupedBackground)
         #elseif os(macOS)
-        Color(nsColor: .controlBackgroundColor)
+            Color(nsColor: .controlBackgroundColor)
         #endif
     }
 
     static func pasteboardString() -> String? {
         #if os(iOS)
-        UIPasteboard.general.string
+            UIPasteboard.general.string
         #elseif os(macOS)
-        NSPasteboard.general.string(forType: .string)
+            NSPasteboard.general.string(forType: .string)
         #endif
     }
 
     @MainActor
     static func copyToPasteboard(_ value: String) {
         #if os(iOS)
-        UIPasteboard.general.string = value
-        UINotificationFeedbackGenerator().notificationOccurred(.success)
+            UIPasteboard.general.string = value
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
         #elseif os(macOS)
-        NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(value, forType: .string)
+            NSPasteboard.general.clearContents()
+            NSPasteboard.general.setString(value, forType: .string)
         #endif
     }
 
@@ -120,17 +122,17 @@ enum InspectPlatform {
 
     static var topBarLeadingPlacement: ToolbarItemPlacement {
         #if os(iOS)
-        .topBarLeading
+            .topBarLeading
         #elseif os(macOS)
-        .automatic
+            .automatic
         #endif
     }
 
     static var topBarTrailingPlacement: ToolbarItemPlacement {
         #if os(iOS)
-        .topBarTrailing
+            .topBarTrailing
         #elseif os(macOS)
-        .automatic
+            .automatic
         #endif
     }
 }
@@ -138,9 +140,9 @@ enum InspectPlatform {
 extension Image {
     init(platformImage: InspectPlatformImage) {
         #if os(iOS)
-        self.init(uiImage: platformImage)
+            self.init(uiImage: platformImage)
         #elseif os(macOS)
-        self.init(nsImage: platformImage)
+            self.init(nsImage: platformImage)
         #endif
     }
 }
@@ -148,61 +150,57 @@ extension Image {
 extension View {
     func inspectPlatformURLField() -> some View {
         #if os(iOS)
-        self
-            .textInputAutocapitalization(.never)
-            .keyboardType(.URL)
-            .autocorrectionDisabled()
-            .submitLabel(.go)
+            textInputAutocapitalization(.never)
+                .keyboardType(.URL)
+                .autocorrectionDisabled()
+                .submitLabel(.go)
         #elseif os(macOS)
-        self
-            .autocorrectionDisabled()
-            .submitLabel(.go)
+            autocorrectionDisabled()
+                .submitLabel(.go)
         #endif
     }
 
     func inspectInlineNavigationTitle() -> some View {
         #if os(iOS)
-        self.navigationBarTitleDisplayMode(.inline)
+            navigationBarTitleDisplayMode(.inline)
         #elseif os(macOS)
-        self
+            self
         #endif
     }
 
     func inspectNavigationBarVisible() -> some View {
         #if os(iOS)
-        self.toolbar(.visible, for: .navigationBar)
+            toolbar(.visible, for: .navigationBar)
         #elseif os(macOS)
-        self
+            self
         #endif
     }
 
     func inspectNavigationBarHidden() -> some View {
         #if os(iOS)
-        self.toolbar(.hidden, for: .navigationBar)
+            toolbar(.hidden, for: .navigationBar)
         #elseif os(macOS)
-        self
+            self
         #endif
     }
 
     func inspectGroupedListStyle(background: Color) -> some View {
         #if os(iOS)
-        self
-            .listStyle(.insetGrouped)
-            .scrollContentBackground(.hidden)
-            .background(background)
+            listStyle(.insetGrouped)
+                .scrollContentBackground(.hidden)
+                .background(background)
         #elseif os(macOS)
-        self
-            .listStyle(.inset)
-            .scrollContentBackground(.hidden)
-            .background(background)
+            listStyle(.inset)
+                .scrollContentBackground(.hidden)
+                .background(background)
         #endif
     }
 
     func inspectScrollDismissesKeyboard() -> some View {
         #if os(iOS)
-        self.scrollDismissesKeyboard(.immediately)
+            scrollDismissesKeyboard(.immediately)
         #elseif os(macOS)
-        self
+            self
         #endif
     }
 }

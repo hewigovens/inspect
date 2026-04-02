@@ -8,9 +8,9 @@ public enum InspectionError: LocalizedError, Sendable {
 
     public var errorDescription: String? {
         switch self {
-        case .invalidURL(let raw):
+        case let .invalidURL(raw):
             return "'\(raw)' is not a valid HTTPS URL."
-        case .unsupportedScheme(let scheme):
+        case let .unsupportedScheme(scheme):
             return "Only HTTPS URLs are supported. Received: \(scheme ?? "unknown")."
         case .missingServerTrust:
             return "The TLS handshake finished without exposing a server trust chain."

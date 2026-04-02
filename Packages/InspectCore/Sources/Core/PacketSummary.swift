@@ -42,7 +42,7 @@ struct PacketSummary {
                 String(bytes[16]),
                 String(bytes[17]),
                 String(bytes[18]),
-                String(bytes[19])
+                String(bytes[19]),
             ].joined(separator: ".")
 
             transport = Self.transport(for: protocolNumber)
@@ -64,7 +64,7 @@ struct PacketSummary {
             }
 
             let protocolNumber = bytes[6]
-            let destinationSlice = bytes[24..<40]
+            let destinationSlice = bytes[24 ..< 40]
 
             transport = Self.transport(for: protocolNumber)
             remoteHost = Self.ipv6String(from: destinationSlice)
@@ -96,8 +96,9 @@ struct PacketSummary {
     }
 
     private static func destinationPort(from bytes: [UInt8], protocolNumber: UInt8, transportOffset: Int) -> Int? {
-        guard (protocolNumber == IPProtocol.tcp || protocolNumber == IPProtocol.udp),
-              bytes.count >= transportOffset + 4 else {
+        guard protocolNumber == IPProtocol.tcp || protocolNumber == IPProtocol.udp,
+              bytes.count >= transportOffset + 4
+        else {
             return nil
         }
 
@@ -108,7 +109,8 @@ struct PacketSummary {
 
     private static func serverName(from bytes: [UInt8], protocolNumber: UInt8, transportOffset: Int) -> String? {
         guard protocolNumber == IPProtocol.tcp,
-              bytes.count >= transportOffset + 20 else {
+              bytes.count >= transportOffset + 20
+        else {
             return nil
         }
 

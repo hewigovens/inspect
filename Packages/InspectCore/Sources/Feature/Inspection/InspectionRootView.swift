@@ -73,6 +73,11 @@ public struct InspectionRootView: View {
 
             handleExternalRequest(request)
         }
+        .onChange(of: store.isLoading) { _, isLoading in
+            if isLoading {
+                selectedReportIndex = 0
+            }
+        }
         .onChange(of: store.inspection?.id) { _, _ in
             guard screenshotScenario == nil, let report = store.inspection?.primaryReport else {
                 return
@@ -114,7 +119,8 @@ public struct InspectionRootView: View {
 
     private var rootContent: some View {
         let inspection = store.inspection
-        let report = inspection?.primaryReport
+        let clampedIndex = min(selectedReportIndex, max((inspection?.reports.count ?? 1) - 1, 0))
+        let report = inspection?.reports[safe: clampedIndex]
         let recentItems = screenshotScenario?.showsRecents == false
             ? []
             : store.recentInputs.map(RecentLookupItem.init)

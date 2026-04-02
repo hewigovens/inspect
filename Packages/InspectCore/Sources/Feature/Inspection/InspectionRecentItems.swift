@@ -1,5 +1,5 @@
-import InspectCore
 import Foundation
+import InspectCore
 
 enum RecentInputFormatter {
     static func host(for recent: String) -> String? {

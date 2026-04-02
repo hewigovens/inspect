@@ -7,17 +7,22 @@ struct InspectionRedirectsCard: View {
 
     var body: some View {
         InspectCard {
-            VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: 0) {
                 Text("Redirects")
                     .font(.inspectRootHeadline)
+                    .padding(.bottom, 14)
 
                 ForEach(Array(inspection.reports.enumerated()), id: \.element.id) { index, report in
+                    if index > 0 {
+                        Divider()
+                    }
+
                     Button {
                         selectedReportIndex = index
                     } label: {
-                        HStack(spacing: 12) {
-                            Text("Hop \(index + 1)")
-                                .font(.inspectRootCaption)
+                        HStack(alignment: .center, spacing: 12) {
+                            Text("\(index + 1).")
+                                .font(.inspectRootSubheadlineSemibold)
                                 .foregroundStyle(.secondary)
 
                             Text(report.host)
@@ -41,14 +46,10 @@ struct InspectionRedirectsCard: View {
                                     .foregroundStyle(.tertiary)
                             }
                         }
-                        .padding(.vertical, 8)
+                        .padding(.vertical, 12)
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-
-                    if inspection.reports.indices.contains(index + 1) {
-                        Divider()
-                    }
                 }
             }
         }

@@ -31,15 +31,15 @@ private struct CertificatePolicies {
     let policies: [PolicyInformation]
 
     init(_ ext: X509.Certificate.Extension) throws {
-        self.policies = try DER.sequence(
+        policies = try DER.sequence(
             of: PolicyInformation.self,
             identifier: .sequence,
-            rootNode: try DER.parse(ext.value)
+            rootNode: DER.parse(ext.value)
         )
     }
 }
 
-private struct PolicyInformation: DERParseable, Sendable {
+private struct PolicyInformation: DERParseable {
     let identifier: ASN1ObjectIdentifier
     let qualifiers: [PolicyQualifier]
 
@@ -64,7 +64,7 @@ private struct PolicyInformation: DERParseable, Sendable {
     }
 }
 
-private struct PolicyQualifier: DERParseable, Sendable {
+private struct PolicyQualifier: DERParseable {
     let label: String
     let value: String
 
@@ -77,12 +77,14 @@ private struct PolicyQualifier: DERParseable, Sendable {
             let qualifierValue = try ASN1Any(derEncoded: &nodes)
 
             if qualifierID == Self.cpsQualifierID,
-               let cpsURI = try? ASN1IA5String(asn1Any: qualifierValue) {
+               let cpsURI = try? ASN1IA5String(asn1Any: qualifierValue)
+            {
                 return PolicyQualifier(label: "CPS URI", value: String(decoding: cpsURI.bytes, as: UTF8.self))
             }
 
             if qualifierID == Self.userNoticeQualifierID,
-               let userNotice = try? UserNotice(asn1Any: qualifierValue) {
+               let userNotice = try? UserNotice(asn1Any: qualifierValue)
+            {
                 return PolicyQualifier(label: "User Notice", value: userNotice.value)
             }
 
@@ -99,7 +101,7 @@ private struct PolicyQualifier: DERParseable, Sendable {
     }
 }
 
-private struct UserNotice: DERParseable, Sendable {
+private struct UserNotice: DERParseable {
     let value: String
 
     init(derEncoded node: ASN1Node) throws {

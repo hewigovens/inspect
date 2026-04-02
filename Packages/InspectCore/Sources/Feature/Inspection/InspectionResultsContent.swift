@@ -67,6 +67,6 @@ struct InspectionResultsContent: View {
     }
 
     private var selectedReport: TLSInspectionReport? {
-        inspection?.reports[safe: selectedReportIndex]
+        inspection?.reports[safe: min(selectedReportIndex, (inspection?.reports.count ?? 1) - 1)]
     }
 }

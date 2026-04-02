@@ -56,7 +56,7 @@ struct TLSServerCertificateCapture {
                 return nil
             }
 
-            let payload = Data(recordBuffer[5..<totalRecordLength])
+            let payload = Data(recordBuffer[5 ..< totalRecordLength])
             recordBuffer.removeFirst(totalRecordLength)
 
             switch contentType {
@@ -93,7 +93,7 @@ struct TLSServerCertificateCapture {
                 return nil
             }
 
-            let body = Data(handshakeBuffer[4..<totalHandshakeLength])
+            let body = Data(handshakeBuffer[4 ..< totalHandshakeLength])
             handshakeBuffer.removeFirst(totalHandshakeLength)
 
             guard handshakeType == TLSHandshakeType.certificate else {
@@ -132,7 +132,7 @@ struct TLSServerCertificateCapture {
                 return nil
             }
 
-            certificates.append(Data(body[cursor..<(cursor + certificateLength)]))
+            certificates.append(Data(body[cursor ..< (cursor + certificateLength)]))
             cursor += certificateLength
         }
 
@@ -171,7 +171,7 @@ struct TLSServerCertificateCapture {
                 return nil
             }
 
-            certificates.append(Data(body[cursor..<(cursor + certificateLength)]))
+            certificates.append(Data(body[cursor ..< (cursor + certificateLength)]))
             cursor += certificateLength
 
             guard cursor + 2 <= body.count else {
@@ -197,7 +197,7 @@ struct TLSServerCertificateCapture {
 
     private static func int24(at offset: Int, in data: Data) -> Int {
         (Int(data[offset]) << 16) |
-        (Int(data[offset + 1]) << 8) |
-        Int(data[offset + 2])
+            (Int(data[offset + 1]) << 8) |
+            Int(data[offset + 2])
     }
 }

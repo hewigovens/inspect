@@ -6,7 +6,7 @@ struct InspectBackground: View {
             colors: [
                 .inspectBackgroundStart,
                 .inspectBackgroundMiddle,
-                .inspectBackgroundEnd
+                .inspectBackgroundEnd,
             ],
             startPoint: .topLeading,
             endPoint: .bottomTrailing

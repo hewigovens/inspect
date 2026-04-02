@@ -1,6 +1,6 @@
 import Foundation
 
-struct InspectMacTunnelProfile: Sendable {
+struct InspectMacTunnelProfile {
     let localizedDescription: String
     let serverAddress: String
     let providerBundleIdentifier: String

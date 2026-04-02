@@ -4,10 +4,6 @@
     extension CertificateDetailView {
         var platformContent: some View {
             List {
-                if inspection.didRedirect {
-                    reportSection
-                }
-
                 chainSection
 
                 Section {
@@ -34,22 +30,6 @@
             }
         }
 
-        var reportSection: some View {
-            Section {
-                Picker("TLS Hop", selection: $selectedReportIndex) {
-                    ForEach(Array(inspection.reports.enumerated()), id: \.element.id) { index, report in
-                        Text("Hop \(index + 1) • \(report.host)").tag(index)
-                    }
-                }
-                .pickerStyle(.navigationLink)
-                .onChange(of: selectedReportIndex) { _, newValue in
-                    updateReportSelection(to: newValue)
-                }
-            } header: {
-                sectionHeader("TLS Hop")
-            }
-        }
-
         var chainSection: some View {
             Section {
                 CompactCertificateChainPanel(
@@ -60,7 +40,7 @@
                 )
                 .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             } header: {
-                sectionHeader(inspection.didRedirect ? "Certificate Chain For Selected Hop" : "Certificate Chain")
+                sectionHeader("Certificate Chain")
             }
         }
 

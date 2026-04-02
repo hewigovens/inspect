@@ -119,10 +119,9 @@ struct InspectMacRootView: View {
             .allowsHitTesting(appModel.selectedSection == .monitor)
             .accessibilityHidden(appModel.selectedSection != .monitor)
 
-            InspectMacSettingsView(manager: manager)
-                .opacity(appModel.selectedSection == .settings ? 1 : 0)
-                .allowsHitTesting(appModel.selectedSection == .settings)
-                .accessibilityHidden(appModel.selectedSection != .settings)
+            if appModel.selectedSection == .settings {
+                InspectMacSettingsView(manager: manager)
+            }
 
             if appModel.selectedSection == nil {
                 ContentUnavailableView(

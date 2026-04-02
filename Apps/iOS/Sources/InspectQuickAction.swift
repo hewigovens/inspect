@@ -1,5 +1,5 @@
-import UIKit
 import InspectKit
+import UIKit
 
 enum InspectQuickAction {
     static let inspectType = "in.fourplex.Inspect.shortcut.inspect"

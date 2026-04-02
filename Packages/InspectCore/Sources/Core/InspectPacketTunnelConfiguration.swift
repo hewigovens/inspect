@@ -1,7 +1,7 @@
 import Foundation
 import NetworkExtension
 
-struct InspectPacketTunnelConfiguration: Equatable, Sendable {
+struct InspectPacketTunnelConfiguration: Equatable {
     static let liveMonitor = InspectPacketTunnelConfiguration(
         ipv4Address: "198.18.0.1",
         ipv4SubnetMask: "255.255.255.0",

@@ -7,7 +7,7 @@ struct InspectionMonitorEntry: Identifiable, Equatable {
     let note: String?
 
     init(event: TLSProbeEvent, note: String?) {
-        self.id = event.id
+        id = event.id
         self.event = event
         self.note = note
     }
@@ -33,7 +33,7 @@ enum InspectionMonitoredHostState: Equatable {
     }
 }
 
-enum InspectionMonitoredHostCertificateAvailability: Equatable {
+enum MonitoredHostCertAvailability: Equatable {
     case captured
     case pending
 
@@ -54,9 +54,11 @@ struct InspectionMonitoredHost: Identifiable, Equatable {
     let lastSeenAt: Date
     let latestReport: TLSInspectionReport?
     let state: InspectionMonitoredHostState
-    let certificateAvailability: InspectionMonitoredHostCertificateAvailability
+    let certificateAvailability: MonitoredHostCertAvailability
 
-    var id: String { host }
+    var id: String {
+        host
+    }
 
     var statusTitle: String {
         state.title
@@ -102,7 +104,9 @@ enum InspectionMonitorHostFilter: String, CaseIterable, Identifiable {
     case review
     case pending
 
-    var id: String { rawValue }
+    var id: String {
+        rawValue
+    }
 
     var title: String {
         switch self {

@@ -2,9 +2,9 @@ import UIKit
 
 final class InspectAppDelegate: NSObject, UIApplicationDelegate {
     func application(
-        _ application: UIApplication,
+        _: UIApplication,
         configurationForConnecting connectingSceneSession: UISceneSession,
-        options: UIScene.ConnectionOptions
+        options _: UIScene.ConnectionOptions
     ) -> UISceneConfiguration {
         let configuration = UISceneConfiguration(
             name: nil,
