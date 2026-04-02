@@ -185,13 +185,7 @@ public struct InspectionRootView: View {
                 selectedReportIndex: $selectedReportIndex,
                 recentItems: recentItems,
                 currentReportURL: report?.requestedURL,
-                onInspectRecent: { recentInput in
-                    await store.inspectRecent(recentInput)
-                },
-                onClearRecents: {
-                    store.clearRecents()
-                },
-                onOpenCertificateDetail: openCertificateDetail,
+                delegate: self,
                 isInputFocused: $isInputFocused
             )
 
@@ -278,7 +272,7 @@ public struct InspectionRootView: View {
                 InspectionChainCard(
                     inspection: inspection,
                     selectedReportIndex: selectedReportIndex,
-                    onOpenCertificateDetail: openCertificateDetail
+                    actions: self
                 )
                 .id("chain")
             }
@@ -290,12 +284,7 @@ public struct InspectionRootView: View {
                 InspectionRecentCard(
                     items: recentItems,
                     currentReportURL: inspection?.requestedURL,
-                    onInspectRecent: { recentInput in
-                        await store.inspectRecent(recentInput)
-                    },
-                    onClearRecents: {
-                        store.clearRecents()
-                    },
+                    actions: self,
                     isInputFocused: $isInputFocused
                 )
                 .id("recents")
@@ -371,5 +360,23 @@ public struct InspectionRootView: View {
                 initialSelectionIndex: 0
             )
         }
+    }
+}
+
+extension InspectionRootView: InspectionResultsActions {
+    func inspectRecent(_ input: String) async {
+        await store.inspectRecent(input)
+    }
+
+    func removeRecent(_ input: String) {
+        store.removeRecent(input)
+    }
+
+    func clearRecents() {
+        store.clearRecents()
+    }
+
+    func openCertificateDetail(inspection: TLSInspection, reportIndex: Int, certificateIndex: Int) {
+        openCertificateDetail(inspection, reportIndex, certificateIndex)
     }
 }

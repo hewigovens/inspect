@@ -10,7 +10,7 @@
 
 ## Release Pipeline
 
-iOS and macOS share the same `MARKETING_VERSION` in `project.yml` but need separate `CURRENT_PROJECT_VERSION` (build numbers) because App Store Connect requires unique build numbers per platform upload.
+iOS and macOS share the same `MARKETING_VERSION` in `project.yml`. The testflight script auto-resolves build numbers by querying App Store Connect for the highest existing build and using `max(ASC max + 1, project.yml)`.
 
 **iOS TestFlight:**
 ```
@@ -25,10 +25,10 @@ TESTFLIGHT_SCHEME=InspectMac TESTFLIGHT_DESTINATION="generic/platform=macOS" jus
 **Both platforms (sequential):**
 ```
 just testflight
-TESTFLIGHT_SCHEME=InspectMac TESTFLIGHT_DESTINATION="generic/platform=macOS" TESTFLIGHT_BUILD_NUMBER=<next> just testflight
+TESTFLIGHT_SCHEME=InspectMac TESTFLIGHT_DESTINATION="generic/platform=macOS" just testflight
 ```
 
-The script auto-detects `.ipa` (iOS) vs `.pkg` (macOS) and uses the correct `asc` upload flag (`--ipa` vs `--pkg`). macOS builds require a separate build number if the same number was already uploaded for iOS.
+The script auto-detects `.ipa` (iOS) vs `.pkg` (macOS) and uses the correct `asc` upload flag (`--ipa` vs `--pkg`). Override with `TESTFLIGHT_BUILD_NUMBER` if needed.
 
 After upgrading Xcode, run "Download Manual Profiles" in Xcode > Settings > Accounts before building, otherwise the iOS export will fail with a missing `embedded.mobileprovision` error.
 
@@ -44,6 +44,14 @@ After upgrading Xcode, run "Download Manual Profiles" in Xcode > Settings > Acco
 - Reuse shared primitives before adding app-local duplicates. Current shared examples include `InspectSection`, `InspectIconTile`, `InspectionAppMetadata`, `InspectAppLinks`, and the unified settings components in `InspectSettingsComponents.swift`.
 - When macOS and iOS share the same app-level concept, prefer one shared model in `InspectKit` rather than parallel enums or duplicated constants in each app target. Settings rows, diagnostics/about sections, and error normalization are already unified in InspectKit.
 - Consolidate conditional compilation in one place when possible. `Layout.swift` uses a single `PlatformValues` struct; prefer that pattern over scattering `#if os(...)` branches through feature views.
+
+### MVVM + Protocol-Oriented Views
+
+- Views should not take closures for user actions. Define a protocol (e.g. `InspectionRecentActions`) that declares the actions a view needs, then pass the conforming object as `actions:`.
+- Compose action protocols when a parent view aggregates children: `protocol InspectionResultsActions: InspectionChainActions, InspectionRecentActions {}`.
+- The parent view (e.g. `InspectionRootView`) conforms to the composed protocol via an extension, keeping action implementations out of the view body.
+- Name action protocols `*Actions` (not `*Delegate`) to avoid triggering the `class_delegate_protocol` lint rule — these are used by value-type views.
+- Keep UI text concise. Prefer short labels (“Not checked”, “Checking…”) over verbose descriptions.
 
 ## InspectKit Feature Directory Structure
 

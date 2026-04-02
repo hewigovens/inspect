@@ -1,10 +1,15 @@
 import InspectCore
 import SwiftUI
 
+@MainActor
+protocol InspectionChainActions {
+    func openCertificateDetail(inspection: TLSInspection, reportIndex: Int, certificateIndex: Int)
+}
+
 struct InspectionChainCard: View {
     let inspection: TLSInspection
     let selectedReportIndex: Int
-    let onOpenCertificateDetail: (TLSInspection, Int, Int) -> Void
+    let actions: InspectionChainActions
 
     var body: some View {
         InspectCard {
@@ -31,7 +36,11 @@ struct InspectionChainCard: View {
         certificateIndex: Int
     ) -> some View {
         Button {
-            onOpenCertificateDetail(inspection, reportIndex, certificateIndex)
+            actions.openCertificateDetail(
+                inspection: inspection,
+                reportIndex: reportIndex,
+                certificateIndex: certificateIndex
+            )
         } label: {
             CertificateRow(
                 certificate: certificate,
@@ -48,11 +57,17 @@ struct InspectionChainCard: View {
     }
 }
 
+@MainActor
+protocol InspectionRecentActions {
+    func inspectRecent(_ input: String) async
+    func removeRecent(_ input: String)
+    func clearRecents()
+}
+
 struct InspectionRecentCard: View {
     let items: [RecentLookupItem]
     let currentReportURL: URL?
-    let onInspectRecent: (String) async -> Void
-    let onClearRecents: () -> Void
+    let actions: InspectionRecentActions
     let isInputFocused: FocusState<Bool>.Binding
 
     var body: some View {
@@ -64,7 +79,7 @@ struct InspectionRecentCard: View {
 
                     Spacer()
 
-                    Button("Clear", action: onClearRecents)
+                    Button("Clear") { actions.clearRecents() }
                         .font(.inspectRootCaptionSemibold)
                         .foregroundStyle(.secondary)
                         .buttonStyle(.plain)
@@ -72,47 +87,58 @@ struct InspectionRecentCard: View {
                 }
 
                 ForEach(Array(items.enumerated()), id: \.element.id) { index, recent in
-                    let isCurrent = recent.normalizedURL == currentReportURL
-
-                    Button {
-                        isInputFocused.wrappedValue = false
-                        Task {
-                            await onInspectRecent(recent.rawInput)
-                        }
-                    } label: {
-                        HStack(spacing: 12) {
-                            RecentLookupIcon(host: recent.host)
-
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text(recent.primaryText)
-                                    .font(.inspectRootSubheadlineSemibold)
-                                    .foregroundStyle(.primary)
-                                    .multilineTextAlignment(.leading)
-
-                                if let secondaryText = recent.secondaryText {
-                                    Text(secondaryText)
-                                        .font(.inspectRootCaption)
-                                        .foregroundStyle(.secondary)
-                                        .lineLimit(1)
-                                }
-                            }
-
-                            Spacer()
-
-                            if isCurrent {
-                                Text("Current")
-                                    .font(.inspectRootCaptionSemibold)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                        .padding(.vertical, 8)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .contentShape(Rectangle())
-                    .accessibilityIdentifier("recent.\(index)")
+                    recentRow(recent: recent, index: index)
                 }
+            }
+        }
+    }
+
+    private func recentRow(recent: RecentLookupItem, index: Int) -> some View {
+        let isCurrent = recent.normalizedURL == currentReportURL
+
+        return Button {
+            isInputFocused.wrappedValue = false
+            Task {
+                await actions.inspectRecent(recent.rawInput)
+            }
+        } label: {
+            HStack(spacing: 12) {
+                RecentLookupIcon(host: recent.host)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(recent.primaryText)
+                        .font(.inspectRootSubheadlineSemibold)
+                        .foregroundStyle(.primary)
+                        .multilineTextAlignment(.leading)
+
+                    if let secondaryText = recent.secondaryText {
+                        Text(secondaryText)
+                            .font(.inspectRootCaption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                }
+
+                Spacer()
+
+                if isCurrent {
+                    Text("Current")
+                        .font(.inspectRootCaptionSemibold)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .contentShape(Rectangle())
+        .accessibilityIdentifier("recent.\(index)")
+        .contextMenu {
+            Button(role: .destructive) {
+                actions.removeRecent(recent.rawInput)
+            } label: {
+                Label("Delete lookup", systemImage: "trash")
             }
         }
     }

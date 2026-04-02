@@ -10,7 +10,7 @@ public struct CertificateDetailView: View {
     @State var copyFeedback: String?
     @State var copyFeedbackToken = UUID()
     @State var presentsSSLLabs = false
-    @State var revocationStatus: RevocationStatus = .unchecked
+    @State private var revocationCache: [String: RevocationStatus] = [:]
 
     public init(inspection: TLSInspection, initialReportIndex: Int = 0, initialSelectionIndex: Int = 0) {
         self.inspection = inspection
@@ -37,6 +37,16 @@ public struct CertificateDetailView: View {
             initialReportIndex: 0,
             initialSelectionIndex: initialSelectionIndex
         )
+    }
+
+    var revocationStatus: RevocationStatus {
+        guard let key = revocationCacheKey else { return .unchecked }
+        return revocationCache[key] ?? .unchecked
+    }
+
+    private var revocationCacheKey: String? {
+        guard let cert = selectedCertificate else { return nil }
+        return "\(selectedReportIndex)-\(cert.id)"
     }
 
     var selectedReport: TLSInspectionReport? {
@@ -152,7 +162,6 @@ public struct CertificateDetailView: View {
             in: inspection.reports[safe: index],
             index: nextCertificateIndex
         )
-        revocationStatus = .unchecked
     }
 
     func copy(row: DetailLine) {
@@ -198,20 +207,20 @@ public struct CertificateDetailView: View {
     }
 
     func checkRevocation() {
-        guard let selectedReport else {
+        guard let selectedReport, let key = revocationCacheKey else {
             return
         }
 
-        revocationStatus = .checking
+        let certificatesForCheck = Array(selectedReport.certificates.dropFirst(selectedIndex))
+
+        revocationCache[key] = .checking
         Task {
             let result = await RevocationChecker.check(
-                certificates: selectedReport.certificates,
+                certificates: certificatesForCheck,
                 host: selectedReport.host
             )
             await MainActor.run {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    revocationStatus = result
-                }
+                revocationCache[key] = result
             }
         }
     }

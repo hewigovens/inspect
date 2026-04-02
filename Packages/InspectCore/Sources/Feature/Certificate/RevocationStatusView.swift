@@ -6,9 +6,11 @@ struct RevocationStatusBadge: View {
     let onCheck: () -> Void
 
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(alignment: .top, spacing: 10) {
             Image(systemName: iconName)
                 .foregroundStyle(tint)
+                .font(.body)
+                .frame(width: 20, height: 20)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
@@ -19,7 +21,7 @@ struct RevocationStatusBadge: View {
                     Text(detail)
                         .font(.inspectRootCaption)
                         .foregroundStyle(.secondary)
-                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
 
@@ -38,6 +40,7 @@ struct RevocationStatusBadge: View {
             }
         }
         .padding(.vertical, 4)
+        .animation(nil, value: status)
     }
 
     private var iconName: String {
@@ -61,19 +64,19 @@ struct RevocationStatusBadge: View {
 
     private var title: String {
         switch status {
-        case .unchecked: return "Revocation not checked"
-        case .checking: return "Checking revocation…"
+        case .unchecked: return "Status not checked"
+        case .checking: return "Checking status…"
         case .good: return "Not revoked"
-        case .revoked: return "Certificate revoked"
-        case .unreachable: return "Revocation check inconclusive"
+        case .revoked: return "Revoked"
+        case .unreachable: return "Inconclusive"
         }
     }
 
     private var detail: String? {
         switch status {
-        case .unchecked: return "OCSP and CRL endpoints"
-        case .checking: return "Querying OCSP and CRL endpoints…"
-        case .good: return "OCSP/CRL verification passed"
+        case .unchecked: return "OCSP / CRL endpoints"
+        case .checking: return nil
+        case .good: return "OCSP / CRL passed"
         case let .revoked(reason): return reason
         case let .unreachable(reason): return reason
         }

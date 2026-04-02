@@ -65,6 +65,11 @@ public final class InspectionStore {
         await inspect(recentInput)
     }
 
+    public func removeRecent(_ input: String) {
+        RecentInputStore.remove(input)
+        recentInputs = RecentInputStore.load()
+    }
+
     public func clearRecents() {
         RecentInputStore.clear()
         recentInputs = []
@@ -109,6 +114,13 @@ private enum RecentInputStore {
         var values = load().filter { $0.caseInsensitiveCompare(trimmed) != .orderedSame }
         values.insert(trimmed, at: 0)
         UserDefaults.standard.set(Array(values.prefix(limit)), forKey: key)
+    }
+
+    static func remove(_ value: String) {
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        var values = load()
+        values.removeAll { $0.caseInsensitiveCompare(trimmed) == .orderedSame }
+        UserDefaults.standard.set(values, forKey: key)
     }
 
     static func clear() {

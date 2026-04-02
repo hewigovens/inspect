@@ -1,6 +1,9 @@
 import InspectCore
 import SwiftUI
 
+@MainActor
+protocol InspectionResultsActions: InspectionChainActions, InspectionRecentActions {}
+
 struct InspectionResultsContent: View {
     let isLoading: Bool
     let errorMessage: String?
@@ -8,9 +11,7 @@ struct InspectionResultsContent: View {
     @Binding var selectedReportIndex: Int
     let recentItems: [RecentLookupItem]
     let currentReportURL: URL?
-    let onInspectRecent: (String) async -> Void
-    let onClearRecents: () -> Void
-    let onOpenCertificateDetail: (TLSInspection, Int, Int) -> Void
+    let delegate: InspectionResultsActions
     let isInputFocused: FocusState<Bool>.Binding
 
     var body: some View {
@@ -41,7 +42,7 @@ struct InspectionResultsContent: View {
                 InspectionChainCard(
                     inspection: inspection,
                     selectedReportIndex: selectedReportIndex,
-                    onOpenCertificateDetail: onOpenCertificateDetail
+                    actions: delegate
                 )
                 .id("chain")
                 InspectionSummaryCard(
@@ -53,12 +54,11 @@ struct InspectionResultsContent: View {
                     .id("security")
             }
 
-            if recentItems.isEmpty == false {
+            if !recentItems.isEmpty {
                 InspectionRecentCard(
                     items: recentItems,
                     currentReportURL: currentReportURL,
-                    onInspectRecent: onInspectRecent,
-                    onClearRecents: onClearRecents,
+                    actions: delegate,
                     isInputFocused: isInputFocused
                 )
                 .id("recents")
