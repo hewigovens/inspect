@@ -8,7 +8,10 @@ public struct LiveTLSInspectionClient: TLSInspectionClient {
     public init() {}
 
     public func inspect(url: URL) async throws -> TLSInspectionReport {
-        try await TLSInspector().inspect(url: url)
+        guard let report = try await TLSInspector().inspect(url: url).primaryReport else {
+            throw InspectionError.missingServerTrust
+        }
+        return report
     }
 }
 

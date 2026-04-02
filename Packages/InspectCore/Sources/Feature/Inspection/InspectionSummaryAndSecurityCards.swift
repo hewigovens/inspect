@@ -4,70 +4,70 @@ import SwiftUI
 struct InspectionSummaryCard: View {
     @Environment(\.openURL) private var openURL
     let report: TLSInspectionReport
+    let reportIndex: Int
     @State private var presentsSSLLabs = false
 
     var body: some View {
         InspectCard {
             VStack(alignment: .leading, spacing: 16) {
-                Text(report.host)
-                    .font(.inspectRootTitle3)
-                    .lineLimit(2)
+                Text("Connection Summary")
+                    .font(.inspectRootHeadline)
 
                 LazyVGrid(
                     columns: Array(
                         repeating: GridItem(.flexible(minimum: 0), spacing: badgeSpacing),
-                        count: min(badges.count, InspectLayout.Summary.maxBadgesPerRow)
+                        count: min(badges(for: selectedReport).count, InspectLayout.Summary.maxBadgesPerRow)
                     ),
                     alignment: .leading,
                     spacing: badgeSpacing
                 ) {
-                    ForEach(badges) { badge in
+                    ForEach(badges(for: selectedReport)) { badge in
                         Badge(text: badge.text, tint: badge.tint)
                             .frame(maxWidth: .infinity)
                     }
                 }
 
-                if let leaf = report.leafCertificate {
+                if let leaf = selectedReport.leafCertificate {
                     VStack(alignment: .leading, spacing: 12) {
                         InspectionSummaryField(title: "Issued To", value: leaf.subjectSummary)
                         InspectionSummaryField(title: "Issued By", value: leaf.issuerSummary)
                         InspectionSummaryField(title: "Validity", value: leaf.validity.status.rawValue)
-                        if let cipherSuite = report.cipherSuite {
+                        if let cipherSuite = selectedReport.cipherSuite {
                             InspectionSummaryField(title: "Cipher Suite", value: cipherSuite)
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
-                if let failureReason = report.trust.failureReason, report.trust.isTrusted == false {
+                if let failureReason = selectedReport.trust.failureReason, selectedReport.trust.isTrusted == false {
                     Text(failureReason)
                         .font(.inspectRootFootnote)
                         .foregroundStyle(.secondary)
                 }
 
-                if let sslLabsURL = report.sslLabsURL {
+                if let sslLabsURL = selectedReport.sslLabsURL {
                     Button {
                         openSSLLabs(sslLabsURL)
                     } label: {
                         Label("Open in SSL Labs", systemImage: "arrow.up.right.square")
                     }
                     .font(.inspectRootSubheadlineSemibold)
-                    .accessibilityIdentifier("action.open-ssllabs")
+                    .accessibilityIdentifier("action.open-ssllabs.\(reportIndex)")
                 }
             }
         }
-        .inspectSafariSheet(url: report.sslLabsURL, isPresented: $presentsSSLLabs)
+        .inspectSafariSheet(url: selectedReport.sslLabsURL, isPresented: $presentsSSLLabs)
     }
 
     private func openSSLLabs(_ url: URL) {
         #if os(macOS)
-        openURL(url)
+            openURL(url)
         #else
-        presentsSSLLabs = true
+            presentsSSLLabs = true
         #endif
     }
 
-    private var protocolTitle: String {
+    private func protocolTitle(for report: TLSInspectionReport) -> String {
         switch report.networkProtocolName?.lowercased() {
         case "h2":
             return "HTTP/2"
@@ -86,13 +86,17 @@ struct InspectionSummaryCard: View {
         InspectLayout.Summary.badgeSpacing
     }
 
-    private var badges: [InspectionSummaryBadge] {
+    private var selectedReport: TLSInspectionReport {
+        report
+    }
+
+    private func badges(for report: TLSInspectionReport) -> [InspectionSummaryBadge] {
         var values = [
             InspectionSummaryBadge(
                 text: report.trust.badgeText,
                 tint: report.trust.isTrusted ? .green : .orange
             ),
-            InspectionSummaryBadge(text: protocolTitle, tint: .blue)
+            InspectionSummaryBadge(text: protocolTitle(for: report), tint: .blue),
         ]
 
         if let tlsVersion = report.tlsVersion {
@@ -135,7 +139,9 @@ private struct InspectionSummaryBadge: Identifiable {
     let text: String
     let tint: Color
 
-    var id: String { text }
+    var id: String {
+        text
+    }
 }
 
 private struct InspectionSummaryField: View {
@@ -158,36 +164,39 @@ private struct InspectionSummaryField: View {
 }
 
 struct InspectionSecurityCard: View {
-    let assessment: SecurityAssessment
+    let report: TLSInspectionReport
 
     var body: some View {
         InspectCard {
             VStack(alignment: .leading, spacing: 14) {
-                HStack {
-                    Text("Security Signals")
-                        .font(.inspectRootHeadline)
+                Text("Security Signals")
+                    .font(.inspectRootHeadline)
 
-                    if assessment.showsHeadline {
-                        Spacer()
-                        Text(assessment.headline)
+                if report.security.findings.isEmpty {
+                    Text("No security findings for this hop.")
+                        .font(.inspectRootCaption)
+                        .foregroundStyle(.secondary)
+                } else {
+                    if report.security.showsHeadline {
+                        Text(report.security.headline)
                             .font(.inspectRootCaptionSemibold)
                             .foregroundStyle(.secondary)
                     }
-                }
 
-                ForEach(assessment.findings) { finding in
-                    HStack(alignment: .top, spacing: 12) {
-                        Circle()
-                            .fill(color(for: finding.severity))
-                            .frame(width: 10, height: 10)
-                            .padding(.top, 6)
+                    ForEach(report.security.findings) { finding in
+                        HStack(alignment: .top, spacing: 12) {
+                            Circle()
+                                .fill(color(for: finding.severity))
+                                .frame(width: 10, height: 10)
+                                .padding(.top, 6)
 
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text(finding.title)
-                                .font(.inspectRootSubheadlineSemibold)
-                            Text(finding.message)
-                                .font(.inspectRootCaption)
-                                .foregroundStyle(.secondary)
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(finding.title)
+                                    .font(.inspectRootSubheadlineSemibold)
+                                Text(finding.message)
+                                    .font(.inspectRootCaption)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     }
                 }

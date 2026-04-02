@@ -38,28 +38,6 @@ public struct TLSInspectionReport: Identifiable, Sendable, Equatable, Codable {
     }
 
     public var sslLabsURL: URL? {
-        URL(string: "https://www.ssllabs.com/ssltest/analyze.html?hideResults=on&d=\(host)")
-    }
-}
-
-public struct TrustSummary: Sendable, Equatable, Codable {
-    public let evaluated: Bool
-    public let isTrusted: Bool
-    public let failureReason: String?
-
-    public init(evaluated: Bool, isTrusted: Bool, failureReason: String?) {
-        self.evaluated = evaluated
-        self.isTrusted = isTrusted
-        self.failureReason = failureReason
-    }
-
-    public var badgeText: String {
-        if isTrusted {
-            return "Trusted"
-        }
-        if evaluated {
-            return "Failed"
-        }
-        return "Unchecked"
+        SSLLabs.analyzeURL(host: host)
     }
 }

@@ -1,5 +1,9 @@
 name: Inspect
 
+include:
+  - path: project.local.yml
+    enable: ${INCLUDE_LOCAL_PROJECT_YML}
+
 options:
   bundleIdPrefix: in.fourplex
   createIntermediateGroups: true
@@ -7,14 +11,10 @@ options:
     iOS: "18.0"
     macOS: "15.0"
 
-configFiles:
-  Debug: Configs/Project.xcconfig
-  Release: Configs/Project.xcconfig
-
 settings:
   base:
-    CURRENT_PROJECT_VERSION: 84
-    MARKETING_VERSION: 2.5.1
+    CURRENT_PROJECT_VERSION: 86
+    MARKETING_VERSION: 2.5.2
     SWIFT_VERSION: 6.0
     TARGETED_DEVICE_FAMILY: "1,2"
     INSPECT_APP_GROUP_IDENTIFIER: group.in.fourplex.inspect.monitor

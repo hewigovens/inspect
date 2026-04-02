@@ -5,9 +5,13 @@ public enum InspectSection: String, CaseIterable, Hashable, Identifiable, Sendab
     case monitor = "Monitor"
     case settings = "Settings"
 
-    public var id: String { rawValue }
+    public var id: String {
+        rawValue
+    }
 
-    public var title: String { rawValue }
+    public var title: String {
+        rawValue
+    }
 
     public var systemImage: String {
         switch self {

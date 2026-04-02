@@ -33,9 +33,9 @@ final class InspectionMonitorStore {
         self.flowObservationFeed = flowObservationFeed
         self.enableNetworkFeedPolling = enableNetworkFeedPolling
         self.userDefaults = userDefaults
-        self.isEnabled = userDefaults.bool(forKey: Self.enabledKey)
-        self.entries = Self.loadPersistedEntries(from: userDefaults)
-        self.lastLeafFingerprintByHost = Self.makeFingerprintIndex(from: entries)
+        isEnabled = userDefaults.bool(forKey: Self.enabledKey)
+        entries = Self.loadPersistedEntries(from: userDefaults)
+        lastLeafFingerprintByHost = Self.makeFingerprintIndex(from: entries)
         let enabledKey = Self.enabledKey
         defaultsObserver = NotificationCenter.default.addObserver(
             forName: UserDefaults.didChangeNotification,
@@ -160,7 +160,8 @@ final class InspectionMonitorStore {
             }
 
             guard case let .captured(report) = entry.event.result,
-                  latestCapturedReportByHost[host] == nil else {
+                  latestCapturedReportByHost[host] == nil
+            else {
                 continue
             }
 
@@ -181,7 +182,8 @@ final class InspectionMonitorStore {
 
         for entry in entries {
             guard case let .captured(report) = entry.event.result,
-                  report.host.lowercased() == normalizedHost else {
+                  report.host.lowercased() == normalizedHost
+            else {
                 continue
             }
 
@@ -242,7 +244,8 @@ final class InspectionMonitorStore {
 
     private func pollFeedIfNeeded() async {
         guard isEnabled,
-              let flowObservationFeed else {
+              let flowObservationFeed
+        else {
             return
         }
 
@@ -290,7 +293,7 @@ final class InspectionMonitorStore {
         let supportsActiveProbe = MonitorHostClassifier.isIPAddressLiteral(host) == false
         let firstSeenAt = entries.last?.event.occurredAt ?? lastEntry.event.occurredAt
         let state: InspectionMonitoredHostState
-        let certificateAvailability: InspectionMonitoredHostCertificateAvailability
+        let certificateAvailability: MonitoredHostCertAvailability
 
         if let latestReport {
             certificateAvailability = .captured
@@ -345,7 +348,8 @@ final class InspectionMonitorStore {
 
     private static func loadPersistedEntries(from userDefaults: UserDefaults) -> [InspectionMonitorEntry] {
         guard let data = userDefaults.data(forKey: entriesKey),
-              let snapshots = try? JSONDecoder().decode([InspectionMonitorEntrySnapshot].self, from: data) else {
+              let snapshots = try? JSONDecoder().decode([InspectionMonitorEntrySnapshot].self, from: data)
+        else {
             return []
         }
 
@@ -359,7 +363,8 @@ final class InspectionMonitorStore {
             guard case let .captured(report) = entry.event.result,
                   let leafFingerprint = report.leafCertificate?.fingerprints.first(where: {
                       $0.label.caseInsensitiveCompare("SHA-256") == .orderedSame
-                  })?.value else {
+                  })?.value
+            else {
                 continue
             }
 
@@ -375,8 +380,8 @@ private struct InspectionMonitorEntrySnapshot: Codable {
     let note: String?
 
     init(entry: InspectionMonitorEntry) {
-        self.event = entry.event
-        self.note = entry.note
+        event = entry.event
+        note = entry.note
     }
 
     var entry: InspectionMonitorEntry {

@@ -70,7 +70,7 @@ struct CertificateDetailContent {
             titled: "Validity",
             rows: [
                 DetailLine(label: "Not Valid Before", value: certificate.validity.notBefore?.inspectDisplayString ?? "Unavailable"),
-                DetailLine(label: "Not Valid After", value: certificate.validity.notAfter?.inspectDisplayString ?? "Unavailable")
+                DetailLine(label: "Not Valid After", value: certificate.validity.notAfter?.inspectDisplayString ?? "Unavailable"),
             ],
             into: &sections
         )
@@ -81,19 +81,19 @@ struct CertificateDetailContent {
                 DetailLine(label: "Version", value: certificate.version),
                 DetailLine(label: "Signature Algorithm", value: certificate.signatureAlgorithm),
                 DetailLine(label: "Serial Number", value: certificate.serialNumber, style: .stacked, monospaced: true),
-                DetailLine(label: "Raw Signature", value: certificate.signature, style: .stacked, monospaced: true)
+                DetailLine(label: "Raw Signature", value: certificate.signature, style: .stacked, monospaced: true),
             ],
             into: &sections
         )
 
         let usageRows =
             certificate.keyUsage.map { DetailLine(label: "Key Usage", value: $0) }
-            + certificate.extendedKeyUsage.map { DetailLine(label: "Extended Key Usage", value: $0) }
+                + certificate.extendedKeyUsage.map { DetailLine(label: "Extended Key Usage", value: $0) }
         appendSection(titled: "Usage", rows: usageRows, into: &sections)
 
         let namesAndAccessRows =
             certificate.subjectAlternativeNames.map(DetailLine.init)
-            + certificate.authorityInfoAccess.map(DetailLine.init)
+                + certificate.authorityInfoAccess.map(DetailLine.init)
         appendSection(titled: "Names & Access", rows: namesAndAccessRows, into: &sections)
 
         appendSection(
@@ -102,7 +102,7 @@ struct CertificateDetailContent {
                 DetailLine(label: "Algorithm", value: certificate.publicKey.algorithm),
                 DetailLine(label: "Bit Size", value: certificate.publicKey.bitSize.map(String.init) ?? "Unavailable"),
                 DetailLine(label: "SPKI SHA-256", value: certificate.publicKey.spkiSHA256Fingerprint, style: .stacked, monospaced: true),
-                DetailLine(label: "Key Data", value: certificate.publicKey.hexRepresentation, style: .stacked, monospaced: true)
+                DetailLine(label: "Key Data", value: certificate.publicKey.hexRepresentation, style: .stacked, monospaced: true),
             ],
             into: &sections
         )

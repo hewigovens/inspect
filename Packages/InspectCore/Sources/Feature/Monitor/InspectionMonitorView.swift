@@ -64,7 +64,7 @@ public struct InspectionMonitorView: View {
                         isRefreshing: isRefreshing,
                         refreshAction: cardRefreshAction
                     )
-                        .id("monitor")
+                    .id("monitor")
 
                     InspectionMonitorHostListCard(
                         store: monitorStore,
@@ -73,7 +73,7 @@ public struct InspectionMonitorView: View {
                         isSearchExpanded: $isHostSearchExpanded,
                         isSearchFocused: $isHostSearchFocused
                     )
-                        .id("monitor.hosts")
+                    .id("monitor.hosts")
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 20)

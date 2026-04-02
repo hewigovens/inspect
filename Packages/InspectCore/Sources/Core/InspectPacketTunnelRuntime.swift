@@ -27,7 +27,7 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
     ) {
         self.provider = provider
         self.observationFeed = observationFeed
-        self.logger = InspectRuntimeLogger(
+        logger = InspectRuntimeLogger(
             subsystem: loggerSubsystem,
             category: loggerCategory,
             scope: "InspectTunnel"
@@ -124,7 +124,8 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
 
         let shouldEmit = stateQueue.sync { () -> Bool in
             if let lastObservedAt = lastObservationAtByKey[endpointKey],
-               now.timeIntervalSince(lastObservedAt) < throttleInterval {
+               now.timeIntervalSince(lastObservedAt) < throttleInterval
+            {
                 return false
             }
 
@@ -256,7 +257,7 @@ public final class InspectPacketTunnelRuntime: @unchecked Sendable {
     private var tunnelFileDescriptor: Int32? {
         var buffer = [CChar](repeating: 0, count: Int(IFNAMSIZ))
 
-        for fileDescriptor: Int32 in 0...1024 {
+        for fileDescriptor: Int32 in 0 ... 1024 {
             var length = socklen_t(buffer.count)
             let interfaceName: String
             if getsockopt(

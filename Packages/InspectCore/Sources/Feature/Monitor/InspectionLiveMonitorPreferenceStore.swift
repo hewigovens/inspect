@@ -3,7 +3,7 @@ import InspectCore
 
 public enum InspectionLiveMonitorPreferenceStore {
     private static let enabledKey = "inspect.monitor.enabled.v1"
-    nonisolated(unsafe) private static let sharedDefaults = UserDefaults(suiteName: InspectSharedContainer.appGroupIdentifier) ?? .standard
+    private nonisolated(unsafe) static let sharedDefaults = UserDefaults(suiteName: InspectSharedContainer.appGroupIdentifier) ?? .standard
 
     public static var isEnabled: Bool {
         defaults.bool(forKey: enabledKey)

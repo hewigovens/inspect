@@ -19,7 +19,8 @@ public enum InspectSharedLog {
         }
 
         if FileManager.default.fileExists(atPath: fileURL.path),
-           let handle = try? FileHandle(forWritingTo: fileURL) {
+           let handle = try? FileHandle(forWritingTo: fileURL)
+        {
             do {
                 try handle.seekToEnd()
                 try handle.write(contentsOf: data)
@@ -34,7 +35,8 @@ public enum InspectSharedLog {
 
     public static func readTail(maxBytes: Int = 256 * 1024) -> String? {
         guard let fileURL = logFileURL(),
-              let handle = try? FileHandle(forReadingFrom: fileURL) else {
+              let handle = try? FileHandle(forReadingFrom: fileURL)
+        else {
             return nil
         }
         defer {
@@ -49,7 +51,8 @@ public enum InspectSharedLog {
         if fileSize > UInt64(maxBytes) {
             try? handle.seek(toOffset: fileSize - UInt64(maxBytes))
             guard let data = try? handle.readToEnd(),
-                  let raw = String(data: data, encoding: .utf8) else {
+                  let raw = String(data: data, encoding: .utf8)
+            else {
                 return nil
             }
 
@@ -64,7 +67,8 @@ public enum InspectSharedLog {
         try? handle.seek(toOffset: 0)
         guard let data = try? handle.readToEnd(),
               let text = String(data: data, encoding: .utf8),
-              text.isEmpty == false else {
+              text.isEmpty == false
+        else {
             return nil
         }
 

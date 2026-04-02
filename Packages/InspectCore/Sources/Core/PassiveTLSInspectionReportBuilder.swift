@@ -11,7 +11,8 @@ public struct PassiveTLSInspectionReportBuilder: Sendable {
         guard let certificateChainDER = observation.capturedCertificateChainDER,
               certificateChainDER.isEmpty == false,
               let host = observation.passiveInspectionHost,
-              let requestedURL = makeRequestedURL(host: host, port: observation.remotePort) else {
+              let requestedURL = makeRequestedURL(host: host, port: observation.remotePort)
+        else {
             return nil
         }
 

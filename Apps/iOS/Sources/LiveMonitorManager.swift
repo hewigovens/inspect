@@ -1,10 +1,10 @@
+import Foundation
 import InspectCore
 import InspectKit
-import Foundation
 @preconcurrency import NetworkExtension
 import Observation
 #if canImport(WidgetKit)
-import WidgetKit
+    import WidgetKit
 #endif
 
 @MainActor
@@ -36,10 +36,10 @@ final class LiveMonitorManager {
             if desiredLiveMonitorEnabled == nil {
                 desiredLiveMonitorEnabled = LiveMonitorTunnelState.isActive(for: manager.connection.status)
             }
-            self.lastErrorMessage = nil
+            lastErrorMessage = nil
             logger.verbose("Refresh complete. status=\(manager.connection.status.inspectionDescription) configured=\(manager.isEnabled)")
         } catch {
-            self.lastErrorMessage = error.localizedDescription
+            lastErrorMessage = error.localizedDescription
             logger.critical("Refresh failed: \(error.localizedDescription)")
         }
     }
@@ -167,9 +167,9 @@ final class LiveMonitorManager {
         InspectionLiveMonitorPreferenceStore.setEnabled(
             LiveMonitorTunnelState.isActive(for: currentStatus)
         )
-#if canImport(WidgetKit)
-        WidgetCenter.shared.reloadTimelines(ofKind: InspectWidgetKind.liveMonitor)
-#endif
+        #if canImport(WidgetKit)
+            WidgetCenter.shared.reloadTimelines(ofKind: InspectWidgetKind.liveMonitor)
+        #endif
         logger.verbose("Updated state. status=\(currentStatus.inspectionDescription) configured=\(isConfigured)")
     }
 

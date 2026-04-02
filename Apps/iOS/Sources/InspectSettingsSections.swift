@@ -13,7 +13,7 @@ struct InspectTunnelSettingsSection: View {
                 systemImage: "checkmark.shield",
                 tint: .green
             ) {
-                Text(manager.isConfigured ? InspectionCommonStrings.yes : InspectionCommonStrings.no)
+                Text(manager.isConfigured ? InspectionCommonStrings.yesLabel : InspectionCommonStrings.noLabel)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.primary)
                     .monospacedDigit()

@@ -1,5 +1,5 @@
-import InspectCore
 import Foundation
+import InspectCore
 
 enum InspectionReviewPromptStore {
     private static let promptedVersionKey = "inspect.review-prompted-version.v1"

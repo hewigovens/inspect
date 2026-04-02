@@ -11,25 +11,25 @@ extension Color {
 
     static var certificateChainSelectionBackground: Color {
         #if os(macOS)
-        return .inspectAccent.opacity(0.16)
+            return .inspectAccent.opacity(0.16)
         #else
-        return .accentColor
+            return .accentColor
         #endif
     }
 
     static func certificateChainPrimaryText(isSelected: Bool) -> Color {
         #if os(macOS)
-        return .primary
+            return .primary
         #else
-        return isSelected ? .white : .primary
+            return isSelected ? .white : .primary
         #endif
     }
 
     static func certificateChainSecondaryText(isSelected: Bool) -> Color {
         #if os(macOS)
-        return .secondary
+            return .secondary
         #else
-        return isSelected ? .white.opacity(0.82) : .secondary
+            return isSelected ? .white.opacity(0.82) : .secondary
         #endif
     }
 }

@@ -13,7 +13,8 @@ enum SCTDecoder {
     static func decode(from ext: X509.Certificate.Extension) -> [LabeledValue] {
         guard ext.oid == oid,
               let outerNode = try? DER.parse(ext.value),
-              let octetString = try? ASN1OctetString(derEncoded: outerNode) else {
+              let octetString = try? ASN1OctetString(derEncoded: outerNode)
+        else {
             return []
         }
         return parseList(Array(octetString.bytes))
@@ -51,8 +52,8 @@ enum SCTDecoder {
         return entries
     }
 
-    private static func parseSingle(_ reader: inout ByteReader, end: Int) -> ParsedSCT? {
-        guard let _ = try? reader.readUInt8() else { return nil }
+    private static func parseSingle(_ reader: inout ByteReader, end _: Int) -> ParsedSCT? {
+        guard (try? reader.readUInt8()) != nil else { return nil }
 
         guard let logIDBytes = try? reader.readBytes(32) else { return nil }
         let logName = KnownCTLogs.name(forLogID: logIDBytes)
@@ -61,7 +62,7 @@ enum SCTDecoder {
         let timestamp = Date(timeIntervalSince1970: Double(timestampMs) / 1000.0).inspectDisplayString
 
         guard let extensionsLength = try? reader.readUInt16(),
-              let _ = try? reader.skip(Int(extensionsLength)) else { return nil }
+              (try? reader.skip(Int(extensionsLength))) != nil else { return nil }
 
         guard let hashAlgo = try? reader.readUInt8(),
               let sigAlgo = try? reader.readUInt8() else { return nil }

@@ -23,7 +23,8 @@ public enum InspectLogConfiguration {
     ) -> InspectLogVerbosity {
         let defaults = UserDefaults(suiteName: suiteName) ?? .standard
         guard let rawValue = defaults.string(forKey: defaultsKey),
-              let verbosity = InspectLogVerbosity(rawValue: rawValue) else {
+              let verbosity = InspectLogVerbosity(rawValue: rawValue)
+        else {
             return .criticalOnly
         }
 
@@ -48,7 +49,7 @@ public struct InspectRuntimeLogger: Sendable {
         category: String,
         scope: String
     ) {
-        self.logger = Logger(subsystem: subsystem, category: category)
+        logger = Logger(subsystem: subsystem, category: category)
         self.scope = scope
     }
 

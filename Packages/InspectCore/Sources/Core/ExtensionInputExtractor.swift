@@ -3,7 +3,7 @@ import UniformTypeIdentifiers
 
 @MainActor
 public enum ExtensionInputExtractor {
-    nonisolated private static let safariPreprocessingResultsKey = "NSExtensionJavaScriptPreprocessingResultsKey"
+    private nonisolated static let safariPreprocessingResultsKey = "NSExtensionJavaScriptPreprocessingResultsKey"
 
     public static func loadURL(from context: NSExtensionContext?) async -> URL? {
         guard let input = await loadInputString(from: context) else {
@@ -36,9 +36,11 @@ public enum ExtensionInputExtractor {
     private static func loadSafariPreprocessingInput(from items: [NSExtensionItem]) async -> String? {
         for item in items {
             for provider in item.attachments ?? []
-            where provider.hasItemConformingToTypeIdentifier(UTType.propertyList.identifier) {
+                where provider.hasItemConformingToTypeIdentifier(UTType.propertyList.identifier)
+            {
                 if let payload = await loadSafariPreprocessingPayload(from: provider),
-                   let urlString = stringValue(in: payload, keys: ["url", "URL"]) {
+                   let urlString = stringValue(in: payload, keys: ["url", "URL"])
+                {
                     return urlString
                 }
             }
@@ -56,7 +58,7 @@ public enum ExtensionInputExtractor {
 
                 for typeIdentifier in [
                     UTType.url.identifier,
-                    UTType.fileURL.identifier
+                    UTType.fileURL.identifier,
                 ] where provider.hasItemConformingToTypeIdentifier(typeIdentifier) {
                     if let value = await loadItemString(from: provider, typeIdentifier: typeIdentifier) {
                         return trimmed(value)
@@ -77,7 +79,7 @@ public enum ExtensionInputExtractor {
 
                 for typeIdentifier in [
                     UTType.plainText.identifier,
-                    UTType.text.identifier
+                    UTType.text.identifier,
                 ] where provider.hasItemConformingToTypeIdentifier(typeIdentifier) {
                     if let value = await loadItemString(from: provider, typeIdentifier: typeIdentifier) {
                         return trimmed(value)
@@ -92,12 +94,14 @@ public enum ExtensionInputExtractor {
     private static func loadAttributedFallback(from items: [NSExtensionItem]) -> String? {
         for item in items {
             if let body = item.attributedContentText?.string,
-               let trimmedBody = trimmed(body) {
+               let trimmedBody = trimmed(body)
+            {
                 return trimmedBody
             }
 
             if let title = item.attributedTitle?.string,
-               let trimmedTitle = trimmed(title) {
+               let trimmedTitle = trimmed(title)
+            {
                 return trimmedTitle
             }
         }
@@ -113,7 +117,7 @@ public enum ExtensionInputExtractor {
         }
     }
 
-    nonisolated private static func safariPreprocessingPayload(from item: NSSecureCoding?) -> [String: String]? {
+    private nonisolated static func safariPreprocessingPayload(from item: NSSecureCoding?) -> [String: String]? {
         if let dictionary = item as? [String: Any] {
             if let nested = dictionary[safariPreprocessingResultsKey] as? [String: Any] {
                 return stringDictionary(from: nested)
@@ -134,7 +138,7 @@ public enum ExtensionInputExtractor {
         return nil
     }
 
-    nonisolated private static func stringDictionary(from dictionary: [String: Any]) -> [String: String] {
+    private nonisolated static func stringDictionary(from dictionary: [String: Any]) -> [String: String] {
         var result: [String: String] = [:]
 
         for (key, value) in dictionary {
@@ -148,10 +152,11 @@ public enum ExtensionInputExtractor {
         return result
     }
 
-    nonisolated private static func stringValue(in dictionary: [String: String], keys: [String]) -> String? {
+    private nonisolated static func stringValue(in dictionary: [String: String], keys: [String]) -> String? {
         for key in keys {
             if let value = dictionary[key],
-               let trimmedValue = trimmed(value) {
+               let trimmedValue = trimmed(value)
+            {
                 return trimmedValue
             }
         }
@@ -207,7 +212,7 @@ public enum ExtensionInputExtractor {
         }
     }
 
-    nonisolated private static func stringValue(from item: NSSecureCoding?) -> String? {
+    private nonisolated static func stringValue(from item: NSSecureCoding?) -> String? {
         if let url = item as? URL {
             return url.absoluteString
         }
@@ -231,7 +236,7 @@ public enum ExtensionInputExtractor {
         return nil
     }
 
-    nonisolated private static func trimmed(_ value: String) -> String? {
+    private nonisolated static func trimmed(_ value: String) -> String? {
         let trimmedValue = value.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmedValue.isEmpty ? nil : trimmedValue
     }

@@ -2,7 +2,9 @@ public struct ByteReader {
     private let data: [UInt8]
     public private(set) var offset: Int = 0
 
-    public var remaining: Int { data.count - offset }
+    public var remaining: Int {
+        data.count - offset
+    }
 
     public init(_ data: [UInt8]) {
         self.data = data
@@ -32,7 +34,7 @@ public struct ByteReader {
     public mutating func readUInt64() throws -> UInt64 {
         guard offset + 8 <= data.count else { throw ByteReaderError.truncated }
         var value: UInt64 = 0
-        for i in 0..<8 {
+        for i in 0 ..< 8 {
             value = value << 8 | UInt64(data[offset + i])
         }
         offset += 8
@@ -41,7 +43,7 @@ public struct ByteReader {
 
     public mutating func readBytes(_ count: Int) throws -> [UInt8] {
         guard offset + count <= data.count else { throw ByteReaderError.truncated }
-        let bytes = Array(data[offset..<offset + count])
+        let bytes = Array(data[offset ..< offset + count])
         offset += count
         return bytes
     }

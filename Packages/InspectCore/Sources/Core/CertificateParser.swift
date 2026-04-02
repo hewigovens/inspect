@@ -154,11 +154,11 @@ public struct CertificateParser: Sendable {
         switch constraints {
         case .notCertificateAuthority:
             return [LabeledValue(label: "Certificate Authority", value: "No")]
-        case .isCertificateAuthority(let maxPathLength):
+        case let .isCertificateAuthority(maxPathLength):
             if let maxPathLength {
                 return [
                     LabeledValue(label: "Certificate Authority", value: "Yes"),
-                    LabeledValue(label: "Max Path Length", value: String(maxPathLength))
+                    LabeledValue(label: "Max Path Length", value: String(maxPathLength)),
                 ]
             }
 
@@ -259,21 +259,7 @@ public struct CertificateParser: Sendable {
         }
 
         if let decoded = try? AuthorityKeyIdentifier(ext) {
-            var parts: [String] = []
-
-            if let keyIdentifier = decoded.keyIdentifier {
-                parts.append("keyID: \(Array(keyIdentifier).inspectHexString(grouped: true))")
-            }
-
-            if let serial = decoded.authorityCertSerialNumber {
-                parts.append("issuerSerial: \(Array(serial.bytes).inspectHexString(grouped: true))")
-            }
-
-            if let issuer = decoded.authorityCertIssuer {
-                parts.append("issuer: \(issuer.map(displayValue(for:)).joined(separator: ", "))")
-            }
-
-            return parts.joined(separator: ", ")
+            return formatAuthorityKeyIdentifier(decoded)
         }
 
         if let decoded = try? ExtendedKeyUsage(ext) {
@@ -290,6 +276,24 @@ public struct CertificateParser: Sendable {
         }
 
         return Array(ext.value).inspectHexString(grouped: true)
+    }
+
+    private func formatAuthorityKeyIdentifier(_ aki: AuthorityKeyIdentifier) -> String {
+        var parts: [String] = []
+
+        if let keyIdentifier = aki.keyIdentifier {
+            parts.append("keyID: \(Array(keyIdentifier).inspectHexString(grouped: true))")
+        }
+
+        if let serial = aki.authorityCertSerialNumber {
+            parts.append("issuerSerial: \(Array(serial.bytes).inspectHexString(grouped: true))")
+        }
+
+        if let issuer = aki.authorityCertIssuer {
+            parts.append("issuer: \(issuer.map(displayValue(for:)).joined(separator: ", "))")
+        }
+
+        return parts.joined(separator: ", ")
     }
 
     private func parsePublicKey(_ publicKey: X509.Certificate.PublicKey?, secCertificate: SecCertificate) -> PublicKeyDetails {
@@ -323,7 +327,8 @@ public struct CertificateParser: Sendable {
 
     private func parsePublicKeyDescription(_ description: String) -> (algorithm: String, bitSize: Int?) {
         if let match = description.firstMatch(of: /RSA(\d+)\.PublicKey/),
-           let bitSize = Int(match.1) {
+           let bitSize = Int(match.1)
+        {
             return ("RSA", bitSize)
         }
 
@@ -348,23 +353,23 @@ public struct CertificateParser: Sendable {
 
     private func parse(generalName: GeneralName) -> LabeledValue {
         switch generalName {
-        case .dnsName(let value):
+        case let .dnsName(value):
             return LabeledValue(label: "DNS Name", value: value)
-        case .rfc822Name(let value):
+        case let .rfc822Name(value):
             return LabeledValue(label: "Email", value: value)
-        case .uniformResourceIdentifier(let value):
+        case let .uniformResourceIdentifier(value):
             return LabeledValue(label: "URI", value: value)
-        case .ipAddress(let value):
+        case let .ipAddress(value):
             return LabeledValue(label: "IP Address", value: formatIPAddress(value.bytes))
-        case .directoryName(let value):
+        case let .directoryName(value):
             return LabeledValue(label: "Directory Name", value: String(describing: value))
-        case .registeredID(let value):
+        case let .registeredID(value):
             return LabeledValue(label: "Registered ID", value: String(describing: value))
-        case .otherName(let value):
+        case let .otherName(value):
             return LabeledValue(label: "Other Name", value: String(describing: value))
-        case .x400Address(let value):
+        case let .x400Address(value):
             return LabeledValue(label: "X.400 Address", value: String(describing: value))
-        case .ediPartyName(let value):
+        case let .ediPartyName(value):
             return LabeledValue(label: "EDI Party", value: String(describing: value))
         }
     }
@@ -393,7 +398,7 @@ public struct CertificateParser: Sendable {
     private func fingerprints(for derData: Data) -> [LabeledValue] {
         [
             LabeledValue(label: "SHA-256", value: SHA256.hash(data: derData).inspectHexString(grouped: true)),
-            LabeledValue(label: "SHA-1", value: Insecure.SHA1.hash(data: derData).inspectHexString(grouped: true))
+            LabeledValue(label: "SHA-1", value: Insecure.SHA1.hash(data: derData).inspectHexString(grouped: true)),
         ]
     }
 
@@ -422,31 +427,21 @@ public struct CertificateParser: Sendable {
         }
     }
 
+    private static let extensionFriendlyNames: [String: String] = [
+        "2.5.29.14": "Subject Key Identifier",
+        "2.5.29.15": "Key Usage",
+        "2.5.29.17": "Subject Alternative Name",
+        "2.5.29.19": "Basic Constraints",
+        "2.5.29.32": "Certificate Policies",
+        "2.5.29.35": "Authority Key Identifier",
+        "2.5.29.37": "Extended Key Usage",
+        "1.3.6.1.5.5.7.1.1": "Authority Information Access",
+        "1.3.6.1.4.1.11129.2.4.2": "CT Precertificate SCTs",
+        "2.5.29.31": "CRL Distribution Points",
+    ]
+
     private func extensionFriendlyName(for oid: String) -> String {
-        switch oid {
-        case "2.5.29.14":
-            return "Subject Key Identifier"
-        case "2.5.29.15":
-            return "Key Usage"
-        case "2.5.29.17":
-            return "Subject Alternative Name"
-        case "2.5.29.19":
-            return "Basic Constraints"
-        case "2.5.29.32":
-            return "Certificate Policies"
-        case "2.5.29.35":
-            return "Authority Key Identifier"
-        case "2.5.29.37":
-            return "Extended Key Usage"
-        case "1.3.6.1.5.5.7.1.1":
-            return "Authority Information Access"
-        case "1.3.6.1.4.1.11129.2.4.2":
-            return "CT Precertificate SCTs"
-        case "2.5.29.31":
-            return "CRL Distribution Points"
-        default:
-            return oid
-        }
+        Self.extensionFriendlyNames[oid] ?? oid
     }
 
     private func normalizeSignatureAlgorithm(_ value: String) -> String {

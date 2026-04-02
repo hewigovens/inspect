@@ -14,7 +14,8 @@ public enum InspectSharedContainer {
 
         if let value = ProcessInfo.processInfo.environment["INSPECT_APP_GROUP_IDENTIFIER"]?
             .trimmingCharacters(in: .whitespacesAndNewlines),
-           value.isEmpty == false {
+            value.isEmpty == false
+        {
             bootstrapLogger.debug("Using app group from environment: \(value, privacy: .public)")
             return value
         }

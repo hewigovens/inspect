@@ -17,37 +17,37 @@ private struct PlatformValues {
 
     static let current: PlatformValues = {
         #if os(macOS)
-        PlatformValues(
-            rootStackSpacing: 16,
-            rootSideRailWidth: 380,
-            rootCompactContentMaxWidth: 1140,
-            rootCompactHorizontalPadding: 28,
-            inputCardSpacing: 12,
-            inputSampleColumnWidth: 320,
-            inputDemoTargetVerticalPadding: 6,
-            inputDemoTargetControlSize: .small,
-            inputPrompt: "Inspect a host name or HTTPS URL.",
-            inputPromptFont: .inspectRootCaptionSemibold,
-            inputUsesHorizontalCompactDemoTargets: true,
-            inputUsesInlineCompactInputControls: true,
-            diagnosticsContentMaxWidth: 920
-        )
+            PlatformValues(
+                rootStackSpacing: 16,
+                rootSideRailWidth: 380,
+                rootCompactContentMaxWidth: 1140,
+                rootCompactHorizontalPadding: 28,
+                inputCardSpacing: 12,
+                inputSampleColumnWidth: 320,
+                inputDemoTargetVerticalPadding: 6,
+                inputDemoTargetControlSize: .small,
+                inputPrompt: "Inspect a host name or HTTPS URL.",
+                inputPromptFont: .inspectRootCaptionSemibold,
+                inputUsesHorizontalCompactDemoTargets: true,
+                inputUsesInlineCompactInputControls: true,
+                diagnosticsContentMaxWidth: 920
+            )
         #else
-        PlatformValues(
-            rootStackSpacing: 18,
-            rootSideRailWidth: 360,
-            rootCompactContentMaxWidth: nil,
-            rootCompactHorizontalPadding: 20,
-            inputCardSpacing: 14,
-            inputSampleColumnWidth: 300,
-            inputDemoTargetVerticalPadding: 8,
-            inputDemoTargetControlSize: .regular,
-            inputPrompt: "Enter a host name or HTTPS URL.",
-            inputPromptFont: .inspectRootSubheadline,
-            inputUsesHorizontalCompactDemoTargets: false,
-            inputUsesInlineCompactInputControls: false,
-            diagnosticsContentMaxWidth: 760
-        )
+            PlatformValues(
+                rootStackSpacing: 18,
+                rootSideRailWidth: 360,
+                rootCompactContentMaxWidth: nil,
+                rootCompactHorizontalPadding: 20,
+                inputCardSpacing: 14,
+                inputSampleColumnWidth: 300,
+                inputDemoTargetVerticalPadding: 8,
+                inputDemoTargetControlSize: .regular,
+                inputPrompt: "Enter a host name or HTTPS URL.",
+                inputPromptFont: .inspectRootSubheadline,
+                inputUsesHorizontalCompactDemoTargets: false,
+                inputUsesInlineCompactInputControls: false,
+                diagnosticsContentMaxWidth: 760
+            )
         #endif
     }()
 }
@@ -63,9 +63,9 @@ enum InspectLayout {
             }
 
             #if os(macOS)
-            return true
+                return true
             #else
-            return horizontalSizeClass == .regular
+                return horizontalSizeClass == .regular
             #endif
         }
 
@@ -77,48 +77,88 @@ enum InspectLayout {
             usesRegularDashboardLayout ? 32 : PlatformValues.current.rootCompactHorizontalPadding
         }
 
-        static var stackSpacing: CGFloat { PlatformValues.current.rootStackSpacing }
-        static var sideRailWidth: CGFloat { PlatformValues.current.rootSideRailWidth }
+        static var stackSpacing: CGFloat {
+            PlatformValues.current.rootStackSpacing
+        }
+
+        static var sideRailWidth: CGFloat {
+            PlatformValues.current.rootSideRailWidth
+        }
     }
 
     enum Input {
         static func usesRegularWidthLayout(horizontalSizeClass: UserInterfaceSizeClass?) -> Bool {
             #if os(macOS)
-            return true
+                return true
             #else
-            return horizontalSizeClass == .regular
+                return horizontalSizeClass == .regular
             #endif
         }
 
-        static var usesHorizontalCompactDemoTargets: Bool { PlatformValues.current.inputUsesHorizontalCompactDemoTargets }
-        static var usesInlineCompactInputControls: Bool { PlatformValues.current.inputUsesInlineCompactInputControls }
-        static var inputPrompt: String { PlatformValues.current.inputPrompt }
-        static var promptFont: Font { PlatformValues.current.inputPromptFont }
-        static var cardSpacing: CGFloat { PlatformValues.current.inputCardSpacing }
-        static var sampleColumnWidth: CGFloat { PlatformValues.current.inputSampleColumnWidth }
-        static var demoTargetVerticalPadding: CGFloat { PlatformValues.current.inputDemoTargetVerticalPadding }
-        static var demoTargetControlSize: ControlSize { PlatformValues.current.inputDemoTargetControlSize }
+        static var usesHorizontalCompactDemoTargets: Bool {
+            PlatformValues.current.inputUsesHorizontalCompactDemoTargets
+        }
+
+        static var usesInlineCompactInputControls: Bool {
+            PlatformValues.current.inputUsesInlineCompactInputControls
+        }
+
+        static var inputPrompt: String {
+            PlatformValues.current.inputPrompt
+        }
+
+        static var promptFont: Font {
+            PlatformValues.current.inputPromptFont
+        }
+
+        static var cardSpacing: CGFloat {
+            PlatformValues.current.inputCardSpacing
+        }
+
+        static var sampleColumnWidth: CGFloat {
+            PlatformValues.current.inputSampleColumnWidth
+        }
+
+        static var demoTargetVerticalPadding: CGFloat {
+            PlatformValues.current.inputDemoTargetVerticalPadding
+        }
+
+        static var demoTargetControlSize: ControlSize {
+            PlatformValues.current.inputDemoTargetControlSize
+        }
     }
 
     enum Monitor {
         static var usesInlineCardSearch: Bool {
             #if os(iOS) || os(macOS)
-            true
+                true
             #else
-            false
+                false
             #endif
         }
 
-        static var inlineSearchButtonSize: CGFloat { 32 }
-        static var scrollBottomContentPadding: CGFloat { 24 }
+        static var inlineSearchButtonSize: CGFloat {
+            32
+        }
+
+        static var scrollBottomContentPadding: CGFloat {
+            24
+        }
     }
 
     enum Diagnostics {
-        static var contentMaxWidth: CGFloat { PlatformValues.current.diagnosticsContentMaxWidth }
+        static var contentMaxWidth: CGFloat {
+            PlatformValues.current.diagnosticsContentMaxWidth
+        }
     }
 
     enum Summary {
-        static var badgeSpacing: CGFloat { 10 }
-        static var maxBadgesPerRow: Int { 4 }
+        static var badgeSpacing: CGFloat {
+            10
+        }
+
+        static var maxBadgesPerRow: Int {
+            4
+        }
     }
 }

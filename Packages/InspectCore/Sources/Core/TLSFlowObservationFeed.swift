@@ -17,7 +17,7 @@ public actor TLSFlowObservationFeed {
 
         if let containerURL = InspectSharedContainer.containerURL(appGroupIdentifier: appGroupIdentifier) {
             let fileURL = containerURL.appendingPathComponent(Self.fileName(for: key))
-            self.storage = TLSFlowObservationFeedStorage(
+            storage = TLSFlowObservationFeedStorage(
                 fileURL: fileURL,
                 maximumPendingItems: maximumPendingItems
             )
@@ -25,7 +25,7 @@ public actor TLSFlowObservationFeed {
                 "init appGroup=\(appGroupIdentifier) key=\(key) path=\(fileURL.path) bundle=\(bundleIdentifier)"
             )
         } else {
-            self.storage = nil
+            storage = nil
             logger.critical(
                 "init failed appGroup=\(appGroupIdentifier) key=\(key) because shared container URL is unavailable"
             )
@@ -39,7 +39,7 @@ public actor TLSFlowObservationFeed {
     ) {
         self.key = key
         let bundleIdentifier = Bundle.main.bundleIdentifier ?? "nil"
-        self.storage = TLSFlowObservationFeedStorage(
+        storage = TLSFlowObservationFeedStorage(
             fileURL: fileURL,
             maximumPendingItems: maximumPendingItems
         )

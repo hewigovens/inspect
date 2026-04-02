@@ -11,7 +11,8 @@ enum CRLDistributionPointsDecoder {
 
     static func decode(from ext: X509.Certificate.Extension) -> [LabeledValue] {
         guard ext.oid == oid,
-              let parsed = try? CRLDistributionPoints(ext) else {
+              let parsed = try? CRLDistributionPoints(ext)
+        else {
             return []
         }
 
@@ -35,7 +36,7 @@ private struct CRLDistributionPoints {
             }
         }
 
-        self.uris = collected
+        uris = collected
     }
 
     private static func parseDistributionPoint(_ node: ASN1Node) throws -> [String] {

@@ -6,27 +6,31 @@ public final class TLSInspector {
 
     public init() {}
 
-    public func inspect(input: String) async throws -> TLSInspectionReport {
+    public func inspect(input: String) async throws -> TLSInspection {
         try await inspect(url: URLInputNormalizer.normalize(input: input))
     }
 
-    public func inspect(url: URL) async throws -> TLSInspectionReport {
+    public func inspect(url: URL) async throws -> TLSInspection {
         try await RequestRunner(url: URLInputNormalizer.normalize(url: url), parser: parser).run()
     }
 }
 
 private final class RequestRunner: NSObject, URLSessionDataDelegate, URLSessionTaskDelegate, @unchecked Sendable {
+    private struct CapturedTrustEvent {
+        let requestURL: URL?
+        let host: String
+        let trust: SecTrust
+        let trustEvaluationSucceeded: Bool
+        let trustFailureReason: String?
+    }
+
     private let url: URL
     private let parser: CertificateParser
 
     private var session: URLSession?
-    private var continuation: CheckedContinuation<TLSInspectionReport, Error>?
-    private var capturedTrust: SecTrust?
-    private var trustEvaluationSucceeded = false
-    private var trustFailureReason: String?
-    private var networkProtocolName: String?
-    private var tlsVersion: String?
-    private var cipherSuite: String?
+    private var continuation: CheckedContinuation<TLSInspection, Error>?
+    private var capturedTrustEvents: [CapturedTrustEvent] = []
+    private var transactionMetrics: [URLSessionTaskTransactionMetrics] = []
     private var hasCompleted = false
 
     init(url: URL, parser: CertificateParser) {
@@ -34,7 +38,7 @@ private final class RequestRunner: NSObject, URLSessionDataDelegate, URLSessionT
         self.parser = parser
     }
 
-    func run() async throws -> TLSInspectionReport {
+    func run() async throws -> TLSInspection {
         try await withCheckedThrowingContinuation { continuation in
             self.continuation = continuation
 
@@ -56,31 +60,38 @@ private final class RequestRunner: NSObject, URLSessionDataDelegate, URLSessionT
     }
 
     func urlSession(
-        _ session: URLSession,
+        _: URLSession,
         task: URLSessionTask,
         didReceive challenge: URLAuthenticationChallenge,
         completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
     ) {
         guard challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust,
-              let serverTrust = challenge.protectionSpace.serverTrust else {
+              let serverTrust = challenge.protectionSpace.serverTrust
+        else {
             completionHandler(.performDefaultHandling, nil)
             return
         }
 
-        capturedTrust = serverTrust
-
         var error: CFError?
-        trustEvaluationSucceeded = SecTrustEvaluateWithError(serverTrust, &error)
-        trustFailureReason = (error as Error?)?.localizedDescription
+        let trustEvaluationSucceeded = SecTrustEvaluateWithError(serverTrust, &error)
+        let trustFailureReason = (error as Error?)?.localizedDescription
+        capturedTrustEvents.append(
+            CapturedTrustEvent(
+                requestURL: task.currentRequest?.url ?? task.originalRequest?.url,
+                host: challenge.protectionSpace.host,
+                trust: serverTrust,
+                trustEvaluationSucceeded: trustEvaluationSucceeded,
+                trustFailureReason: trustFailureReason
+            )
+        )
 
         completionHandler(.useCredential, URLCredential(trust: serverTrust))
     }
 
-    func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
-        guard let transaction = metrics.transactionMetrics.last else { return }
-        networkProtocolName = transaction.networkProtocolName
-        tlsVersion = transaction.negotiatedTLSProtocolVersion.map(Self.tlsVersionName)
-        cipherSuite = transaction.negotiatedTLSCipherSuite.map(Self.cipherSuiteName)
+    func urlSession(_: URLSession, task _: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
+        transactionMetrics = metrics.transactionMetrics.filter { transaction in
+            transaction.request.url?.scheme?.caseInsensitiveCompare("https") == .orderedSame
+        }
     }
 
     static func tlsVersionName(_ version: tls_protocol_version_t) -> String {
@@ -95,30 +106,31 @@ private final class RequestRunner: NSObject, URLSessionDataDelegate, URLSessionT
         }
     }
 
+    private static let cipherSuiteNames: [tls_ciphersuite_t: String] = [
+        .RSA_WITH_AES_128_GCM_SHA256: "RSA AES-128-GCM SHA256",
+        .RSA_WITH_AES_256_GCM_SHA384: "RSA AES-256-GCM SHA384",
+        .ECDHE_RSA_WITH_AES_128_GCM_SHA256: "ECDHE-RSA AES-128-GCM SHA256",
+        .ECDHE_RSA_WITH_AES_256_GCM_SHA384: "ECDHE-RSA AES-256-GCM SHA384",
+        .ECDHE_ECDSA_WITH_AES_128_GCM_SHA256: "ECDHE-ECDSA AES-128-GCM SHA256",
+        .ECDHE_ECDSA_WITH_AES_256_GCM_SHA384: "ECDHE-ECDSA AES-256-GCM SHA384",
+        .ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256: "ECDHE-RSA ChaCha20-Poly1305",
+        .ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256: "ECDHE-ECDSA ChaCha20-Poly1305",
+        .AES_128_GCM_SHA256: "AES-128-GCM SHA256",
+        .AES_256_GCM_SHA384: "AES-256-GCM SHA384",
+        .CHACHA20_POLY1305_SHA256: "ChaCha20-Poly1305 SHA256",
+    ]
+
     static func cipherSuiteName(_ suite: tls_ciphersuite_t) -> String {
-        switch suite {
-        case .RSA_WITH_AES_128_GCM_SHA256: return "RSA AES-128-GCM SHA256"
-        case .RSA_WITH_AES_256_GCM_SHA384: return "RSA AES-256-GCM SHA384"
-        case .ECDHE_RSA_WITH_AES_128_GCM_SHA256: return "ECDHE-RSA AES-128-GCM SHA256"
-        case .ECDHE_RSA_WITH_AES_256_GCM_SHA384: return "ECDHE-RSA AES-256-GCM SHA384"
-        case .ECDHE_ECDSA_WITH_AES_128_GCM_SHA256: return "ECDHE-ECDSA AES-128-GCM SHA256"
-        case .ECDHE_ECDSA_WITH_AES_256_GCM_SHA384: return "ECDHE-ECDSA AES-256-GCM SHA384"
-        case .ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256: return "ECDHE-RSA ChaCha20-Poly1305"
-        case .ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256: return "ECDHE-ECDSA ChaCha20-Poly1305"
-        case .AES_128_GCM_SHA256: return "AES-128-GCM SHA256"
-        case .AES_256_GCM_SHA384: return "AES-256-GCM SHA384"
-        case .CHACHA20_POLY1305_SHA256: return "ChaCha20-Poly1305 SHA256"
-        default: return "0x\(String(suite.rawValue, radix: 16, uppercase: true))"
-        }
+        cipherSuiteNames[suite] ?? "0x\(String(suite.rawValue, radix: 16, uppercase: true))"
     }
 
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+    func urlSession(_: URLSession, dataTask _: URLSessionDataTask, didReceive _: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         completionHandler(.allow)
     }
 
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {}
+    func urlSession(_: URLSession, dataTask _: URLSessionDataTask, didReceive _: Data) {}
 
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    func urlSession(_ session: URLSession, task _: URLSessionTask, didCompleteWithError error: Error?) {
         guard hasCompleted == false else {
             return
         }
@@ -128,37 +140,74 @@ private final class RequestRunner: NSObject, URLSessionDataDelegate, URLSessionT
             session.finishTasksAndInvalidate()
         }
 
-        guard let trust = capturedTrust else {
+        let reports = buildReports()
+        guard !reports.isEmpty else {
             continuation?.resume(throwing: error ?? InspectionError.missingServerTrust)
             continuation = nil
             return
         }
 
-        let chain = (SecTrustCopyCertificateChain(trust) as? [SecCertificate]) ?? []
-        let certificates = parser.parse(certificates: chain)
-        let trustSummary = TrustSummary(
-            evaluated: true,
-            isTrusted: trustEvaluationSucceeded,
-            failureReason: trustFailureReason
-        )
-        let security = SecurityAnalyzer().analyze(
+        let inspection = TLSInspection(
             requestedURL: url,
-            trust: trustSummary,
-            certificates: certificates
+            reports: reports
         )
 
-        let report = TLSInspectionReport(
-            requestedURL: url,
-            host: url.host ?? url.absoluteString,
-            networkProtocolName: networkProtocolName,
-            tlsVersion: tlsVersion,
-            cipherSuite: cipherSuite,
-            trust: trustSummary,
-            security: security,
-            certificates: certificates
-        )
-
-        continuation?.resume(returning: report)
+        continuation?.resume(returning: inspection)
         continuation = nil
+    }
+
+    private func buildReports() -> [TLSInspectionReport] {
+        // Match trust events to transactions by host rather than index.
+        // URLSession may skip TLS challenges on connection reuse, so
+        // index-based pairing can pair the wrong metadata with a host.
+        var metricsByHost: [String: [URLSessionTaskTransactionMetrics]] = [:]
+        for metric in transactionMetrics {
+            if let host = metric.request.url?.host?.lowercased() {
+                metricsByHost[host, default: []].append(metric)
+            }
+        }
+
+        return capturedTrustEvents.compactMap { event in
+            let hostKey = event.host.lowercased()
+            let transaction = metricsByHost[hostKey]?.first
+            if transaction != nil {
+                metricsByHost[hostKey]?.removeFirst()
+            }
+            let requestURL = transaction?.request.url ?? event.requestURL ?? makeFallbackURL(host: event.host)
+            guard let requestURL else {
+                return nil
+            }
+
+            let chain = (SecTrustCopyCertificateChain(event.trust) as? [SecCertificate]) ?? []
+            let certificates = parser.parse(certificates: chain)
+            let trustSummary = TrustSummary(
+                evaluated: true,
+                isTrusted: event.trustEvaluationSucceeded,
+                failureReason: event.trustFailureReason
+            )
+            let security = SecurityAnalyzer().analyze(
+                requestedURL: requestURL,
+                trust: trustSummary,
+                certificates: certificates
+            )
+
+            return TLSInspectionReport(
+                requestedURL: requestURL,
+                host: requestURL.host ?? event.host,
+                networkProtocolName: transaction?.networkProtocolName,
+                tlsVersion: transaction?.negotiatedTLSProtocolVersion.map(Self.tlsVersionName),
+                cipherSuite: transaction?.negotiatedTLSCipherSuite.map(Self.cipherSuiteName),
+                trust: trustSummary,
+                security: security,
+                certificates: certificates
+            )
+        }
+    }
+
+    private func makeFallbackURL(host: String) -> URL? {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = host
+        return components.url
     }
 }

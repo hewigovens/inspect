@@ -104,13 +104,13 @@ public struct InspectSettingsMessageRow: View {
     public init(message: String, systemImage: String, color: Color) {
         self.message = message
         self.systemImage = systemImage
-        self.foregroundStyle = AnyShapeStyle(color)
+        foregroundStyle = AnyShapeStyle(color)
     }
 
     public init(message: String, systemImage: String, hierarchicalStyle: HierarchicalShapeStyle) {
         self.message = message
         self.systemImage = systemImage
-        self.foregroundStyle = AnyShapeStyle(hierarchicalStyle)
+        foregroundStyle = AnyShapeStyle(hierarchicalStyle)
     }
 
     public var body: some View {

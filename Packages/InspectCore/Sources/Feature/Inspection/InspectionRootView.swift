@@ -10,6 +10,7 @@ public struct InspectionRootView: View {
     @State private var store = InspectionStore()
     @State private var monitorStore: InspectionMonitorStore
     @State private var certificateRoute: InspectionCertificateRoute?
+    @State private var selectedReportIndex = 0
 
     private let initialURL: URL?
     private let closeAction: (() -> Void)?
@@ -65,17 +66,24 @@ public struct InspectionRootView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: InspectionExternalInputCenter.notification)) { _ in
             guard presentation == .app,
-                  let request = InspectionExternalInputCenter.consumePendingRequest() else {
+                  let request = InspectionExternalInputCenter.consumePendingRequest()
+            else {
                 return
             }
 
             handleExternalRequest(request)
         }
-        .onChange(of: store.report?.id) { _, _ in
-            guard screenshotScenario == nil, let report = store.report else {
+        .onChange(of: store.isLoading) { _, isLoading in
+            if isLoading {
+                selectedReportIndex = 0
+            }
+        }
+        .onChange(of: store.inspection?.id) { _, _ in
+            guard screenshotScenario == nil, let report = store.inspection?.primaryReport else {
                 return
             }
 
+            selectedReportIndex = 0
             monitorStore.recordInspection(report)
             maybeRequestReview(for: report)
         }
@@ -83,10 +91,10 @@ public struct InspectionRootView: View {
 
     @ViewBuilder
     private var content: some View {
-        if presentation == .app, screenshotScenario?.showsCertificateDetail == true, let report = store.report {
+        if presentation == .app, screenshotScenario?.showsCertificateDetail == true, let report = store.inspection?.primaryReport {
             CertificateDetailView(report: report, initialSelectionIndex: 0)
                 .ensureNavigationBarVisible()
-        } else if presentation == .actionExtension, let report = store.report {
+        } else if presentation == .actionExtension, let report = store.inspection?.primaryReport {
             CertificateDetailView(report: report, initialSelectionIndex: 0)
                 .toolbar {
                     if let closeAction {
@@ -110,7 +118,9 @@ public struct InspectionRootView: View {
     }
 
     private var rootContent: some View {
-        let report = store.report
+        let inspection = store.inspection
+        let clampedIndex = min(selectedReportIndex, max((inspection?.reports.count ?? 1) - 1, 0))
+        let report = inspection?.reports[safe: clampedIndex]
         let recentItems = screenshotScenario?.showsRecents == false
             ? []
             : store.recentInputs.map(RecentLookupItem.init)
@@ -125,9 +135,9 @@ public struct InspectionRootView: View {
             ScrollView {
                 Group {
                     if usesRegularDashboardLayout {
-                        regularWidthContent(report: report, recentItems: recentItems)
+                        regularWidthContent(inspection: inspection, report: report, recentItems: recentItems)
                     } else {
-                        compactWidthContent(report: report, recentItems: recentItems)
+                        compactWidthContent(inspection: inspection, report: report, recentItems: recentItems)
                     }
                 }
                 .frame(maxWidth: rootContentMaxWidth, alignment: .leading)
@@ -151,7 +161,7 @@ public struct InspectionRootView: View {
         .certificateDetailDestination($certificateRoute)
     }
 
-    private func compactWidthContent(report: TLSInspectionReport?, recentItems: [RecentLookupItem]) -> some View {
+    private func compactWidthContent(inspection: TLSInspection?, report: TLSInspectionReport?, recentItems: [RecentLookupItem]) -> some View {
         LazyVStack(spacing: rootStackSpacing) {
             InspectionInputCard(
                 store: store,
@@ -162,7 +172,8 @@ public struct InspectionRootView: View {
 
             if presentation == .app,
                showsMonitorCard,
-               screenshotScenario?.showsMonitorCard != false {
+               screenshotScenario?.showsMonitorCard != false
+            {
                 InspectionMonitorCard(store: monitorStore)
                     .id("monitor")
             }
@@ -170,7 +181,8 @@ public struct InspectionRootView: View {
             InspectionResultsContent(
                 isLoading: store.isLoading,
                 errorMessage: store.errorMessage,
-                report: report,
+                inspection: inspection,
+                selectedReportIndex: $selectedReportIndex,
                 recentItems: recentItems,
                 currentReportURL: report?.requestedURL,
                 onInspectRecent: { recentInput in
@@ -190,7 +202,7 @@ public struct InspectionRootView: View {
         }
     }
 
-    private func regularWidthContent(report: TLSInspectionReport?, recentItems: [RecentLookupItem]) -> some View {
+    private func regularWidthContent(inspection: TLSInspection?, report: TLSInspectionReport?, recentItems: [RecentLookupItem]) -> some View {
         VStack(alignment: .leading, spacing: 18) {
             InspectionInputCard(
                 store: store,
@@ -200,10 +212,10 @@ public struct InspectionRootView: View {
             .id("input")
 
             HStack(alignment: .top, spacing: 18) {
-                regularMainColumn(report: report)
+                regularMainColumn(inspection: inspection, report: report)
                     .frame(maxWidth: .infinity, alignment: .top)
 
-                regularSideRail(report: report, recentItems: recentItems)
+                regularSideRail(inspection: inspection, recentItems: recentItems)
                     .frame(width: regularSideRailWidth, alignment: .top)
             }
         }
@@ -221,8 +233,7 @@ public struct InspectionRootView: View {
         InspectReviewRequester.requestReview()
     }
 
-    @ViewBuilder
-    private func regularMainColumn(report: TLSInspectionReport?) -> some View {
+    private func regularMainColumn(inspection: TLSInspection?, report: TLSInspectionReport?) -> some View {
         VStack(alignment: .leading, spacing: 18) {
             if store.isLoading {
                 InspectionLoadingCard()
@@ -238,10 +249,21 @@ public struct InspectionRootView: View {
                 .id("error")
             }
 
-            if let report {
-                InspectionSummaryCard(report: report)
-                    .id("summary")
-                InspectionSecurityCard(assessment: report.security)
+            if let inspection, let report {
+                if inspection.didRedirect {
+                    InspectionRedirectsCard(
+                        inspection: inspection,
+                        selectedReportIndex: $selectedReportIndex
+                    )
+                    .id("hop-picker")
+                }
+
+                InspectionSummaryCard(
+                    report: report,
+                    reportIndex: selectedReportIndex
+                )
+                .id("summary")
+                InspectionSecurityCard(report: report)
                     .id("security")
             } else {
                 InspectionWorkspaceCard()
@@ -250,12 +272,12 @@ public struct InspectionRootView: View {
         }
     }
 
-    @ViewBuilder
-    private func regularSideRail(report: TLSInspectionReport?, recentItems: [RecentLookupItem]) -> some View {
+    private func regularSideRail(inspection: TLSInspection?, recentItems: [RecentLookupItem]) -> some View {
         VStack(alignment: .leading, spacing: 18) {
-            if let report {
+            if let inspection {
                 InspectionChainCard(
-                    report: report,
+                    inspection: inspection,
+                    selectedReportIndex: selectedReportIndex,
                     onOpenCertificateDetail: openCertificateDetail
                 )
                 .id("chain")
@@ -267,7 +289,7 @@ public struct InspectionRootView: View {
             } else {
                 InspectionRecentCard(
                     items: recentItems,
-                    currentReportURL: report?.requestedURL,
+                    currentReportURL: inspection?.requestedURL,
                     onInspectRecent: { recentInput in
                         await store.inspectRecent(recentInput)
                     },
@@ -281,7 +303,8 @@ public struct InspectionRootView: View {
 
             if presentation == .app,
                showsMonitorCard,
-               screenshotScenario?.showsMonitorCard != false {
+               screenshotScenario?.showsMonitorCard != false
+            {
                 InspectionMonitorCard(store: monitorStore)
                     .id("monitor")
             }
@@ -324,10 +347,11 @@ public struct InspectionRootView: View {
         )
     }
 
-    private func openCertificateDetail(_ report: TLSInspectionReport, _ index: Int) {
+    private func openCertificateDetail(_ inspection: TLSInspection, _ reportIndex: Int, _ certificateIndex: Int) {
         certificateRoute = InspectionCertificateRoute(
-            report: report,
-            initialSelectionIndex: index
+            inspection: inspection,
+            initialReportIndex: reportIndex,
+            initialSelectionIndex: certificateIndex
         )
     }
 
@@ -342,7 +366,8 @@ public struct InspectionRootView: View {
             }
 
             certificateRoute = InspectionCertificateRoute(
-                report: report,
+                inspection: TLSInspection(report: report),
+                initialReportIndex: 0,
                 initialSelectionIndex: 0
             )
         }

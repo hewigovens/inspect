@@ -4,12 +4,13 @@ import SwiftUI
 struct InspectionResultsContent: View {
     let isLoading: Bool
     let errorMessage: String?
-    let report: TLSInspectionReport?
+    let inspection: TLSInspection?
+    @Binding var selectedReportIndex: Int
     let recentItems: [RecentLookupItem]
     let currentReportURL: URL?
     let onInspectRecent: (String) async -> Void
     let onClearRecents: () -> Void
-    let onOpenCertificateDetail: (TLSInspectionReport, Int) -> Void
+    let onOpenCertificateDetail: (TLSInspection, Int, Int) -> Void
     let isInputFocused: FocusState<Bool>.Binding
 
     var body: some View {
@@ -28,15 +29,27 @@ struct InspectionResultsContent: View {
                 .id("error")
             }
 
-            if let report {
+            if let inspection, let report = selectedReport {
+                if inspection.didRedirect {
+                    InspectionRedirectsCard(
+                        inspection: inspection,
+                        selectedReportIndex: $selectedReportIndex
+                    )
+                    .id("hop-picker")
+                }
+
                 InspectionChainCard(
-                    report: report,
+                    inspection: inspection,
+                    selectedReportIndex: selectedReportIndex,
                     onOpenCertificateDetail: onOpenCertificateDetail
                 )
-                    .id("chain")
-                InspectionSummaryCard(report: report)
-                    .id("summary")
-                InspectionSecurityCard(assessment: report.security)
+                .id("chain")
+                InspectionSummaryCard(
+                    report: report,
+                    reportIndex: selectedReportIndex
+                )
+                .id("summary")
+                InspectionSecurityCard(report: report)
                     .id("security")
             }
 
@@ -51,5 +64,9 @@ struct InspectionResultsContent: View {
                 .id("recents")
             }
         }
+    }
+
+    private var selectedReport: TLSInspectionReport? {
+        inspection?.reports[safe: min(selectedReportIndex, (inspection?.reports.count ?? 1) - 1)]
     }
 }

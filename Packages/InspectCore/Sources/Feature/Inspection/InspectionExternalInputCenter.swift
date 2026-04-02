@@ -47,7 +47,8 @@ public enum InspectionExternalInputCenter {
 
     public static func consumePendingSharedReportRequest() -> InspectionExternalRequest? {
         guard let token = InspectionSharedPendingReportStore.consumeToken(),
-              let report = InspectionSharedReportStore.consume(token: token) else {
+              let report = InspectionSharedReportStore.consume(token: token)
+        else {
             return nil
         }
 

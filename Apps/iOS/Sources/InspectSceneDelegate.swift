@@ -2,12 +2,13 @@ import UIKit
 
 final class InspectSceneDelegate: NSObject, UIWindowSceneDelegate {
     func scene(
-        _ scene: UIScene,
-        willConnectTo session: UISceneSession,
+        _: UIScene,
+        willConnectTo _: UISceneSession,
         options connectionOptions: UIScene.ConnectionOptions
     ) {
         guard let shortcutItem = connectionOptions.shortcutItem,
-              let route = InspectQuickAction.route(for: shortcutItem) else {
+              let route = InspectQuickAction.route(for: shortcutItem)
+        else {
             return
         }
 
@@ -15,7 +16,7 @@ final class InspectSceneDelegate: NSObject, UIWindowSceneDelegate {
     }
 
     func windowScene(
-        _ windowScene: UIWindowScene,
+        _: UIWindowScene,
         performActionFor shortcutItem: UIApplicationShortcutItem,
         completionHandler: @escaping (Bool) -> Void
     ) {

@@ -10,7 +10,7 @@ struct InspectionMonitorCard: View {
         isRefreshing: Bool = false,
         refreshAction: (() -> Void)? = nil
     ) {
-        self._store = Bindable(store)
+        _store = Bindable(store)
         self.isRefreshing = isRefreshing
         self.refreshAction = refreshAction
     }

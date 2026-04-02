@@ -3,7 +3,8 @@ import SwiftUI
 
 public struct CertificateDetailView: View {
     @Environment(\.openURL) private var openURL
-    let report: TLSInspectionReport
+    let inspection: TLSInspection
+    @State var selectedReportIndex: Int
     @State var selectedIndex: Int
     @State var selectedContent: CertificateDetailContent?
     @State var copyFeedback: String?
@@ -11,14 +12,35 @@ public struct CertificateDetailView: View {
     @State var presentsSSLLabs = false
     @State var revocationStatus: RevocationStatus = .unchecked
 
-    public init(report: TLSInspectionReport, initialSelectionIndex: Int = 0) {
-        self.report = report
+    public init(inspection: TLSInspection, initialReportIndex: Int = 0, initialSelectionIndex: Int = 0) {
+        self.inspection = inspection
 
-        let selectedIndex = report.certificates.indices.contains(initialSelectionIndex)
+        let selectedReportIndex = inspection.reports.indices.contains(initialReportIndex)
+            ? initialReportIndex
+            : 0
+        let selectedIndex = inspection.reports[safe: selectedReportIndex]?.certificates.indices.contains(initialSelectionIndex) == true
             ? initialSelectionIndex
             : 0
+        _selectedReportIndex = State(initialValue: selectedReportIndex)
         _selectedIndex = State(initialValue: selectedIndex)
-        _selectedContent = State(initialValue: Self.selectedContent(in: report, index: selectedIndex))
+        _selectedContent = State(
+            initialValue: Self.selectedContent(
+                in: inspection.reports[safe: selectedReportIndex],
+                index: selectedIndex
+            )
+        )
+    }
+
+    public init(report: TLSInspectionReport, initialSelectionIndex: Int = 0) {
+        self.init(
+            inspection: TLSInspection(report: report),
+            initialReportIndex: 0,
+            initialSelectionIndex: initialSelectionIndex
+        )
+    }
+
+    var selectedReport: TLSInspectionReport? {
+        inspection.reports[safe: selectedReportIndex]
     }
 
     var selectedCertificate: CertificateDetails? {
@@ -32,13 +54,13 @@ public struct CertificateDetailView: View {
 
         return CertificateExportWriter.writeTemporaryCertificate(
             selectedCertificate,
-            host: report.host,
+            host: selectedReport?.host ?? inspection.primaryReport?.host ?? inspection.requestedURL.absoluteString,
             indexInChain: selectedIndex
         )
     }
 
     var chainNodes: [CertificateChainNode] {
-        Array(report.certificates.enumerated().reversed().enumerated()).map { depth, entry in
+        Array((selectedReport?.certificates ?? []).enumerated().reversed().enumerated()).map { depth, entry in
             CertificateChainNode(
                 originalIndex: entry.offset,
                 depth: depth,
@@ -75,7 +97,7 @@ public struct CertificateDetailView: View {
                             Label("Copy as PEM", systemImage: "doc.on.doc")
                         }
 
-                        if report.certificates.count > 1 {
+                        if let selectedReport, selectedReport.certificates.count > 1 {
                             Button {
                                 copyFullChainPEM()
                             } label: {
@@ -92,7 +114,7 @@ public struct CertificateDetailView: View {
                         }
                         .disabled(revocationStatus == .checking)
 
-                        if let sslLabsURL = report.sslLabsURL {
+                        if let sslLabsURL = selectedReport?.sslLabsURL {
                             Button {
                                 openSSLLabs(sslLabsURL)
                             } label: {
@@ -104,11 +126,11 @@ public struct CertificateDetailView: View {
                     }
                 }
             }
-            .inspectSafariSheet(url: report.sslLabsURL, isPresented: $presentsSSLLabs)
+            .inspectSafariSheet(url: selectedReport?.sslLabsURL, isPresented: $presentsSSLLabs)
     }
 
-    static func selectedContent(in report: TLSInspectionReport, index: Int) -> CertificateDetailContent? {
-        guard report.certificates.indices.contains(index) else {
+    static func selectedContent(in report: TLSInspectionReport?, index: Int) -> CertificateDetailContent? {
+        guard let report, report.certificates.indices.contains(index) else {
             return nil
         }
 
@@ -117,7 +139,20 @@ public struct CertificateDetailView: View {
 
     func updateSelection(to index: Int) {
         selectedIndex = index
-        selectedContent = Self.selectedContent(in: report, index: index)
+        selectedContent = Self.selectedContent(in: selectedReport, index: index)
+    }
+
+    func updateReportSelection(to index: Int) {
+        selectedReportIndex = index
+        let nextCertificateIndex = inspection.reports[safe: index]?.certificates.indices.contains(selectedIndex) == true
+            ? selectedIndex
+            : 0
+        selectedIndex = nextCertificateIndex
+        selectedContent = Self.selectedContent(
+            in: inspection.reports[safe: index],
+            index: nextCertificateIndex
+        )
+        revocationStatus = .unchecked
     }
 
     func copy(row: DetailLine) {
@@ -156,17 +191,22 @@ public struct CertificateDetailView: View {
     }
 
     func copyFullChainPEM() {
-        let pem = CertificateExportWriter.fullChainPEM(from: report.certificates)
+        let certificates = selectedReport?.certificates ?? []
+        let pem = CertificateExportWriter.fullChainPEM(from: certificates)
         InspectClipboard.copy(pem)
-        showCopyFeedback("Copied \(report.certificates.count) certificates")
+        showCopyFeedback("Copied \(certificates.count) certificates")
     }
 
     func checkRevocation() {
+        guard let selectedReport else {
+            return
+        }
+
         revocationStatus = .checking
         Task {
             let result = await RevocationChecker.check(
-                certificates: report.certificates,
-                host: report.host
+                certificates: selectedReport.certificates,
+                host: selectedReport.host
             )
             await MainActor.run {
                 withAnimation(.easeInOut(duration: 0.2)) {
@@ -178,9 +218,9 @@ public struct CertificateDetailView: View {
 
     func openSSLLabs(_ url: URL) {
         #if os(macOS)
-        openURL(url)
+            openURL(url)
         #else
-        presentsSSLLabs = true
+            presentsSSLLabs = true
         #endif
     }
 }

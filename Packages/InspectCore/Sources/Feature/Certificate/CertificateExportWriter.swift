@@ -1,5 +1,5 @@
-import InspectCore
 import Foundation
+import InspectCore
 
 enum CertificateExportWriter {
     static func writeTemporaryCertificate(_ certificate: CertificateDetails, host: String, indexInChain: Int) -> URL? {

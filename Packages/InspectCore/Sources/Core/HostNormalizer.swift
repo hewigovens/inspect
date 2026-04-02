@@ -38,7 +38,8 @@ public enum HostNormalizer {
             guard component.isEmpty == false,
                   component.count <= 3,
                   let number = Int(component),
-                  (0...255).contains(number) else {
+                  (0 ... 255).contains(number)
+            else {
                 return false
             }
         }
