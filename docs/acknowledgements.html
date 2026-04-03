@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inspect Acknowledgements</title>
+  <meta name="description" content="Open source acknowledgements for Inspect.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #eef4f8; --bg-elevated: rgba(255,255,255,0.88); --text: #17324a;
+      --text-secondary: #567088; --text-tertiary: #72879a;
+      --border: rgba(41,78,119,0.12); --accent: #175ea7;
+      --mono: "DM Mono", ui-monospace, monospace;
+      --sans: "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0e1a24; --bg-elevated: rgba(22,38,54,0.9); --text: #dce6ee;
+        --text-secondary: #8fa4b8; --text-tertiary: #5d778e;
+        --border: rgba(140,180,220,0.1); --accent: #5a9fd6;
+      }
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body { margin: 0; font-family: var(--sans); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    nav { position: sticky; top: 0; z-index: 100; padding: 0 clamp(20px,4vw,48px);
+      background: color-mix(in srgb, var(--bg) 85%, transparent);
+      backdrop-filter: blur(20px) saturate(1.8); -webkit-backdrop-filter: blur(20px) saturate(1.8);
+      border-bottom: 1px solid var(--border); }
+    nav .inner { display: flex; align-items: center; justify-content: space-between;
+      max-width: 1080px; margin: 0 auto; height: 56px; }
+    nav .wordmark { font-family: var(--mono); font-weight: 500; font-size: 0.88rem;
+      letter-spacing: 0.06em; color: var(--text); text-transform: uppercase; }
+    nav .wordmark:hover { text-decoration: none; }
+    nav .links { display: flex; gap: 28px; font-size: 0.88rem; color: var(--text-secondary); }
+    nav .links a { color: inherit; }
+    nav .links a:hover { color: var(--text); text-decoration: none; }
+
+    .page { max-width: 720px; margin: 0 auto; padding: clamp(48px,8vh,96px) clamp(20px,4vw,48px) clamp(32px,5vh,60px); }
+    .page .overline { font-family: var(--mono); font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 12px; }
+    .page h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 600; letter-spacing: -0.02em;
+      margin: 0 0 8px; line-height: 1.1; }
+    .page .subtitle { font-size: 0.95rem; color: var(--text-secondary); margin: 0 0 40px; }
+    .page h2 { font-size: 1.1rem; font-weight: 600; margin: 32px 0 8px; }
+    .page p, .page li { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
+    .page p { margin: 0 0 12px; }
+
+    .dep-list { list-style: none; padding: 0; margin: 0 0 32px; display: flex; flex-direction: column; gap: 16px; }
+    .dep-list li { padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .dep-list li:last-child { border-bottom: none; padding-bottom: 0; }
+    .dep-list strong { display: block; font-size: 0.95rem; margin-bottom: 2px; color: var(--text); }
+    .dep-list span { font-size: 0.88rem; color: var(--text-secondary); }
+    .dep-list a { font-size: 0.82rem; }
+
+    footer { max-width: 1080px; margin: 0 auto; padding: 0 clamp(20px,4vw,48px) clamp(32px,5vh,60px); }
+    footer .inner { display: flex; justify-content: space-between; align-items: center;
+      padding-top: 20px; border-top: 1px solid var(--border); font-size: 0.82rem; color: var(--text-tertiary); }
+    footer .links { display: flex; gap: 20px; }
+    footer .links a { color: var(--text-tertiary); }
+    footer .links a:hover { color: var(--text-secondary); }
+
+    @media (max-width: 540px) {
+      footer .inner { flex-direction: column; align-items: flex-start; gap: 12px; }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <div class="inner">
+      <a class="wordmark" href="index.html">Inspect</a>
+      <div class="links">
+        <a href="privacy.html">Privacy</a>
+        <a href="acknowledgements.html">Acknowledgements</a>
+        <a href="https://github.com/hewigovens/inspect">Source</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="overline">Open Source</div>
+    <h1>Acknowledgements</h1>
+    <p class="subtitle">Inspect uses a small set of open source packages.</p>
+
+    <ul class="dep-list">
+      <li>
+        <strong>swift-certificates</strong>
+        <span>X.509 certificate parsing and models.</span><br>
+        <a href="https://github.com/apple/swift-certificates">apple/swift-certificates</a>
+      </li>
+      <li>
+        <strong>swift-asn1</strong>
+        <span>ASN.1 encoding used by the certificate layer.</span><br>
+        <a href="https://github.com/apple/swift-asn1">apple/swift-asn1</a>
+      </li>
+      <li>
+        <strong>swift-crypto</strong>
+        <span>Cryptographic primitives for tests and tooling.</span><br>
+        <a href="https://github.com/apple/swift-crypto">apple/swift-crypto</a>
+      </li>
+      <li>
+        <strong>tun2proxy</strong>
+        <span>Rust TUN proxy for Live Monitor traffic forwarding.</span><br>
+        <a href="https://github.com/tun2proxy/tun2proxy">tun2proxy/tun2proxy</a>
+      </li>
+    </ul>
+
+    <h2>License Notice</h2>
+    <p>Each package is distributed under its own license. Refer to the upstream repositories for complete license text.</p>
+  </div>
+
+  <footer>
+    <div class="inner">
+      <span>&copy; 2025 Inspect</span>
+      <div class="links">
+        <a href="privacy.html">Privacy</a>
+        <a href="acknowledgements.html">Acknowledgements</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

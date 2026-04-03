@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inspect Privacy Policy</title>
+  <meta name="description" content="Privacy Policy for Inspect.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #eef4f8; --bg-elevated: rgba(255,255,255,0.88); --text: #17324a;
+      --text-secondary: #567088; --text-tertiary: #72879a;
+      --border: rgba(41,78,119,0.12); --accent: #175ea7;
+      --mono: "DM Mono", ui-monospace, monospace;
+      --sans: "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0e1a24; --bg-elevated: rgba(22,38,54,0.9); --text: #dce6ee;
+        --text-secondary: #8fa4b8; --text-tertiary: #5d778e;
+        --border: rgba(140,180,220,0.1); --accent: #5a9fd6;
+      }
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body { margin: 0; font-family: var(--sans); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    nav { position: sticky; top: 0; z-index: 100; padding: 0 clamp(20px,4vw,48px);
+      background: color-mix(in srgb, var(--bg) 85%, transparent);
+      backdrop-filter: blur(20px) saturate(1.8); -webkit-backdrop-filter: blur(20px) saturate(1.8);
+      border-bottom: 1px solid var(--border); }
+    nav .inner { display: flex; align-items: center; justify-content: space-between;
+      max-width: 1080px; margin: 0 auto; height: 56px; }
+    nav .wordmark { font-family: var(--mono); font-weight: 500; font-size: 0.88rem;
+      letter-spacing: 0.06em; color: var(--text); text-transform: uppercase; }
+    nav .wordmark:hover { text-decoration: none; }
+    nav .links { display: flex; gap: 28px; font-size: 0.88rem; color: var(--text-secondary); }
+    nav .links a { color: inherit; }
+    nav .links a:hover { color: var(--text); text-decoration: none; }
+
+    .page { max-width: 720px; margin: 0 auto; padding: clamp(48px,8vh,96px) clamp(20px,4vw,48px) clamp(32px,5vh,60px); }
+    .page .overline { font-family: var(--mono); font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 12px; }
+    .page h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 600; letter-spacing: -0.02em;
+      margin: 0 0 8px; line-height: 1.1; }
+    .page .updated { font-size: 0.88rem; color: var(--text-tertiary); margin: 0 0 40px; }
+    .page h2 { font-size: 1.1rem; font-weight: 600; margin: 32px 0 8px; }
+    .page p, .page li { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
+    .page p { margin: 0 0 12px; }
+    .page ul { padding-left: 1.2rem; margin: 0 0 12px; }
+    .page li { margin-bottom: 4px; }
+
+    footer { max-width: 1080px; margin: 0 auto; padding: 0 clamp(20px,4vw,48px) clamp(32px,5vh,60px); }
+    footer .inner { display: flex; justify-content: space-between; align-items: center;
+      padding-top: 20px; border-top: 1px solid var(--border); font-size: 0.82rem; color: var(--text-tertiary); }
+    footer .links { display: flex; gap: 20px; }
+    footer .links a { color: var(--text-tertiary); }
+    footer .links a:hover { color: var(--text-secondary); }
+    @media (max-width: 540px) { footer .inner { flex-direction: column; align-items: flex-start; gap: 12px; } }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <div class="inner">
+      <a class="wordmark" href="index.html">Inspect</a>
+      <div class="links">
+        <a href="privacy.html">Privacy</a>
+        <a href="acknowledgements.html">Acknowledgements</a>
+        <a href="https://github.com/hewigovens/inspect">Source</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="overline">Legal</div>
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated March 13, 2026</p>
+
+    <p>Inspect is a certificate inspection app for iPhone, iPad, and Mac. This policy explains what information the app handles and how it is used.</p>
+
+    <h2>Information Inspect Processes</h2>
+    <ul>
+      <li>Host names or HTTPS URLs that you enter manually or send from the share sheet.</li>
+      <li>Certificate chain data returned by the server you choose to inspect.</li>
+      <li>TLS handshake metadata (SNI, certificate chains) passively observed by Live Monitor when enabled.</li>
+      <li>Recent lookup entries and Live Monitor observations stored locally on your device.</li>
+      <li>Certificate files you choose to export or share.</li>
+    </ul>
+
+    <h2>How Inspect Uses This Information</h2>
+    <ul>
+      <li>To open a TLS connection to the host you selected and capture the presented certificate chain.</li>
+      <li>To passively observe TLS handshakes when Live Monitor is enabled, without intercepting or modifying traffic.</li>
+      <li>To evaluate server trust and display certificate details and security findings.</li>
+      <li>To keep a small recent-history list and Live Monitor observations on your device.</li>
+      <li>To generate a temporary certificate file only when you choose to export or share.</li>
+    </ul>
+
+    <h2>Data Storage</h2>
+    <p>Inspect stores recent lookups locally on your device using Apple's system storage APIs. Exported certificates are written to a temporary file on-device only when you ask the app to export or share one.</p>
+
+    <h2>Network Requests</h2>
+    <p>Inspect connects to the HTTPS endpoint that you choose to inspect. Those requests go directly from your device to that endpoint.</p>
+    <p>When Live Monitor is enabled, a local packet tunnel observes TLS handshakes from your device's traffic. The tunnel only reads handshake metadata and does not intercept, decrypt, or modify any traffic.</p>
+    <p>To show favicons next to recent items, the app may request an icon from Google's favicon service using the host name.</p>
+
+    <h2>Data Collection and Tracking</h2>
+    <p>Inspect does not require user accounts and does not include advertising SDKs, analytics SDKs, or third-party tracking code.</p>
+
+    <h2>Data Sharing</h2>
+    <p>The developer does not receive your inspection history, certificate contents, or exported files. Information is only sent to third parties as part of the network behavior you initiate, such as connecting to a host you entered.</p>
+
+    <h2>Your Choices</h2>
+    <ul>
+      <li>Clear recent lookups and Live Monitor history inside the app.</li>
+      <li>Enable or disable Live Monitor at any time.</li>
+      <li>Choose not to export or share certificates.</li>
+      <li>Remove the app from your device at any time.</li>
+    </ul>
+
+    <h2>Contact</h2>
+    <p>Privacy questions: <a href="https://github.com/hewigovens/inspect/issues">open an issue</a></p>
+  </div>
+
+  <footer>
+    <div class="inner">
+      <span>&copy; 2025 Inspect</span>
+      <div class="links">
+        <a href="privacy.html">Privacy</a>
+        <a href="acknowledgements.html">Acknowledgements</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

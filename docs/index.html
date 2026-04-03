@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inspect — TLS Certificate Inspector</title>
+  <meta name="description"
+    content="TLS certificate inspector with passive Live Monitor for iPhone, iPad, and Mac. See what your device connects to.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #eef4f8;
+      --bg-elevated: rgba(255, 255, 255, 0.88);
+      --text: #17324a;
+      --text-secondary: #567088;
+      --text-tertiary: #72879a;
+      --border: rgba(41, 78, 119, 0.12);
+      --accent: #175ea7;
+      --accent-subtle: rgba(23, 94, 167, 0.08);
+      --surface: rgba(255, 255, 255, 0.7);
+      --shadow-subtle: 0 1px 2px rgba(32, 62, 91, 0.06);
+      --shadow-medium: 0 4px 24px rgba(32, 62, 91, 0.1);
+      --mono: "DM Mono", ui-monospace, monospace;
+      --sans: "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0e1a24;
+        --bg-elevated: rgba(22, 38, 54, 0.9);
+        --text: #dce6ee;
+        --text-secondary: #8fa4b8;
+        --text-tertiary: #5d778e;
+        --border: rgba(140, 180, 220, 0.1);
+        --accent: #5a9fd6;
+        --accent-subtle: rgba(90, 159, 214, 0.1);
+        --surface: rgba(22, 38, 54, 0.7);
+        --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.3);
+        --shadow-medium: 0 4px 24px rgba(0, 0, 0, 0.4);
+      }
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html {
+      background: var(--bg);
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    /* ── Nav ── */
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0 clamp(20px, 4vw, 48px);
+      background: color-mix(in srgb, var(--bg) 85%, transparent);
+      backdrop-filter: blur(20px) saturate(1.8);
+      -webkit-backdrop-filter: blur(20px) saturate(1.8);
+      border-bottom: 1px solid var(--border);
+    }
+
+    nav .inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1080px;
+      margin: 0 auto;
+      height: 56px;
+    }
+
+    nav .wordmark {
+      font-family: var(--mono);
+      font-weight: 500;
+      font-size: 0.88rem;
+      letter-spacing: 0.06em;
+      color: var(--text);
+      text-transform: uppercase;
+    }
+
+    nav .wordmark:hover { text-decoration: none; }
+
+    nav .links {
+      display: flex;
+      gap: 28px;
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+
+    nav .links a { color: inherit; }
+    nav .links a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── Sections ── */
+
+    section {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 clamp(20px, 4vw, 48px);
+    }
+
+    /* ── Hero ── */
+
+    .hero {
+      padding-top: clamp(80px, 14vh, 140px);
+      padding-bottom: clamp(48px, 8vh, 80px);
+    }
+
+    .hero .overline {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      font-weight: 600;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      margin: 0 0 24px;
+    }
+
+    .hero .subtitle {
+      font-size: clamp(1.1rem, 2vw, 1.35rem);
+      color: var(--text-secondary);
+      max-width: 520px;
+      margin: 0 0 36px;
+      line-height: 1.5;
+    }
+
+    .hero .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: var(--text);
+      color: var(--bg);
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 500;
+      transition: opacity 0.15s;
+    }
+
+    .hero .cta:hover { opacity: 0.85; text-decoration: none; }
+
+    .hero .cta svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    /* ── Screenshots ── */
+
+    .screenshots {
+      padding-bottom: clamp(48px, 8vh, 80px);
+    }
+
+    .screenshot-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: clamp(12px, 2vw, 20px);
+    }
+
+    .screenshot-grid figure {
+      margin: 0;
+    }
+
+    .screenshot-grid img {
+      width: 100%;
+      height: auto;
+      border-radius: 16px;
+      box-shadow: var(--shadow-medium);
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .screenshot-grid img:hover {
+      transform: translateY(-4px);
+    }
+
+    .screenshot-grid figcaption {
+      margin-top: 10px;
+      font-size: 0.82rem;
+      color: var(--text-tertiary);
+      text-align: center;
+    }
+
+    /* ── Feature ── */
+
+    .feature {
+      padding-bottom: clamp(48px, 8vh, 80px);
+    }
+
+    .feature-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: clamp(32px, 5vw, 64px);
+      align-items: center;
+    }
+
+    .feature .overline {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .feature h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin: 0 0 16px;
+      line-height: 1.1;
+    }
+
+    .feature p {
+      color: var(--text-secondary);
+      margin: 0 0 20px;
+      font-size: 1.02rem;
+    }
+
+    .feature ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .feature li {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .feature li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 9px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.5;
+    }
+
+    .feature-image img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: var(--shadow-medium);
+      border: 1px solid var(--border);
+    }
+
+    /* ── Info grid ── */
+
+    .info {
+      padding-bottom: clamp(48px, 8vh, 80px);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .info-cell {
+      background: var(--bg-elevated);
+      padding: clamp(20px, 3vw, 32px);
+    }
+
+    .info-cell h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin: 0 0 14px;
+    }
+
+    .info-cell ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .info-cell li {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    .info-cell li a {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .info-cell p {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      margin: 0 0 12px;
+      line-height: 1.45;
+    }
+
+    .info-cell code {
+      font-family: var(--mono);
+      font-size: 0.88em;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: var(--accent-subtle);
+      color: var(--accent);
+    }
+
+    /* ── Footer ── */
+
+    footer {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 clamp(20px, 4vw, 48px) clamp(32px, 5vh, 60px);
+    }
+
+    footer .inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 0.82rem;
+      color: var(--text-tertiary);
+    }
+
+    footer .links {
+      display: flex;
+      gap: 20px;
+    }
+
+    footer .links a { color: var(--text-tertiary); }
+    footer .links a:hover { color: var(--text-secondary); }
+
+    /* ── Entrance animations ── */
+
+    @media (prefers-reduced-motion: no-preference) {
+      .fade-in {
+        opacity: 0;
+        transform: translateY(12px);
+        animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      }
+
+      .fade-in:nth-child(1) { animation-delay: 0s; }
+      .fade-in:nth-child(2) { animation-delay: 0.06s; }
+      .fade-in:nth-child(3) { animation-delay: 0.12s; }
+      .fade-in:nth-child(4) { animation-delay: 0.18s; }
+      .fade-in:nth-child(5) { animation-delay: 0.24s; }
+
+      @keyframes fadeUp {
+        to { opacity: 1; transform: translateY(0); }
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .fade-in { opacity: 1; transform: none; }
+    }
+
+    /* ── Responsive ── */
+
+    @media (max-width: 860px) {
+      .screenshot-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .feature-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-image { order: -1; }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .screenshot-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .screenshot-grid figcaption {
+        display: none;
+      }
+
+      footer .inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <div class="inner">
+      <a class="wordmark" href="index.html">Inspect</a>
+      <div class="links">
+        <a href="privacy.html">Privacy</a>
+        <a href="acknowledgements.html">Acknowledgements</a>
+        <a href="https://github.com/hewigovens/inspect">Source</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <h1 class="fade-in">Inspect</h1>
+    <p class="subtitle fade-in">TLS certificate inspector with passive Live Monitor for iPhone, iPad, and Mac.</p>
+    <a class="cta fade-in" href="https://apps.apple.com/us/app/inspect-view-tls-certificate/id1074957486">
+      <svg viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11"/></svg>
+      Download on the App Store
+    </a>
+  </section>
+
+  <section class="screenshots">
+    <div class="screenshot-grid">
+      <figure class="fade-in">
+        <img src="images/01-inspect-tab.png" alt="Inspect tab" loading="lazy">
+        <figcaption>Inspect any endpoint</figcaption>
+      </figure>
+      <figure class="fade-in">
+        <img src="images/02-live-monitor.png" alt="Live Monitor" loading="lazy">
+        <figcaption>Passive certificate capture</figcaption>
+      </figure>
+      <figure class="fade-in">
+        <img src="images/03-host-detail.png" alt="Host detail" loading="lazy">
+        <figcaption>Trust and security signals</figcaption>
+      </figure>
+      <figure class="fade-in">
+        <img src="images/04-cert-chain.png" alt="Certificate chain" loading="lazy">
+        <figcaption>Full X.509 chain detail</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="feature">
+    <div class="feature-layout">
+      <div>
+        <div class="overline">Live Monitor</div>
+        <h2>Observe TLS traffic<br>without interception</h2>
+        <p>Certificates are captured from live handshakes and shown in a scrollable feed. Nothing is intercepted or modified.</p>
+        <ul>
+          <li>Certificate chains and SNI from live TLS handshakes</li>
+          <li>Detects certificate changes across repeat observations</li>
+          <li>All data stays on-device</li>
+        </ul>
+      </div>
+      <div class="feature-image">
+        <img src="images/mac-inspect.png" alt="Inspect for Mac" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <section class="info">
+    <div class="info-grid">
+      <div class="info-cell">
+        <h3>Inspection</h3>
+        <ul>
+          <li>Full certificate chain with X.509 detail</li>
+          <li>Redirect-aware multi-hop inspection</li>
+          <li>OCSP and CRL revocation checking</li>
+          <li>Certificate Transparency SCT log parsing</li>
+          <li>Export certificates as DER or PEM</li>
+        </ul>
+      </div>
+      <div class="info-cell">
+        <h3>Security</h3>
+        <ul>
+          <li>Trust failures and hostname mismatch</li>
+          <li>Expired or not-yet-valid certificates</li>
+          <li>Weak keys and signature algorithms</li>
+          <li>Suspicious CA usage on leaf certificates</li>
+          <li>Interception product detection</li>
+          <li>Certificate change monitoring</li>
+        </ul>
+      </div>
+      <div class="info-cell">
+        <h3>Integration</h3>
+        <ul>
+          <li>Safari extension for inspecting the current page</li>
+          <li>macOS Share extension for URLs from any app</li>
+          <li>iOS action extension from share sheet</li>
+          <li>Home Screen widget for Live Monitor status</li>
+          <li><a href="https://github.com/hewigovens/inspect">Open source</a> — Swift 6, SwiftUI, Rust</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="inner">
+      <span>&copy; 2025 Inspect</span>
+      <div class="links">
+        <a href="privacy.html">Privacy</a>
+        <a href="acknowledgements.html">Acknowledgements</a>
+        <a href="https://github.com/hewigovens/inspect">GitHub</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
