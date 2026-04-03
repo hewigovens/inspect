@@ -1,7 +1,0 @@
-Live Monitor is here.
-
-- Monitor TLS certificates across apps while you browse
-- Review observed hosts in a dedicated Monitor tab
-- Open host details and inspect captured certificate chains
-- Keep monitor history, events, and tunnel logs available between launches
-- Improved Safari compatibility and overall monitoring reliability
