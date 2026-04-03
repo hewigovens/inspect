@@ -72,7 +72,7 @@ struct RevocationStatusBadge: View {
     private var detail: String? {
         switch status {
         case .unchecked: return "OCSP and CRL endpoints"
-        case .checking: return nil
+        case .checking: return "Querying OCSP and CRL endpoints…"
         case .good: return "OCSP/CRL verification passed"
         case let .revoked(reason): return reason
         case let .unreachable(reason): return reason
