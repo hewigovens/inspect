@@ -5,6 +5,7 @@ public enum RevocationStatus: Sendable, Equatable {
     case unchecked
     case checking
     case good
+    case crlOnly
     case revoked(String)
     case unreachable(String)
 }
@@ -14,6 +15,7 @@ public enum RevocationChecker: Sendable {
         certificates: [CertificateDetails],
         host: String
     ) async -> RevocationStatus {
+        let leafCertificate = certificates.first
         let secCerts = certificates.compactMap {
             SecCertificateCreateWithData(nil, $0.derData as CFData)
         }
@@ -54,10 +56,30 @@ public enum RevocationChecker: Sendable {
             return .revoked(message)
         }
 
-        if lowered.contains("ocsp") || lowered.contains("crl") || lowered.contains("revocation") {
-            return .unreachable(message)
+        if let fallbackStatus = fallbackStatus(for: leafCertificate, errorMessage: message) {
+            return fallbackStatus
         }
 
         return .unreachable(message)
+    }
+
+    static func fallbackStatus(
+        for leafCertificate: CertificateDetails?,
+        errorMessage: String
+    ) -> RevocationStatus? {
+        guard let leafCertificate else {
+            return nil
+        }
+
+        if leafCertificate.hasOCSPResponder == false, leafCertificate.hasCRLDistributionPoints {
+            return .crlOnly
+        }
+
+        let lowered = errorMessage.lowercased()
+        if lowered.contains("ocsp") || lowered.contains("crl") || lowered.contains("revocation") {
+            return .unreachable(errorMessage)
+        }
+
+        return nil
     }
 }

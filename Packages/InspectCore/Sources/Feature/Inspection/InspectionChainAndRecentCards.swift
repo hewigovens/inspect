@@ -94,53 +94,44 @@ struct InspectionRecentCard: View {
     }
 
     private func recentRow(recent: RecentLookupItem, index: Int) -> some View {
-        let isCurrent = recent.normalizedURL == currentReportURL
+        return HStack(spacing: 12) {
+            RecentLookupIcon(host: recent.host)
 
-        return Button {
-            isInputFocused.wrappedValue = false
-            Task {
-                await actions.inspectRecent(recent.rawInput)
-            }
-        } label: {
-            HStack(spacing: 12) {
-                RecentLookupIcon(host: recent.host)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(recent.primaryText)
+                    .font(.inspectRootSubheadlineSemibold)
+                    .foregroundStyle(.primary)
+                    .multilineTextAlignment(.leading)
 
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(recent.primaryText)
-                        .font(.inspectRootSubheadlineSemibold)
-                        .foregroundStyle(.primary)
-                        .multilineTextAlignment(.leading)
-
-                    if let secondaryText = recent.secondaryText {
-                        Text(secondaryText)
-                            .font(.inspectRootCaption)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                    }
-                }
-
-                Spacer()
-
-                if isCurrent {
-                    Text("Current")
-                        .font(.inspectRootCaptionSemibold)
+                if let secondaryText = recent.secondaryText {
+                    Text(secondaryText)
+                        .font(.inspectRootCaption)
                         .foregroundStyle(.secondary)
+                        .lineLimit(1)
                 }
             }
-            .padding(.vertical, 8)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .contentShape(Rectangle())
         .accessibilityIdentifier("recent.\(index)")
         .contextMenu {
+            Button {
+                isInputFocused.wrappedValue = false
+                Task {
+                    await actions.inspectRecent(recent.rawInput)
+                }
+            } label: {
+                Label("Look up again", systemImage: "magnifyingglass")
+            }
+
             Button(role: .destructive) {
                 actions.removeRecent(recent.rawInput)
             } label: {
                 Label("Delete lookup", systemImage: "trash")
             }
         }
+        .accessibilityHint("Long press for lookup and delete actions")
     }
 }
 

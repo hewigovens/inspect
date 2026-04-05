@@ -39,14 +39,26 @@ public struct CertificateDetailView: View {
         )
     }
 
-    var revocationStatus: RevocationStatus {
+    var showsRevocationStatus: Bool {
+        selectedCertificate?.isLeaf == true
+    }
+
+    var leafRevocationStatus: RevocationStatus {
         guard let key = revocationCacheKey else { return .unchecked }
         return revocationCache[key] ?? .unchecked
     }
 
     private var revocationCacheKey: String? {
-        guard let cert = selectedCertificate else { return nil }
-        return "\(selectedReportIndex)-\(cert.id)"
+        guard showsRevocationStatus else { return nil }
+        guard let selectedReport, let leaf = selectedReport.leafCertificate else { return nil }
+        return "\(selectedReport.id.uuidString)-\(leaf.id)"
+    }
+
+    var revocationSummary: CertificateRevocationSummary {
+        CertificateRevocationSummary.make(
+            host: selectedReport?.host ?? inspection.primaryReport?.host ?? inspection.requestedURL.absoluteString,
+            status: leafRevocationStatus
+        )
     }
 
     var selectedReport: TLSInspectionReport? {
@@ -115,15 +127,6 @@ public struct CertificateDetailView: View {
                             }
                         }
 
-                        Divider()
-
-                        Button {
-                            checkRevocation()
-                        } label: {
-                            Label("Check Revocation", systemImage: "checkmark.shield")
-                        }
-                        .disabled(revocationStatus == .checking)
-
                         if let sslLabsURL = selectedReport?.sslLabsURL {
                             Button {
                                 openSSLLabs(sslLabsURL)
@@ -135,6 +138,9 @@ public struct CertificateDetailView: View {
                         Image(systemName: "ellipsis.circle")
                     }
                 }
+            }
+            .task(id: revocationCacheKey) {
+                refreshRevocationStatus()
             }
             .inspectSafariSheet(url: selectedReport?.sslLabsURL, isPresented: $presentsSSLLabs)
     }
@@ -206,17 +212,20 @@ public struct CertificateDetailView: View {
         showCopyFeedback("Copied \(certificates.count) certificates")
     }
 
-    func checkRevocation() {
+    @MainActor
+    func refreshRevocationStatus(force: Bool = false) {
         guard let selectedReport, let key = revocationCacheKey else {
             return
         }
 
-        let certificatesForCheck = Array(selectedReport.certificates.dropFirst(selectedIndex))
+        if force == false, revocationCache[key] != nil {
+            return
+        }
 
         revocationCache[key] = .checking
         Task {
             let result = await RevocationChecker.check(
-                certificates: certificatesForCheck,
+                certificates: selectedReport.certificates,
                 host: selectedReport.host
             )
             await MainActor.run {

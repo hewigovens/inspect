@@ -6,13 +6,14 @@
             List {
                 chainSection
 
-                Section {
-                    RevocationStatusBadge(
-                        status: revocationStatus,
-                        onCheck: checkRevocation
-                    )
-                } header: {
-                    sectionHeader("Revocation")
+                if showsRevocationStatus {
+                    Section {
+                        RevocationStatusBadge(
+                            summary: revocationSummary
+                        )
+                    } header: {
+                        sectionHeader("Server Revocation")
+                    }
                 }
 
                 if let selectedContent {
