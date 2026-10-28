@@ -10,6 +10,8 @@ import Observation
 @MainActor
 @Observable
 final class LiveMonitorManager {
+    static let shared = LiveMonitorManager()
+
     static let tunnelProviderBundleIdentifier = "in.fourplex.Inspect.PacketTunnelExtension"
     static let localizedDescription = "Inspect Live Monitor"
     var status: NEVPNStatus = .invalid

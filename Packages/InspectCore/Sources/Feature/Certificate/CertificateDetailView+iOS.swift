@@ -1,32 +1,65 @@
 #if !os(macOS)
+    import InspectCore
     import SwiftUI
 
     extension CertificateDetailView {
         var platformContent: some View {
+            Group {
+                if #available(iOS 27.1, *) {
+                    arrangementContent
+                } else {
+                    listContent
+                }
+            }
+        }
+
+        /// Main/detail split that keeps the chain beside the rows it indexes.
+        ///
+        /// The default split style divides horizontally when the container is wider than
+        /// tall and vertically when it is taller, so every Duo pose keeps both panes.
+        @available(iOS 27.1, *)
+        var arrangementContent: some View {
+            ArrangementView {
+                List { chainSection }
+            } secondary: {
+                List { detailPaneSections }
+            }
+        }
+
+        var listContent: some View {
             List {
                 chainSection
+                detailPaneSections
+            }
+        }
 
-                if showsRevocationStatus {
-                    Section {
-                        RevocationStatusBadge(
-                            summary: revocationSummary
-                        )
-                    } header: {
-                        sectionHeader("Server Revocation")
-                    }
+        @ViewBuilder
+        private var detailPaneSections: some View {
+            revocationSection
+
+            if let selectedContent {
+                ForEach(selectedContent.sections) { section in
+                    detailSection(section)
                 }
+            } else {
+                Section {
+                    Text("No certificate details were available for this inspection.")
+                        .foregroundStyle(.secondary)
+                } header: {
+                    sectionHeader("Certificate")
+                }
+            }
+        }
 
-                if let selectedContent {
-                    ForEach(selectedContent.sections) { section in
-                        detailSection(section)
-                    }
-                } else {
-                    Section {
-                        Text("No certificate details were available for this inspection.")
-                            .foregroundStyle(.secondary)
-                    } header: {
-                        sectionHeader("Certificate")
-                    }
+        @ViewBuilder
+        private var revocationSection: some View {
+            if showsRevocationStatus {
+                Section {
+                    RevocationStatusBadge(
+                        summary: revocationSummary
+                    )
+                } header: {
+                    sectionHeader("Server Revocation")
                 }
             }
         }

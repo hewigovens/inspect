@@ -5,6 +5,8 @@ private struct PlatformValues {
     let rootSideRailWidth: CGFloat
     let rootCompactContentMaxWidth: CGFloat?
     let rootCompactHorizontalPadding: CGFloat
+    let rootDashboardMinimumWidth: CGFloat
+    let inputRegularMinimumContentWidth: CGFloat
     let inputCardSpacing: CGFloat
     let inputSampleColumnWidth: CGFloat
     let inputDemoTargetVerticalPadding: CGFloat
@@ -22,6 +24,8 @@ private struct PlatformValues {
                 rootSideRailWidth: 380,
                 rootCompactContentMaxWidth: 1140,
                 rootCompactHorizontalPadding: 28,
+                rootDashboardMinimumWidth: 980,
+                inputRegularMinimumContentWidth: 760,
                 inputCardSpacing: 12,
                 inputSampleColumnWidth: 320,
                 inputDemoTargetVerticalPadding: 6,
@@ -38,6 +42,8 @@ private struct PlatformValues {
                 rootSideRailWidth: 360,
                 rootCompactContentMaxWidth: nil,
                 rootCompactHorizontalPadding: 20,
+                rootDashboardMinimumWidth: 900,
+                inputRegularMinimumContentWidth: 680,
                 inputCardSpacing: 14,
                 inputSampleColumnWidth: 300,
                 inputDemoTargetVerticalPadding: 8,
@@ -53,10 +59,32 @@ private struct PlatformValues {
 }
 
 enum InspectLayout {
+    /// Whether a regular-width presentation fits the space this layout needs.
+    ///
+    /// A regular size class alone does not imply enough room on a foldable: the Duo's
+    /// inner display is regular width in portrait but too narrow for a side rail beside
+    /// the main column. Width is checked when the container reports one.
+    static func fitsRegularWidth(
+        _ width: CGFloat?,
+        minimum: CGFloat,
+        horizontalSizeClass: UserInterfaceSizeClass?
+    ) -> Bool {
+        guard horizontalSizeClass == .regular else {
+            return false
+        }
+
+        guard let width else {
+            return true
+        }
+
+        return width >= minimum
+    }
+
     enum Root {
         static func usesRegularDashboardLayout(
             presentation: InspectionPresentation,
-            horizontalSizeClass: UserInterfaceSizeClass?
+            horizontalSizeClass: UserInterfaceSizeClass?,
+            availableWidth: CGFloat? = nil
         ) -> Bool {
             guard presentation == .app else {
                 return false
@@ -65,7 +93,11 @@ enum InspectLayout {
             #if os(macOS)
                 return true
             #else
-                return horizontalSizeClass == .regular
+                return fitsRegularWidth(
+                    availableWidth,
+                    minimum: dashboardMinimumWidth,
+                    horizontalSizeClass: horizontalSizeClass
+                )
             #endif
         }
 
@@ -84,15 +116,32 @@ enum InspectLayout {
         static var sideRailWidth: CGFloat {
             PlatformValues.current.rootSideRailWidth
         }
+
+        /// Narrowest width where the main column and side rail still both read well.
+        static var dashboardMinimumWidth: CGFloat {
+            PlatformValues.current.rootDashboardMinimumWidth
+        }
     }
 
     enum Input {
-        static func usesRegularWidthLayout(horizontalSizeClass: UserInterfaceSizeClass?) -> Bool {
+        static func usesRegularWidthLayout(
+            horizontalSizeClass: UserInterfaceSizeClass?,
+            availableWidth: CGFloat? = nil
+        ) -> Bool {
             #if os(macOS)
                 return true
             #else
-                return horizontalSizeClass == .regular
+                return fitsRegularWidth(
+                    availableWidth,
+                    minimum: regularWidthMinimum,
+                    horizontalSizeClass: horizontalSizeClass
+                )
             #endif
+        }
+
+        /// Narrowest width where the field and sample column still both read well.
+        static var regularWidthMinimum: CGFloat {
+            PlatformValues.current.inputRegularMinimumContentWidth
         }
 
         static var usesHorizontalCompactDemoTargets: Bool {

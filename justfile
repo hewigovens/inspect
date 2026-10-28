@@ -86,8 +86,15 @@ reset-mac-extensions:
     fi
     echo "Done. Verify with: pluginkit -m -v -p com.apple.share-services | grep -i inspect"
 
+# Screenshots default to the iPhone Duo set; export SCREENSHOTS_SETS=all for every set.
 app-store-screenshots:
     ./scripts/app_store_screenshots.sh capture
+
+app-store-screenshots-all:
+    SCREENSHOTS_SETS=all ./scripts/app_store_screenshots.sh capture
+
+app-store-screenshots-duo:
+    CAPTURE_DUO_INNER=YES ./scripts/app_store_screenshots.sh capture
 
 run-ios-device log_file="target/ios-device-console.log" tunnel_log_file="target/ios-device-tunnel.log" app_group="group.in.fourplex.inspect.monitor":
     #!/usr/bin/env bash

@@ -4,7 +4,7 @@ import SwiftUI
 struct InspectAppRootView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var selectedTab: InspectSection = .inspect
-    @State private var liveMonitorManager = LiveMonitorManager()
+    @State private var liveMonitorManager = LiveMonitorManager.shared
     @State private var isLiveMonitorCoordinatorReady = false
     @State private var deferredAppRoute: InspectAppRoute?
 

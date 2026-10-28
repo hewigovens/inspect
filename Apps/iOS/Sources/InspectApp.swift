@@ -2,6 +2,10 @@ import InspectCore
 import InspectKit
 import SwiftUI
 
+enum InspectWindowID {
+    static let monitor = "monitor"
+}
+
 @main
 struct InspectApp: App {
     @UIApplicationDelegateAdaptor(InspectAppDelegate.self) private var appDelegate
@@ -16,6 +20,10 @@ struct InspectApp: App {
                         _ = InspectionExternalInputCenter.handleDeepLink(url)
                     }
                 }
+        }
+
+        WindowGroup(id: InspectWindowID.monitor) {
+            InspectMonitorWindowView()
         }
     }
 }

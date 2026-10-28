@@ -149,6 +149,53 @@ just app-store-screenshots
 
 That uses the built-in `INSPECT_SCREENSHOT_SCENARIO` launch mode and writes output under `build/app-store-screenshots/output/`.
 
+### Choosing sets
+
+Screenshots are captured and uploaded per set, because a release rarely changes all of them. Select with `SCREENSHOTS_SETS` (default `duo`):
+
+| Value | Sets |
+| --- | --- |
+| `duo` (default) | iPhone Duo only |
+| `all` | iPhone 6.5", iPad 12.9", iPhone Duo |
+| `iphone`, `ipad`, `duo,ipad`, … | any combination |
+
+```bash
+SCREENSHOTS_SETS=all just app-store-screenshots
+```
+
+Output per set:
+
+- `iphone/` — 6.5" iPhone, uploaded as `IPHONE_65`
+- `ipad/` — 12.9" iPad, uploaded as `IPAD_PRO_3GEN_129`
+- `duo-outer/` — iPhone Duo, outer display, uploaded as `APP_IPHONE_DUO`
+- `duo-inner/` — iPhone Duo, inner display, uploaded as `APP_IPHONE_DUO`
+
+Uploads replace the existing set for that display type (`--replace --confirm`), since App Store Connect appends otherwise and repeated runs would stack duplicates. Set `SCREENSHOTS_UPLOAD_APPEND=YES` to add without deleting first.
+
+Simulators and the Xcode project are only provisioned for the selected sets, so a Duo-only run does not boot or create the iPhone and iPad devices.
+
+### iPhone Duo captures
+
+The Duo simulator presents one display at a time, and `simctl` has no fold control — the pose is driven from Device Hub's on-screen buttons:
+
+1. Open **Xcode > Open Developer Tool > Device Hub** (Xcode 27.1 or later).
+2. Select the `Inspect App Store iPhone Duo` simulator.
+3. Use the fold controls for the set you want, then rerun the script.
+
+Both Duo sets are verified after capture. A blank set (wrong pose) fails with instructions rather than uploading black frames. Inner-display captures only run when `CAPTURE_DUO_INNER=YES` is set:
+
+```bash
+CAPTURE_DUO_INNER=YES just app-store-screenshots
+```
+
+Captured sets survive rebuilds. Only the set being captured is cleared, and `duo-inner/` is never cleared automatically because producing it again requires unfolding the device by hand.
+
+Validated sizes: outer `1398×2034`, inner `2007×2853` (or landscape equivalents).
+
+### Certificate layout is iPhone Duo only
+
+`CertificateDetailView` uses SwiftUI `ArrangementView` to show the chain beside the certificate rows, gated behind `#available(iOS 27.1, *)`. iPadOS remains at 27.0, which does not have the API, so **iPad and regular iPhone renders keep the single-column list**. That is why the `ipad/` and `iphone/` sets are unchanged by the Duo work — and why they will need re-capturing if iPadOS 27.1 ever ships or the gate is lowered to a fallback layout.
+
 To upload screenshots:
 
 ```bash
@@ -160,3 +207,5 @@ Or capture and upload in one pass:
 ```bash
 ./scripts/app_store_screenshots.sh capture-upload <VERSION_LOCALIZATION_ID>
 ```
+
+App Store Connect allows one screenshot set per display type, so both Duo directories are merged into a single `APP_IPHONE_DUO` upload with inner-display captures ordered first — they show the split layouts that make the Duo support visible.

@@ -6,6 +6,7 @@ struct InspectionInputCard: View {
     @Bindable var store: InspectionStore
     @Binding var dismissDemoTarget: Bool
     let isInputFocused: FocusState<Bool>.Binding
+    var foldMetrics = InspectFoldMetrics.none
 
     var body: some View {
         InspectCard {
@@ -99,7 +100,9 @@ struct InspectionInputCard: View {
 
     @ViewBuilder
     private var compactInputControls: some View {
-        if InspectLayout.Input.usesInlineCompactInputControls {
+        // A folded device leaves a narrow region where inline controls would be
+        // cramped, so they stack instead.
+        if InspectLayout.Input.usesInlineCompactInputControls, foldMetrics.isPartiallyFolded == false {
             HStack(alignment: .center, spacing: 10) {
                 inputField(verticalPadding: 10, cornerRadius: 14)
                 pasteButton(expands: false)
@@ -217,7 +220,10 @@ struct InspectionInputCard: View {
     }
 
     private var usesRegularWidthLayout: Bool {
-        InspectLayout.Input.usesRegularWidthLayout(horizontalSizeClass: horizontalSizeClass)
+        InspectLayout.Input.usesRegularWidthLayout(
+            horizontalSizeClass: horizontalSizeClass,
+            availableWidth: foldMetrics.contentWidth
+        )
     }
 
     private var sampleColumnWidth: CGFloat {
