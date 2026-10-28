@@ -93,8 +93,13 @@ app-store-screenshots:
 app-store-screenshots-all:
     SCREENSHOTS_SETS=all ./scripts/app_store_screenshots.sh capture
 
-app-store-screenshots-duo:
-    CAPTURE_DUO_INNER=YES ./scripts/app_store_screenshots.sh capture
+# Captures both Duo displays; pauses so the device can be unfolded in Device Hub.
+app-store-screenshots-duo-both:
+    SCREENSHOTS_SETS=duo SCREENSHOTS_DUO_DISPLAY=both ./scripts/app_store_screenshots.sh capture
+
+# Inner Duo display only; unfold the device in Device Hub first.
+app-store-screenshots-duo-inner:
+    SCREENSHOTS_SETS=duo SCREENSHOTS_DUO_DISPLAY=inner ./scripts/app_store_screenshots.sh capture
 
 run-ios-device log_file="target/ios-device-console.log" tunnel_log_file="target/ios-device-tunnel.log" app_group="group.in.fourplex.inspect.monitor":
     #!/usr/bin/env bash

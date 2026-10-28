@@ -180,15 +180,21 @@ The Duo simulator presents one display at a time, and `simctl` has no fold contr
 
 1. Open **Xcode > Open Developer Tool > Device Hub** (Xcode 27.1 or later).
 2. Select the `Inspect App Store iPhone Duo` simulator.
-3. Use the fold controls for the set you want, then rerun the script.
+3. Set the pose, then run the matching command.
 
-Both Duo sets are verified after capture. A blank set (wrong pose) fails with instructions rather than uploading black frames. Inner-display captures only run when `CAPTURE_DUO_INNER=YES` is set:
+Because the two displays need opposite poses, which display to capture is explicit via `SCREENSHOTS_DUO_DISPLAY` (default `outer`):
 
-```bash
-CAPTURE_DUO_INNER=YES just app-store-screenshots
-```
+| Value | Pose | Command |
+| --- | --- | --- |
+| `outer` | Folded | `just app-store-screenshots` |
+| `inner` | Unfolded | `just app-store-screenshots-duo-inner` |
+| `both` | Captures outer, then pauses for you to unfold | `just app-store-screenshots-duo-both` |
 
-Captured sets survive rebuilds. Only the set being captured is cleared, and `duo-inner/` is never cleared automatically because producing it again requires unfolding the device by hand.
+`both` waits for Return before the inner capture, so it needs an interactive terminal; without one it fails with instructions to run the two passes separately.
+
+Both Duo sets are verified after capture. A blank set (wrong pose) fails with instructions rather than uploading black screenshots.
+
+Only the display being captured is cleared before a run, so a set produced in the other posture survives a rebuild. Values set in the environment win over `.env`, so the `just` recipes can override file defaults.
 
 Validated sizes: outer `1398×2034`, inner `2007×2853` (or landscape equivalents).
 

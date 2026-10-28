@@ -198,13 +198,21 @@ build_app() {
     fail "Built app not found at $app_path"
   fi
 
-  # Stale captures would be uploaded alongside fresh ones, so clear the sets
-  # being re-captured. The Duo inner set is kept because producing it requires
-  # another manual unfold.
+  # Clear only what this run re-captures, so a set produced in another posture
+  # survives. Each Duo display is cleared independently.
   local set
   for set in "${SETS[@]}"; do
-    describe_set "$set"
-    rm -f "$SET_OUTPUT"/*.png
+    if [[ "$set" != duo ]]; then
+      describe_set "$set"
+      rm -f "$SET_OUTPUT"/*.png
+      continue
+    fi
+
+    case "$duo_display" in
+      outer) rm -f "$duo_outer_output_path"/*.png ;;
+      inner) rm -f "$duo_inner_output_path"/*.png ;;
+      both) rm -f "$duo_outer_output_path"/*.png "$duo_inner_output_path"/*.png ;;
+    esac
   done
 }
 
@@ -408,18 +416,47 @@ capture_all() {
     boot_simulator "$udid"
 
     if [[ "$set" == duo ]]; then
-      capture_duo_outer_set "$udid" "$output"
+      capture_duo "$udid"
     else
       capture_device_set "$udid" "$output"
     fi
   done
 }
 
-capture_duo_inner() {
-  is_truthy "${CAPTURE_DUO_INNER:-}" || return 0
-  in_sets duo || return 0
+# The Duo shows one display at a time, and the outer and inner displays need
+# opposite poses. Capturing both in one run therefore has to stop and let the
+# device be unfolded between them.
+capture_duo() {
+  local udid="$1"
 
-  capture_duo_inner_set "$(udid_for duo)" "$duo_inner_output_path"
+  case "$duo_display" in
+    outer)
+      capture_duo_outer_set "$udid" "$duo_outer_output_path"
+      ;;
+    inner)
+      capture_duo_inner_set "$udid" "$duo_inner_output_path"
+      ;;
+    both)
+      capture_duo_outer_set "$udid" "$duo_outer_output_path"
+      await_duo_posture "unfold"
+      capture_duo_inner_set "$udid" "$duo_inner_output_path"
+      ;;
+  esac
+}
+
+await_duo_posture() {
+  local action="$1"
+
+  log ""
+  log "Unfold the device in Device Hub, then press Return to capture the inner display."
+  log ""
+
+  if [[ -t 0 ]]; then
+    read -r _
+    return 0
+  fi
+
+  fail "Capturing both Duo displays needs an interactive terminal. Run once with SCREENSHOTS_DUO_DISPLAY=outer and once with SCREENSHOTS_DUO_DISPLAY=inner instead."
 }
 
 in_sets() {
@@ -499,6 +536,15 @@ in_sets() {
   return 1
 }
 
+duo_display=""
+
+resolve_duo_display() {
+  case "${SCREENSHOTS_DUO_DISPLAY:-outer}" in
+    outer | inner | both) duo_display="${SCREENSHOTS_DUO_DISPLAY:-outer}" ;;
+    *) fail "SCREENSHOTS_DUO_DISPLAY must be outer, inner, or both" ;;
+  esac
+}
+
 usage() {
   cat >&2 <<EOF
 Usage: scripts/app_store_screenshots.sh [capture|upload VERSION_LOCALIZATION_ID|capture-upload VERSION_LOCALIZATION_ID]
@@ -507,17 +553,59 @@ Screenshot sets are chosen with SCREENSHOTS_SETS (default: duo).
   SCREENSHOTS_SETS=duo     iPhone Duo only
   SCREENSHOTS_SETS=all     iPhone, iPad, and iPhone Duo
 
-iPhone Duo inner-display captures require the simulator to be unfolded.
-Open Device Hub, select "Inspect App Store iPhone Duo", and unfold it before capturing.
-Set CAPTURE_DUO_INNER=YES to include them.
+The Duo shows one display at a time, so its two sets need opposite poses.
+Choose with SCREENSHOTS_DUO_DISPLAY (default: outer).
+  outer   Capture the outer display; device folded.
+  inner   Capture the inner display; device unfolded.
+  both    Capture outer, pause for you to unfold, then capture inner.
+
+Open Device Hub (Xcode 27.1 > Open Developer Tool > Device Hub) and set the
+pose before capturing. Blank captures fail with instructions rather than
+uploading black screenshots.
 EOF
 }
 
+# Environment values win over the .env file, so `just` recipes and one-off
+# invocations can override file defaults. snapshot_preset_env records anything
+# already set so it can be restored after the file is sourced.
+snapshot_preset_env() {
+  PRESET_ENV=()
+
+  local name
+  for name in "${PRESERVED_ENV_NAMES[@]}"; do
+    if [[ -n "${!name:-}" ]]; then
+      PRESET_ENV+=("$name=${!name}")
+    fi
+  done
+}
+
+restore_preset_env() {
+  local entry
+  local name
+
+  for entry in "${PRESET_ENV[@]:-}"; do
+    [[ -n "$entry" ]] || continue
+    name="${entry%%=*}"
+    printf -v "$name" '%s' "${entry#*=}"
+    export "${name?}"
+  done
+}
+
+# Values that recipes set and .env.example also defines; the environment wins.
+PRESERVED_ENV_NAMES=(
+  SCREENSHOTS_SETS
+  SCREENSHOTS_DUO_DISPLAY
+  SCREENSHOTS_UPLOAD_APPEND
+)
+
+snapshot_preset_env
 load_env_file "$env_file"
+restore_preset_env
 normalize_auth_env
 build_asc_args
 configure
 resolve_sets
+resolve_duo_display
 
 # Only the selected sets get simulators; provisioning three devices for a
 # Duo-only run wastes several minutes of first-boot migration.
@@ -533,7 +621,6 @@ case "${1:-capture}" in
   capture)
     build_app
     capture_all
-    capture_duo_inner
     ;;
   upload)
     upload_screenshots "${2:-}"
@@ -541,7 +628,6 @@ case "${1:-capture}" in
   capture-upload)
     build_app
     capture_all
-    capture_duo_inner
     upload_screenshots "${2:-}"
     ;;
   *)
