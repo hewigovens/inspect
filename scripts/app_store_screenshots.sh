@@ -46,10 +46,8 @@ describe_set() {
       SET_OUTPUT="$output_root/ipad"
       SET_SIMULATOR="Inspect App Store iPad"
       SET_DISPLAY_TYPE="IPAD_PRO_3GEN_129"
-      SET_DEVICE_TYPES="
-        com.apple.CoreSimulator.SimDeviceType.iPad-Pro-12-9-inch-6th-generation-8GB
-        com.apple.CoreSimulator.SimDeviceType.iPad-Pro-12-9-inch-6th-generation-16GB
-        com.apple.CoreSimulator.SimDeviceType.iPad-Pro-12-9-inch-5th-generation"
+      # First entry wins; later ones cover runtimes that dropped it.
+      SET_DEVICE_TYPES="com.apple.CoreSimulator.SimDeviceType.iPad-Pro-12-9-inch-6th-generation-8GB com.apple.CoreSimulator.SimDeviceType.iPad-Pro-12-9-inch-6th-generation-16GB com.apple.CoreSimulator.SimDeviceType.iPad-Pro-12-9-inch-5th-generation"
       ;;
     duo)
       SET_OUTPUT="$duo_outer_output_path"
@@ -485,13 +483,13 @@ ensure_simulator_for_set() {
   describe_set "$set"
 
   # Device types are tried in preference order until one pairs with a runtime.
-  while IFS= read -r device_type; do
-    [[ -n "$device_type" ]] || continue
+  # Split on whitespace so the value's layout cannot leak into an identifier.
+  for device_type in $SET_DEVICE_TYPES; do
     if udid="$(ensure_simulator "$SET_SIMULATOR" "$device_type")"; then
       break
     fi
     udid=""
-  done <<<"$SET_DEVICE_TYPES"
+  done
 
   [[ -n "$udid" ]] || fail "Unable to provision a simulator for the $set set"
 
