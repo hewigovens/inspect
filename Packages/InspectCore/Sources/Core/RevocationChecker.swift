@@ -49,37 +49,30 @@ public enum RevocationChecker: Sendable {
             return .good
         }
 
-        let message = (error as Error?)?.localizedDescription ?? "Evaluation failed"
-        let lowered = message.lowercased()
+        return failureStatus(for: leafCertificate, error: error as Error?)
+    }
 
-        if lowered.contains("revoke") {
-            return .revoked(message)
-        }
+    static func failureStatus(
+        for leafCertificate: CertificateDetails?,
+        error: Error?
+    ) -> RevocationStatus {
+        let error = error as NSError?
+        let message = error?.localizedDescription ?? "Evaluation failed"
 
-        if let fallbackStatus = fallbackStatus(for: leafCertificate, errorMessage: message) {
-            return fallbackStatus
+        if error?.domain == NSOSStatusErrorDomain {
+            if error?.code == Int(errSecCertificateRevoked) {
+                return .revoked(message)
+            }
+
+            if error?.code == Int(errSecIncompleteCertRevocationCheck),
+               let leafCertificate,
+               leafCertificate.hasOCSPResponder == false,
+               leafCertificate.hasCRLDistributionPoints
+            {
+                return .crlOnly
+            }
         }
 
         return .unreachable(message)
-    }
-
-    static func fallbackStatus(
-        for leafCertificate: CertificateDetails?,
-        errorMessage: String
-    ) -> RevocationStatus? {
-        guard let leafCertificate else {
-            return nil
-        }
-
-        if leafCertificate.hasOCSPResponder == false, leafCertificate.hasCRLDistributionPoints {
-            return .crlOnly
-        }
-
-        let lowered = errorMessage.lowercased()
-        if lowered.contains("ocsp") || lowered.contains("crl") || lowered.contains("revocation") {
-            return .unreachable(errorMessage)
-        }
-
-        return nil
     }
 }

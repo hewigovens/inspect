@@ -59,8 +59,6 @@ private struct PlatformValues {
 }
 
 enum InspectLayout {
-    /// The input card's two columns need 638pt: padding, the 278pt button row, a
-    /// 20pt gap, and a 240pt floor for the sample column. Below that it overflows.
     static func fitsRegularWidth(
         _ width: CGFloat?,
         minimum: CGFloat,
@@ -114,8 +112,6 @@ enum InspectLayout {
             PlatformValues.current.rootSideRailWidth
         }
 
-        /// A fixed rail starves the main column once the dashboard is allowed at
-        /// narrower widths, so the rail shrinks with the container.
         static func sideRailWidth(forAvailableWidth width: CGFloat?) -> CGFloat {
             let full = PlatformValues.current.rootSideRailWidth
             guard let width else {

@@ -207,8 +207,6 @@ public struct InspectionRootView: View {
         }
     }
 
-    // Without this the compact layout leaves the lower half of the screen empty
-    // on first launch, which reads as broken on a tall folded display.
     private func hasNothingToShow(inspection: TLSInspection?) -> Bool {
         inspection == nil
             && store.isLoading == false

@@ -28,7 +28,6 @@ configure() {
   ensure_output_directories
 }
 
-# macOS ships bash 3.2, which has no associative arrays, so this stays a case.
 describe_set() {
   case "$1" in
     iphone)
@@ -41,7 +40,6 @@ describe_set() {
       SET_OUTPUT="$output_root/ipad"
       SET_SIMULATOR="Inspect App Store iPad"
       SET_DISPLAY_TYPE="IPAD_PRO_3GEN_129"
-      # Space separated, in preference order: the first that a runtime accepts wins.
       SET_DEVICE_TYPES="com.apple.CoreSimulator.SimDeviceType.iPad-Pro-12-9-inch-6th-generation-8GB com.apple.CoreSimulator.SimDeviceType.iPad-Pro-12-9-inch-6th-generation-16GB com.apple.CoreSimulator.SimDeviceType.iPad-Pro-12-9-inch-5th-generation"
       ;;
     duo)
@@ -134,7 +132,6 @@ ensure_simulator() {
     return 0
   fi
 
-  # Device type and runtime only pair up for some combinations.
   runtime="$(runtime_for_device_type "$device_type")" || return 1
   xcrun simctl create "$simulator_name" "$device_type" "$runtime"
 }
@@ -166,7 +163,6 @@ clear_simulator() {
 build_app() {
   generate_xcode_project "$repo_root"
 
-  # Inner captures need a manual unfold, so they are never discarded here.
   rm -rf "$derived_data_path"
   ensure_output_directories
 
@@ -184,7 +180,6 @@ build_app() {
     fail "Built app not found at $app_path"
   fi
 
-  # Only the display being captured is cleared; inner capture needs a manual unfold.
   local set
   for set in "${SETS[@]}"; do
     if [[ "$set" != duo ]]; then
@@ -316,8 +311,6 @@ verify_duo_captures() {
   done
 }
 
-# asc appends on upload, so repeated runs would stack duplicates.
-# SCREENSHOTS_UPLOAD_APPEND=1 opts back into appending.
 upload_screenshot_set() {
   local localization_id="$1"
   local label="$2"
@@ -356,8 +349,6 @@ upload_screenshots() {
   done
 }
 
-# One set per display type, so both Duo directories merge. Inner first: they
-# show the split layouts.
 upload_duo_screenshots() {
   local localization_id="$1"
   local staging
@@ -402,7 +393,6 @@ capture_all() {
   done
 }
 
-# The two displays need opposite poses, so "both" must pause for the unfold.
 capture_duo() {
   local udid="$1"
 
@@ -415,15 +405,13 @@ capture_duo() {
       ;;
     both)
       capture_duo_outer_set "$udid" "$duo_outer_output_path"
-      await_duo_posture "unfold"
+      await_duo_posture
       capture_duo_inner_set "$udid" "$duo_inner_output_path"
       ;;
   esac
 }
 
 await_duo_posture() {
-  local action="$1"
-
   log ""
   log "Unfold the device in Device Hub, then press Return to capture the inner display."
   log ""
@@ -436,18 +424,6 @@ await_duo_posture() {
   fail "Capturing both Duo displays needs an interactive terminal. Run once with SCREENSHOTS_DUO_DISPLAY=outer and once with SCREENSHOTS_DUO_DISPLAY=inner instead."
 }
 
-in_sets() {
-  local candidate="$1"
-  local set
-
-  for set in "${SETS[@]}"; do
-    [[ "$set" == "$candidate" ]] && return 0
-  done
-
-  return 1
-}
-
-# UDIDs live in <set>_udid.
 udid_for() {
   describe_set "$1"
   local name="${1}_udid"
@@ -461,7 +437,6 @@ ensure_simulator_for_set() {
 
   describe_set "$set"
 
-  # Split on whitespace so the value's layout cannot leak into an identifier.
   for device_type in $SET_DEVICE_TYPES; do
     if udid="$(ensure_simulator "$SET_SIMULATOR" "$device_type")"; then
       break
@@ -474,8 +449,6 @@ ensure_simulator_for_set() {
   printf -v "${set}_udid" '%s' "$udid"
 }
 
-# Duo is the default set: it is what Duo support added, and iOS 27.1 SDK
-# submissions require it from April 2027.
 resolve_sets() {
   local raw="${SCREENSHOTS_SETS:-duo}"
   local entry
@@ -498,17 +471,6 @@ resolve_sets() {
   done
 
   [[ ${#SETS[@]} -gt 0 ]] || fail "No screenshot sets selected"
-}
-
-in_sets() {
-  local candidate="$1"
-  local set
-
-  for set in "${SETS[@]}"; do
-    [[ "$set" == "$candidate" ]] && return 0
-  done
-
-  return 1
 }
 
 duo_display=""
@@ -540,7 +502,6 @@ uploading black screenshots.
 EOF
 }
 
-# The environment wins over .env, so just recipes can override file defaults.
 snapshot_preset_env() {
   PRESET_ENV=()
 
@@ -564,7 +525,6 @@ restore_preset_env() {
   done
 }
 
-# Keys recipes set that .env.example also defines.
 PRESERVED_ENV_NAMES=(
   SCREENSHOTS_SETS
   SCREENSHOTS_DUO_DISPLAY
@@ -580,7 +540,6 @@ configure
 resolve_sets
 resolve_duo_display
 
-# Provision only the selected sets; each first boot costs minutes of migration.
 iphone_udid=""
 ipad_udid=""
 duo_udid=""

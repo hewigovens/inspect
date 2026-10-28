@@ -48,8 +48,6 @@ func regularWidthTrustsSizeClassBeforeGeometry() {
 
 @Test
 func inputCardFitsAtItsGateWidth() {
-    // The regular input card has hard minimums: 278pt of buttons, a sample
-    // column, and spacing. The gate must never admit a width below them.
     let gate = InspectLayout.Input.regularWidthMinimum
     let rootPadding: CGFloat = 64
     let cardPadding: CGFloat = 36
@@ -60,7 +58,6 @@ func inputCardFitsAtItsGateWidth() {
 
 @Test
 func dashboardStaysCompactOnNarrowRegularWidths() {
-    // Duo inner display: regular width in portrait, but too narrow for the rail.
     #expect(
         InspectLayout.fitsRegularWidth(
             InspectLayout.Root.dashboardMinimumWidth - 1,
@@ -88,8 +85,6 @@ func dashboardIsDisabledOutsideTheApp() {
     )
 }
 
-/// Widths measured from the iPhone Duo simulator. The unfolded landscape value
-/// (867pt) previously fell under the dashboard threshold and lost its two columns.
 @Test(
     arguments: [
         (585.0, false, "unfolded portrait"),
@@ -138,7 +133,6 @@ func sideRailShrinksWithTheContainer() {
     #expect(InspectLayout.Root.sideRailWidth(forAvailableWidth: 744) < full)
 }
 
-/// The rail must leave the main column usable at every width that allows a dashboard.
 @Test
 func sideRailLeavesMainColumnUsable() {
     for width in [700.0, 744.0, 834.0, 867.0, 1024.0] {
@@ -175,7 +169,6 @@ func bookStyleFoldConstrainsContentToLeadingRegion() {
 
 @Test
 func horizontalFoldLeavesFullWidthUsable() {
-    // Propped up: the hinge divides height, so width stays whole.
     let metrics = InspectFoldMetrics(
         availableSize: CGSize(width: 626, height: 890),
         divisionFrame: CGRect(x: 0, y: 430, width: 626, height: 30)
