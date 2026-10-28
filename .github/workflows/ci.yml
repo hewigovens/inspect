@@ -10,7 +10,9 @@ concurrency:
 
 jobs:
   build-and-test:
-    runs-on: macos-26
+    # Xcode 27 is required: the app uses iOS 27.1 APIs (ArrangementView,
+    # reservedRegions). The macOS 26 image only ships Xcode 26.x.
+    runs-on: xcode-27
 
     steps:
       - name: Check out repository
