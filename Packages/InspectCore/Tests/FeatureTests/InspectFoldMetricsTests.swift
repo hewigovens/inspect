@@ -1,5 +1,5 @@
-@testable import InspectKit
 import CoreGraphics
+@testable import InspectKit
 import Testing
 
 @Test
@@ -36,7 +36,7 @@ func regularWidthAcceptsContainersAtOrAboveMinimum() {
 }
 
 @Test
-func regularWidthTrustsSizeClassWithoutGeometry() {
+func regularWidthTrustsSizeClassBeforeGeometry() {
     #expect(
         InspectLayout.fitsRegularWidth(
             nil,
@@ -44,6 +44,18 @@ func regularWidthTrustsSizeClassWithoutGeometry() {
             horizontalSizeClass: .regular
         )
     )
+}
+
+@Test
+func inputCardFitsAtItsGateWidth() {
+    // The regular input card has hard minimums: 278pt of buttons, a sample
+    // column, and spacing. The gate must never admit a width below them.
+    let gate = InspectLayout.Input.regularWidthMinimum
+    let rootPadding: CGFloat = 64
+    let cardPadding: CGFloat = 36
+    let columnsNeeded: CGFloat = 116 + 12 + 150 + 20 + 240
+
+    #expect(gate - rootPadding - cardPadding >= columnsNeeded)
 }
 
 @Test
@@ -76,8 +88,8 @@ func dashboardIsDisabledOutsideTheApp() {
     )
 }
 
-// Widths measured from the iPhone Duo simulator. The unfolded landscape value
-// (867pt) previously fell under the dashboard threshold and lost its two columns.
+/// Widths measured from the iPhone Duo simulator. The unfolded landscape value
+/// (867pt) previously fell under the dashboard threshold and lost its two columns.
 @Test(
     arguments: [
         (585.0, false, "unfolded portrait"),
@@ -126,7 +138,7 @@ func sideRailShrinksWithTheContainer() {
     #expect(InspectLayout.Root.sideRailWidth(forAvailableWidth: 744) < full)
 }
 
-// The rail must leave the main column usable at every width that allows a dashboard.
+/// The rail must leave the main column usable at every width that allows a dashboard.
 @Test
 func sideRailLeavesMainColumnUsable() {
     for width in [700.0, 744.0, 834.0, 867.0, 1024.0] {

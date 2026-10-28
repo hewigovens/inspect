@@ -40,7 +40,7 @@ struct InspectionInputCard: View {
                     inspectButton(expands: false)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(minWidth: 240, maxWidth: .infinity, alignment: .leading)
 
             if dismissDemoTarget == false {
                 VStack(alignment: .leading, spacing: 12) {
@@ -57,7 +57,7 @@ struct InspectionInputCard: View {
                     knownGoodButton
                     brokenCertificateButton
                 }
-                .frame(width: sampleColumnWidth, alignment: .leading)
+                .frame(minWidth: 240, idealWidth: sampleColumnWidth, maxWidth: sampleColumnWidth, alignment: .leading)
             }
         }
     }

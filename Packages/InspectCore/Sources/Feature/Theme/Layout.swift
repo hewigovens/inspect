@@ -42,8 +42,8 @@ private struct PlatformValues {
                 rootSideRailWidth: 360,
                 rootCompactContentMaxWidth: nil,
                 rootCompactHorizontalPadding: 20,
-                rootDashboardMinimumWidth: 700,
-                inputRegularMinimumContentWidth: 680,
+                rootDashboardMinimumWidth: 638,
+                inputRegularMinimumContentWidth: 638,
                 inputCardSpacing: 14,
                 inputSampleColumnWidth: 300,
                 inputDemoTargetVerticalPadding: 8,
@@ -59,8 +59,8 @@ private struct PlatformValues {
 }
 
 enum InspectLayout {
-    // A regular size class alone does not guarantee enough room: the Duo inner
-    // display is regular width in portrait but too narrow for the side rail.
+    /// The input card's two columns need 638pt: padding, the 278pt button row, a
+    /// 20pt gap, and a 240pt floor for the sample column. Below that it overflows.
     static func fitsRegularWidth(
         _ width: CGFloat?,
         minimum: CGFloat,
@@ -114,8 +114,8 @@ enum InspectLayout {
             PlatformValues.current.rootSideRailWidth
         }
 
-        // A fixed rail starves the main column once the dashboard is allowed at
-        // narrower widths, so the rail shrinks with the container.
+        /// A fixed rail starves the main column once the dashboard is allowed at
+        /// narrower widths, so the rail shrinks with the container.
         static func sideRailWidth(forAvailableWidth width: CGFloat?) -> CGFloat {
             let full = PlatformValues.current.rootSideRailWidth
             guard let width else {
@@ -136,9 +136,9 @@ enum InspectLayout {
             availableWidth: CGFloat? = nil
         ) -> Bool {
             #if os(macOS)
-                return true
+                true
             #else
-                return fitsRegularWidth(
+                fitsRegularWidth(
                     availableWidth,
                     minimum: regularWidthMinimum,
                     horizontalSizeClass: horizontalSizeClass
