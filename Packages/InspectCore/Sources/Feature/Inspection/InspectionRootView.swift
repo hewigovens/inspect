@@ -195,11 +195,25 @@ public struct InspectionRootView: View {
                 isInputFocused: $isInputFocused
             )
 
+            if hasNothingToShow(inspection: inspection) {
+                InspectionWorkspaceCard()
+                    .id("workspace")
+            }
+
             if showsAboutCard, screenshotScenario?.showsAboutCard != false {
                 InspectionAppLinksCard(appVersionText: InspectionAppMetadata.versionText)
                     .id("about")
             }
         }
+    }
+
+    // Without this the compact layout leaves the lower half of the screen empty
+    // on first launch, which reads as broken on a tall folded display.
+    private func hasNothingToShow(inspection: TLSInspection?) -> Bool {
+        inspection == nil
+            && store.isLoading == false
+            && store.errorMessage == nil
+            && screenshotScenario == nil
     }
 
     private func regularWidthContent(inspection: TLSInspection?, report: TLSInspectionReport?, recentItems: [RecentLookupItem]) -> some View {
