@@ -100,8 +100,6 @@ struct InspectionInputCard: View {
 
     @ViewBuilder
     private var compactInputControls: some View {
-        // A folded device leaves a narrow region where inline controls would be
-        // cramped, so they stack instead.
         if InspectLayout.Input.usesInlineCompactInputControls, foldMetrics.isPartiallyFolded == false {
             HStack(alignment: .center, spacing: 10) {
                 inputField(verticalPadding: 10, cornerRadius: 14)

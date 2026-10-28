@@ -59,11 +59,8 @@ private struct PlatformValues {
 }
 
 enum InspectLayout {
-    /// Whether a regular-width presentation fits the space this layout needs.
-    ///
-    /// A regular size class alone does not imply enough room on a foldable: the Duo's
-    /// inner display is regular width in portrait but too narrow for a side rail beside
-    /// the main column. Width is checked when the container reports one.
+    // A regular size class alone does not guarantee enough room: the Duo inner
+    // display is regular width in portrait but too narrow for the side rail.
     static func fitsRegularWidth(
         _ width: CGFloat?,
         minimum: CGFloat,
@@ -117,7 +114,6 @@ enum InspectLayout {
             PlatformValues.current.rootSideRailWidth
         }
 
-        /// Narrowest width where the main column and side rail still both read well.
         static var dashboardMinimumWidth: CGFloat {
             PlatformValues.current.rootDashboardMinimumWidth
         }
@@ -139,7 +135,6 @@ enum InspectLayout {
             #endif
         }
 
-        /// Narrowest width where the field and sample column still both read well.
         static var regularWidthMinimum: CGFloat {
             PlatformValues.current.inputRegularMinimumContentWidth
         }

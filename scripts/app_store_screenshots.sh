@@ -12,9 +12,6 @@ output_root="$repo_root/build/app-store-screenshots/output"
 project_path="$repo_root/Inspect.xcodeproj"
 bundle_id="in.fourplex.Inspect"
 
-# Screenshot sets are named by SCREENSHOTS_SETS; each accessor function below
-# resolves one of these names. macOS ships bash 3.2, which has no associative
-# arrays, so the mapping stays in case blocks.
 duo_outer_output_path="$output_root/duo-outer"
 duo_inner_output_path="$output_root/duo-inner"
 screenshot_wait_seconds="${APP_STORE_SCREENSHOTS_WAIT_SECONDS:-2}"
@@ -31,8 +28,6 @@ configure() {
   ensure_output_directories
 }
 
-# Describes one screenshot set into SET_OUTPUT, SET_SIMULATOR, SET_DISPLAY_TYPE,
-# and SET_DEVICE_TYPES (device types are space separated, in preference order).
 # macOS ships bash 3.2, which has no associative arrays, so this stays a case.
 describe_set() {
   case "$1" in
@@ -46,7 +41,7 @@ describe_set() {
       SET_OUTPUT="$output_root/ipad"
       SET_SIMULATOR="Inspect App Store iPad"
       SET_DISPLAY_TYPE="IPAD_PRO_3GEN_129"
-      # First entry wins; later ones cover runtimes that dropped it.
+      # Space separated, in preference order: the first that a runtime accepts wins.
       SET_DEVICE_TYPES="com.apple.CoreSimulator.SimDeviceType.iPad-Pro-12-9-inch-6th-generation-8GB com.apple.CoreSimulator.SimDeviceType.iPad-Pro-12-9-inch-6th-generation-16GB com.apple.CoreSimulator.SimDeviceType.iPad-Pro-12-9-inch-5th-generation"
       ;;
     duo)
@@ -61,11 +56,8 @@ describe_set() {
   esac
 }
 
-# Resolve the newest iOS runtime that can actually create the given device type.
-#
-# Runtimes drop support for older device types and vice versa: iOS 27.1 only
-# runs iPhone Duo, while iOS 27.0 runs the iPhone 6.5" and iPad 12.9" sets.
-# Pinning one runtime therefore breaks either the Duo or the legacy devices.
+# No single runtime covers every device type: iOS 27.1 only runs iPhone Duo,
+# while iOS 27.0 runs the 6.5" iPhone and iPad sets.
 runtime_for_device_type() {
   local device_type="$1"
   local runtime
@@ -142,9 +134,7 @@ ensure_simulator() {
     return 0
   fi
 
-  # Device types and runtimes are not interchangeable: pair the device type with
-  # a runtime that actually accepts it instead of pinning a combination that a
-  # newer Xcode dropped.
+  # Device type and runtime only pair up for some combinations.
   runtime="$(runtime_for_device_type "$device_type")" || return 1
   xcrun simctl create "$simulator_name" "$device_type" "$runtime"
 }
@@ -176,9 +166,7 @@ clear_simulator() {
 build_app() {
   generate_xcode_project "$repo_root"
 
-  # Only DerivedData is disposable. Captures are preserved because some sets
-  # need a manual device pose (the Duo's inner display) and cannot be
-  # regenerated without another human step.
+  # Inner captures need a manual unfold, so they are never discarded here.
   rm -rf "$derived_data_path"
   ensure_output_directories
 
@@ -196,8 +184,7 @@ build_app() {
     fail "Built app not found at $app_path"
   fi
 
-  # Clear only what this run re-captures, so a set produced in another posture
-  # survives. Each Duo display is cleared independently.
+  # Only the display being captured is cleared; inner capture needs a manual unfold.
   local set
   for set in "${SETS[@]}"; do
     if [[ "$set" != duo ]]; then
@@ -224,7 +211,7 @@ ensure_output_directories() {
   mkdir -p "$duo_inner_output_path"
 }
 
-# A capture is blank when the display was not presenting the app.
+# The inactive display captures as a uniform frame, which is why this samples content.
 is_blank_capture() {
   local path="$1"
   local tiny
@@ -299,10 +286,6 @@ capture_device_set() {
   capture_scenario "$udid" certificate-chain "$output_path/04-cert-chain.png" "$display"
 }
 
-# The Duo presents one display at a time: folded shows the outer display, and
-# unfolding makes that one inactive. Both sets are verified rather than assumed,
-# so a capture taken in the wrong pose fails loudly instead of uploading black
-# frames.
 capture_duo_outer_set() {
   local udid="$1"
   local output_path="$2"
@@ -333,9 +316,8 @@ verify_duo_captures() {
   done
 }
 
-# App Store Connect appends on upload, so repeated runs would stack duplicate
-# sets. Replace each display type's set by default; SCREENSHOTS_UPLOAD_APPEND
-# opts back into appending.
+# asc appends on upload, so repeated runs would stack duplicates.
+# SCREENSHOTS_UPLOAD_APPEND=1 opts back into appending.
 upload_screenshot_set() {
   local localization_id="$1"
   local label="$2"
@@ -374,9 +356,8 @@ upload_screenshots() {
   done
 }
 
-# App Store Connect keeps one set per display type, so both Duo directories merge
-# into a single APP_IPHONE_DUO upload. Inner captures go first: they show the
-# split layouts that make the Duo support visible.
+# One set per display type, so both Duo directories merge. Inner first: they
+# show the split layouts.
 upload_duo_screenshots() {
   local localization_id="$1"
   local staging
@@ -421,9 +402,7 @@ capture_all() {
   done
 }
 
-# The Duo shows one display at a time, and the outer and inner displays need
-# opposite poses. Capturing both in one run therefore has to stop and let the
-# device be unfolded between them.
+# The two displays need opposite poses, so "both" must pause for the unfold.
 capture_duo() {
   local udid="$1"
 
@@ -468,7 +447,7 @@ in_sets() {
   return 1
 }
 
-# Simulator UDIDs are stored per set in the <set>_udid variables.
+# UDIDs live in <set>_udid.
 udid_for() {
   describe_set "$1"
   local name="${1}_udid"
@@ -482,7 +461,6 @@ ensure_simulator_for_set() {
 
   describe_set "$set"
 
-  # Device types are tried in preference order until one pairs with a runtime.
   # Split on whitespace so the value's layout cannot leak into an identifier.
   for device_type in $SET_DEVICE_TYPES; do
     if udid="$(ensure_simulator "$SET_SIMULATOR" "$device_type")"; then
@@ -496,9 +474,8 @@ ensure_simulator_for_set() {
   printf -v "${set}_udid" '%s' "$udid"
 }
 
-# Screenshot sets are selectable because only some change between releases.
-# iPhone Duo is the default: it is the set that Duo support added, and it must
-# be present for submissions built with the iOS 27.1 SDK from April 2027.
+# Duo is the default set: it is what Duo support added, and iOS 27.1 SDK
+# submissions require it from April 2027.
 resolve_sets() {
   local raw="${SCREENSHOTS_SETS:-duo}"
   local entry
@@ -563,9 +540,7 @@ uploading black screenshots.
 EOF
 }
 
-# Environment values win over the .env file, so `just` recipes and one-off
-# invocations can override file defaults. snapshot_preset_env records anything
-# already set so it can be restored after the file is sourced.
+# The environment wins over .env, so just recipes can override file defaults.
 snapshot_preset_env() {
   PRESET_ENV=()
 
@@ -589,7 +564,7 @@ restore_preset_env() {
   done
 }
 
-# Values that recipes set and .env.example also defines; the environment wins.
+# Keys recipes set that .env.example also defines.
 PRESERVED_ENV_NAMES=(
   SCREENSHOTS_SETS
   SCREENSHOTS_DUO_DISPLAY
@@ -605,8 +580,7 @@ configure
 resolve_sets
 resolve_duo_display
 
-# Only the selected sets get simulators; provisioning three devices for a
-# Duo-only run wastes several minutes of first-boot migration.
+# Provision only the selected sets; each first boot costs minutes of migration.
 iphone_udid=""
 ipad_udid=""
 duo_udid=""

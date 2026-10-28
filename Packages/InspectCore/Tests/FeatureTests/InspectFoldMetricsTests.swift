@@ -48,7 +48,7 @@ func regularWidthTrustsSizeClassWithoutGeometry() {
 
 @Test
 func dashboardStaysCompactOnNarrowRegularWidths() {
-    // The Duo inner display is regular width in portrait but too narrow for the side rail.
+    // Duo inner display: regular width in portrait, but too narrow for the rail.
     #expect(
         InspectLayout.fitsRegularWidth(
             InspectLayout.Root.dashboardMinimumWidth - 1,
@@ -120,7 +120,7 @@ func bookStyleFoldConstrainsContentToLeadingRegion() {
 
 @Test
 func horizontalFoldLeavesFullWidthUsable() {
-    // Propped up on a surface the hinge divides height, so width stays whole.
+    // Propped up: the hinge divides height, so width stays whole.
     let metrics = InspectFoldMetrics(
         availableSize: CGSize(width: 626, height: 890),
         divisionFrame: CGRect(x: 0, y: 430, width: 626, height: 30)

@@ -11,8 +11,8 @@ struct InspectApp: App {
     @UIApplicationDelegateAdaptor(InspectAppDelegate.self) private var appDelegate
 
     init() {
-        // Owned by the app, not a scene: the monitor can outlive the main window,
-        // and a scene-scoped handler left the toggle inert in that case.
+        // App-scoped, not scene-scoped: closing the main window must not clear
+        // the handler the monitor-only scene depends on.
         let manager = LiveMonitorManager.shared
         InspectionLiveMonitorCoordinator.configure { isEnabled in
             try await manager.setLiveMonitorEnabled(isEnabled)

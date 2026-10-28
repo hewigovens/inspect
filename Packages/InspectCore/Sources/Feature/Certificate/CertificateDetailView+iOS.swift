@@ -13,10 +13,8 @@
             }
         }
 
-        /// Main/detail split that keeps the chain beside the rows it indexes.
-        ///
-        /// The default split style divides horizontally when the container is wider than
-        /// tall and vertically when it is taller, so every Duo pose keeps both panes.
+        // Not .axes(.horizontal): a tall container would then show one pane and
+        // hide the details.
         @available(iOS 27.1, *)
         var arrangementContent: some View {
             ArrangementView {
