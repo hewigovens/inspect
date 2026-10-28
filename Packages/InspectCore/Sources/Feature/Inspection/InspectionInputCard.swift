@@ -6,6 +6,7 @@ struct InspectionInputCard: View {
     @Bindable var store: InspectionStore
     @Binding var dismissDemoTarget: Bool
     let isInputFocused: FocusState<Bool>.Binding
+    var foldMetrics = InspectFoldMetrics.none
 
     var body: some View {
         InspectCard {
@@ -39,7 +40,7 @@ struct InspectionInputCard: View {
                     inspectButton(expands: false)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(minWidth: 240, maxWidth: .infinity, alignment: .leading)
 
             if dismissDemoTarget == false {
                 VStack(alignment: .leading, spacing: 12) {
@@ -56,7 +57,7 @@ struct InspectionInputCard: View {
                     knownGoodButton
                     brokenCertificateButton
                 }
-                .frame(width: sampleColumnWidth, alignment: .leading)
+                .frame(minWidth: 240, idealWidth: sampleColumnWidth, maxWidth: sampleColumnWidth, alignment: .leading)
             }
         }
     }
@@ -99,7 +100,7 @@ struct InspectionInputCard: View {
 
     @ViewBuilder
     private var compactInputControls: some View {
-        if InspectLayout.Input.usesInlineCompactInputControls {
+        if InspectLayout.Input.usesInlineCompactInputControls, foldMetrics.isPartiallyFolded == false {
             HStack(alignment: .center, spacing: 10) {
                 inputField(verticalPadding: 10, cornerRadius: 14)
                 pasteButton(expands: false)
@@ -217,7 +218,10 @@ struct InspectionInputCard: View {
     }
 
     private var usesRegularWidthLayout: Bool {
-        InspectLayout.Input.usesRegularWidthLayout(horizontalSizeClass: horizontalSizeClass)
+        InspectLayout.Input.usesRegularWidthLayout(
+            horizontalSizeClass: horizontalSizeClass,
+            availableWidth: foldMetrics.contentWidth
+        )
     }
 
     private var sampleColumnWidth: CGFloat {

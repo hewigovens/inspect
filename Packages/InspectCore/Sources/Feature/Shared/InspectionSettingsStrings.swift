@@ -19,6 +19,8 @@ public enum InspectionSettingsStrings {
         public static let liveMonitorSection = "Live Monitor Tunnel"
         public static let invalidMonitorMessage = "Use the Live Monitor switch in the Monitor tab to install and control the profile."
         public static let diagnosticsFooter = "Use Events and Tunnel Log for troubleshooting. \(Shared.verboseFooter)"
+        public static let openMonitorWindow = "Open Monitor in New Window"
+        public static let openMonitorWindowFooter = "On foldable iPhone, the Monitor can stay open beside Inspect while both keep updating."
     }
 
     public enum Mac {

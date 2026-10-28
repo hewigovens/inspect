@@ -23,7 +23,7 @@ struct InspectionSummaryCard: View {
                 ) {
                     ForEach(badges(for: selectedReport)) { badge in
                         Badge(text: badge.text, tint: badge.tint)
-                            .frame(maxWidth: .infinity)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
 

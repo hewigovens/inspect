@@ -11,6 +11,7 @@ public struct InspectionRootView: View {
     @State private var monitorStore: InspectionMonitorStore
     @State private var certificateRoute: InspectionCertificateRoute?
     @State private var selectedReportIndex = 0
+    @State private var foldMetrics = InspectFoldMetrics.none
 
     private let initialURL: URL?
     private let closeAction: (() -> Void)?
@@ -145,6 +146,7 @@ public struct InspectionRootView: View {
                 .padding(.horizontal, rootHorizontalPadding)
                 .padding(.top, presentation.topPadding)
                 .padding(.bottom, 24)
+                .inspectFoldSafe(foldMetrics)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .scrollBounceBehavior(.basedOnSize)
@@ -152,6 +154,9 @@ public struct InspectionRootView: View {
             .applyExtensionScrollMargins(presentation)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .inspectFoldMetrics { metrics in
+            foldMetrics = metrics
+        }
         .onAppear {
             isInputFocused = false
             if let screenshotScenario {
@@ -166,7 +171,8 @@ public struct InspectionRootView: View {
             InspectionInputCard(
                 store: store,
                 dismissDemoTarget: $dismissDemoTarget,
-                isInputFocused: $isInputFocused
+                isInputFocused: $isInputFocused,
+                foldMetrics: foldMetrics
             )
             .id("input")
 
@@ -189,6 +195,11 @@ public struct InspectionRootView: View {
                 isInputFocused: $isInputFocused
             )
 
+            if hasNothingToShow(inspection: inspection) {
+                InspectionWorkspaceCard()
+                    .id("workspace")
+            }
+
             if showsAboutCard, screenshotScenario?.showsAboutCard != false {
                 InspectionAppLinksCard(appVersionText: InspectionAppMetadata.versionText)
                     .id("about")
@@ -196,12 +207,20 @@ public struct InspectionRootView: View {
         }
     }
 
+    private func hasNothingToShow(inspection: TLSInspection?) -> Bool {
+        inspection == nil
+            && store.isLoading == false
+            && store.errorMessage == nil
+            && screenshotScenario == nil
+    }
+
     private func regularWidthContent(inspection: TLSInspection?, report: TLSInspectionReport?, recentItems: [RecentLookupItem]) -> some View {
         VStack(alignment: .leading, spacing: 18) {
             InspectionInputCard(
                 store: store,
                 dismissDemoTarget: $dismissDemoTarget,
-                isInputFocused: $isInputFocused
+                isInputFocused: $isInputFocused,
+                foldMetrics: foldMetrics
             )
             .id("input")
 
@@ -326,13 +345,14 @@ public struct InspectionRootView: View {
     }
 
     private var regularSideRailWidth: CGFloat {
-        InspectLayout.Root.sideRailWidth
+        InspectLayout.Root.sideRailWidth(forAvailableWidth: foldMetrics.availableSize?.width)
     }
 
     private var usesRegularDashboardLayout: Bool {
         InspectLayout.Root.usesRegularDashboardLayout(
             presentation: presentation,
-            horizontalSizeClass: horizontalSizeClass
+            horizontalSizeClass: horizontalSizeClass,
+            availableWidth: foldMetrics.contentWidth
         )
     }
 

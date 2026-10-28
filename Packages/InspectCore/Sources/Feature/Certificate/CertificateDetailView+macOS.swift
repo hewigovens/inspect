@@ -33,11 +33,12 @@
                             macSelectedCertificateCard(selectedCertificate)
                         }
 
-                        InspectCard {
-                            RevocationStatusBadge(
-                                status: revocationStatus,
-                                onCheck: checkRevocation
-                            )
+                        if showsRevocationStatus {
+                            InspectCard {
+                                RevocationStatusBadge(
+                                    summary: revocationSummary
+                                )
+                            }
                         }
 
                         if let selectedContent {

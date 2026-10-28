@@ -13,8 +13,8 @@ options:
 
 settings:
   base:
-    CURRENT_PROJECT_VERSION: 89
-    MARKETING_VERSION: 2.5.2
+    CURRENT_PROJECT_VERSION: 92
+    MARKETING_VERSION: 2.5.3
     SWIFT_VERSION: 6.0
     TARGETED_DEVICE_FAMILY: "1,2"
     INSPECT_APP_GROUP_IDENTIFIER: group.in.fourplex.inspect.monitor

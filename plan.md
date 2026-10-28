@@ -49,7 +49,26 @@ Focus:
 4. Keep iOS, iPad, and macOS presentation aligned without stretching phone-first layouts onto larger screens.
 5. Keep extension naming and handoff behavior consistent across iOS Safari, macOS Safari, and macOS Share.
 
-### 2. Tunnel Stability
+### 2. Large-Screen and Foldable Layout
+
+Goal:
+
+Present the same Inspect, Monitor, and certificate flows well on every container the app can occupy, including foldable iPhone.
+
+Done:
+
+1. Layout gates read the live container width instead of trusting a regular size class alone, so the side rail no longer crushes the main column on narrow regular widths such as the Duo inner display in portrait.
+2. Fold state comes from `reservedRegions(kind: .division)` and constrains content to the region the hinge leaves free.
+3. Certificate detail uses `ArrangementView` on iOS 27.1 and later so the chain sits beside the rows it indexes; the plain list remains for narrower poses and older systems.
+4. Monitor can open in a second window, which iPhone Duo can show beside Inspect on its inner display.
+
+Remaining:
+
+1. Visual verification of the arrangement split and fold displacement on physical iPhone Duo hardware.
+2. Decide whether Monitor should use the split arrangement for host list and host detail.
+3. Revisit hinge posture (`onHingeChange`) only if a prop-up specific layout proves useful.
+
+### 3. Tunnel Stability
 
 Focus:
 
@@ -58,7 +77,7 @@ Focus:
 3. Improve error reporting only when it helps product-level diagnosis.
 4. Avoid risky structural changes unless they clearly improve stability.
 
-### 3. UDP Observation
+### 4. UDP Observation
 
 Goal:
 
@@ -71,7 +90,7 @@ Plan:
 3. Decide how UDP observations should appear in Monitor and Diagnostics.
 4. Keep certificate detail disabled for UDP-only observations unless a later protocol-specific parser exists.
 
-### 4. QUIC and HTTP/3
+### 5. QUIC and HTTP/3
 
 Treat this as a separate track from basic UDP observation.
 
@@ -81,7 +100,7 @@ Scope:
 2. Evaluate whether passive QUIC handshake parsing is worth the complexity.
 3. Do not bundle QUIC certificate capture into the first UDP milestone.
 
-### 5. Documentation and Release Hygiene
+### 6. Documentation and Release Hygiene
 
 Focus:
 
@@ -90,7 +109,7 @@ Focus:
 3. Keep iOS and macOS TestFlight / App Review flows easy to run from `just` and repo scripts.
 4. Keep store descriptions and screenshots current without intrusive in-app screenshot automation.
 
-### 6. macOS Expansion
+### 7. macOS Expansion
 
 Goal:
 

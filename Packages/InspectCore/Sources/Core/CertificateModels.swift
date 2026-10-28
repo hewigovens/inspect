@@ -144,6 +144,14 @@ public struct CertificateDetails: Identifiable, Sendable, Equatable, Codable {
             subjectEntry.label == issuerEntry.label && subjectEntry.value == issuerEntry.value
         }
     }
+
+    public var hasOCSPResponder: Bool {
+        authorityInfoAccess.contains { $0.label.localizedCaseInsensitiveContains("ocsp") }
+    }
+
+    public var hasCRLDistributionPoints: Bool {
+        crlDistributionPoints.isEmpty == false
+    }
 }
 
 public struct PublicKeyDetails: Sendable, Equatable, Codable {

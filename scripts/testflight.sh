@@ -34,7 +34,7 @@ validate_app_access() {
   require_value ASC_APP_ID
 
   log "Validating App Store Connect access for app $app_id"
-  run_asc apps get --id "$app_id" --output json >/dev/null || {
+  run_asc apps view --id "$app_id" --output json >/dev/null || {
     fail "Unable to access App Store Connect app $app_id."
   }
 }
@@ -158,7 +158,7 @@ wait_for_build_processing() {
     local build_json
     local build_state
 
-    if ! build_json="$(run_asc builds find --app "$app_id" --build-number "$build_number" --output json 2>/dev/null)"; then
+    if ! build_json="$(run_asc builds info --app "$app_id" --build-number "$build_number" --version "$build_version" --platform "$exported_platform" --output json 2>/dev/null)"; then
       build_json='{"data":null}'
     fi
 

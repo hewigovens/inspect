@@ -38,7 +38,7 @@ final class MacShareExtensionRequestHandler {
         if let bundleIdentifier,
            let runningApp = NSRunningApplication.runningApplications(withBundleIdentifier: bundleIdentifier).first
         {
-            return runningApp.activate(options: [.activateAllWindows, .activateIgnoringOtherApps])
+            return runningApp.activate(options: [.activateAllWindows])
         }
 
         let configuration = NSWorkspace.OpenConfiguration()

@@ -1,31 +1,63 @@
 #if !os(macOS)
+    import InspectCore
     import SwiftUI
 
     extension CertificateDetailView {
         var platformContent: some View {
+            Group {
+                if #available(iOS 27.1, *) {
+                    arrangementContent
+                } else {
+                    listContent
+                }
+            }
+        }
+
+        // Not .axes(.horizontal): a tall container would then show one pane and
+        // hide the details.
+        @available(iOS 27.1, *)
+        var arrangementContent: some View {
+            ArrangementView {
+                List { chainSection }
+            } secondary: {
+                List { detailPaneSections }
+            }
+        }
+
+        var listContent: some View {
             List {
                 chainSection
+                detailPaneSections
+            }
+        }
 
+        @ViewBuilder
+        private var detailPaneSections: some View {
+            revocationSection
+
+            if let selectedContent {
+                ForEach(selectedContent.sections) { section in
+                    detailSection(section)
+                }
+            } else {
+                Section {
+                    Text("No certificate details were available for this inspection.")
+                        .foregroundStyle(.secondary)
+                } header: {
+                    sectionHeader("Certificate")
+                }
+            }
+        }
+
+        @ViewBuilder
+        private var revocationSection: some View {
+            if showsRevocationStatus {
                 Section {
                     RevocationStatusBadge(
-                        status: revocationStatus,
-                        onCheck: checkRevocation
+                        summary: revocationSummary
                     )
                 } header: {
-                    sectionHeader("Revocation")
-                }
-
-                if let selectedContent {
-                    ForEach(selectedContent.sections) { section in
-                        detailSection(section)
-                    }
-                } else {
-                    Section {
-                        Text("No certificate details were available for this inspection.")
-                            .foregroundStyle(.secondary)
-                    } header: {
-                        sectionHeader("Certificate")
-                    }
+                    sectionHeader("Server Revocation")
                 }
             }
         }
