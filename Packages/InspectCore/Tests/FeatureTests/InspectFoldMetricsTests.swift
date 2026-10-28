@@ -76,6 +76,28 @@ func dashboardIsDisabledOutsideTheApp() {
     )
 }
 
+// Widths measured from the iPhone Duo simulator. The unfolded landscape value
+// (867pt) previously fell under the dashboard threshold and lost its two columns.
+@Test(
+    arguments: [
+        (585.0, false, "unfolded portrait"),
+        (744.0, true, "iPad mini portrait"),
+        (834.0, true, "iPad Pro 11 portrait"),
+        (867.0, true, "unfolded landscape"),
+        (1024.0, true, "iPad Pro 12.9 portrait"),
+    ]
+)
+func dashboardMatchesRealDeviceWidths(width: Double, expectsDashboard: Bool, label: String) {
+    #expect(
+        InspectLayout.fitsRegularWidth(
+            CGFloat(width),
+            minimum: InspectLayout.Root.dashboardMinimumWidth,
+            horizontalSizeClass: .regular
+        ) == expectsDashboard,
+        "\(label) at \(Int(width))pt"
+    )
+}
+
 @Test
 func inputCardDropsToCompactControlsOnNarrowRegularWidths() {
     #expect(
@@ -92,6 +114,27 @@ func inputCardDropsToCompactControlsOnNarrowRegularWidths() {
             horizontalSizeClass: .regular
         )
     )
+}
+
+@Test
+func sideRailShrinksWithTheContainer() {
+    let full = InspectLayout.Root.sideRailWidth
+
+    #expect(InspectLayout.Root.sideRailWidth(forAvailableWidth: nil) == full)
+    #expect(InspectLayout.Root.sideRailWidth(forAvailableWidth: 2400) == full)
+    #expect(InspectLayout.Root.sideRailWidth(forAvailableWidth: 867) < full)
+    #expect(InspectLayout.Root.sideRailWidth(forAvailableWidth: 744) < full)
+}
+
+// The rail must leave the main column usable at every width that allows a dashboard.
+@Test
+func sideRailLeavesMainColumnUsable() {
+    for width in [700.0, 744.0, 834.0, 867.0, 1024.0] {
+        let rail = InspectLayout.Root.sideRailWidth(forAvailableWidth: CGFloat(width))
+        let mainColumn = width - 2 * 32 - rail - 18
+
+        #expect(mainColumn >= 340, "main column \(Int(mainColumn))pt at \(Int(width))pt")
+    }
 }
 
 @Test

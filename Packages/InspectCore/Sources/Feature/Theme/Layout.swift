@@ -24,7 +24,7 @@ private struct PlatformValues {
                 rootSideRailWidth: 380,
                 rootCompactContentMaxWidth: 1140,
                 rootCompactHorizontalPadding: 28,
-                rootDashboardMinimumWidth: 980,
+                rootDashboardMinimumWidth: 700,
                 inputRegularMinimumContentWidth: 760,
                 inputCardSpacing: 12,
                 inputSampleColumnWidth: 320,
@@ -42,7 +42,7 @@ private struct PlatformValues {
                 rootSideRailWidth: 360,
                 rootCompactContentMaxWidth: nil,
                 rootCompactHorizontalPadding: 20,
-                rootDashboardMinimumWidth: 900,
+                rootDashboardMinimumWidth: 700,
                 inputRegularMinimumContentWidth: 680,
                 inputCardSpacing: 14,
                 inputSampleColumnWidth: 300,
@@ -112,6 +112,17 @@ enum InspectLayout {
 
         static var sideRailWidth: CGFloat {
             PlatformValues.current.rootSideRailWidth
+        }
+
+        // A fixed rail starves the main column once the dashboard is allowed at
+        // narrower widths, so the rail shrinks with the container.
+        static func sideRailWidth(forAvailableWidth width: CGFloat?) -> CGFloat {
+            let full = PlatformValues.current.rootSideRailWidth
+            guard let width else {
+                return full
+            }
+
+            return min(full, max(full * 0.7, width * 0.34))
         }
 
         static var dashboardMinimumWidth: CGFloat {

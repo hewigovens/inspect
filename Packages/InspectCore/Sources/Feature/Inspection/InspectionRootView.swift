@@ -333,7 +333,7 @@ public struct InspectionRootView: View {
     }
 
     private var regularSideRailWidth: CGFloat {
-        InspectLayout.Root.sideRailWidth
+        InspectLayout.Root.sideRailWidth(forAvailableWidth: foldMetrics.availableSize?.width)
     }
 
     private var usesRegularDashboardLayout: Bool {
