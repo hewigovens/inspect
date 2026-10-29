@@ -28,7 +28,7 @@ A TLS certificate inspector for iPhone, iPad, and Mac. Inspect a website, review
 
 ## Contributing
 
-Start with [CONTRIBUTING.md](CONTRIBUTING.md). See [DEVELOPMENT.md](DEVELOPMENT.md) for architecture, local commands, screenshots, and release workflows.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, architecture, local commands, screenshots, and release workflows.
 
 ## License
 

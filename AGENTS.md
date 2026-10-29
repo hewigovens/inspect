@@ -1,36 +1,17 @@
 # Inspect Agent Notes
 
-- `project.yml` is the source of truth for the Xcode project. Regenerate `Inspect.xcodeproj` with `xcodegen generate`; do not commit the generated project.
-- Use [`justfile`](/Users/hewig/workspace/h/Inspect/justfile) for common local tasks.
-- Prefer `xcbeautify` for `xcodebuild` output. The repo scripts and CI are expected to use `xcodebuild ... | xcbeautify`.
-- TestFlight uploads go through [`scripts/testflight.sh`](/Users/hewig/workspace/h/Inspect/scripts/testflight.sh) and read settings from `.env`.
-- App Store screenshots go through [`scripts/app_store_screenshots.sh`](/Users/hewig/workspace/h/Inspect/scripts/app_store_screenshots.sh). Use the built-in `INSPECT_SCREENSHOT_SCENARIO` launch mode rather than hand-editing UI state for storefront captures.
-- Required TestFlight env vars: `ASC_APP_ID`, `APP_STORE_CONNECT_KEY_ID`, `APP_STORE_CONNECT_ISSUER_ID`, `APP_STORE_CONNECT_KEY_PATH`.
-- If the current App Store Connect app already has the repo's `CURRENT_PROJECT_VERSION`, set `TESTFLIGHT_BUILD_NUMBER` in `.env` before uploading.
+- [CONTRIBUTING.md](CONTRIBUTING.md) is the guide for setup, architecture, commands, signing, releases, and screenshots. Keep detailed workflows there rather than duplicating them here.
+- `project.yml` is the source of truth for the Xcode project. Regenerate with `just generate`, which includes the ignored `project.local.yml` when present. Never commit the generated project, local signing settings, `.env`, or build outputs.
+- Use [justfile](justfile) for common tasks and `xcodebuild ... | xcbeautify` for build output.
+- Compile with Xcode 27.1 or newer. Preserve the iOS 18 and macOS 15 deployment targets and availability guards around newer APIs.
 
-## Release Pipeline
+## Verification and Releases
 
-iOS and macOS share the same `MARKETING_VERSION` in `project.yml`. The testflight script auto-resolves build numbers by querying App Store Connect for the highest existing build and using `max(ASC max + 1, project.yml)`.
-
-**iOS TestFlight:**
-```
-just testflight
-```
-
-**macOS TestFlight:**
-```
-TESTFLIGHT_SCHEME=InspectMac TESTFLIGHT_DESTINATION="generic/platform=macOS" just testflight
-```
-
-**Both platforms (sequential):**
-```
-just testflight
-TESTFLIGHT_SCHEME=InspectMac TESTFLIGHT_DESTINATION="generic/platform=macOS" just testflight
-```
-
-The script auto-detects `.ipa` (iOS) vs `.pkg` (macOS) and uses the correct `asc` upload flag (`--ipa` vs `--pkg`). Override with `TESTFLIGHT_BUILD_NUMBER` if needed.
-
-After upgrading Xcode, run "Download Manual Profiles" in Xcode > Settings > Accounts before building, otherwise the iOS export will fail with a missing `embedded.mobileprovision` error.
+- Run focused shared tests with `swift test --package-path Packages/InspectCore`; use the platform build/test recipes for affected app behavior. Documentation changes need diff, link, and command checks rather than app rebuilds.
+- Upload builds through [scripts/testflight.sh](scripts/testflight.sh), which reads `.env`. Run iOS and macOS uploads sequentially because they share archive/export paths. Check the chosen build number against the selected platform before re-uploading.
+- Both platforms share their version settings in `project.yml`. Verify signed exports and App Store Connect processing state; a `VALID` upload is separate from an App Review submission.
+- Before submitting, validate the exact platform, version, build, listing metadata, review details, and screenshots. Preserve the existing release policy and verify the resulting review state.
+- Capture storefront images with [scripts/app_store_screenshots.sh](scripts/app_store_screenshots.sh) and the built-in `INSPECT_SCREENSHOT_SCENARIO` mode. Check the rendered content as well as dimensions, and verify uploaded assets reach `COMPLETE`.
 
 ## Code Style
 
@@ -44,6 +25,8 @@ After upgrading Xcode, run "Download Manual Profiles" in Xcode > Settings > Acco
 - Reuse shared primitives before adding app-local duplicates. Current shared examples include `InspectSection`, `InspectIconTile`, `InspectionAppMetadata`, `InspectAppLinks`, and the unified settings components in `InspectSettingsComponents.swift`.
 - When macOS and iOS share the same app-level concept, prefer one shared model in `InspectKit` rather than parallel enums or duplicated constants in each app target. Settings rows, diagnostics/about sections, and error normalization are already unified in InspectKit.
 - Consolidate conditional compilation in one place when possible. `Layout.swift` uses a single `PlatformValues` struct; prefer that pattern over scattering `#if os(...)` branches through feature views.
+- Keep Live Monitor coordination app-scoped so closing one window does not disable tunnel control in another.
+- Classify certificate revocation failures using Security error codes and preserve diagnostics for other trust-evaluation failures.
 
 ### MVVM + Protocol-Oriented Views
 
